@@ -1,0 +1,14 @@
+package de.pcfreak9000.spaceawaits.desktop;
+
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+
+import de.pcfreak9000.spaceawaits.SpaceAwaits;
+
+public class DesktopLauncher {
+    public static void main(String[] arg) {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.useOpenGL3(true, 3, 3);
+        new Lwjgl3Application(new SpaceAwaits(), config);
+    }
+}
