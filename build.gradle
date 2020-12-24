@@ -8,6 +8,7 @@ buildscript {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
         google()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         
@@ -26,6 +27,7 @@ allprojects {
         box2DLightsVersion = '1.5'
         ashleyVersion = '1.7.3'
         aiVersion = '1.8.2'
+        cjpbaseVersion = "v1.8.0_172-alpha.56"
     }
 
     repositories {
@@ -35,6 +37,7 @@ allprojects {
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -63,6 +66,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
         
     }
 }
