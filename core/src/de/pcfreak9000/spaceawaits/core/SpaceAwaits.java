@@ -13,6 +13,8 @@ import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
+import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
+import de.pcfreak9000.spaceawaits.tileworld.WorldScreen;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 
 public class SpaceAwaits extends Game {
@@ -26,18 +28,37 @@ public class SpaceAwaits extends Game {
     
     public static final EventBus BUS = new EventBus();//Hmmm
     
+    private static SpaceAwaits singleton;
+    
+    public static SpaceAwaits getSpaceAwaits() {
+        return singleton;
+    }
+    
     private Modloader modloader;
     private AssetManager assetManager;
+    private WorldManager worldManager;
+    
+    private WorldScreen worldScreen;
+    
+    public SpaceAwaits() {
+        if (SpaceAwaits.singleton != null) {
+            throw new IllegalStateException("singleton violation");
+        }
+        SpaceAwaits.singleton = this;
+    }
     
     @Override
     public void create() {
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
+        this.worldManager = new WorldManager();
+        this.worldScreen = new WorldScreen(worldManager);
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
+        setScreen(worldScreen);
     }
     
     private void preloadResources() {

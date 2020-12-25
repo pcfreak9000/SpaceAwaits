@@ -29,7 +29,7 @@ public class GameRegistry<T> {
     public GameRegistry<T> register(final String name, final T data) {
         final T before = this.registered.put(name, data);
         if (before != null) {
-            this.LOGGER.info("Overriden: " + name);
+            this.LOGGER.info("Overriding: " + name);
         }
         return this;
     }

@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.tileworld;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +9,9 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
@@ -55,14 +56,11 @@ public class Region {
     
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
-        
+    
     private boolean recacheTiles;
-    private boolean recacheLights;
-    private final Queue<TileState> lightBfsQueue;
-    private final Queue<RemovalNode>[] lightRemovalBfsQueue;
-    //private final Queue<TileState> sunlightBfsQueue;
-    //private final Queue<RemovalNode>[] sunlightRemovalBfsQueue;
+    
     private final Entity regionEntity;
+    private int cacheId = -1;
     
     public Region(int rx, int ry, TileWorld tw) {
         this.tileWorld = tw;
@@ -76,9 +74,6 @@ public class Region {
         this.tickables = new ArrayList<>();
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new Entity();
-        this.lightBfsQueue = new ArrayDeque<>();
-        this.lightRemovalBfsQueue = new Queue[3];
-        Arrays.setAll(this.lightRemovalBfsQueue, (i) -> new ArrayDeque<>());
         RenderComponent rc = new RenderComponent(new Sprite() {
             @Override
             public void draw() {
@@ -101,10 +96,6 @@ public class Region {
         });
         this.regionEntity.add(rc);
         this.regionEntity.add(new TickRegionComponent(this));
-    }
-    
-    private void queueRecacheLights() {
-        this.recacheLights = true;
     }
     
     private void queueRecacheTiles() {
@@ -176,16 +167,11 @@ public class Region {
                 tickables.add((Tickable) te);
             }
         }
-        if ((old.light().maxRGB() > 0 || !Objects.equals(old.getTile().getFilterColor(), t.getFilterColor())
-                || old.getTile().getLightLoss() != t.getLightLoss())) {
-            removeLight(old);
-        }
+        
         //newTileState.sunlight().set(old.sunlight());
         //newTileState.setDirectSun(old.isDirectSun());
         //requestSunlightComputation();
-        if (t.hasLight()) {
-            addLight(newTileState);
-        }
+        
         queueRecacheTiles();
         //        if (tileWorld.inBounds(tx + 1, ty)) {
         //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
@@ -208,33 +194,11 @@ public class Region {
     
     public void setTileBackground(Tile t, int tx, int ty) {
         this.tilesBackground.set(new TileState(t, tx, ty), tx, ty);
-        if (t.hasLight()) {
-            //addLight(t);
-            //queueRecacheLights();
-        }
     }
     
     public boolean inBounds(int gtx, int gty) {
         return gtx >= this.tx && gtx < this.tx + REGION_TILE_SIZE && gty >= this.ty && gty < this.ty + REGION_TILE_SIZE
                 && gtx < tileWorld.getWorldWidth() && gty < tileWorld.getWorldHeight();
-    }
-    
-    private void addLight(TileState light) {
-        this.lightBfsQueue.add(light);
-        light.light().set(light.getTile().getLightColor());//This might cause issues if this method is used to add light to already existing tiles?
-        queueRecacheLights();
-    }
-    
-    private void removeLight(TileState light) {
-        for (int i = 0; i < 3; i++) {
-            RemovalNode node = new RemovalNode();
-            node.t = light;
-            node.v = light.light().get(i);
-            if (node.v > 0) {
-                this.lightRemovalBfsQueue[i].add(node);
-            }
-        }
-        queueRecacheLights();
     }
     
     public void tick(float time) {
@@ -246,131 +210,40 @@ public class Region {
         }
     }
     
-    private void resolveLights() {
-        for (int i = 0; i < this.lightRemovalBfsQueue.length; i++) {
-            while (!this.lightRemovalBfsQueue[i].isEmpty()) {
-                RemovalNode front = this.lightRemovalBfsQueue[i].poll();
-                int tx = front.t.getGlobalTileX();
-                int ty = front.t.getGlobalTileY();
-                if (this.tileWorld.inBounds(tx + 1, ty)) {
-                    TileState t = getTileStateGlobal(tx + 1, ty);
-                    checkRemoveLightHelper(front, t, i);
-                }
-                if (this.tileWorld.inBounds(tx - 1, ty)) {
-                    TileState t = getTileStateGlobal(tx - 1, ty);
-                    checkRemoveLightHelper(front, t, i);
-                }
-                if (this.tileWorld.inBounds(tx, ty + 1)) {
-                    TileState t = getTileStateGlobal(tx, ty + 1);
-                    checkRemoveLightHelper(front, t, i);
-                }
-                if (this.tileWorld.inBounds(tx, ty - 1)) {
-                    TileState t = getTileStateGlobal(tx, ty - 1);
-                    checkRemoveLightHelper(front, t, i);
-                }
-            }
-        }
-        while (!this.lightBfsQueue.isEmpty()) {
-            TileState front = this.lightBfsQueue.poll();
-            int tx = front.getGlobalTileX();
-            int ty = front.getGlobalTileY();
-            //Check if the light "front" is actually there (theoretically doesnt need to be done for "front" that comes from propagating) 
-            if (front != getTileStateGlobal(tx, ty)) {
-                continue;
-            }
-            if (front.getTile().hasLightFilter()) {
-                Color filter = front.getTile().getFilterColor();
-                front.light().mulRGB(filter);
-            }
-            if (this.tileWorld.inBounds(tx + 1, ty)) {
-                TileState t = getTileStateGlobal(tx + 1, ty);
-                checkAddLightHelper(front, t);
-            }
-            if (this.tileWorld.inBounds(tx - 1, ty)) {
-                TileState t = getTileStateGlobal(tx - 1, ty);
-                checkAddLightHelper(front, t);
-            }
-            if (this.tileWorld.inBounds(tx, ty + 1)) {
-                TileState t = getTileStateGlobal(tx, ty + 1);
-                checkAddLightHelper(front, t);
-            }
-            if (this.tileWorld.inBounds(tx, ty - 1)) {
-                TileState t = getTileStateGlobal(tx, ty - 1);
-                checkAddLightHelper(front, t);
-            }
-        }
-        
+    private void createCache(SpriteCache c) {
+        c.beginCache();
+        float[] empty = new float[5 * 6 * REGION_TILE_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE images per layer, 2 layers 
+        c.add(null, empty, 0, empty.length);
+        cacheId = c.endCache();
+        //Dont allocate too many caches -> use some pooling or something (only regions that are loaded need a cache)
     }
     
-    private void checkRemoveLightHelper(RemovalNode front, TileState t, int index) {
-        if (t != null) {
-            Color col = t.light();
-            if (col.get(index) > 0 && col.get(index) < front.v) {
-                RemovalNode node = new RemovalNode();
-                node.t = t;
-                node.v = col.get(index);
-                t.light().set(index, 0);
-                this.lightRemovalBfsQueue[index].add(node);
-                queueNeighbouringLightRecaching(t);
-            } else if (col.get(index) >= front.v) {
-                this.lightBfsQueue.add(t);
-                queueNeighbouringLightRecaching(t);
-            }
-        }
-    }
-    
-    private void checkAddLightHelper(TileState front, TileState t) {
-        if (t != null) {
-            boolean found = false;
-            for (int i = 0; i < 3; i++) {
-                if (t.light().get(i) + 1 < front.light().get(i)) {
-                    t.light().set(i, front.light().get(i) - front.getTile().getLightLoss());
-                    found = true;
-                }
-            }
-            if (found) {
-                this.lightBfsQueue.add(t);
-                queueNeighbouringLightRecaching(t);
-            }
-        }
-    }
-    
-    private void queueNeighbouringLightRecaching(TileState t) {
-        int c = Region.toGlobalRegion(t.getGlobalTileX());
-        int d = Region.toGlobalRegion(t.getGlobalTileY());
-        if (this.rx != c || this.ry != d) {
-            Region r = this.tileWorld.getRegion(c, d);
-            if (r != null) {
-                r.queueRecacheLights();
-            }
-        }
-    }
-    
-    private void recacheTiles() {
+    private void recacheTiles(SpriteCache cache) {
         //LOGGER.debug("Recaching: " + toString());
-        InstancedBatch2D packingBatchActual = new InstancedBatch2D(true);
-        BorderedBatchAdapter packingBatch = new BorderedBatchAdapter(packingBatchActual);
-        packingBatch.begin();
-        Matrix3x2f tmpTransform = new Matrix3x2f();
-        tmpTransform.scale(Tile.TILE_SIZE);
+        cache.beginCache(cacheId);
         List<TileState> tiles = new ArrayList<>();
-        Predicate<TileState> predicate = (t) -> t.getTile().color().getA() > 0;
-        //background does not need to be recached all the time because it can not change (rn)
+        Predicate<TileState> predicate = (t) -> t.getTile().color().a > 0;//Maybe just iterate the whole tilestorage or something, first collecting everything is probably slow
+        //background does not need to be recached all the time because it can not change (rn)?
         this.tilesBackground.getAll(tiles, predicate);
+        Color backgroundColor = new Color();
         for (TileState t : tiles) {
-            packingBatch.color().set(t.getTile().color());
-            packingBatch.color().mulRGB(BACKGROUND_FACTOR);
-            tmpTransform.setTranslation(t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE);
-            packingBatch.draw(t.getTile().getTexture(), tmpTransform);
+            backgroundColor.set(t.getTile().color());
+            backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
+            cache.setColor(backgroundColor);
+            addTile(t, cache);
         }
         tiles.clear();
         this.tiles.getAll(tiles, predicate);
         for (TileState t : tiles) {
-            packingBatch.color().set(t.getTile().color());
-            tmpTransform.setTranslation(t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE);
-            packingBatch.draw(t.getTile().getTexture(), tmpTransform);
+            cache.setColor(t.getTile().color());
+            addTile(t, cache);
         }
-        tileCache = packingBatchActual.flushWithOptionalCache();
+        cache.endCache();
+    }
+    
+    private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
+        c.add(null, t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
+                Tile.TILE_SIZE);
     }
     
     @Override

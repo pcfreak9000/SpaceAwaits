@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import de.pcfreak9000.spaceawaits.tileworld.World;
-import de.pcfreak9000.spaceawaits.tileworld.WorldLoadingFence;
+import de.pcfreak9000.spaceawaits.tileworld.WorldLoadingBounds;
 import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
 
@@ -28,7 +28,7 @@ public class GameInstance {
         
         TransformComponent tc = this.player.getPlayerEntity().getComponent(TransformComponent.class);
         tc.position.set(x, y);
-        this.groundManager.getLoader().setWorldUpdateFence(new WorldLoadingFence(tc.position));
+        this.groundManager.getLoader().setWorldUpdateFence(new WorldLoadingBounds(tc.position));
         this.groundManager.getECSManager().addEntity(this.player.getPlayerEntity());
         this.groundManager.setWorld(world);
     }

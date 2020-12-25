@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
-public class WorldLoadingFence {
+public class WorldLoadingBounds {
     
     private final Vector2 following;
     
@@ -14,7 +14,7 @@ public class WorldLoadingFence {
     private int xChunkOffset;
     private int yChunkOffset;
     
-    public WorldLoadingFence(Vector2 foll) {
+    public WorldLoadingBounds(Vector2 foll) {
         this.following = foll;
     }
     

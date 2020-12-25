@@ -16,7 +16,7 @@ public class WorldLoader {
     private WorldManager manager;
     
     private World currentWorld;
-    private WorldLoadingFence worldLoadingFence;
+    private WorldLoadingBounds worldLoadingBounds;
     
     //TODO recache loaded regions if resources have been reloaded
     
@@ -47,21 +47,21 @@ public class WorldLoader {
         return this.currentWorld != null;
     }
     
-    public void setWorldUpdateFence(WorldLoadingFence fence) {
+    public void setWorldUpdateFence(WorldLoadingBounds fence) {
         if (!hasCurrentWorld()) {
-            this.worldLoadingFence = fence;
+            this.worldLoadingBounds = fence;
             return;
         }
         unloadAllRegions();
-        this.worldLoadingFence = fence;
+        this.worldLoadingBounds = fence;
         loadAllRegions();
     }
     
     private void loadAllRegions() {
-        int xR = this.worldLoadingFence.getChunkRadiusRangeX();
-        int yR = this.worldLoadingFence.getChunkRadiusRangeY();
-        int xM = this.worldLoadingFence.getChunkMidpointX();
-        int yM = this.worldLoadingFence.getChunkMidpointY();
+        int xR = this.worldLoadingBounds.getChunkRadiusRangeX();
+        int yR = this.worldLoadingBounds.getChunkRadiusRangeY();
+        int xM = this.worldLoadingBounds.getChunkMidpointX();
+        int yM = this.worldLoadingBounds.getChunkMidpointY();
         for (int i = 0; i <= 2 * xR; i++) {
             for (int j = 0; j <= 2 * yR; j++) {
                 int rx = i - xR + xM;
