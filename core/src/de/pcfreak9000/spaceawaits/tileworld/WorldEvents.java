@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.tileworld;
 import com.badlogic.ashley.core.Engine;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class WorldEvents {
     

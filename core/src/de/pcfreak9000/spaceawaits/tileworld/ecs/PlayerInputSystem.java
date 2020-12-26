@@ -8,10 +8,11 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.omnikryptec.event.EventSubscription;
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.TileWorld;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class PlayerInputSystem extends IteratingSystem {
     
@@ -29,7 +30,7 @@ public class PlayerInputSystem extends IteratingSystem {
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
         this.world = ev.getTileWorldNew();
-        this.cam = ev.worldMgr.getPlanetCamera().getCameraActual();//TODO meh...?
+        this.cam = ev.worldMgr.getRenderInfo().getCamera();
     }
     
     private Tile ugly = null;

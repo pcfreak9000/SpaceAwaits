@@ -1,11 +1,8 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.tile;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
 
 public class TileStorage {
     

@@ -9,9 +9,9 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.TileWorld;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class ParallaxSystem extends IteratingSystem {
     
@@ -29,7 +29,7 @@ public class ParallaxSystem extends IteratingSystem {
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.tileWorld = svwe.getTileWorldNew();
-        this.cam = svwe.worldMgr.getRenderer().getCamera();
+        this.cam = svwe.worldMgr.getRenderInfo().getCamera();
     }
     
     @Override

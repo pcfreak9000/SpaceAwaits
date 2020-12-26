@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.TileWorld;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class CameraSystem extends IteratingSystem {
     
@@ -29,7 +29,7 @@ public class CameraSystem extends IteratingSystem {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.camera = svwe.worldMgr.getRenderer().getCamera();
+        this.camera = svwe.worldMgr.getRenderInfo().getCamera();
         this.tileWorld = svwe.getTileWorldNew();
     }
     

@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.tileworld;
 
 import com.badlogic.gdx.math.Vector2;
 
+import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class WorldLoadingBounds {

@@ -2,13 +2,13 @@ package de.pcfreak9000.spaceawaits.tileworld.ecs;
 
 import com.badlogic.ashley.core.Component;
 
-import de.pcfreak9000.spaceawaits.tileworld.Region;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
 
-public class TickRegionComponent implements Component {
+public class RegionComponent implements Component {
     
     public final Region region;
     
-    public TickRegionComponent(Region r) {
+    public RegionComponent(Region r) {
         this.region = r;
     }
 }

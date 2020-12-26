@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
+
 /**
  * Responsible for successful surface world loading and unloading, management of
  * loaded chunks

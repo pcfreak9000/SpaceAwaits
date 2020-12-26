@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.tileworld.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderComponent;
 
 public class Background {
     
@@ -19,7 +18,6 @@ public class Background {
         this.texture = texture;
         this.entity = new Entity();
         this.sprite = new Sprite();        
-        this.entity.add(new RenderComponent(this.sprite));
         this.entity.add(new ParallaxComponent(xMov, yMov, aspect));
         this.sprite.setSize(1920 * 2 * aspect, 1920 * 2);
         //this.sprite.getRenderData().setTilingFactor(tilingFactor);

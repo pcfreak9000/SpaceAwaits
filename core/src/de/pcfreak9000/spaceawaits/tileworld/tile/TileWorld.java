@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.tile;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,8 +6,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
+import de.pcfreak9000.spaceawaits.tileworld.RegionGenerator;
 
 public class TileWorld {
     

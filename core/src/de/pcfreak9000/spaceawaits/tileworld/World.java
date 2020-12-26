@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
+
 public class World {
     
     private final TileWorld tileWorld;

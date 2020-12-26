@@ -7,16 +7,15 @@ import com.badlogic.ashley.systems.IteratingSystem;
 
 public class TickRegionSystem extends IteratingSystem {
     
-    private ComponentMapper<TickRegionComponent> tMapper = ComponentMapper.getFor(TickRegionComponent.class);
-    
-    public TickRegionSystem() {
-        super(Family.all(TickRegionComponent.class).get());
+    private ComponentMapper<RegionComponent> tMapper = ComponentMapper.getFor(RegionComponent.class);
         
+    public TickRegionSystem() {
+        super(Family.all(RegionComponent.class).get());    
     }
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        TickRegionComponent c = tMapper.get(entity);
+        RegionComponent c = tMapper.get(entity);
         c.region.tick(deltaTime);
     }
     

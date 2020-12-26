@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.tile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -10,24 +10,13 @@ import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.TickRegionComponent;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tickable;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileEntity;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.RegionComponent;
 
 public class Region {
-    
-    private static class RemovalNode {
-        TileState t;
-        float v;
-    }
     
     private static final Logger LOGGER = Logger.getLogger(Region.class);
     
@@ -57,10 +46,12 @@ public class Region {
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
-    private boolean recacheTiles;
-    
     private final Entity regionEntity;
-    private int cacheId = -1;
+    
+    private boolean recacheTiles;
+    public int cacheId = -1;
+    private int backgroundLength = 0;
+    private int length = 0;
     
     public Region(int rx, int ry, TileWorld tw) {
         this.tileWorld = tw;
@@ -74,28 +65,7 @@ public class Region {
         this.tickables = new ArrayList<>();
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new Entity();
-        RenderComponent rc = new RenderComponent(new Sprite() {
-            @Override
-            public void draw() {
-                if (Region.this.recacheTiles) {
-                    Region.this.recacheTiles = false;
-                    recacheTiles();
-                }
-                if (tileCache != null) {
-                    tileRenderer.put(tileCache);
-                }
-            }
-            
-            @Override
-            public boolean isVisible(FrustumIntersection frustum) {
-                return frustum.testAab(Region.this.tx * Tile.TILE_SIZE, Region.this.ty * Tile.TILE_SIZE, 0,
-                        (Region.this.tx + REGION_TILE_SIZE) * Tile.TILE_SIZE,
-                        (Region.this.ty + REGION_TILE_SIZE) * Tile.TILE_SIZE, 0);
-                
-            }
-        });
-        this.regionEntity.add(rc);
-        this.regionEntity.add(new TickRegionComponent(this));
+        this.regionEntity.add(new RegionComponent(this));
     }
     
     private void queueRecacheTiles() {
@@ -210,35 +180,44 @@ public class Region {
         }
     }
     
-    private void createCache(SpriteCache c) {
-        c.beginCache();
-        float[] empty = new float[5 * 6 * REGION_TILE_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE images per layer, 2 layers 
-        c.add(null, empty, 0, empty.length);
-        cacheId = c.endCache();
-        //Dont allocate too many caches -> use some pooling or something (only regions that are loaded need a cache)
+
+    //TMP
+    public int len() {
+        return length;
     }
     
-    private void recacheTiles(SpriteCache cache) {
+    //TMP?!
+    public boolean recacheTiles() {
+        return recacheTiles;
+    }
+    
+    //TMP?!
+    public void recacheTiles(SpriteCache cache) {
         //LOGGER.debug("Recaching: " + toString());
-        cache.beginCache(cacheId);
+        //cache.beginCache(cacheId);
         List<TileState> tiles = new ArrayList<>();
         Predicate<TileState> predicate = (t) -> t.getTile().color().a > 0;//Maybe just iterate the whole tilestorage or something, first collecting everything is probably slow
         //background does not need to be recached all the time because it can not change (rn)?
         this.tilesBackground.getAll(tiles, predicate);
         Color backgroundColor = new Color();
+        this.backgroundLength = 0;
+        this.length = 0;
         for (TileState t : tiles) {
             backgroundColor.set(t.getTile().color());
             backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
             cache.setColor(backgroundColor);
             addTile(t, cache);
+            this.backgroundLength++;
+            this.length++;
         }
         tiles.clear();
         this.tiles.getAll(tiles, predicate);
         for (TileState t : tiles) {
             cache.setColor(t.getTile().color());
             addTile(t, cache);
+            this.length++;
         }
-        cache.endCache();
+        //cache.endCache();
     }
     
     private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
