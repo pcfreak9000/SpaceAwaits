@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.tileworld.RegionGenerator;
 
 public class TileWorld {
@@ -26,8 +25,8 @@ public class TileWorld {
     public TileWorld(int width, int height, RegionGenerator generator) {
         this.width = width;
         this.height = height;
-        this.arrayWidth = (int) Mathf.ceil(width / Region.REGION_TILE_SIZE);
-        this.arrayHeight = (int) Mathf.ceil(height / Region.REGION_TILE_SIZE);
+        this.arrayWidth = (int) Math.ceil(width / (double) Region.REGION_TILE_SIZE);//TODO use other ceil?
+        this.arrayHeight = (int) Math.ceil(height / (double) Region.REGION_TILE_SIZE);
         this.generator = generator;
         this.regions = new Region[this.arrayWidth][this.arrayHeight];
     }
@@ -85,16 +84,20 @@ public class TileWorld {
         }
         Set<Region> regions = new HashSet<>();
         if (xy) {
-            regions.add(requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y)));
+            Region reg = requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y));
+            regions.add(reg);
         }
         if (xwyh) {
-            regions.add(requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y + h)));
+            Region reg = requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y + h));
+            regions.add(reg);
         }
         if (inBounds(x + w, y)) {
-            regions.add(requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y)));
+            Region reg = requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y));
+            regions.add(reg);
         }
         if (inBounds(x, y + h)) {
-            regions.add(requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y + h)));
+            Region reg = requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y + h));
+            regions.add(reg);
         }
         for (Region r : regions) {
             r.tileIntersections(output, x, y, w, h, predicate);

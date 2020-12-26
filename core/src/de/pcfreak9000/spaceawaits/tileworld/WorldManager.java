@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Engine;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderRegionSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TickRegionSystem;
 
@@ -31,11 +32,11 @@ public class WorldManager {
     }
     
     private void addDefaultECSSystems() {//Create some indexed hook system thing instead?
-        //this.ecsManager.addSystem(new PlayerInputSystem());
+        this.ecsManager.addSystem(new RenderRegionSystem());//TODO fix order of rendering and logic...
+        this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickRegionSystem());
         this.ecsManager.addSystem(new PhysicsSystem());
         this.ecsManager.addSystem(new CameraSystem());
-        this.ecsManager.addSystem(new RenderRegionSystem());
         //this.ecsManager.addSystem(new ParallaxSystem());
     }
     

@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.tileworld.tile;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
@@ -31,13 +31,13 @@ public class Tile {
     }
     
     private String textureName = null;
-    private Texture texture = null;
+    private TextureRegion texture = null;
     
     private boolean canBreak = true;
     private boolean opaque = false;
     private boolean solid = true;
     
-    private final Color color = new Color();
+    private final Color color = new Color(1,1,1,1);
     
     private Color lightColor;
     private float lightloss = 1;
@@ -139,4 +139,11 @@ public class Tile {
         return String.format("Tile[texture=%s]", this.textureName);
     }
     
+    //TODO this sucks:
+    public void setTextureRegion(TextureRegion tex) {
+        this.texture = tex;
+    }
+    public TextureRegion getTextureRegion() {
+        return this.texture;
+    }
 }

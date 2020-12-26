@@ -83,7 +83,7 @@ public class WorldLoader {
         Iterator<Region> it = this.localLoadedChunks.iterator();
         while (it.hasNext()) {
             Region c = it.next();
-            manager.getECSManager().addEntity(c.getECSEntity());
+            manager.getECSManager().removeEntity(c.getECSEntity());
             it.remove();
         }
     }

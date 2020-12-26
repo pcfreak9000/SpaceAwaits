@@ -9,11 +9,10 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RegionComponent;
 
 public class Region {
@@ -27,7 +26,7 @@ public class Region {
     private static final float BACKGROUND_FACTOR = 0.5f;
     
     public static int toGlobalRegion(int globalTile) {
-        return (int) Mathf.floor(globalTile / REGION_TILE_SIZE);
+        return (int) Math.floor(globalTile / (double) REGION_TILE_SIZE);//TODO use other floor
     }
     
     private final int rx;
@@ -67,8 +66,8 @@ public class Region {
         this.regionEntity = new Entity();
         this.regionEntity.add(new RegionComponent(this));
     }
-    
-    private void queueRecacheTiles() {
+    //HMm
+    public void queueRecacheTiles() {
         this.recacheTiles = true;
     }
     
@@ -116,6 +115,7 @@ public class Region {
     
     public Tile setTile(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
+        GameRegistry.TILE_REGISTRY.checkRegistered(t);
         TileState newTileState = new TileState(t, tx, ty);
         TileState old = this.tiles.set(newTileState, tx, ty);
         if (old.getTileEntity() != null) {
@@ -192,36 +192,37 @@ public class Region {
     }
     
     //TMP?!
-    public void recacheTiles(SpriteCache cache) {
+    public void recacheTiles(SpriteBatch cache) {
         //LOGGER.debug("Recaching: " + toString());
         //cache.beginCache(cacheId);
         List<TileState> tiles = new ArrayList<>();
         Predicate<TileState> predicate = (t) -> t.getTile().color().a > 0;//Maybe just iterate the whole tilestorage or something, first collecting everything is probably slow
         //background does not need to be recached all the time because it can not change (rn)?
-        this.tilesBackground.getAll(tiles, predicate);
-        Color backgroundColor = new Color();
-        this.backgroundLength = 0;
+//        this.tilesBackground.getAll(tiles, predicate);
+//        Color backgroundColor = new Color();
+//        this.backgroundLength = 0;
         this.length = 0;
-        for (TileState t : tiles) {
-            backgroundColor.set(t.getTile().color());
-            backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
-            cache.setColor(backgroundColor);
-            addTile(t, cache);
-            this.backgroundLength++;
-            this.length++;
-        }
-        tiles.clear();
+//        for (TileState t : tiles) {
+//            backgroundColor.set(t.getTile().color());
+//            backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
+//            cache.setColor(backgroundColor);
+//            addTile(t, cache);
+//            this.backgroundLength++;
+//            this.length++;
+//        }
+//        tiles.clear();
         this.tiles.getAll(tiles, predicate);
         for (TileState t : tiles) {
             cache.setColor(t.getTile().color());
             addTile(t, cache);
             this.length++;
         }
+        //recacheTiles = false;
         //cache.endCache();
     }
     
-    private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
-        c.add(null, t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
+    private void addTile(TileState t, SpriteBatch c) {//TODO tile texture and animations and stuff
+        c.draw(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
                 Tile.TILE_SIZE);
     }
     

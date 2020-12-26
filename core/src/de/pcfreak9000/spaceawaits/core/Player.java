@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import de.pcfreak9000.spaceawaits.item.Inventory;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputComponent;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
@@ -35,18 +34,11 @@ public class Player {
         pic.maxYv = 100;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
-        Sprite sprite = new Sprite() {
-            @Override
-            public void draw() {
-                super.draw();
-                //batch.color().set(0, 0, 1);
-                //batch.drawRect(pc.x, pc.y, pc.w, pc.h);
-            }
-        };
+        Sprite sprite = new Sprite();
         sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 4);
         //FIXME resource reloading
         //sprite.getRenderData().setUVAndTexture(Omnikryptec.getTexturesS().get("mensch.png"));
-        sprite.setLayer(100);
+     //   sprite.setLayer(100);
         //        SimpleSprite light = new SimpleSprite();
         //        light.setTexture(Omnikryptec.getTexturesS().get("light_2.png"));
         //        light.setWidth(Tile.TILE_SIZE * 80);
@@ -55,10 +47,11 @@ public class Player {
         //        //light.getColor().set(-100, 1, 1);
         //        light.getTransform().localspaceWrite().setTranslation(-light.getWidth() / 2 + sprite.getWidth() / 2,
         //                -light.getHeight() / 2 + sprite.getHeight() / 2);
-        RenderComponent rc = new RenderComponent(sprite);
         //        rc.light = light;
-        e.add(rc);
-        e.add(new TransformComponent());
+//        e.add(rc);
+        TransformComponent tc = new TransformComponent();
+        tc.position.set(500, 2900);
+        e.add(tc);
         e.add(pc);
         pc.w = sprite.getWidth();
         pc.h = sprite.getHeight() * 0.95f;

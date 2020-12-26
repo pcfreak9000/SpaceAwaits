@@ -1,5 +1,8 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.util.List;
+import java.util.Random;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -12,9 +15,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
+import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.tileworld.World;
+import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
+import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator.GeneratorCapabilitiesBase;
+import de.pcfreak9000.spaceawaits.tileworld.WorldLoadingBounds;
 import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.WorldScreen;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 
 public class SpaceAwaits extends Game {
@@ -35,7 +45,7 @@ public class SpaceAwaits extends Game {
     }
     
     private Modloader modloader;
-    private AssetManager assetManager;
+    public AssetManager assetManager;
     private WorldManager worldManager;
     
     private WorldScreen worldScreen;
@@ -58,7 +68,23 @@ public class SpaceAwaits extends Game {
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
+        GameRegistry.TILE_REGISTRY.reloadResources(assetManager);
+        this.assetManager.finishLoading();
+        GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
+        Player p = new Player();
+        this.worldManager.getLoader().setWorldUpdateFence(new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
+        World testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
+                .generateWorld(0);
+        this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
+        this.worldManager.setWorld(testWorld);
         setScreen(worldScreen);
+    }
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+    //TMP
+    private WorldGenerator pickGenerator(List<WorldGenerator> list) {
+        return MathUtil.getWeightedRandom(new Random(), list);
     }
     
     private void preloadResources() {

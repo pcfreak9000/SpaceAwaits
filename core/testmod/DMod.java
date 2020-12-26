@@ -56,6 +56,7 @@ public class DMod {
         GameRegistry.TILE_REGISTRY.register("dirt", dirttile);
         
         Tile torch = new Tile();
+        GameRegistry.TILE_REGISTRY.register("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
         Tile laser = new Tile() {
