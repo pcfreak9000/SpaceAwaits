@@ -1,11 +1,13 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.item.Inventory;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntityComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
@@ -34,21 +36,13 @@ public class Player {
         pic.maxYv = 100;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
-        Sprite sprite = new Sprite();
+        Texture t = SpaceAwaits.getSpaceAwaits().assetManager.get("mensch.png");
+        Sprite sprite = new Sprite(t);
         sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 4);
+        RenderEntityComponent rc = new RenderEntityComponent();
+        rc.sprite = sprite;
+        e.add(rc);
         //FIXME resource reloading
-        //sprite.getRenderData().setUVAndTexture(Omnikryptec.getTexturesS().get("mensch.png"));
-     //   sprite.setLayer(100);
-        //        SimpleSprite light = new SimpleSprite();
-        //        light.setTexture(Omnikryptec.getTexturesS().get("light_2.png"));
-        //        light.setWidth(Tile.TILE_SIZE * 80);
-        //        light.setHeight(Tile.TILE_SIZE * 80);
-        //        //light.setColor(new Color());
-        //        //light.getColor().set(-100, 1, 1);
-        //        light.getTransform().localspaceWrite().setTranslation(-light.getWidth() / 2 + sprite.getWidth() / 2,
-        //                -light.getHeight() / 2 + sprite.getHeight() / 2);
-        //        rc.light = light;
-//        e.add(rc);
         TransformComponent tc = new TransformComponent();
         tc.position.set(500, 2900);
         e.add(tc);

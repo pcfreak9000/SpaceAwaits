@@ -36,12 +36,12 @@ public class CameraSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         Vector2 positionState = this.transformMapper.get(entity).position;
-        float x = positionState.x; //- this.camera.viewportWidth / 2f;
-        float y = positionState.y; //- this.camera.viewportHeight / 2f;
+        float x = positionState.x;
+        float y = positionState.y;
         x = Mathf.max(this.camera.viewportWidth / 2, x);
         y = Mathf.max(this.camera.viewportHeight / 2, y);
-        x = Mathf.min(this.tileWorld.getWorldWidth() * Tile.TILE_SIZE - this.camera.viewportWidth/2, x);
-        y = Mathf.min(this.tileWorld.getWorldHeight() * Tile.TILE_SIZE - this.camera.viewportHeight/2, y);
+        x = Mathf.min(this.tileWorld.getWorldWidth() * Tile.TILE_SIZE - this.camera.viewportWidth / 2, x);
+        y = Mathf.min(this.tileWorld.getWorldHeight() * Tile.TILE_SIZE - this.camera.viewportHeight / 2, y);
         this.camera.position.set(x, y, 0);
         //temporary wrap around
         TransformComponent tc = this.transformMapper.get(entity);

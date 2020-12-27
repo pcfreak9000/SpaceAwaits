@@ -69,19 +69,23 @@ public class SpaceAwaits extends Game {
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
         GameRegistry.TILE_REGISTRY.reloadResources(assetManager);
+        this.assetManager.load("mensch.png", Texture.class);
         this.assetManager.finishLoading();
         GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
         Player p = new Player();
-        this.worldManager.getLoader().setWorldUpdateFence(new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
+        this.worldManager.getLoader().setWorldUpdateFence(
+                new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
         World testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
                 .generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
         this.worldManager.setWorld(testWorld);
         setScreen(worldScreen);
     }
+    
     public WorldManager getWorldManager() {
         return worldManager;
     }
+    
     //TMP
     private WorldGenerator pickGenerator(List<WorldGenerator> list) {
         return MathUtil.getWeightedRandom(new Random(), list);

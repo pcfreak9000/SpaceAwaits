@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import de.omnikryptec.util.Logger;
@@ -198,19 +199,19 @@ public class Region {
         List<TileState> tiles = new ArrayList<>();
         Predicate<TileState> predicate = (t) -> t.getTile().color().a > 0;//Maybe just iterate the whole tilestorage or something, first collecting everything is probably slow
         //background does not need to be recached all the time because it can not change (rn)?
-//        this.tilesBackground.getAll(tiles, predicate);
-//        Color backgroundColor = new Color();
-//        this.backgroundLength = 0;
+        this.tilesBackground.getAll(tiles, predicate);
+        Color backgroundColor = new Color();
+        this.backgroundLength = 0;
         this.length = 0;
-//        for (TileState t : tiles) {
-//            backgroundColor.set(t.getTile().color());
-//            backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
-//            cache.setColor(backgroundColor);
-//            addTile(t, cache);
-//            this.backgroundLength++;
-//            this.length++;
-//        }
-//        tiles.clear();
+        for (TileState t : tiles) {
+            backgroundColor.set(t.getTile().color());
+            backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
+            cache.setColor(backgroundColor);
+            addTile(t, cache);
+            this.backgroundLength++;
+            this.length++;
+        }
+        tiles.clear();
         this.tiles.getAll(tiles, predicate);
         for (TileState t : tiles) {
             cache.setColor(t.getTile().color());
