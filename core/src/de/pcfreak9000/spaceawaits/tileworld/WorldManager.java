@@ -28,7 +28,7 @@ public class WorldManager {
     
     public void updateAndRender(float delta) {
         worldLoader.loadChunks(delta);
-        worldRenderInfo.prepare();
+        worldRenderInfo.applyViewport();
         ecsManager.update(delta);
     }
     

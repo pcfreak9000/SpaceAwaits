@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.tileworld.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
-@Mod(id = "SpaceExplorer2D-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
+@Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
     
     @Instance

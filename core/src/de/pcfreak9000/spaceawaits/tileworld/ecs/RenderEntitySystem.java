@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,10 +24,12 @@ public class RenderEntitySystem extends IteratingSystem {
     }
     
     private SpriteBatch b;
+    private Camera cam;
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.b = svwe.worldMgr.getRenderInfo().getSpriteBatch();
+        this.cam = svwe.worldMgr.getRenderInfo().getCamera();
     }
     
     @Override

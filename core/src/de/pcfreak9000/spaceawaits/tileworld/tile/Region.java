@@ -193,7 +193,7 @@ public class Region {
     }
     
     //TMP?!
-    public void recacheTiles(SpriteCache cache) {
+    public int recacheTiles(SpriteCache cache) {
         //LOGGER.debug("Recaching: " + toString());
         //cache.beginCache(cacheId);
         List<TileState> tiles = new ArrayList<>();
@@ -218,6 +218,7 @@ public class Region {
             addTile(t, cache);
             this.length++;
         }
+        return this.length;
         //recacheTiles = false;
         //cache.endCache();
     }

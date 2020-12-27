@@ -69,7 +69,7 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
     
     @Override
     public void update(float deltaTime) {
-        this.regionCache.clear();
+        //this.regionCache.clear();
         regionCache.setProjectionMatrix(
                 SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getCamera().combined);
         for(int i=0; i<getEntities().size(); i++) {
@@ -82,12 +82,12 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
     protected void processEntity(Entity entity, float deltaTime) {
         RegionComponent c = tMapper.get(entity);
         SpriteCache ca = this.regionCache;
-        ca.clear();
+        this.regionCache.clear();
         ca.beginCache();
-        c.region.recacheTiles(ca);
+        int length = c.region.recacheTiles(ca);
         int id = ca.endCache();
         ca.begin();
-        ca.draw(id, 0, c.region.len());
+        ca.draw(id, 0, length);
         ca.end();
 //        
 //                if (c.region.recacheTiles()) {

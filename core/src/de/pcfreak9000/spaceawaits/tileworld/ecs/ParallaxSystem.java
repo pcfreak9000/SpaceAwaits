@@ -16,11 +16,11 @@ import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 public class ParallaxSystem extends IteratingSystem {
     
     public ParallaxSystem() {
-        super(Family.all(ParallaxComponent.class, RenderComponent.class).get());
+        super(Family.all(ParallaxComponent.class, RenderEntityComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
     
-    private final ComponentMapper<RenderComponent> renderMapper = ComponentMapper.getFor(RenderComponent.class);
+    private final ComponentMapper<RenderEntityComponent> renderMapper = ComponentMapper.getFor(RenderEntityComponent.class);
     private final ComponentMapper<ParallaxComponent> parallaxMapper = ComponentMapper.getFor(ParallaxComponent.class);
     
     private TileWorld tileWorld;
@@ -34,7 +34,7 @@ public class ParallaxSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        RenderComponent rc = this.renderMapper.get(entity);
+        RenderEntityComponent rc = this.renderMapper.get(entity);
         ParallaxComponent pc = this.parallaxMapper.get(entity);
         Vector3 positionState = this.cam.position;
         float xratio = positionState.x / (this.tileWorld.getWorldWidth() * Tile.TILE_SIZE);

@@ -37,8 +37,9 @@ public class Player {
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
         Texture t = SpaceAwaits.getSpaceAwaits().assetManager.get("mensch.png");
+        //t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Sprite sprite = new Sprite(t);
-        sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 4);
+        sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 3);
         RenderEntityComponent rc = new RenderEntityComponent();
         rc.sprite = sprite;
         e.add(rc);
@@ -47,7 +48,7 @@ public class Player {
         tc.position.set(500, 2900);
         e.add(tc);
         e.add(pc);
-        pc.w = sprite.getWidth();
+        pc.w = sprite.getWidth() * 0.95f;
         pc.h = sprite.getHeight() * 0.95f;
         return e;
     }
