@@ -41,6 +41,6 @@ public class WorldRenderInfo {
     }
     
     public void resize(int width, int height) {
-        this.viewport.setScreenSize(width, height);
+        this.viewport.update(width, height);
     }
 }

@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.IntSet;
 
@@ -70,6 +69,9 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
     
     @Override
     public void update(float deltaTime) {
+        this.regionCache.clear();
+        regionCache.setProjectionMatrix(
+                SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getCamera().combined);
         for(int i=0; i<getEntities().size(); i++) {
             processEntity(getEntities().get(i), deltaTime);
         }
@@ -79,6 +81,14 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         RegionComponent c = tMapper.get(entity);
+        SpriteCache ca = this.regionCache;
+        ca.clear();
+        ca.beginCache();
+        c.region.recacheTiles(ca);
+        int id = ca.endCache();
+        ca.begin();
+        ca.draw(id, 0, c.region.len());
+        ca.end();
 //        
 //                if (c.region.recacheTiles()) {
 //                    regionCache.beginCache(c.region.cacheId);
@@ -92,10 +102,10 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
 //                    regionCache.draw(c.region.cacheId, 0, c.region.len());
 //                }
 //                regionCache.end();
-        SpriteBatch b = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getSpriteBatch();
-        b.begin();
-        c.region.recacheTiles(b);
-        b.end();
+//        SpriteBatch b = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getSpriteBatch();
+//        b.begin();
+//        c.region.recacheTiles(b);
+//        b.end();
     }
     
 }

@@ -9,7 +9,7 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -192,7 +192,7 @@ public class Region {
     }
     
     //TMP?!
-    public void recacheTiles(SpriteBatch cache) {
+    public void recacheTiles(SpriteCache cache) {
         //LOGGER.debug("Recaching: " + toString());
         //cache.beginCache(cacheId);
         List<TileState> tiles = new ArrayList<>();
@@ -221,8 +221,8 @@ public class Region {
         //cache.endCache();
     }
     
-    private void addTile(TileState t, SpriteBatch c) {//TODO tile texture and animations and stuff
-        c.draw(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
+    private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
+        c.add(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
                 Tile.TILE_SIZE);
     }
     
