@@ -69,9 +69,11 @@ public class SpaceAwaits extends Game {
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
         GameRegistry.TILE_REGISTRY.reloadResources(assetManager);
+        GameRegistry.BACKGROUND_REGISTRY.reloadResources(assetManager);
         this.assetManager.load("mensch.png", Texture.class);
         this.assetManager.finishLoading();
         GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
+        GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);
         Player p = new Player();
         this.worldManager.getLoader().setWorldUpdateFence(
                 new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));

@@ -1,5 +1,4 @@
 
-
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.event.EventSubscription;
@@ -36,7 +35,7 @@ public class DMod {
         
         Tile ironTile = new Tile();
         ironTile.setTexture("ore_iron.png");
-       // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
+        // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
         
         Tile bottom = new Tile();
@@ -75,7 +74,7 @@ public class DMod {
         //laser.setLightColor(new Color(5, 0, 0));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background("Space.png", 16 / 9f, 3, 1000, 1000);
+        Background back = new Background("Space.png", 1920 * 16f / 9, 1920);
         GameRegistry.BACKGROUND_REGISTRY.register("stars", back);
         
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
@@ -93,8 +92,9 @@ public class DMod {
                             if (!tileWorld.inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
                                 continue;
                             }
-                            int value = 75 + Mathf.round(6 * Mathf.abs(MathUtils.sin(0.2f * (i + chunk.getGlobalTileX())))
-                                    + 20 * Mathf.abs(MathUtils.sin(0.05f * (i + chunk.getGlobalTileX()))));
+                            int value = 75
+                                    + Mathf.round(6 * Mathf.abs(MathUtils.sin(0.2f * (i + chunk.getGlobalTileX())))
+                                            + 20 * Mathf.abs(MathUtils.sin(0.05f * (i + chunk.getGlobalTileX()))));
                             if (j + chunk.getGlobalTileY() > value) {
                                 continue;
                             }
@@ -115,7 +115,7 @@ public class DMod {
                                 if (Math.random() < 0.001) {
                                     t = laser;
                                 }
-                                if(Math.random() < 0.002) {
+                                if (Math.random() < 0.002) {
                                     t = torch;
                                 }
                             }
