@@ -24,7 +24,8 @@ public class LaserTileEntity extends TileEntity implements Tickable {
         if (myState.getGlobalTileY() - progress >= 0 && progress >= 1) {
             Region tw = world.getRegion(Region.toGlobalRegion(myState.getGlobalTileX()),
                     Region.toGlobalRegion(myState.getGlobalTileY() - Mathf.floori(progress)));
-            if (tw != null) {
+            if (tw != null && tw.getTile(myState.getGlobalTileX(), myState.getGlobalTileY() - Mathf.floori(progress))
+                    .canBreak()) {
                 tw.setTile(Tile.EMPTY, myState.getGlobalTileX(), myState.getGlobalTileY() - Mathf.floori(progress));
             }
         } else if (myState.getGlobalTileY() - progress < 0) {
