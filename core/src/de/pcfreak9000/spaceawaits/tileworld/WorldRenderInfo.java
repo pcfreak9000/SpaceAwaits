@@ -1,10 +1,13 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class WorldRenderInfo {
     
@@ -31,6 +34,21 @@ public class WorldRenderInfo {
         return spriteBatch;
     }
     
+    public void setAdditiveBlending() {
+        spriteBatch.enableBlending();
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+    }
+    
+    public void setDefaultBlending() {
+        spriteBatch.enableBlending();
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    public void setMultiplicativeBlending() {
+        spriteBatch.enableBlending();
+        spriteBatch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+    }
+    
     public void applyViewport() {
         viewport.apply();
         this.spriteBatch.setProjectionMatrix(camera.combined);
@@ -42,5 +60,6 @@ public class WorldRenderInfo {
     
     public void resize(int width, int height) {
         this.viewport.update(width, height);
+        SpaceAwaits.getSpaceAwaits().getWorldManager().lightCalc.resize(this.viewport.getCamera().viewportWidth, this.viewport.getCamera().viewportHeight);//TODO hacky
     }
 }

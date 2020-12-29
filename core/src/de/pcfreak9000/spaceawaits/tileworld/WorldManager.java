@@ -16,7 +16,7 @@ public class WorldManager {
     private final Engine ecsManager;
     private final WorldRenderInfo worldRenderInfo;
     private final WorldLoader worldLoader;
-    
+    public LightCalculator lightCalc;//TODO lightcalc visibility
     private World currentWorld;
     
     public WorldManager() {
@@ -41,6 +41,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new ParallaxSystem());
         this.ecsManager.addSystem(new RenderRegionSystem());//TODO fix order of rendering and logic...
         this.ecsManager.addSystem(new RenderEntitySystem());
+        this.ecsManager.addSystem(lightCalc = new LightCalculator());
     }
     
     public void setWorld(World world) {
