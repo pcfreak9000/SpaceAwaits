@@ -37,7 +37,6 @@ public class PlayerInputSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        
         PlayerInputComponent play = this.mapper.get(entity);
         float vy = 0;
         float vx = 0;

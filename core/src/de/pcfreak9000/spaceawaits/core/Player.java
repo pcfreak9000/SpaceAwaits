@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.item.Inventory;
+import de.pcfreak9000.spaceawaits.tileworld.LightComponent;
+import de.pcfreak9000.spaceawaits.tileworld.PointLight;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntityComponent;
@@ -43,6 +45,9 @@ public class Player {
         RenderEntityComponent rc = new RenderEntityComponent();
         rc.sprite = sprite;
         e.add(rc);
+        LightComponent lc = new LightComponent();
+        lc.light = new PointLight();
+        e.add(lc);
         //FIXME resource reloading
         TransformComponent tc = new TransformComponent();
         tc.position.set(500, 2900);

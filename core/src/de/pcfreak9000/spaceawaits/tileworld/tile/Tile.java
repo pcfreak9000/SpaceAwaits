@@ -42,7 +42,7 @@ public class Tile {
     private Color lightColor;
     private float lightloss = 1;
     
-    private Color filterColor;
+    private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0);
     
     private float bouncyness = 0;
     
@@ -95,7 +95,7 @@ public class Tile {
     }
     
     public void setFilterColor(Color color) {
-        this.filterColor = color;
+        //this.filterColor = color;
     }
     
     public Color getFilterColor() {
