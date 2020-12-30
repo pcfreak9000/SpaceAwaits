@@ -10,13 +10,20 @@ import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.tileworld.Light;
+import de.pcfreak9000.spaceawaits.tileworld.LightBFPixelAlgorithm;
+import de.pcfreak9000.spaceawaits.tileworld.LightComponent;
+import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RegionComponent;
 
-public class Region {
+public class Region implements Light {
     
     private static final Logger LOGGER = Logger.getLogger(Region.class);
     
@@ -66,7 +73,40 @@ public class Region {
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new Entity();
         this.regionEntity.add(new RegionComponent(this));
+        LightComponent lc = new LightComponent();
+        lc.light = this;
+        this.regionEntity.add(lc);
     }
+    
+    private static class LightState {
+        private byte level;
+        //private Color color;
+        private int i, j;
+    }
+    
+    private Texture lightTexture;
+    
+    private static LightBFPixelAlgorithm lightWorker = new LightBFPixelAlgorithm();
+    
+    @Override
+    public void drawLight(SpriteBatch batch, World world) {//TODO ambient light
+        final byte lightConstant = 10;
+        lightWorker.submit(this, world, (pix) -> {
+            if (lightTexture != null) {
+                lightTexture.dispose();//TODO dispose when this region is deleted/unloaded
+            }
+            lightTexture = new Texture(pix);
+            lightTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+            pix.dispose();
+        });
+        if (lightTexture != null) {
+            batch.draw(lightTexture, tx * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+                    ty * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+                    REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
+                    REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
+        }
+    }
+    
     //HMm
     public void queueRecacheTiles() {
         this.recacheTiles = true;
@@ -181,7 +221,6 @@ public class Region {
         }
     }
     
-
     //TMP
     public int len() {
         return length;
@@ -224,8 +263,8 @@ public class Region {
     }
     
     private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
-        c.add(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE,
-                Tile.TILE_SIZE);
+        c.add(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE,
+                Tile.TILE_SIZE, Tile.TILE_SIZE);
     }
     
     @Override

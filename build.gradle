@@ -67,6 +67,6 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
-        
+        implementation 'com.github.tommyettinger:jbump:v1.0.0'
     }
 }
