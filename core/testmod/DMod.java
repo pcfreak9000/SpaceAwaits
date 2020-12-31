@@ -32,6 +32,7 @@ public class DMod {
         Tile tstoneTile = new Tile();
         tstoneTile.setTexture("stone.png");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
+        //tstoneTile.setLightLoss(0.75f);
         
         Tile ironTile = new Tile();
         ironTile.setTexture("ore_iron.png");

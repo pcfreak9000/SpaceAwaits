@@ -78,27 +78,26 @@ public class Region implements Light {
         this.regionEntity.add(lc);
     }
     
-    private static class LightState {
-        private byte level;
-        //private Color color;
-        private int i, j;
-    }
-    
     private Texture lightTexture;
+    private boolean calculating = false;
     
     private static LightBFPixelAlgorithm lightWorker = new LightBFPixelAlgorithm();
     
     @Override
     public void drawLight(SpriteBatch batch, World world) {//TODO ambient light
-        final byte lightConstant = 10;
-        lightWorker.submit(this, world, (pix) -> {
-            if (lightTexture != null) {
-                lightTexture.dispose();//TODO dispose when this region is deleted/unloaded
-            }
-            lightTexture = new Texture(pix);
-            lightTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            pix.dispose();
-        });
+        final int lightConstant = 10;
+        if (!calculating) {
+            calculating = true;
+            lightWorker.submit(this, world, (pix) -> {
+                if (lightTexture != null) {
+                    lightTexture.dispose();//TODO dispose when this region is deleted/unloaded
+                }
+                lightTexture = new Texture(pix);
+                lightTexture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
+                calculating = false;
+                pix.dispose();
+            });
+        }
         if (lightTexture != null) {
             batch.draw(lightTexture, tx * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
                     ty * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,

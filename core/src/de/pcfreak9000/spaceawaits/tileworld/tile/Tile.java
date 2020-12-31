@@ -40,7 +40,7 @@ public class Tile {
     private final Color color = new Color(1,1,1,1);
     
     private Color lightColor;
-    private float lightloss = 1;
+    private float lightloss = 0.8f;
     
     private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0);
     
