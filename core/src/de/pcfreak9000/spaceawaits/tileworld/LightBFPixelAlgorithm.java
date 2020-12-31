@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
 
 import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
@@ -43,11 +44,12 @@ public class LightBFPixelAlgorithm {
     };
     
     public void submit(Region region, World world, Consumer<Pixmap> createTexture) {
-        AsyncCalcInfo info = pool.obtain();
-        info.r = region;
-        info.consumer = createTexture;
-        info.w = world;
-        queue.add(info);
+        //        AsyncCalcInfo info = pool.obtain();
+        //        info.r = region;
+        //        info.consumer = createTexture;
+        //        info.w = world;
+        //        queue.add(info);
+        executor.submit(new PixelPointLightTask(world, region, createTexture));
     }
     
     private static class LightState {
@@ -57,6 +59,8 @@ public class LightBFPixelAlgorithm {
         private int index;
     }
     
+    private AsyncExecutor executor = new AsyncExecutor(4);
+    
     private Thread actualThread;
     
     public LightBFPixelAlgorithm() {
@@ -65,7 +69,8 @@ public class LightBFPixelAlgorithm {
     }
     
     private Runnable threaded = new Runnable() {
-        final byte globalLightConstant = 10;
+        final int globalLightConstant = 10;
+        private static final float THRESHOLD = 0.1f;//threshold constant...
         
         private boolean checkBounds(int i, int j) {
             return i >= 0 && i < globalLightConstant * 2 + Region.REGION_TILE_SIZE && j >= 0
@@ -101,11 +106,10 @@ public class LightBFPixelAlgorithm {
                             }
                         }
                     }
-                    
                     Array<LightState> modify = new Array<>();
                     while (!queue.isEmpty()) {
                         LightState state = queue.poll();
-                        modify.add(state);//This way its incomplete!
+                        modify.add(state);
                         if (state.value > THRESHOLD && state.index < globalLightConstant) {
                             help(head, queue, state, state.i + 1, state.j, lightvalues);
                             help(head, queue, state, state.i - 1, state.j, lightvalues);
@@ -119,7 +123,6 @@ public class LightBFPixelAlgorithm {
                         pix.setColor(color);
                         pix.drawPixel(l.i, pix.getHeight() - 1 - l.j);
                     }
-                    
                     Gdx.app.postRunnable(() -> {
                         head.consumer.accept(pix);
                         pool.free(head);
@@ -132,8 +135,6 @@ public class LightBFPixelAlgorithm {
                 }
             }
         }
-        
-        private static final float THRESHOLD = 0.1f;//threshold constant...
         
         private void help(AsyncCalcInfo info, Queue<LightState> queue, LightState front, int i, int j,
                 float[][] intens) {
