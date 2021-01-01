@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -78,17 +79,20 @@ public class Region implements Light {
         this.regionEntity.add(lc);
     }
     
-    private Texture lightTexture;
+    private Texture lightTexture, lt2;
     private boolean calculating = false;
+    
+    private Color color = new Color(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1).mul(0.5f).add(0, 0,
+            0, 0.5f);
     
     private static LightBFPixelAlgorithm lightWorker = new LightBFPixelAlgorithm();
     
     @Override
     public void drawLight(SpriteBatch batch, World world) {//TODO ambient light
-        final int lightConstant = 10;
+        final int lightConstant = 50;
         if (!calculating) {
             calculating = true;
-            lightWorker.submit(this, world, (pix) -> {
+            lightWorker.submit(world, (pix) -> {
                 if (lightTexture != null) {
                     lightTexture.dispose();//TODO dispose when this region is deleted/unloaded
                 }
@@ -96,13 +100,30 @@ public class Region implements Light {
                 lightTexture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
                 calculating = false;
                 pix.dispose();
-            });
+            }, getGlobalTileX(), getGlobalTileY(), REGION_TILE_SIZE, REGION_TILE_SIZE, color);
+            lightWorker.submit(world, (pix) -> {
+                if (lt2 != null) {
+                    lt2.dispose();//TODO dispose when this region is deleted/unloaded
+                }
+                lt2 = new Texture(pix);
+                lt2.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
+                pix.dispose();
+            }, getGlobalTileX() + REGION_TILE_SIZE / 2, getGlobalTileY() + REGION_TILE_SIZE / 2, 1, 1, color);
         }
+        //        if (lt2 != null) {
+        //            batch.draw(lt2,
+        //                    (getGlobalTileX() + REGION_TILE_SIZE / 2) * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+        //                    (getGlobalTileY() + REGION_TILE_SIZE / 2) * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+        //                    1 * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
+        //                    1 * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
+        //        }
         if (lightTexture != null) {
-            batch.draw(lightTexture, tx * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
-                    ty * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
-                    REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
-                    REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
+            for (int i = 0; i < 10; i++) {
+                batch.draw(lightTexture, tx * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+                        ty * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
+                        REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
+                        REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
+            }
         }
     }
     

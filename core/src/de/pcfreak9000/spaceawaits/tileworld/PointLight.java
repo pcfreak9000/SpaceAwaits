@@ -19,6 +19,7 @@ public class PointLight implements Light, Disposable {
         t = new Texture(p);
         p.dispose();
         batch.draw(t, 0, 0, 100, 100);
+        throw new IllegalStateException();
         //can't directly dispose the texture here because the render call isnt out yet
     }
     

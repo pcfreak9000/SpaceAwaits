@@ -11,53 +11,57 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
-import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class PixelPointLightTask implements AsyncTask<Void> {
     private static class LightState {
         private float value;
-        private Color light = new Color();
+        private Color light;
         private int i, j;
         private int index;
     }
     
     private float threshold = 0.1f;
-    private int lightConstant = 10;
+    private int lightConstant = 50;
     private World world;
-    private Region region;
     private Consumer<Pixmap> consumer;
+    private int atx;
+    private int aty;
+    private int areawidth;
+    private int areaheight;
+    private Color color;
     
-    public PixelPointLightTask(World world, Region region, Consumer<Pixmap> consumer) {
+    public PixelPointLightTask(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight, Color color) {
         this.world = world;
-        this.region = region;
         this.consumer = consumer;
+        this.atx = tx;
+        this.aty = ty;
+        this.areawidth = areawidth;
+        this.areaheight = areaheight;
+        this.color = color;
     }
     
     private boolean checkBounds(int i, int j) {
-        return i >= 0 && i < lightConstant * 2 + Region.REGION_TILE_SIZE && j >= 0
-                && j < lightConstant * 2 + Region.REGION_TILE_SIZE;
+        return i >= 0 && i < lightConstant * 2 + areawidth && j >= 0 && j < lightConstant * 2 + areaheight;
     }
     
     @Override
     public Void call() throws Exception {
-        Queue<LightState> queue = new ArrayDeque<>();
-        Pixmap pix = new Pixmap(Region.REGION_TILE_SIZE + lightConstant * 2,
-                Region.REGION_TILE_SIZE + lightConstant * 2, Format.RGB888);
+        Pixmap pix = new Pixmap(areawidth + lightConstant * 2, areaheight + lightConstant * 2, Format.RGB888);
         pix.setColor(Color.BLACK);
         pix.fill();
-        float[][] lightvalues = new float[Region.REGION_TILE_SIZE + lightConstant * 2][Region.REGION_TILE_SIZE
-                + lightConstant * 2];
-        for (int i = 0; i < Region.REGION_TILE_SIZE; i++) {
-            for (int j = 0; j < Region.REGION_TILE_SIZE; j++) {
-                int gtx = i + region.getGlobalTileX();
-                int gty = j + region.getGlobalTileY();
-                if (region.getTile(gtx, gty) == Tile.EMPTY
+        Queue<LightState> queue = new ArrayDeque<>();
+        float[][] lightvalues = new float[pix.getWidth()][pix.getHeight()];
+        for (int i = 0; i < areawidth; i++) {
+            for (int j = 0; j < areaheight; j++) {
+                int gtx = i + atx;
+                int gty = j + aty;
+                if (world.getTileWorld().getTile(gtx, gty) == Tile.EMPTY
                 /* && head.r.getBackground(gtx, gty) == Tile.EMPTY */) {
                     LightState state = new LightState();
                     state.i = i + lightConstant;
                     state.j = j + lightConstant;
-                    state.light = Color.CORAL;
+                    state.light = color;
                     state.value = 1;
                     state.index = 0;
                     lightvalues[state.i][state.j] = state.value;
@@ -93,14 +97,14 @@ public class PixelPointLightTask implements AsyncTask<Void> {
         if (!checkBounds(i, j)) {
             return;
         }
-        int tx = region.getGlobalTileX() + i - lightConstant;
-        int ty = region.getGlobalTileY() + j - lightConstant;
+        int tx = atx + i - lightConstant;
+        int ty = aty + j - lightConstant;
         Tile tile = Tile.EMPTY;//Hmmm...
         if (world.getTileWorld().inBounds(tx, ty)) {
             tile = world.getTileWorld().getTile(tx, ty);
         }
         
-        float newIntens = Math.max(Math.min(tile.getLightLoss(), 0.99f), 0) * front.value;
+        float newIntens = Math.max(tile.getLightLoss(), 0) * front.value;
         if (newIntens > intens[i][j]) {
             intens[i][j] = newIntens;
             LightState newState = new LightState();

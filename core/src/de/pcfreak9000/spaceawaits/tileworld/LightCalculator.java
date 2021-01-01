@@ -17,21 +17,10 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {
-    /*
-     * - Tiles in aktuellem Kameraausschnitt - boolean[][] mit Lichtquellen? - Licht
-     * propagieren - Rendertexture aufbauen/rendern
-     * 
-     */
-    private static final float LIGHT_SIZE = Tile.TILE_SIZE / 1;
-    private static final int LIGHT_RADIUS_EXT = 20;
     
     private static final ComponentMapper<LightComponent> lMapper = ComponentMapper.getFor(LightComponent.class);
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
     
     private World world;
     private WorldRenderInfo info;
