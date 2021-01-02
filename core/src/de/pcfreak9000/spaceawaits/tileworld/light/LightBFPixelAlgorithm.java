@@ -1,10 +1,12 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.light;
 
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.async.AsyncExecutor;
+
+import de.pcfreak9000.spaceawaits.tileworld.World;
 
 public class LightBFPixelAlgorithm {
     

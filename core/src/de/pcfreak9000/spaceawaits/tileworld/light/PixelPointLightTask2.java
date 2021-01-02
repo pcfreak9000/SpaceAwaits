@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.light;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class PixelPointLightTask2 implements AsyncTask<Void> {

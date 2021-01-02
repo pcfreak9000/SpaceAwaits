@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderRegionSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TickRegionSystem;
+import de.pcfreak9000.spaceawaits.tileworld.light.LightCalculator;
 
 public class WorldManager {
     

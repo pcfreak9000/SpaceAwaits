@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
+import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class World {

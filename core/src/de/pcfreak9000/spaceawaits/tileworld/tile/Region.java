@@ -18,11 +18,11 @@ import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.tileworld.Light;
-import de.pcfreak9000.spaceawaits.tileworld.LightBFPixelAlgorithm;
-import de.pcfreak9000.spaceawaits.tileworld.LightComponent;
 import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RegionComponent;
+import de.pcfreak9000.spaceawaits.tileworld.light.Light;
+import de.pcfreak9000.spaceawaits.tileworld.light.LightBFPixelAlgorithm;
+import de.pcfreak9000.spaceawaits.tileworld.light.LightComponent;
 
 public class Region implements Light {
     

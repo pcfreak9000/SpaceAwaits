@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.light;
 
 import com.badlogic.ashley.core.Component;
 

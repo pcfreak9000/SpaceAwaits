@@ -16,6 +16,7 @@ import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.MathUtil;
+import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.World;
@@ -45,10 +46,11 @@ public class SpaceAwaits extends Game {
     }
     
     private Modloader modloader;
-    public AssetManager assetManager;
+    public AssetManager assetManager;//TODO private, resource reloading in general
     private WorldManager worldManager;
     
-    private WorldScreen worldScreen;
+    public WorldScreen worldScreen;
+    public MainMenuScreen mainMenuScreen;
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
@@ -64,6 +66,7 @@ public class SpaceAwaits extends Game {
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
         this.worldScreen = new WorldScreen(worldManager);
+        this.mainMenuScreen = new MainMenuScreen();
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
@@ -81,7 +84,7 @@ public class SpaceAwaits extends Game {
                 .generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
         this.worldManager.setWorld(testWorld);
-        setScreen(worldScreen);
+        setScreen(mainMenuScreen);
     }
     
     public WorldManager getWorldManager() {

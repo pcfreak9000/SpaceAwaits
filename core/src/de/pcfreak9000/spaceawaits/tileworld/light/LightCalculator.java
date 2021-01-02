@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld;
+package de.pcfreak9000.spaceawaits.tileworld.light;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -16,6 +16,10 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.World;
+import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
+import de.pcfreak9000.spaceawaits.tileworld.WorldRenderInfo;
+import de.pcfreak9000.spaceawaits.tileworld.WorldEvents.SetWorldEvent;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {
