@@ -1,4 +1,5 @@
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.event.EventSubscription;
@@ -7,6 +8,7 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.mod.ModLoaderEvents;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.tileworld.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.tileworld.Background;
 import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
@@ -32,7 +34,7 @@ public class DMod {
         Tile tstoneTile = new Tile();
         tstoneTile.setTexture("stone.png");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
-        //tstoneTile.setLightLoss(0.75f);
+        tstoneTile.setLightTransmission(0.55f);
         
         Tile ironTile = new Tile();
         ironTile.setTexture("ore_iron.png");
@@ -72,7 +74,7 @@ public class DMod {
         };
         laser.setTexture("dirt.png");
         laser.color().set(1, 0, 0, 1);
-        //laser.setLightColor(new Color(5, 0, 0));
+        laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
         Background back = new Background("Space.png", 1920 * 16f / 9, 1920);
@@ -125,7 +127,7 @@ public class DMod {
                         }
                     }
                     //chunk.requestSunlightComputation();
-                }), GameRegistry.BACKGROUND_REGISTRY.get("stars"));
+                }), GameRegistry.BACKGROUND_REGISTRY.get("stars"), AmbientLightProvider.constant(Color.WHITE));
             }
         });
     }

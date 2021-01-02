@@ -1,7 +1,5 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
-import java.util.Iterator;
-
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -10,13 +8,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventSubscription;
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {
     
@@ -47,30 +47,45 @@ public class LightCalculator extends IteratingSystem {
         this.lightsBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);//Hmmmm, width and height, ...?!
     }
     
-    private Array<Disposable> disposables = new Array<>();
+    private Texture texture;
+    private int gwi, ghi;
+    
+    private static final int extraLightRadius = 25;
     
     @Override
     public void update(float deltaTime) {
         Camera cam = info.getCamera();
+        int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
+        int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
+        int wi = Mathf.ceili(cam.viewportWidth / Tile.TILE_SIZE);
+        int hi = Mathf.ceili(cam.viewportHeight / Tile.TILE_SIZE);
+        try {
+            new PixelPointLightTask2(world, (pix) -> {
+                if (texture != null) {
+                    texture.dispose();//TODO dispose when this region is deleted/unloaded
+                }
+                texture = new Texture(pix);
+                texture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
+                gwi = texture.getWidth();
+                ghi = texture.getHeight();
+                pix.dispose();
+            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius).call();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //}
         SpriteBatch batch = info.getSpriteBatch();
-        this.lightsBuffer.begin();
+        this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
-            Gdx.gl.glClearColor(0, 0, 0, 0);//Move this to a setting or do ambient 
+            Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             info.setAdditiveBlending();
             batch.begin();
-            for (Entity e : getEntities()) {
-                Light light = lMapper.get(e).light;
-                light.drawLight(batch, world);
-                if (light instanceof Disposable) {
-                    disposables.add((Disposable) light);
-                }
+            if (texture != null) {
+                batch.draw(texture, Tile.TILE_SIZE * xi, Tile.TILE_SIZE * yi, gwi * Tile.TILE_SIZE,
+                        ghi * Tile.TILE_SIZE);
             }
             batch.end();
-            for (Iterator<Disposable> it = disposables.iterator(); it.hasNext();) {
-                it.next().dispose();
-                it.remove();//This is ugly...
-            }
         }
         this.lightsBuffer.end();
         info.applyViewport();

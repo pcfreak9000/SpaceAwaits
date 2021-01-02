@@ -34,13 +34,13 @@ public class Tile {
     private TextureRegion texture = null;
     
     private boolean canBreak = true;
-    private boolean opaque = false;
+    private boolean opaque = true;
     private boolean solid = true;
     
     private final Color color = new Color(1,1,1,1);
     
     private Color lightColor;
-    private float lightloss = 0.8f;
+    private float lighttransmission = 0.8f;
     
     private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0);
     
@@ -110,12 +110,12 @@ public class Tile {
         return this.color;
     }
     
-    public float getLightLoss() {
-        return this.lightloss;
+    public float getLightTransmission() {
+        return this.lighttransmission;
     }
     
-    public void setLightLoss(float f) {
-        this.lightloss = f;
+    public void setLightTransmission(float f) {
+        this.lighttransmission = f;
     }
     
     public String getTextureName() {

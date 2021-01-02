@@ -66,6 +66,13 @@ public class TileWorld {
         return r == null ? null : r.getTile(tx, ty);//Meh
     }
     
+    public Tile getTileBackground(int tx, int ty) {
+        int rx = Region.toGlobalRegion(tx);
+        int ry = Region.toGlobalRegion(ty);
+        Region r = requestRegion(rx, ry);
+        return r == null ? null : r.getBackground(tx, ty);//Meh
+    }
+    
     public void setTile(Tile tile, int tx, int ty) {
         int rx = Region.toGlobalRegion(tx);
         int ry = Region.toGlobalRegion(ty);

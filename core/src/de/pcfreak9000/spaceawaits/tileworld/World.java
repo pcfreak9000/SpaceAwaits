@@ -6,10 +6,16 @@ public class World {
     
     private final TileWorld tileWorld;
     private final Background background;
+    private AmbientLightProvider ambientLight;
     
-    public World(TileWorld tileWorld, Background background) {
+    public World(TileWorld tileWorld, Background background, AmbientLightProvider ambient) {
         this.tileWorld = tileWorld;
         this.background = background;
+        this.ambientLight = ambient;
+    }
+    
+    public AmbientLightProvider getAmbientLight() {
+        return ambientLight;
     }
     
     public TileWorld getTileWorld() {

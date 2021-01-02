@@ -104,7 +104,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
             tile = world.getTileWorld().getTile(tx, ty);
         }
         
-        float newIntens = Math.max(tile.getLightLoss(), 0) * front.value;
+        float newIntens = Math.max(tile.getLightTransmission(), 0) * front.value;
         if (newIntens > intens[i][j]) {
             intens[i][j] = newIntens;
             LightState newState = new LightState();
