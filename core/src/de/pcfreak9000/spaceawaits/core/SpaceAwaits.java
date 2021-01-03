@@ -66,7 +66,7 @@ public class SpaceAwaits extends Game {
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
         this.worldScreen = new WorldScreen(worldManager);
-        this.mainMenuScreen = new MainMenuScreen();
+
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
@@ -84,6 +84,7 @@ public class SpaceAwaits extends Game {
                 .generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
         this.worldManager.setWorld(testWorld);
+        this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
     }
     
