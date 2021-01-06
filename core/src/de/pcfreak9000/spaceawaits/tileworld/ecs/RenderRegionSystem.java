@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.IntSet;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 
 public class RenderRegionSystem extends IteratingSystem implements EntityListener {
     
@@ -35,13 +35,13 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
             cacheId = freeCacheIds.first();
             freeCacheIds.remove(cacheId);
         }
-        g.region.cacheId = cacheId;
-        g.region.queueRecacheTiles();
+        g.chunk.cacheId = cacheId;
+        g.chunk.queueRecacheTiles();
     }
     
     private int createCache() {
         regionCache.beginCache();
-        float[] empty = new float[5 * 6 * Region.REGION_TILE_SIZE * Region.REGION_TILE_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE^2 images per layer, 2 layers 
+        float[] empty = new float[5 * 6 * Chunk.CHUNK_TILE_SIZE * Chunk.CHUNK_TILE_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE^2 images per layer, 2 layers 
         regionCache.add(null, empty, 0, empty.length);
         return regionCache.endCache();
         //Dont allocate too many caches -> use some pooling or something (only regions that are loaded need a cache)
@@ -50,8 +50,8 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
     @Override
     public void entityRemoved(Entity entity) {
         RegionComponent g = tMapper.get(entity);
-        freeCacheIds.add(g.region.cacheId);
-        g.region.cacheId = -1;
+        freeCacheIds.add(g.chunk.cacheId);
+        g.chunk.cacheId = -1;
     }
     
     @Override
@@ -84,7 +84,7 @@ public class RenderRegionSystem extends IteratingSystem implements EntityListene
         SpriteCache ca = this.regionCache;
         this.regionCache.clear();
         ca.beginCache();
-        int length = c.region.recacheTiles(ca);
+        int length = c.chunk.recacheTiles(ca);
         int id = ca.endCache();
         ca.begin();
         ca.draw(id, 0, length);

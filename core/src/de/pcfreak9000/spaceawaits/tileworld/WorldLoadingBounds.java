@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.tileworld;
 
 import com.badlogic.gdx.math.Vector2;
 
-import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class WorldLoadingBounds {
@@ -20,11 +20,11 @@ public class WorldLoadingBounds {
     }
     
     public int getChunkMidpointX() {
-        return this.xChunkOffset + Region.toGlobalRegion(Tile.toGlobalTile(this.following.x));
+        return this.xChunkOffset + Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.x));
     }
     
     public int getChunkMidpointY() {
-        return this.yChunkOffset + Region.toGlobalRegion(Tile.toGlobalTile(this.following.y));
+        return this.yChunkOffset + Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.y));
     }
     
     public int getChunkRadiusRangeX() {

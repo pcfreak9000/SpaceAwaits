@@ -16,7 +16,7 @@ public class TickRegionSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         RegionComponent c = tMapper.get(entity);
-        c.region.tick(deltaTime);
+        c.chunk.tick(deltaTime);
     }
     
 }

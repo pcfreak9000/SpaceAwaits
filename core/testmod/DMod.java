@@ -12,7 +12,7 @@ import de.pcfreak9000.spaceawaits.tileworld.Background;
 import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
 import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
@@ -90,8 +90,8 @@ public class DMod {
             @Override
             public World generateWorld(long seed) {
                 return new World(new TileWorld(400, 400, (chunk, tileWorld) -> {
-                    for (int i = 0; i < Region.REGION_TILE_SIZE; i++) {
-                        for (int j = 0; j < Region.REGION_TILE_SIZE; j++) {
+                    for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
+                        for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
                             if (!tileWorld.inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
                                 continue;
                             }

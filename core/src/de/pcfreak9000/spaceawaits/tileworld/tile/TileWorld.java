@@ -18,25 +18,25 @@ public class TileWorld {
     
     private final RegionGenerator generator;
     
-    private final Region[][] regions;
+    private final Chunk[][] chunks;
     
     private boolean wrapsAround = true;//TODO wrapping around
     
     public TileWorld(int width, int height, RegionGenerator generator) {
         this.width = width;
         this.height = height;
-        this.arrayWidth = (int) Math.ceil(width / (double) Region.REGION_TILE_SIZE);//TODO use other ceil?
-        this.arrayHeight = (int) Math.ceil(height / (double) Region.REGION_TILE_SIZE);
+        this.arrayWidth = (int) Math.ceil(width / (double) Chunk.CHUNK_TILE_SIZE);//TODO use other ceil?
+        this.arrayHeight = (int) Math.ceil(height / (double) Chunk.CHUNK_TILE_SIZE);
         this.generator = generator;
-        this.regions = new Region[this.arrayWidth][this.arrayHeight];
+        this.chunks = new Chunk[this.arrayWidth][this.arrayHeight];
     }
     
-    public Region requestRegion(int rx, int ry) {
+    public Chunk requestRegion(int rx, int ry) {
         if (inRegionBounds(rx, ry)) {
-            Region r = this.regions[rx][ry];
+            Chunk r = this.chunks[rx][ry];
             if (r == null) {
-                r = new Region(rx, ry, this);
-                this.regions[rx][ry] = r;
+                r = new Chunk(rx, ry, this);
+                this.chunks[rx][ry] = r;
                 this.generator.generateChunk(r, this);
             }
             return r;
@@ -44,9 +44,9 @@ public class TileWorld {
         return null;
     }
     
-    public Region getRegion(int rx, int ry) {
+    public Chunk getRegion(int rx, int ry) {
         if (inRegionBounds(rx, ry)) {
-            return this.regions[rx][ry];
+            return this.chunks[rx][ry];
         }
         return null;
     }
@@ -60,23 +60,23 @@ public class TileWorld {
     }
     
     public Tile getTile(int tx, int ty) {
-        int rx = Region.toGlobalRegion(tx);
-        int ry = Region.toGlobalRegion(ty);
-        Region r = requestRegion(rx, ry);
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = requestRegion(rx, ry);
         return r == null ? null : r.getTile(tx, ty);//Meh
     }
     
     public Tile getTileBackground(int tx, int ty) {
-        int rx = Region.toGlobalRegion(tx);
-        int ry = Region.toGlobalRegion(ty);
-        Region r = requestRegion(rx, ry);
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = requestRegion(rx, ry);
         return r == null ? null : r.getBackground(tx, ty);//Meh
     }
     
     public void setTile(Tile tile, int tx, int ty) {
-        int rx = Region.toGlobalRegion(tx);
-        int ry = Region.toGlobalRegion(ty);
-        Region r = requestRegion(rx, ry);
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = requestRegion(rx, ry);
         if (r != null) {
             r.setTile(tile, tx, ty);
         }
@@ -89,24 +89,24 @@ public class TileWorld {
         if (!xy && !xwyh) {
             return;
         }
-        Set<Region> regions = new HashSet<>();
+        Set<Chunk> chunks = new HashSet<>();
         if (xy) {
-            Region reg = requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y));
-            regions.add(reg);
+            Chunk reg = requestRegion(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y));
+            chunks.add(reg);
         }
         if (xwyh) {
-            Region reg = requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y + h));
-            regions.add(reg);
+            Chunk reg = requestRegion(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y + h));
+            chunks.add(reg);
         }
         if (inBounds(x + w, y)) {
-            Region reg = requestRegion(Region.toGlobalRegion(x + w), Region.toGlobalRegion(y));
-            regions.add(reg);
+            Chunk reg = requestRegion(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y));
+            chunks.add(reg);
         }
         if (inBounds(x, y + h)) {
-            Region reg = requestRegion(Region.toGlobalRegion(x), Region.toGlobalRegion(y + h));
-            regions.add(reg);
+            Chunk reg = requestRegion(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y + h));
+            chunks.add(reg);
         }
-        for (Region r : regions) {
+        for (Chunk r : chunks) {
             r.tileIntersections(output, x, y, w, h, predicate);
         }
     }

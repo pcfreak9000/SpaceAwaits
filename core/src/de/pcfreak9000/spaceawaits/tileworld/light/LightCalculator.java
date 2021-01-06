@@ -19,7 +19,6 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.WorldRenderInfo;
-import de.pcfreak9000.spaceawaits.tileworld.WorldEvents.SetWorldEvent;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {
@@ -69,7 +68,7 @@ public class LightCalculator extends IteratingSystem {
                     texture.dispose();//TODO dispose when this region is deleted/unloaded
                 }
                 texture = new Texture(pix);
-                texture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
+                texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
                 gwi = texture.getWidth();
                 ghi = texture.getHeight();
                 pix.dispose();

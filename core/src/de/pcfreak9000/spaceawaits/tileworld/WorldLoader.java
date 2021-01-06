@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.pcfreak9000.spaceawaits.tileworld.tile.Region;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 
 /**
  * Responsible for successful surface world loading and unloading, management of
@@ -22,7 +22,7 @@ public class WorldLoader {
     
     //TODO recache loaded regions if resources have been reloaded
     
-    private final Set<Region> localLoadedChunks;
+    private final Set<Chunk> localLoadedChunks;
     
     public WorldLoader(WorldManager worldMgr) {
         this.localLoadedChunks = new HashSet<>();
@@ -69,7 +69,7 @@ public class WorldLoader {
                 int rx = i - xR + xM;
                 int ry = j - yR + yM;
                 if (this.currentWorld.getTileWorld().inRegionBounds(rx, ry)) {
-                    Region c = this.currentWorld.getTileWorld().requestRegion(rx, ry);
+                    Chunk c = this.currentWorld.getTileWorld().requestRegion(rx, ry);
                     if (c != null) {
                         this.localLoadedChunks.add(c);
                         manager.getECSManager().addEntity(c.getECSEntity());
@@ -80,9 +80,9 @@ public class WorldLoader {
     }
     
     private void unloadAllRegions() {
-        Iterator<Region> it = this.localLoadedChunks.iterator();
+        Iterator<Chunk> it = this.localLoadedChunks.iterator();
         while (it.hasNext()) {
-            Region c = it.next();
+            Chunk c = it.next();
             manager.getECSManager().removeEntity(c.getECSEntity());
             it.remove();
         }

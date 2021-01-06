@@ -24,18 +24,18 @@ import de.pcfreak9000.spaceawaits.tileworld.light.Light;
 import de.pcfreak9000.spaceawaits.tileworld.light.LightBFPixelAlgorithm;
 import de.pcfreak9000.spaceawaits.tileworld.light.LightComponent;
 
-public class Region implements Light {
+public class Chunk implements Light {
     
-    private static final Logger LOGGER = Logger.getLogger(Region.class);
+    private static final Logger LOGGER = Logger.getLogger(Chunk.class);
     
     private static final boolean DEBUG_SHOW_BORDERS = false;
     
-    public static final int REGION_TILE_SIZE = 64;
+    public static final int CHUNK_TILE_SIZE = 64;
     
     private static final float BACKGROUND_FACTOR = 0.5f;
     
-    public static int toGlobalRegion(int globalTile) {
-        return (int) Math.floor(globalTile / (double) REGION_TILE_SIZE);//TODO use other floor
+    public static int toGlobalChunk(int globalTile) {
+        return (int) Math.floor(globalTile / (double) CHUNK_TILE_SIZE);//TODO use other floor
     }
     
     private final int rx;
@@ -61,14 +61,14 @@ public class Region implements Light {
     private int backgroundLength = 0;
     private int length = 0;
     
-    public Region(int rx, int ry, TileWorld tw) {
+    public Chunk(int rx, int ry, TileWorld tw) {
         this.tileWorld = tw;
         this.rx = rx;
         this.ry = ry;
-        this.tx = rx * REGION_TILE_SIZE;
-        this.ty = ry * REGION_TILE_SIZE;
-        this.tiles = new TileStorage(REGION_TILE_SIZE, this.tx, this.ty);
-        this.tilesBackground = new TileStorage(REGION_TILE_SIZE, this.tx, this.ty);
+        this.tx = rx * CHUNK_TILE_SIZE;
+        this.ty = ry * CHUNK_TILE_SIZE;
+        this.tiles = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
+        this.tilesBackground = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
         this.tickablesForRemoval = new ArrayDeque<>();
@@ -100,7 +100,7 @@ public class Region implements Light {
                 lightTexture.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
                 calculating = false;
                 pix.dispose();
-            }, getGlobalTileX(), getGlobalTileY(), REGION_TILE_SIZE, REGION_TILE_SIZE, color);
+            }, getGlobalTileX(), getGlobalTileY(), CHUNK_TILE_SIZE, CHUNK_TILE_SIZE, color);
             lightWorker.submit(world, (pix) -> {
                 if (lt2 != null) {
                     lt2.dispose();//TODO dispose when this region is deleted/unloaded
@@ -108,7 +108,7 @@ public class Region implements Light {
                 lt2 = new Texture(pix);
                 lt2.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
                 pix.dispose();
-            }, getGlobalTileX() + REGION_TILE_SIZE / 2, getGlobalTileY() + REGION_TILE_SIZE / 2, 1, 1, color);
+            }, getGlobalTileX() + CHUNK_TILE_SIZE / 2, getGlobalTileY() + CHUNK_TILE_SIZE / 2, 1, 1, color);
         }
         //        if (lt2 != null) {
         //            batch.draw(lt2,
@@ -121,8 +121,8 @@ public class Region implements Light {
             for (int i = 0; i < 10; i++) {
                 batch.draw(lightTexture, tx * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
                         ty * Tile.TILE_SIZE - lightConstant * Tile.TILE_SIZE,
-                        REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
-                        REGION_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
+                        CHUNK_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2,
+                        CHUNK_TILE_SIZE * Tile.TILE_SIZE + lightConstant * Tile.TILE_SIZE * 2);
             }
         }
     }
@@ -132,11 +132,11 @@ public class Region implements Light {
         this.recacheTiles = true;
     }
     
-    public int getGlobalRegionX() {
+    public int getGlobalChunkX() {
         return this.rx;
     }
     
-    public int getGlobalRegionY() {
+    public int getGlobalChunkY() {
         return this.ry;
     }
     
@@ -162,9 +162,9 @@ public class Region implements Light {
     }
     
     private TileState getTileStateGlobal(int tx, int ty) {
-        int rx = Region.toGlobalRegion(tx);
-        int ry = Region.toGlobalRegion(ty);
-        Region r = tileWorld.requestRegion(rx, ry);
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = tileWorld.requestRegion(rx, ry);
         return r.getTileState(tx, ty);
     }
     
@@ -228,7 +228,7 @@ public class Region implements Light {
     }
     
     public boolean inBounds(int gtx, int gty) {
-        return gtx >= this.tx && gtx < this.tx + REGION_TILE_SIZE && gty >= this.ty && gty < this.ty + REGION_TILE_SIZE
+        return gtx >= this.tx && gtx < this.tx + CHUNK_TILE_SIZE && gty >= this.ty && gty < this.ty + CHUNK_TILE_SIZE
                 && gtx < tileWorld.getWorldWidth() && gty < tileWorld.getWorldHeight();
     }
     
