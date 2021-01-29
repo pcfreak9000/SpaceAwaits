@@ -13,6 +13,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
+import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
@@ -27,10 +28,12 @@ public class PlayerInputSystem extends IteratingSystem {
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private TileWorld world;
+    private WorldManager worldManager;
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
         this.world = ev.getTileWorldNew();
+        this.worldManager = ev.worldMgr;
     }
     
     private Tile ugly = null;
@@ -62,35 +65,10 @@ public class PlayerInputSystem extends IteratingSystem {
         if (right) {
             vx += play.maxXv * 5;
         }
-        //        if (Keys.SHOOT.isPressed()) {
-        //            Vector2f mouse = Omnikryptec.getInput().getMousePositionInWorld2D(this.cam, new Vector2f());
-        //            PhysicsComponent pc = this.physicsMapper.get(entity);
-        //            float delx = mouse.x - (pc.x + pc.w / 2);
-        //            float dely = mouse.y - (pc.y + pc.h / 2);
-        //            Vector2f vec = new Vector2f(delx, dely).normalize();
-        //            Entity ent = new Entity();
-        //            PhysicsComponent epc = new PhysicsComponent();
-        //            epc.velocity.set(vec).mul(150);
-        //            epc.w = 10;
-        //            epc.h = 10;
-        //            epc.restitution = 0.9f;
-        //            Sprite sprite = new Sprite();
-        //            //AdvancedSprite sprite = new AdvancedSprite();
-        //            sprite.getTransform().localspaceWrite().scale(10);
-        //            sprite.getRenderData().setUVAndTexture(Omnikryptec.getTexturesS().get("sdfgsdfsdf"));
-        //            sprite.setLayer(50);
-        //            RenderComponent rendComp = new RenderComponent(sprite);
-        //            ent.addComponent(rendComp);
-        //            ent.addComponent(epc);
-        //            TransformComponent trans = new TransformComponent();
-        //            trans.transform.localspaceWrite().setTranslation(pc.x + pc.w / 2, pc.y + pc.h / 2);
-        //            ent.addComponent(trans);
-        //            iecsManager.addEntity(ent);
-        //        }
         this.physicsMapper.get(entity).acceleration.set(vx * 3, vy * 3 - 98.1f);
         if (explode) {
             //TODO Well that is ugly...
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getViewport()
+            Vector2 mouse = worldManager.getRenderInfo().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
@@ -111,7 +89,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         if (destroy) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getViewport()
+            Vector2 mouse = worldManager.getRenderInfo().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
@@ -123,7 +101,7 @@ public class PlayerInputSystem extends IteratingSystem {
             
         }
         if (build) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getViewport()
+            Vector2 mouse = worldManager.getRenderInfo().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);

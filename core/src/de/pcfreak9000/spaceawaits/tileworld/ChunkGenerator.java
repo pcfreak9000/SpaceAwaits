@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
  * @author pcfreak9000
  *
  */
-public interface RegionGenerator {
+public interface ChunkGenerator {
     
     void generateChunk(Chunk chunk, TileWorld tileWorld);
     

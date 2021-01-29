@@ -5,17 +5,17 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-public class TickRegionSystem extends IteratingSystem {
+public class TickChunkSystem extends IteratingSystem {
     
-    private ComponentMapper<RegionComponent> tMapper = ComponentMapper.getFor(RegionComponent.class);
+    private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
         
-    public TickRegionSystem() {
-        super(Family.all(RegionComponent.class).get());    
+    public TickChunkSystem() {
+        super(Family.all(ChunkComponent.class).get());    
     }
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        RegionComponent c = tMapper.get(entity);
+        ChunkComponent c = tMapper.get(entity);
         c.chunk.tick(deltaTime);
     }
     

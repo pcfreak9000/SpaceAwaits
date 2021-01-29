@@ -14,7 +14,7 @@ import de.omnikryptec.math.Weighted;
 public abstract class WorldGenerator implements Weighted {
     
     public static enum GeneratorCapabilitiesBase {
-        LVL_ENTRY, ADRESSABLE_PORTAL;
+        LVL_ENTRY/*, ADRESSABLE_PORTAL*/;
     }
     
     protected final Set<Object> CAPS = new HashSet<>();

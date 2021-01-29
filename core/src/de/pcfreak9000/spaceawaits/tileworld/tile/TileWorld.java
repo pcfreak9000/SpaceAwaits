@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import de.pcfreak9000.spaceawaits.tileworld.RegionGenerator;
+import de.pcfreak9000.spaceawaits.tileworld.ChunkGenerator;
 
 public class TileWorld {
     
@@ -16,13 +16,13 @@ public class TileWorld {
     private final int arrayWidth;
     private final int arrayHeight;
     
-    private final RegionGenerator generator;
+    private final ChunkGenerator generator;
     
     private final Chunk[][] chunks;
     
     private boolean wrapsAround = true;//TODO wrapping around
     
-    public TileWorld(int width, int height, RegionGenerator generator) {
+    public TileWorld(int width, int height, ChunkGenerator generator) {
         this.width = width;
         this.height = height;
         this.arrayWidth = (int) Math.ceil(width / (double) Chunk.CHUNK_TILE_SIZE);//TODO use other ceil?

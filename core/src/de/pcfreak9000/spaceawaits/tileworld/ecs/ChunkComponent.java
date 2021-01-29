@@ -4,11 +4,11 @@ import com.badlogic.ashley.core.Component;
 
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 
-public class RegionComponent implements Component {
+public class ChunkComponent implements Component {
     
     public final Chunk chunk;
     
-    public RegionComponent(Chunk r) {
+    public ChunkComponent(Chunk r) {
         this.chunk = r;
     }
 }
