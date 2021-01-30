@@ -92,7 +92,7 @@ public class DMod {
                 return new World(new TileWorld(400, 400, (chunk, tileWorld) -> {
                     for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
                         for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
-                            if (!tileWorld.inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
+                            if (!tileWorld.getMeta().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
                                 continue;
                             }
                             int value = 75

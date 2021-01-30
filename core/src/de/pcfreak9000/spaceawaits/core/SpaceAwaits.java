@@ -78,7 +78,7 @@ public class SpaceAwaits extends Game {
         GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
         GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);
         Player p = new Player();
-        this.worldManager.getLoader().setWorldUpdateFence(
+        this.worldManager.getLoader().addLoadingBounds(
                 new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
         World testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
                 .generateWorld(0);

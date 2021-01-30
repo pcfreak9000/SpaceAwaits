@@ -7,8 +7,8 @@ import de.pcfreak9000.spaceawaits.tileworld.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputSystem;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderChunkSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.tileworld.light.LightCalculator;
 
@@ -17,6 +17,7 @@ public class WorldManager {
     private final Engine ecsManager;
     private final WorldRenderInfo worldRenderInfo;
     private final WorldLoader worldLoader;
+    private final Loading loading;
     public LightCalculator lightCalc;//TODO lightcalc visibility
     private World currentWorld;
     
@@ -24,12 +25,14 @@ public class WorldManager {
         this.ecsManager = new Engine();
         this.worldLoader = new WorldLoader(this);
         this.worldRenderInfo = new WorldRenderInfo();
+        this.loading = new Loading(this);
         addDefaultECSSystems();
         SpaceAwaits.BUS.post(new WorldEvents.InitWorldManagerEvent(this.ecsManager));
     }
     
     public void updateAndRender(float delta) {
-        worldLoader.loadChunks(delta);
+        //worldLoader.loadChunks(delta);
+        loading.unloadload();
         worldRenderInfo.applyViewport();
         ecsManager.update(delta);
     }
@@ -49,7 +52,8 @@ public class WorldManager {
         if (world != this.currentWorld) {
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this, currentWorld, world));
             this.currentWorld = world;
-            this.worldLoader.setWorld(this.currentWorld);
+            //this.worldLoader.setWorld(this.currentWorld);
+            this.loading.setWorldProvider(this.currentWorld.getTileWorld());
         }
     }
     
@@ -61,7 +65,11 @@ public class WorldManager {
         return this.ecsManager;
     }
     
-    public WorldLoader getLoader() {
+    public Loading getLoader() {
+        return loading;
+    }
+    
+    public WorldLoader getLoaderl() {
         return worldLoader;
     }
     

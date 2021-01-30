@@ -3,36 +3,27 @@ package de.pcfreak9000.spaceawaits.tileworld.tile;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import de.pcfreak9000.spaceawaits.tileworld.ChunkGenerator;
 
-public class TileWorld {
+public class TileWorld implements WorldProvider {
     
-    //in tiles
-    private final int width;
-    private final int height;
-    
-    private final int arrayWidth;
-    private final int arrayHeight;
+    private final WorldMeta meta;
     
     private final ChunkGenerator generator;
     
     private final Chunk[][] chunks;
     
-    private boolean wrapsAround = true;//TODO wrapping around
-    
     public TileWorld(int width, int height, ChunkGenerator generator) {
-        this.width = width;
-        this.height = height;
-        this.arrayWidth = (int) Math.ceil(width / (double) Chunk.CHUNK_TILE_SIZE);//TODO use other ceil?
-        this.arrayHeight = (int) Math.ceil(height / (double) Chunk.CHUNK_TILE_SIZE);
+        this.meta = new WorldMeta(width, height, true);
         this.generator = generator;
-        this.chunks = new Chunk[this.arrayWidth][this.arrayHeight];
+        this.chunks = new Chunk[meta.getWidthChunks()][meta.getHeightChunks()];
     }
     
     public Chunk requestRegion(int rx, int ry) {
-        if (inRegionBounds(rx, ry)) {
+        if (meta.inChunkBounds(rx, ry)) {
             Chunk r = this.chunks[rx][ry];
             if (r == null) {
                 r = new Chunk(rx, ry, this);
@@ -45,18 +36,10 @@ public class TileWorld {
     }
     
     public Chunk getRegion(int rx, int ry) {
-        if (inRegionBounds(rx, ry)) {
+        if (meta.inChunkBounds(rx, ry)) {
             return this.chunks[rx][ry];
         }
         return null;
-    }
-    
-    public boolean inRegionBounds(int rx, int ry) {
-        return rx >= 0 && rx < this.arrayWidth && ry >= 0 && ry < this.arrayHeight;
-    }
-    
-    public boolean inBounds(int tx, int ty) {
-        return tx >= 0 && tx < this.width && ty >= 0 && ty < this.height;
     }
     
     public Tile getTile(int tx, int ty) {
@@ -84,8 +67,8 @@ public class TileWorld {
     
     public void collectTileIntersections(Collection<TileState> output, int x, int y, int w, int h,
             Predicate<TileState> predicate) {
-        boolean xy = inBounds(x, y);
-        boolean xwyh = inBounds(x + w, y + h);
+        boolean xy = meta.inBounds(x, y);
+        boolean xwyh = meta.inBounds(x + w, y + h);
         if (!xy && !xwyh) {
             return;
         }
@@ -98,11 +81,11 @@ public class TileWorld {
             Chunk reg = requestRegion(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y + h));
             chunks.add(reg);
         }
-        if (inBounds(x + w, y)) {
+        if (meta.inBounds(x + w, y)) {
             Chunk reg = requestRegion(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y));
             chunks.add(reg);
         }
-        if (inBounds(x, y + h)) {
+        if (meta.inBounds(x, y + h)) {
             Chunk reg = requestRegion(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y + h));
             chunks.add(reg);
         }
@@ -112,11 +95,26 @@ public class TileWorld {
     }
     
     public int getWorldWidth() {
-        return this.width;
+        return meta.getWidth();
     }
     
     public int getWorldHeight() {
-        return this.height;
+        return meta.getHeight();
+    }
+    
+    @Override
+    public WorldMeta getMeta() {
+        return meta;
+    }
+    
+    @Override
+    public void requestChunk(int gcx, int gcy, Consumer<Chunk> onChunkLoaded) {
+        onChunkLoaded.accept(requestRegion(gcx, gcy));
+    }
+    
+    @Override
+    public void unload(Chunk c) {
+        //Do nothing
     }
     
 }

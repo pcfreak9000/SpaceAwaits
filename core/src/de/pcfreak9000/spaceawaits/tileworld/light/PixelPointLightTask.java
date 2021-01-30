@@ -101,7 +101,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
         int tx = atx + i - lightConstant;
         int ty = aty + j - lightConstant;
         Tile tile = Tile.EMPTY;//Hmmm...
-        if (world.getTileWorld().inBounds(tx, ty)) {
+        if (world.getTileWorld().getMeta().inBounds(tx, ty)) {
             tile = world.getTileWorld().getTile(tx, ty);
         }
         

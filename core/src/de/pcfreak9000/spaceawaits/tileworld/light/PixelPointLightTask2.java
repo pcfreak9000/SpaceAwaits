@@ -49,7 +49,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
             for (int j = 0; j < areaheight; j++) {
                 int gtx = i + atx;
                 int gty = j + aty;
-                if (world.getTileWorld().inBounds(gtx, gty)) {
+                if (world.getTileWorld().getMeta().inBounds(gtx, gty)) {
                     Tile tile = world.getTileWorld().getTile(gtx, gty);
                     Tile backTile = world.getTileWorld().getTileBackground(gtx, gty);
                     Color light = null;
@@ -110,7 +110,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
         int tx = atx + i;
         int ty = aty + j;
         Tile tile = Tile.EMPTY;//Hmmm...
-        if (world.getTileWorld().inBounds(tx, ty)) {
+        if (world.getTileWorld().getMeta().inBounds(tx, ty)) {
             tile = world.getTileWorld().getTile(tx, ty);
         }
         float loss = tile.getLightTransmission();

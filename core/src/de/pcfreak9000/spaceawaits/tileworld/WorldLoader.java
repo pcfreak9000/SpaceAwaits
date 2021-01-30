@@ -68,7 +68,7 @@ public class WorldLoader {
             for (int j = 0; j <= 2 * yR; j++) {
                 int rx = i - xR + xM;
                 int ry = j - yR + yM;
-                if (this.currentWorld.getTileWorld().inRegionBounds(rx, ry)) {
+                if (this.currentWorld.getTileWorld().getMeta().inChunkBounds(rx, ry)) {
                     Chunk c = this.currentWorld.getTileWorld().requestRegion(rx, ry);
                     if (c != null) {
                         this.localLoadedChunks.add(c);

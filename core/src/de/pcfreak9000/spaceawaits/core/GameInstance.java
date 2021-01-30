@@ -28,7 +28,7 @@ public class GameInstance {
         
         TransformComponent tc = this.player.getPlayerEntity().getComponent(TransformComponent.class);
         tc.position.set(x, y);
-        this.groundManager.getLoader().setWorldUpdateFence(new WorldLoadingBounds(tc.position));
+        this.groundManager.getLoader().addLoadingBounds(new WorldLoadingBounds(tc.position));
         this.groundManager.getECSManager().addEntity(this.player.getPlayerEntity());
         this.groundManager.setWorld(world);
     }
