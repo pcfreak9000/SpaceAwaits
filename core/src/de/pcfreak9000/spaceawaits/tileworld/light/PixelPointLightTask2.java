@@ -26,16 +26,14 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     private int aty;
     private int areawidth;
     private int areaheight;
-    private AmbientLightProvider ambientlight;
     
-    public PixelPointLightTask2(AmbientLightProvider ambient, WorldAccessor world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight) {
+    public PixelPointLightTask2(WorldAccessor world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight) {
         this.world = world;
         this.consumer = consumer;
         this.atx = tx;
         this.aty = ty;
         this.areawidth = areawidth;
         this.areaheight = areaheight;
-        this.ambientlight = ambient;
     }
     
     private boolean checkBounds(int i, int j) {
@@ -57,7 +55,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
                     Color light = null;
                     if (tile == null || !tile.isOpaque()) {
                         if (backTile == null || !backTile.isOpaque()) {
-                            light = ambientlight.getAmbientLightNew(gtx, gty);
+                            light = this.world.getAmbientLight().getAmbientLightNew(gtx, gty);
                         }
                         if (backTile != null && backTile.hasLight()) {
                             Color backTileLight = backTile.getLightColor();

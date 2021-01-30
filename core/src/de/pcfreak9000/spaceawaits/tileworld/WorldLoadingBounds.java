@@ -9,22 +9,19 @@ public class WorldLoadingBounds {
     
     private final Vector2 following;
     
-    private int xChunkRange = 1;
-    private int yChunkRange = 1;
-    //Is this even useful?
-    private int xChunkOffset;
-    private int yChunkOffset;
+    private int xChunkRange = 2;
+    private int yChunkRange = 2;
     
     public WorldLoadingBounds(Vector2 foll) {
         this.following = foll;
     }
     
     public int getChunkMidpointX() {
-        return this.xChunkOffset + Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.x));
+        return Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.x));
     }
     
     public int getChunkMidpointY() {
-        return this.yChunkOffset + Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.y));
+        return Chunk.toGlobalChunk(Tile.toGlobalTile(this.following.y));
     }
     
     public int getChunkRadiusRangeX() {

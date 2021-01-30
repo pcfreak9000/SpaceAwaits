@@ -46,14 +46,6 @@ public class WorldManager {
         this.ecsManager.addSystem(lightCalc = new LightCalculator());
     }
     
-    public void setWorld(WorldProvider world) {
-        if (world != this.currentWorld) {
-            SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this, currentWorld, world));
-            this.currentWorld = world;
-            this.worldAccessor.setWorldProvider(this.currentWorld);
-        }
-    }
-    
     public boolean hasCurrentWorld() {
         return this.currentWorld != null;
     }

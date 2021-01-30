@@ -19,8 +19,8 @@ public class WorldScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.05f, 0.05f, 0.05f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //Render Game HUD here?
         this.worldManager.updateAndRender(delta);
+        //Render Game HUD here?
         fps.log();
     }
     
@@ -31,6 +31,6 @@ public class WorldScreen extends ScreenAdapter {
     
     @Override
     public void hide() {
-        this.worldManager.setWorld(null);
+        this.worldManager.getWorldAccess().setWorldProvider(null);
     }
 }

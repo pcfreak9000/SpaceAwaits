@@ -83,7 +83,7 @@ public class SpaceAwaits extends Game {
         WorldProvider testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
                 .generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
-        this.worldManager.setWorld(testWorld);
+        this.worldManager.getWorldAccess().setWorldProvider(testWorld);
         this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
     }

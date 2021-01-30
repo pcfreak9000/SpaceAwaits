@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -65,7 +64,7 @@ public class LightCalculator extends IteratingSystem {
         int wi = Mathf.ceili(cam.viewportWidth / Tile.TILE_SIZE);
         int hi = Mathf.ceili(cam.viewportHeight / Tile.TILE_SIZE);
         try {
-            new PixelPointLightTask2(AmbientLightProvider.constant(Color.WHITE), wmgr.getWorldAccess(), (pix) -> {
+            new PixelPointLightTask2(wmgr.getWorldAccess(), (pix) -> {
                 if (texture != null) {
                     texture.dispose();//TODO dispose when this region is deleted/unloaded
                 }

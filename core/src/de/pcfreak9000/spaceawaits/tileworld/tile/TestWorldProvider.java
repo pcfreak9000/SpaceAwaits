@@ -23,6 +23,8 @@ public class TestWorldProvider implements WorldProvider {
         this.meta = new WorldMeta(width, height, true);
         this.generator = generator;
         this.chunks = new Chunk[meta.getWidthChunks()][meta.getHeightChunks()];
+        this.back = b;
+        this.ambient = a;
     }
     
     private Chunk requestRegion(int rx, int ry) {
@@ -31,7 +33,7 @@ public class TestWorldProvider implements WorldProvider {
             if (r == null) {
                 r = new Chunk(rx, ry, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
                 this.chunks[rx][ry] = r;
-                this.generator.generateChunk(r, this);
+                this.generator.generateChunk(r, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
             }
             return r;
         }

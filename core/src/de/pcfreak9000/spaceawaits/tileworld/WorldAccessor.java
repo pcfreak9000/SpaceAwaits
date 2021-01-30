@@ -15,6 +15,10 @@ import java.util.function.Predicate;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.collections4.set.ListOrderedSet;
 
+import com.badlogic.ashley.core.Engine;
+
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
@@ -148,7 +152,16 @@ public class WorldAccessor {
     }
     
     public void setWorldProvider(WorldProvider wp) {//TMP?
-        this.worldProvider = wp;
+        if (wp != this.worldProvider) {
+            if (this.worldProvider != null) {
+                wmgr.getECSManager().removeEntity(worldProvider.getBackground().getEntity());
+            }
+            SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
+            this.worldProvider = wp;
+            if (this.worldProvider != null) {
+                wmgr.getECSManager().addEntity(worldProvider.getBackground().getEntity());
+            }
+        }
     }
     
     public void addLoadingBounds(WorldLoadingBounds wlb) {
@@ -169,8 +182,7 @@ public class WorldAccessor {
                 it.remove();
             } else if (!inUpdateRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                 addLoaded(e.getKey(), e.getValue());
-                //remove entity
-                this.wmgr.getECSManager().removeEntity(c.getECSEntity());
+                removeChunkFromSystem(c);
                 it.remove();
             }
         }
@@ -199,8 +211,6 @@ public class WorldAccessor {
                 if (inLoadingRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                     if (inUpdateRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                         addUpdated(sc, c);
-                        //add entity
-                        this.wmgr.getECSManager().addEntity(c.getECSEntity());
                     } else {
                         addLoaded(sc, c);
                     }
@@ -213,8 +223,6 @@ public class WorldAccessor {
             Chunk c = e.getValue();
             if (inUpdateRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                 addUpdated(e.getKey(), e.getValue());
-                //add entity
-                this.wmgr.getECSManager().addEntity(c.getECSEntity());
                 it.remove();
             }
         }
@@ -230,6 +238,17 @@ public class WorldAccessor {
     
     private void addUpdated(String sc, Chunk c) {
         chunksUpdated.put(sc, c);
+        addChunkToSystem(c);
+    }
+    
+    private void addChunkToSystem(Chunk c) {
+        Engine ecs = wmgr.getECSManager();
+        ecs.addEntity(c.getECSEntity());
+    }
+    
+    private void removeChunkFromSystem(Chunk c) {
+        Engine ecs = wmgr.getECSManager();
+        ecs.removeEntity(c.getECSEntity());
     }
     
     private void requestChunk(int gcx, int gcy) {
@@ -266,5 +285,9 @@ public class WorldAccessor {
     
     public WorldMeta getMeta() {
         return worldProvider.getMeta();
+    }
+    
+    public AmbientLightProvider getAmbientLight() {
+        return worldProvider.getAmbientLight();
     }
 }
