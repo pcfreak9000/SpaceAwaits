@@ -17,7 +17,7 @@ public class LightBFPixelAlgorithm {
     }
     
     public void submit(World world, Consumer<Pixmap> createTexture, int tx, int ty, int w, int h, Color color) {
-        executor.submit(new PixelPointLightTask(world, createTexture, tx, ty, w, h, color));
+        //executor.submit(new PixelPointLightTask(world, createTexture, tx, ty, w, h, color));
     }
     
 }

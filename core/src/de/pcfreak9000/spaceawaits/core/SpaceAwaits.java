@@ -19,13 +19,13 @@ import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator.GeneratorCapabilitiesBase;
 import de.pcfreak9000.spaceawaits.tileworld.WorldLoadingBounds;
 import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.WorldScreen;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 
 public class SpaceAwaits extends Game {
@@ -78,9 +78,9 @@ public class SpaceAwaits extends Game {
         GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
         GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);
         Player p = new Player();
-        this.worldManager.getLoader().addLoadingBounds(
+        this.worldManager.getWorldAccess().addLoadingBounds(
                 new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
-        World testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
+        WorldProvider testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
                 .generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
         this.worldManager.setWorld(testWorld);

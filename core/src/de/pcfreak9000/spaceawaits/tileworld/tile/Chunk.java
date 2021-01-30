@@ -11,8 +11,9 @@ import java.util.function.Predicate;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkRenderComponent;
 
 public class Chunk {
     
@@ -28,7 +29,7 @@ public class Chunk {
     private final int tx;
     private final int ty;
     
-    private final TileWorld tileWorld;
+    private WorldAccessor worldAccessor;
     
     private final TileStorage tiles;
     private final TileStorage tilesBackground;
@@ -40,8 +41,7 @@ public class Chunk {
     
     private final Entity regionEntity;
     
-    public Chunk(int rx, int ry, TileWorld tw) {
-        this.tileWorld = tw;
+    public Chunk(int rx, int ry, WorldAccessor worldAccessor) {
         this.rx = rx;
         this.ry = ry;
         this.tx = rx * CHUNK_TILE_SIZE;
@@ -54,6 +54,7 @@ public class Chunk {
         this.regionEntity = new Entity();
         this.regionEntity.add(new ChunkComponent(this));
         this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
+        this.worldAccessor = worldAccessor;
     }
     
     public int getGlobalChunkX() {
@@ -129,7 +130,7 @@ public class Chunk {
             old.setTileEntity(null);
         }
         if (t.hasTileEntity()) {
-            TileEntity te = t.createTileEntity(tileWorld, newTileState);
+            TileEntity te = t.createTileEntity(worldAccessor, newTileState);
             this.tileEntities.add(te);
             newTileState.setTileEntity(te);
             if (te instanceof Tickable) {
@@ -162,7 +163,7 @@ public class Chunk {
     
     public boolean inBounds(int gtx, int gty) {
         return gtx >= this.tx && gtx < this.tx + CHUNK_TILE_SIZE && gty >= this.ty && gty < this.ty + CHUNK_TILE_SIZE
-                && gtx < tileWorld.getWorldWidth() && gty < tileWorld.getWorldHeight();
+                && worldAccessor.getMeta().inBounds(gtx, gty);
     }
     
     public void tick(float time) {

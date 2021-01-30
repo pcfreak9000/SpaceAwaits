@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.omnikryptec.math.Weighted;
+import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
 /**
  * TileWorld generator. Capabilities of that generator.
@@ -19,7 +20,7 @@ public abstract class WorldGenerator implements Weighted {
     
     protected final Set<Object> CAPS = new HashSet<>();
     
-    public abstract World generateWorld(long seed);
+    public abstract WorldProvider generateWorld(long seed);
     
     public WorldGenerator() {
         initCaps();

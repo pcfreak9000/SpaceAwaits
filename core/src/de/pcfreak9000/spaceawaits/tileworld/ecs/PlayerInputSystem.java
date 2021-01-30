@@ -15,7 +15,6 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class PlayerInputSystem extends IteratingSystem {
     
@@ -27,12 +26,10 @@ public class PlayerInputSystem extends IteratingSystem {
     private final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper.getFor(PlayerInputComponent.class);
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
-    private TileWorld world;
     private WorldManager worldManager;
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
-        this.world = ev.getTileWorldNew();
         this.worldManager = ev.worldMgr;
     }
     
@@ -78,10 +75,10 @@ public class PlayerInputSystem extends IteratingSystem {
                     if (Mathf.square(i) + Mathf.square(j) <= Mathf.square(rad)) {
                         int tx = txm + i;
                         int ty = tym + j;
-                        Tile t = world.getTile(tx, ty);
+                        Tile t = worldManager.getWorldAccess().getTile(tx, ty);
                         if (t != null && t.canBreak()) {
                             this.ugly = t;
-                            world.setTile(Tile.EMPTY, tx, ty);
+                            worldManager.getWorldAccess().setTile(Tile.EMPTY, tx, ty);
                         }
                         
                     }
@@ -93,10 +90,10 @@ public class PlayerInputSystem extends IteratingSystem {
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
-            Tile t = world.getTile(tx, ty);
+            Tile t = worldManager.getWorldAccess().getTile(tx, ty);
             if (t != null && t.canBreak()) {
                 this.ugly = t;
-                world.setTile(Tile.EMPTY, tx, ty);
+                worldManager.getWorldAccess().setTile(Tile.EMPTY, tx, ty);
             }
             
         }
@@ -106,8 +103,9 @@ public class PlayerInputSystem extends IteratingSystem {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             if (this.ugly != null) {
-                if (world.getTile(tx, ty) == null || world.getTile(tx, ty) == Tile.EMPTY) {
-                    world.setTile(this.ugly, tx, ty);
+                if (worldManager.getWorldAccess().getTile(tx, ty) == null
+                        || worldManager.getWorldAccess().getTile(tx, ty) == Tile.EMPTY) {
+                    worldManager.getWorldAccess().setTile(this.ugly, tx, ty);
                 }
             }
         }

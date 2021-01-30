@@ -1,6 +1,8 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,33 +10,33 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Predicate;
 
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.collections4.set.ListOrderedSet;
 
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
+import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
+import de.pcfreak9000.spaceawaits.tileworld.tile.WorldMeta;
 import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
-public class Loading {
+public class WorldAccessor {
     
     private static String coordsToString(int gcx, int gcy) {
         return gcx + ":" + gcy;
     }
-    //Set with loaded chunks
-    //Set with updated chunks
-    //Set with rendered chunks??? -> Server? Usefulness? Just loop through the loaded chunks and check if they need to be rendered somewhere?
-    //Entitys in the Chunks?
-    //Use a map instead with chunk coordinates? 
-    //How to update the contents of the sets? -> PlayerMovementEvent? (oof because before collision... 
-    //use event with result and query movement? quite oof actually) -> needs thoughts about events in general
-    //Iterating through sets to find out about the individuals, meh -> additional Arrays for each step?
     
-    //For networking, make World abstract or something? -> requestChunk
+    //Entities in the Chunks?
+    //What about force loading?
+    //Keep often visited chunks loaded?
+    
+    //NICE! Forgot that there can be multiple worlds... FUCK -> multiple "Loading" i guess for the server
     
     //Map: loaded chunks
     private Map<String, Chunk> chunksLoaded;
     //Map: updated chunks
-    private Map<String, Chunk> chunksUpdated;//Maybe instead use arraymaps?
+    private Map<String, Chunk> chunksUpdated;
     //(Map: rendering chunks?) -> ChunkRenderComponent involvement?
     
     private Set<String> requested;
@@ -47,14 +49,9 @@ public class Loading {
     //Server: Keep track of all players, load/unload chunks
     private Set<WorldLoadingBounds> bounds;
     
-    //What about force loading?
-    //Keep often visited chunks loaded?
-    
-    //NICE! Forgot that there can be multiple worlds... FUCK -> multiple "Loading" i guess for the server
-    
     private WorldManager wmgr;
     
-    public Loading(WorldManager wmgr) {
+    public WorldAccessor(WorldManager wmgr) {
         this.chunksLoaded = new ListOrderedMap<>();
         this.chunksUpdated = new ListOrderedMap<>();
         this.requested = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -63,9 +60,91 @@ public class Loading {
         this.wmgr = wmgr;
     }
     
+    /**
+     * Change the chunks states or load/unload them if required
+     */
     public void unloadload() {
         downgrade();
         upgrade();
+    }
+    
+    public Tile getTile(int tx, int ty) {
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = getChunk(rx, ry);
+        return r == null ? null : r.getTile(tx, ty);//Meh
+    }
+    
+    public Tile getTileBackground(int tx, int ty) {
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = getChunk(rx, ry);
+        return r == null ? null : r.getBackground(tx, ty);//Meh
+    }
+    
+    public void setTile(Tile tile, int tx, int ty) {
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = getChunk(rx, ry);
+        if (r != null) {
+            r.setTile(tile, tx, ty);
+        }
+    }
+    
+    public void setTileBackground(Tile tile, int tx, int ty) {
+        int rx = Chunk.toGlobalChunk(tx);
+        int ry = Chunk.toGlobalChunk(ty);
+        Chunk r = getChunk(rx, ry);
+        if (r != null) {
+            r.setTileBackground(tile, tx, ty);
+        }
+    }
+    
+    public Chunk getChunk(int gcx, int gcy) {
+        String sc = coordsToString(gcx, gcy);
+        Chunk c = null;
+        c = chunksLoaded.get(sc);
+        if (c == null) {
+            c = chunksUpdated.get(sc);
+        }
+        return c;
+    }
+    
+    public void collectTileIntersections(Collection<TileState> output, int x, int y, int w, int h,
+            Predicate<TileState> predicate) {
+        boolean xy = worldProvider.getMeta().inBounds(x, y);
+        boolean xwyh = worldProvider.getMeta().inBounds(x + w, y + h);
+        if (!xy && !xwyh) {
+            return;
+        }
+        Set<Chunk> chunks = new HashSet<>();
+        if (xy) {
+            Chunk reg = getChunk(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y));
+            if (reg != null) {
+                chunks.add(reg);
+            }
+        }
+        if (xwyh) {
+            Chunk reg = getChunk(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y + h));
+            if (reg != null) {
+                chunks.add(reg);
+            }
+        }
+        if (worldProvider.getMeta().inBounds(x + w, y)) {
+            Chunk reg = getChunk(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y));
+            if (reg != null) {
+                chunks.add(reg);
+            }
+        }
+        if (worldProvider.getMeta().inBounds(x, y + h)) {
+            Chunk reg = getChunk(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y + h));
+            if (reg != null) {
+                chunks.add(reg);
+            }
+        }
+        for (Chunk r : chunks) {
+            r.tileIntersections(output, x, y, w, h, predicate);
+        }
     }
     
     public void setWorldProvider(WorldProvider wp) {//TMP?
@@ -183,5 +262,9 @@ public class Loading {
     
     private boolean inLoadingRange(int gcx, int gcy) {
         return true;
+    }
+    
+    public WorldMeta getMeta() {
+        return worldProvider.getMeta();
     }
 }

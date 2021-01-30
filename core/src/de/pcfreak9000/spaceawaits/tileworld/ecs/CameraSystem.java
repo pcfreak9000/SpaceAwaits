@@ -9,15 +9,15 @@ import com.badlogic.gdx.graphics.Camera;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.WorldRenderInfo;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class CameraSystem extends IteratingSystem {
     
     private WorldRenderInfo render;
-    private TileWorld tileWorld;
+    private WorldAccessor world;
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
@@ -30,7 +30,7 @@ public class CameraSystem extends IteratingSystem {
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.render = svwe.worldMgr.getRenderInfo();
-        this.tileWorld = svwe.getTileWorldNew();
+        this.world = svwe.worldMgr.getWorldAccess();
     }
     
     @Override
@@ -38,9 +38,9 @@ public class CameraSystem extends IteratingSystem {
         TransformComponent tc = this.transformMapper.get(entity);
         //temporary wrap around
         if (tc.position.x < 0) {
-            tc.position.add(this.tileWorld.getWorldWidth() * Tile.TILE_SIZE, 0);
-        } else if (tc.position.x > this.tileWorld.getWorldWidth() * Tile.TILE_SIZE) {
-            tc.position.add(-this.tileWorld.getWorldWidth() * Tile.TILE_SIZE, 0);
+            tc.position.add(world.getMeta().getWidth() * Tile.TILE_SIZE, 0);
+        } else if (tc.position.x > world.getMeta().getWidth() * Tile.TILE_SIZE) {
+            tc.position.add(-world.getMeta().getWidth() * Tile.TILE_SIZE, 0);
         }
         //***
         float x = tc.position.x;
@@ -48,8 +48,8 @@ public class CameraSystem extends IteratingSystem {
         Camera camera = render.getCamera();
         x = Mathf.max(camera.viewportWidth / 2, x);
         y = Mathf.max(camera.viewportHeight / 2, y);
-        x = Mathf.min(this.tileWorld.getWorldWidth() * Tile.TILE_SIZE - camera.viewportWidth / 2, x);
-        y = Mathf.min(this.tileWorld.getWorldHeight() * Tile.TILE_SIZE - camera.viewportHeight / 2, y);
+        x = Mathf.min(world.getMeta().getWidth() * Tile.TILE_SIZE - camera.viewportWidth / 2, x);
+        y = Mathf.min(world.getMeta().getHeight() * Tile.TILE_SIZE - camera.viewportHeight / 2, y);
         camera.position.set(x, y, 0);
         this.render.applyViewport();
     }

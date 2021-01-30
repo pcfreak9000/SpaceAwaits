@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 
 public class Tile {
     
@@ -126,11 +127,11 @@ public class Tile {
         return false;
     }
     
-    public TileEntity createTileEntity(TileWorld world, TileState myState) {
+    public TileEntity createTileEntity(WorldAccessor world, TileState myState) {
         return null;
     }
     
-    public void neighbourChanged(TileWorld world, TileState neighbour) {
+    public void neighbourChanged(TestWorldProvider world, TileState neighbour) {
         //?!?!?!?
     }
     

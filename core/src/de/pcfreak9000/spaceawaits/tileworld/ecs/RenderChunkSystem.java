@@ -10,11 +10,14 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.IntSet;
 
+import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
@@ -27,11 +30,18 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     
     private SpriteCache regionCache;
     private IntSet freeCacheIds;
+    private Camera camera;
     
     public RenderChunkSystem() {
         super(Family.all(ChunkComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
+        SpaceAwaits.BUS.register(this);
+    }
+    
+    @EventSubscription
+    public void settwevent(WorldEvents.SetWorldEvent ev) {
+        camera = ev.worldMgr.getRenderInfo().getCamera();
     }
     
     @Override
@@ -88,6 +98,12 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         ChunkComponent c = tMapper.get(entity);
+        float mx = (c.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE;
+        float my = (c.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE;
+        if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE,
+                0.5f * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE, 0)) {
+            return;
+        }
         SpriteCache ca = this.regionCache;
         this.regionCache.clear();
         ca.beginCache();

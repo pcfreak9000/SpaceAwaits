@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
 import de.pcfreak9000.spaceawaits.tileworld.WorldRenderInfo;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class ParallaxSystem extends IteratingSystem {
     
@@ -22,12 +22,12 @@ public class ParallaxSystem extends IteratingSystem {
     
     private final ComponentMapper<ParallaxComponent> parallaxMapper = ComponentMapper.getFor(ParallaxComponent.class);
     
-    private TileWorld tileWorld;
+    private WorldAccessor tileWorld;
     private WorldRenderInfo render;
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.tileWorld = svwe.getTileWorldNew();
+        this.tileWorld = svwe.worldMgr.getWorldAccess();
         this.render = svwe.worldMgr.getRenderInfo();
     }
     
@@ -42,8 +42,8 @@ public class ParallaxSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         ParallaxComponent pc = this.parallaxMapper.get(entity);
         Vector3 positionState = this.render.getCamera().position;
-        float xratio = positionState.x / (this.tileWorld.getWorldWidth() * Tile.TILE_SIZE);
-        float yratio = positionState.y / (this.tileWorld.getWorldHeight() * Tile.TILE_SIZE);
+        float xratio = positionState.x / (this.tileWorld.getMeta().getWidth() * Tile.TILE_SIZE);
+        float yratio = positionState.y / (this.tileWorld.getMeta().getHeight() * Tile.TILE_SIZE);
         float possibleW = pc.sprite.getWidth() - this.render.getCamera().viewportWidth;
         float possibleH = pc.sprite.getHeight() - this.render.getCamera().viewportHeight;
         pc.sprite.setPosition(positionState.x - this.render.getCamera().viewportWidth / 2 - xratio * possibleW,

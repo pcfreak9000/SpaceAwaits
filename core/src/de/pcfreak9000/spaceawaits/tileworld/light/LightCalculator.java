@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,8 +17,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.tileworld.World;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
+import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.WorldRenderInfo;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
@@ -25,8 +26,9 @@ public class LightCalculator extends IteratingSystem {
     
     private static final ComponentMapper<LightComponent> lMapper = ComponentMapper.getFor(LightComponent.class);
     
-    private World world;
     private WorldRenderInfo info;
+    
+    private WorldManager wmgr;
     
     private FrameBuffer lightsBuffer;
     
@@ -38,7 +40,7 @@ public class LightCalculator extends IteratingSystem {
     @EventSubscription
     public void event(WorldEvents.SetWorldEvent ev) {
         this.info = ev.worldMgr.getRenderInfo();
-        this.world = ev.worldNew;
+        this.wmgr = ev.worldMgr;
         Camera cam = ev.worldMgr.getRenderInfo().getCamera();
         resize(cam.viewportWidth, cam.viewportHeight);
     }
@@ -63,7 +65,7 @@ public class LightCalculator extends IteratingSystem {
         int wi = Mathf.ceili(cam.viewportWidth / Tile.TILE_SIZE);
         int hi = Mathf.ceili(cam.viewportHeight / Tile.TILE_SIZE);
         try {
-            new PixelPointLightTask2(world, (pix) -> {
+            new PixelPointLightTask2(AmbientLightProvider.constant(Color.WHITE), wmgr.getWorldAccess(), (pix) -> {
                 if (texture != null) {
                     texture.dispose();//TODO dispose when this region is deleted/unloaded
                 }

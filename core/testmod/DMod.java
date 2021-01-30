@@ -9,14 +9,15 @@ import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.mod.ModLoaderEvents;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.Background;
-import de.pcfreak9000.spaceawaits.tileworld.World;
+import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
 import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TestWorldProvider;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
+import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
@@ -68,7 +69,7 @@ public class DMod {
             }
             
             @Override
-            public TileEntity createTileEntity(TileWorld world, TileState myState) {
+            public TileEntity createTileEntity(WorldAccessor world, TileState myState) {
                 return new LaserTileEntity(world, myState);
             }
         };
@@ -88,8 +89,8 @@ public class DMod {
             }
             
             @Override
-            public World generateWorld(long seed) {
-                return new World(new TileWorld(400, 400, (chunk, tileWorld) -> {
+            public WorldProvider generateWorld(long seed) {
+                return new TestWorldProvider(400, 400, (chunk, tileWorld) -> {
                     for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
                         for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
                             if (!tileWorld.getMeta().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
@@ -127,7 +128,7 @@ public class DMod {
                         }
                     }
                     //chunk.requestSunlightComputation();
-                }), GameRegistry.BACKGROUND_REGISTRY.get("stars"), AmbientLightProvider.constant(Color.WHITE));
+                }, GameRegistry.BACKGROUND_REGISTRY.get("stars"), AmbientLightProvider.constant(Color.WHITE));
             }
         });
     }

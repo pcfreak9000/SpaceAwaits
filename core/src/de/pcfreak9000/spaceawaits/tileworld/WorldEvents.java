@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.tileworld;
 import com.badlogic.ashley.core.Engine;
 
 import de.omnikryptec.event.Event;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
+import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
 public class WorldEvents {
     
@@ -16,19 +16,16 @@ public class WorldEvents {
     }
     
     public static class SetWorldEvent extends Event {
-        public final World worldOld;
-        public final World worldNew;
+        public final WorldProvider worldOld;
+        public final WorldProvider worldNew;
         public final WorldManager worldMgr;
         
-        public SetWorldEvent(WorldManager wmgr, World worldOld, World worldNew) {
+        public SetWorldEvent(WorldManager wmgr, WorldProvider worldOld, WorldProvider worldNew) {
             this.worldNew = worldNew;
             this.worldOld = worldOld;
             this.worldMgr = wmgr;
         }
         
-        public TileWorld getTileWorldNew() {
-            return worldNew == null ? null : worldNew.getTileWorld();
-        }
     }
     
 }

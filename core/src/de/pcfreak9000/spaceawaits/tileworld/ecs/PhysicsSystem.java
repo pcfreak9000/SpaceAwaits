@@ -15,9 +15,9 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
+import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
 
 public class PhysicsSystem extends IteratingSystem {
     
@@ -27,12 +27,13 @@ public class PhysicsSystem extends IteratingSystem {
     
     private static final float STEPSIZE_SECONDS = 1 / 100f;
     
-    private TileWorld tileWorld;
     private float deltaAcc = 0;
+    
+    private WorldManager wmgr;
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.tileWorld = svwe.getTileWorldNew();
+        this.wmgr = svwe.worldMgr;
     }
     
     public PhysicsSystem() {
@@ -83,7 +84,7 @@ public class PhysicsSystem extends IteratingSystem {
                 //pc.onGround = false;
                 List<TileState> collisions = new ArrayList<>();
                 //Collect possible tile collisions
-                this.tileWorld.collectTileIntersections(collisions, -1 + (int) Mathf.floor(pc.x / Tile.TILE_SIZE),
+                this.wmgr.getWorldAccess().collectTileIntersections(collisions, -1 + (int) Mathf.floor(pc.x / Tile.TILE_SIZE),
                         -1 + (int) Mathf.floor(pc.y / Tile.TILE_SIZE),
                         1 + (int) Mathf.ceil((pc.w + posDeltaX) / Tile.TILE_SIZE),
                         1 + (int) Mathf.ceil((pc.h + posDeltaY) / Tile.TILE_SIZE), (t) -> t.getTile().isSolid());

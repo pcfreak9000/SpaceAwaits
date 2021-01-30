@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.tileworld;
 
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
+import de.pcfreak9000.spaceawaits.tileworld.tile.TestWorldProvider;
 
 /**
  * Generates regions of a TileWorld.
@@ -11,6 +11,6 @@ import de.pcfreak9000.spaceawaits.tileworld.tile.TileWorld;
  */
 public interface ChunkGenerator {
     
-    void generateChunk(Chunk chunk, TileWorld tileWorld);
+    void generateChunk(Chunk chunk, TestWorldProvider testWorldProvider);
     
 }
