@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.CameraSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkReloadingSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputSystem;
@@ -30,7 +31,7 @@ public class WorldManager {
     }
     
     public void updateAndRender(float delta) {
-        worldAccessor.unloadload();
+        //worldAccessor.unloadload();
         worldRenderInfo.applyViewport();
         ecsManager.update(delta);
     }
@@ -40,6 +41,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new TickChunkSystem());
         this.ecsManager.addSystem(new PhysicsSystem());
         this.ecsManager.addSystem(new CameraSystem());
+        this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));
         this.ecsManager.addSystem(new ParallaxSystem());
         this.ecsManager.addSystem(new RenderChunkSystem());//TODO fix order of rendering and logic...
         this.ecsManager.addSystem(new RenderEntitySystem());

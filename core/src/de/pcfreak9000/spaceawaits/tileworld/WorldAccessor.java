@@ -26,6 +26,7 @@ import de.pcfreak9000.spaceawaits.tileworld.tile.WorldMeta;
 import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
 public class WorldAccessor {
+    private static final int LOAD_OFFSET = 2;
     
     private static String coordsToString(int gcx, int gcy) {
         return gcx + ":" + gcy;
@@ -178,6 +179,7 @@ public class WorldAccessor {
             Entry<String, Chunk> e = it.next();
             Chunk c = e.getValue();
             if (!inLoadingRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
+                removeChunkFromSystem(c);
                 unload(c);
                 it.remove();
             } else if (!inUpdateRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
@@ -263,10 +265,12 @@ public class WorldAccessor {
     
     private void requestNewChunks() {
         for (WorldLoadingBounds wlb : bounds) {
-            for (int x = 0; x <= wlb.getChunkRadiusRangeX() * 2; x++) {
-                for (int y = 0; y <= wlb.getChunkRadiusRangeY() * 2; y++) {
-                    int gcx = wlb.getChunkMidpointX() + x - wlb.getChunkRadiusRangeX();
-                    int gcy = wlb.getChunkMidpointY() + y - wlb.getChunkRadiusRangeY();
+            int xrad = LOAD_OFFSET + wlb.getChunkRadiusRangeX();
+            int yrad = LOAD_OFFSET + wlb.getChunkRadiusRangeY();
+            for (int x = 0; x <= xrad * 2; x++) {
+                for (int y = 0; y <= yrad * 2; y++) {
+                    int gcx = wlb.getChunkMidpointX() + x - xrad;
+                    int gcy = wlb.getChunkMidpointY() + y - yrad;
                     if (this.worldProvider.getMeta().inChunkBounds(gcx, gcy)) {
                         requestChunk(gcx, gcy);
                     }
@@ -276,11 +280,33 @@ public class WorldAccessor {
     }
     
     private boolean inUpdateRange(int gcx, int gcy) {
-        return true;
+        for (WorldLoadingBounds wlb : bounds) {
+            int minx = wlb.getChunkMidpointX() - wlb.getChunkRadiusRangeX();
+            int miny = wlb.getChunkMidpointY() - wlb.getChunkRadiusRangeY();
+            int maxx = wlb.getChunkMidpointX() + wlb.getChunkRadiusRangeX();
+            int maxy = wlb.getChunkMidpointY() + wlb.getChunkRadiusRangeY();
+            if (gcx >= minx && gcx <= maxx) {
+                if (gcy >= miny && gcy <= maxy) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     private boolean inLoadingRange(int gcx, int gcy) {
-        return true;
+        for (WorldLoadingBounds wlb : bounds) {
+            int minx = wlb.getChunkMidpointX() - wlb.getChunkRadiusRangeX() - LOAD_OFFSET;
+            int miny = wlb.getChunkMidpointY() - wlb.getChunkRadiusRangeY() - LOAD_OFFSET;
+            int maxx = wlb.getChunkMidpointX() + wlb.getChunkRadiusRangeX() + LOAD_OFFSET;
+            int maxy = wlb.getChunkMidpointY() + wlb.getChunkRadiusRangeY() + LOAD_OFFSET;
+            if (gcx >= minx && gcx <= maxx) {
+                if (gcy >= miny && gcy <= maxy) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     public WorldMeta getMeta() {

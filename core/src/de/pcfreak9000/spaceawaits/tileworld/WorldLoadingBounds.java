@@ -9,8 +9,8 @@ public class WorldLoadingBounds {
     
     private final Vector2 following;
     
-    private int xChunkRange = 2;
-    private int yChunkRange = 2;
+    private int xChunkRange = 1;
+    private int yChunkRange = 1;
     
     public WorldLoadingBounds(Vector2 foll) {
         this.following = foll;
