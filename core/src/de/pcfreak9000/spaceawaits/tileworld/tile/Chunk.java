@@ -12,8 +12,8 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkComponent;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.chunk.ChunkComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.chunk.ChunkRenderComponent;
 
 public class Chunk {
     
@@ -35,6 +35,7 @@ public class Chunk {
     private final TileStorage tilesBackground;
     private final List<TileEntity> tileEntities;
     private final List<Tickable> tickables;
+    private final List<Entity> entities;
     
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
@@ -50,6 +51,7 @@ public class Chunk {
         this.tilesBackground = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
+        this.entities = new ArrayList<>();
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new Entity();
         this.regionEntity.add(new ChunkComponent(this));
@@ -173,6 +175,18 @@ public class Chunk {
         while (!tickablesForRemoval.isEmpty()) {
             tickables.remove(tickablesForRemoval.poll());
         }
+    }
+    
+    public void addEntity(Entity e) {
+        this.entities.add(e);
+    }
+    
+    public void removeEntity(Entity e) {
+        this.entities.remove(e);
+    }
+    
+    public List<Entity> getEntities(){
+        return this.entities;
     }
     
     @Override

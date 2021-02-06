@@ -73,9 +73,6 @@ public class Modloader {
         this.instantiate();
         this.dispatchInstances();
         this.registerEvents();
-        this.preInit();
-        this.init();
-        this.postInit();
         LOGGER.info("Mod loading finished with " + this.modList.size() + " mod(s) loaded");
     }
     
@@ -86,30 +83,7 @@ public class Modloader {
     public URLClassLoader getModClassLoader() {
         return modClassLoader;
     }
-    
-//    public void stageModResources(ResourceManager resourceManager, int i) {
-//        for (ModContainer mc : modList) {
-//            resourceManager.stage(new AdvancedFile(mc.getFile().getAbsolutePath(), mc.getMod().resourceLocation()), i);
-//        }
-//    }
-    
-    private void preInit() {
-        LOGGER.info("mod pre-initialization stage");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Pre-initializing mods"));
-        SpaceAwaits.BUS.post(new ModLoaderEvents.ModPreInitEvent());
-    }
-    
-    private void init() {
-        LOGGER.info("mod initialization stage");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Initializing mods"));
-        SpaceAwaits.BUS.post(new ModLoaderEvents.ModInitEvent());
-    }
-    
-    private void postInit() {
-        LOGGER.info("mod post-initialization stage");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Post-initializing mods"));
-        SpaceAwaits.BUS.post(new ModLoaderEvents.ModPostInitEvent());
-    }
+   
     
     private void instantiate() {
         LOGGER.info("Instantiating mods...");

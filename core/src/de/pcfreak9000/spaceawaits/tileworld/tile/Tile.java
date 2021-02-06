@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.tileworld.tile;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 
@@ -31,8 +32,7 @@ public class Tile {
         GameRegistry.TILE_REGISTRY.register("empty", EMPTY);
     }
     
-    private String textureName = null;
-    private TextureRegion texture = null;
+    private TextureProvider texture = new TextureProvider();
     
     private boolean canBreak = true;
     private boolean opaque = true;
@@ -48,7 +48,7 @@ public class Tile {
     private float bouncyness = 0;
     
     public void setTexture(String name) {
-        this.textureName = name;
+        this.texture.setTexture(name);
     }
     
     public void setBouncyness(float b) {
@@ -120,7 +120,7 @@ public class Tile {
     }
     
     public String getTextureName() {
-        return textureName;
+        return texture.getName();
     }
     
     public boolean hasTileEntity() {
@@ -137,14 +137,10 @@ public class Tile {
     
     @Override
     public String toString() {
-        return String.format("Tile[texture=%s]", this.textureName);
+        return String.format("Tile[texture=%s]", this.getTextureName());
     }
-    
-    //TODO this sucks:
-    public void setTextureRegion(TextureRegion tex) {
-        this.texture = tex;
-    }
+
     public TextureRegion getTextureRegion() {
-        return this.texture;
+        return this.texture.getRegion();
     }
 }

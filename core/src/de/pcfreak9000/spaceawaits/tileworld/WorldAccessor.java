@@ -16,6 +16,7 @@ import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.collections4.set.ListOrderedSet;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
@@ -246,11 +247,17 @@ public class WorldAccessor {
     private void addChunkToSystem(Chunk c) {
         Engine ecs = wmgr.getECSManager();
         ecs.addEntity(c.getECSEntity());
+        for(Entity ent : c.getEntities()) {
+            ecs.addEntity(ent);
+        }
     }
     
     private void removeChunkFromSystem(Chunk c) {
         Engine ecs = wmgr.getECSManager();
         ecs.removeEntity(c.getECSEntity());
+        for(Entity ent : c.getEntities()) {
+            ecs.removeEntity(ent);
+        }
     }
     
     private void requestChunk(int gcx, int gcy) {

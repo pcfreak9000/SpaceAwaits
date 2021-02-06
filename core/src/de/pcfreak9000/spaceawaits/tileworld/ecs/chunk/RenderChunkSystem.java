@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld.ecs;
+package de.pcfreak9000.spaceawaits.tileworld.ecs.chunk;
 
 import java.util.ArrayList;
 import java.util.List;

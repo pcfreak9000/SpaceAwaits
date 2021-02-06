@@ -1,16 +1,24 @@
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.CoreEvents;
+import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
-import de.pcfreak9000.spaceawaits.mod.ModLoaderEvents;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.tileworld.Background;
 import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
 import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.MovingWorldEntityComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.RenderEntityComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.TextureSpriteAction;
 import de.pcfreak9000.spaceawaits.tileworld.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
 import de.pcfreak9000.spaceawaits.tileworld.tile.TestWorldProvider;
@@ -26,12 +34,7 @@ public class DMod {
     private static DMod instance;
     
     @EventSubscription
-    public void preInit(final ModLoaderEvents.ModPreInitEvent pre) {
-        //System.out.println(pre.getClass());
-    }
-    
-    @EventSubscription
-    public void init(final ModLoaderEvents.ModInitEvent init) {
+    public void init(final CoreEvents.InitEvent init) {
         Tile tstoneTile = new Tile();
         tstoneTile.setTexture("stone.png");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
@@ -81,6 +84,8 @@ public class DMod {
         Background back = new Background("Space.png", 1920 * 16f / 9, 1920);
         GameRegistry.BACKGROUND_REGISTRY.register("stars", back);
         
+        TextureProvider texture = new TextureProvider("sdfsdf");
+        
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
             
             @Override
@@ -127,14 +132,27 @@ public class DMod {
                             chunk.setTileBackground(t, i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY());
                         }
                     }
+                    Entity entity = new Entity();
+                    entity.add(new MovingWorldEntityComponent());
+                    RenderEntityComponent rec = new RenderEntityComponent();
+                    Sprite s = new Sprite();
+                    s.setSize(200, 100);
+                    rec.sprite = s;
+                    rec.action = new TextureSpriteAction(texture);
+                    entity.add(rec);
+                    TransformComponent tc = new TransformComponent();
+                    entity.add(tc);
+                    tc.position.set(chunk.getGlobalTileX() * Tile.TILE_SIZE,
+                            tileWorld.getMeta().getHeight() * Tile.TILE_SIZE-1);
+                    chunk.addEntity(entity);
+                    PhysicsComponent pc = new PhysicsComponent();
+                    pc.acceleration.set(0, -98.1f);
+                    pc.w = 200;
+                    pc.h = 100;
+                    entity.add(pc);
                     //chunk.requestSunlightComputation();
                 }, GameRegistry.BACKGROUND_REGISTRY.get("stars"), AmbientLightProvider.constant(Color.WHITE));
             }
         });
-    }
-    
-    @EventSubscription
-    public void postInit(final ModLoaderEvents.ModPostInitEvent post) {
-        
     }
 }

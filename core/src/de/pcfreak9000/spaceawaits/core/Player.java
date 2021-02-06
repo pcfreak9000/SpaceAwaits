@@ -1,14 +1,14 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.item.Inventory;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputComponent;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntityComponent;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.RenderEntityComponent;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.TextureSpriteAction;
 import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
 
 /**
@@ -36,12 +36,11 @@ public class Player {
         pic.maxYv = 100;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
-        Texture t = SpaceAwaits.getSpaceAwaits().assetManager.get("mensch.png");
-        //t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Sprite sprite = new Sprite(t);
+        Sprite sprite = new Sprite();
         sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 3);
         RenderEntityComponent rc = new RenderEntityComponent();
         rc.sprite = sprite;
+        rc.action = new TextureSpriteAction(SpaceAwaits.getSpaceAwaits().mensch);
         e.add(rc);
         //FIXME resource reloading
         TransformComponent tc = new TransformComponent();

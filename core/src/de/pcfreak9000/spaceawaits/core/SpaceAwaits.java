@@ -59,6 +59,8 @@ public class SpaceAwaits extends Game {
         SpaceAwaits.singleton = this;
     }
     
+    public TextureProvider mensch = new TextureProvider("mensch.png");
+    
     @Override
     public void create() {
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
@@ -66,24 +68,27 @@ public class SpaceAwaits extends Game {
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
         this.worldScreen = new WorldScreen(worldManager);
-
+        
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
-        GameRegistry.TILE_REGISTRY.reloadResources(assetManager);
-        GameRegistry.BACKGROUND_REGISTRY.reloadResources(assetManager);
-        this.assetManager.load("mensch.png", Texture.class);
+        BUS.post(new CoreEvents.InitEvent());
+        BUS.post(new CoreEvents.QueueResourcesEvent(assetManager));
+        GameRegistry.BACKGROUND_REGISTRY.reloadResources(assetManager);//Ugh
         this.assetManager.finishLoading();
-        GameRegistry.TILE_REGISTRY.setupTiles(assetManager);
-        GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);
+        BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
+        BUS.post(new CoreEvents.PostInitEvent());
+        GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);//Ugh
+        //Testing stuff below
         Player p = new Player();
         this.worldManager.getWorldAccess().addLoadingBounds(
                 new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
-        WorldProvider testWorld = pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY))
-                .generateWorld(0);
+        WorldProvider testWorld = pickGenerator(
+                GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)).generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
         this.worldManager.getWorldAccess().setWorldProvider(testWorld);
+        //Testing stuff above
         this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
     }
@@ -97,9 +102,10 @@ public class SpaceAwaits extends Game {
         return MathUtil.getWeightedRandom(new Random(), list);
     }
     
-    private void preloadResources() {
+    private void preloadResources() {//What happens on resource reload?
         this.assetManager.load("hyperraum.png", Texture.class);
         this.assetManager.load("text.fnt", BitmapFont.class);
+        this.assetManager.load("missing_texture.png", Texture.class);//Move elsewhere?
         //...
         this.assetManager.finishLoading();
     }

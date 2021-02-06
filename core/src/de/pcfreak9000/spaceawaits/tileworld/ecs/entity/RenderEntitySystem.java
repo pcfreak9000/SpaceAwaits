@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.tileworld.ecs;
+package de.pcfreak9000.spaceawaits.tileworld.ecs.entity;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.WorldEvents;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
 
 public class RenderEntitySystem extends IteratingSystem {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
@@ -46,6 +47,7 @@ public class RenderEntitySystem extends IteratingSystem {
             Vector2 p = transformMapper.get(entity).position;
             rec.sprite.setPosition(p.x, p.y);
         }
+        rec.action.act(rec.sprite);
         rec.sprite.draw(b);
     }
 }

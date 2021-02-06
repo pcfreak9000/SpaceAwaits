@@ -4,15 +4,15 @@ import com.badlogic.ashley.core.Engine;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.CameraSystem;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.ChunkReloadingSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.tileworld.ecs.PlayerInputSystem;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderChunkSystem;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.RenderEntitySystem;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.TickChunkSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.chunk.ChunkReloadingSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.chunk.RenderChunkSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.chunk.TickChunkSystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.MovingWorldEntitySystem;
+import de.pcfreak9000.spaceawaits.tileworld.ecs.entity.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.tileworld.light.LightCalculator;
-import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 
 public class WorldManager {
     
@@ -20,7 +20,6 @@ public class WorldManager {
     private final WorldRenderInfo worldRenderInfo;
     private final WorldAccessor worldAccessor;
     public LightCalculator lightCalc;//TODO lightcalc visibility
-    private WorldProvider currentWorld;
     
     public WorldManager() {
         this.ecsManager = new Engine();
@@ -40,16 +39,13 @@ public class WorldManager {
         this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickChunkSystem());
         this.ecsManager.addSystem(new PhysicsSystem());
+        this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));
         this.ecsManager.addSystem(new ParallaxSystem());
         this.ecsManager.addSystem(new RenderChunkSystem());//TODO fix order of rendering and logic...
         this.ecsManager.addSystem(new RenderEntitySystem());
         this.ecsManager.addSystem(lightCalc = new LightCalculator());
-    }
-    
-    public boolean hasCurrentWorld() {
-        return this.currentWorld != null;
     }
     
     public Engine getECSManager() {
