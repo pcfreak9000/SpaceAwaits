@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import de.pcfreak9000.spaceawaits.item.Item;
 
+@Deprecated
 public class ItemRegistry extends GameRegistry<Item> {
     
     public void reloadResources(AssetManager assets) {

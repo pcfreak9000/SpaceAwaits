@@ -16,17 +16,19 @@ import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.MathUtil;
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
-import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator.GeneratorCapabilitiesBase;
-import de.pcfreak9000.spaceawaits.tileworld.WorldLoadingBounds;
-import de.pcfreak9000.spaceawaits.tileworld.WorldManager;
-import de.pcfreak9000.spaceawaits.tileworld.WorldScreen;
-import de.pcfreak9000.spaceawaits.tileworld.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.tileworld.tile.WorldProvider;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
+import de.pcfreak9000.spaceawaits.world.TestWorldProvider;
+import de.pcfreak9000.spaceawaits.world.WorldLoadingBounds;
+import de.pcfreak9000.spaceawaits.world.WorldManager;
+import de.pcfreak9000.spaceawaits.world.WorldScreen;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
+import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -41,16 +43,18 @@ public class SpaceAwaits extends Game {
     
     private static SpaceAwaits singleton;
     
+    private static Logger LOGGER = Logger.getLogger(SpaceAwaits.class);
+    
     public static SpaceAwaits getSpaceAwaits() {
         return singleton;
     }
     
     private Modloader modloader;
-    public AssetManager assetManager;//TODO private, resource reloading in general
+    private AssetManager assetManager;
     private WorldManager worldManager;
     
     public WorldScreen worldScreen;
-    public MainMenuScreen mainMenuScreen;
+    public MainMenuScreen mainMenuScreen;//also private??
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
@@ -58,8 +62,6 @@ public class SpaceAwaits extends Game {
         }
         SpaceAwaits.singleton = this;
     }
-    
-    public TextureProvider mensch = new TextureProvider("mensch.png");
     
     @Override
     public void create() {
@@ -73,21 +75,26 @@ public class SpaceAwaits extends Game {
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
+        CoreResources.init();
+        LOGGER.info("Init...");
         BUS.post(new CoreEvents.InitEvent());
+        LOGGER.info("Queue resources...");
         BUS.post(new CoreEvents.QueueResourcesEvent(assetManager));
         GameRegistry.BACKGROUND_REGISTRY.reloadResources(assetManager);//Ugh
         this.assetManager.finishLoading();
+        LOGGER.info("Updating resources...");
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
-        BUS.post(new CoreEvents.PostInitEvent());
         GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);//Ugh
+        LOGGER.info("Post-Init...");
+        BUS.post(new CoreEvents.PostInitEvent());
         //Testing stuff below
         Player p = new Player();
         this.worldManager.getWorldAccess().addLoadingBounds(
                 new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
-        WorldProvider testWorld = pickGenerator(
+        WorldGenerationBundle testWorld = pickGenerator(
                 GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)).generateWorld(0);
         this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
-        this.worldManager.getWorldAccess().setWorldProvider(testWorld);
+        this.worldManager.getWorldAccess().setWorldProvider(new TestWorldProvider(testWorld));
         //Testing stuff above
         this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
@@ -105,9 +112,21 @@ public class SpaceAwaits extends Game {
     private void preloadResources() {//What happens on resource reload?
         this.assetManager.load("hyperraum.png", Texture.class);
         this.assetManager.load("text.fnt", BitmapFont.class);
-        this.assetManager.load("missing_texture.png", Texture.class);//Move elsewhere?
+        this.assetManager.load("missing_texture.png", Texture.class);
         //...
         this.assetManager.finishLoading();
+    }
+    
+    public void exit() {
+        Gdx.app.exit();
+    }
+    
+    @Override
+    public void dispose() {
+        LOGGER.info("Exit...");
+        BUS.post(new CoreEvents.ExitEvent());
+        super.dispose();
+        this.assetManager.dispose();
     }
     
     private AssetManager createAssetmanager() {

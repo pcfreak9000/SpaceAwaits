@@ -4,8 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import de.pcfreak9000.spaceawaits.tileworld.Background;
-
+import de.pcfreak9000.spaceawaits.world.Background;
+@Deprecated
 public class BackgroundRegistry extends GameRegistry<Background> {
     
     public void reloadResources(AssetManager assets) {

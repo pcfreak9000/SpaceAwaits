@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.pcfreak9000.spaceawaits.tileworld.WorldGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 
 public class GeneratorRegistry extends GameRegistry<WorldGenerator> {
     

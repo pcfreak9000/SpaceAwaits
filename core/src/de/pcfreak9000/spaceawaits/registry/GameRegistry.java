@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**
  * used to register everything annotated by {@link RegisterSensitive}
@@ -14,7 +16,9 @@ import de.omnikryptec.util.Logger;
  */
 public class GameRegistry<T> {
     
-    public static final TileRegistry TILE_REGISTRY = new TileRegistry();
+    public static final GameRegistry<Tile> TILE_REGISTRY = new GameRegistry<>();
+    
+    public static final GameRegistry<WorldEntityFactory> WORLD_ENTITY_REGISTRY = new GameRegistry<>();
     
     public static final GeneratorRegistry GENERATOR_REGISTRY = new GeneratorRegistry();
     

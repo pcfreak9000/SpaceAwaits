@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
+import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class MainMenuScreen extends ScreenAdapter {
@@ -23,7 +23,6 @@ public class MainMenuScreen extends ScreenAdapter {
     private ExtendViewport viewport;
     private FillViewport backgroundVp;
     
-    private Texture background;
     private SpriteBatch batch;//TODO global batch?
     
     private Stage stage;
@@ -34,7 +33,7 @@ public class MainMenuScreen extends ScreenAdapter {
         this.skin = new Skin(Gdx.files.internal("ui/skin.json"));//TODO license stuff, resource loading stuff
         viewport = new ExtendViewport(200, 200);
         this.stage = new Stage(viewport);
-        backgroundVp = new FillViewport(200*16/9f, 200);
+        backgroundVp = new FillViewport(200 * 16 / 9f, 200);
         TextButton playButton = new TextButton("Play", skin);
         playButton.addListener(new ClickListener() {
             @Override
@@ -46,12 +45,11 @@ public class MainMenuScreen extends ScreenAdapter {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
+                SpaceAwaits.getSpaceAwaits().exit();
             }
         });
         Label label = new Label(SpaceAwaits.NAME, this.skin);
         label.setFontScale(2);
-        this.background = SpaceAwaits.getSpaceAwaits().assetManager.get("Space.png", Texture.class);
         this.batch = new SpriteBatch();
         table.setWidth(this.stage.getWidth());
         table.setHeight(this.stage.getHeight());
@@ -90,7 +88,7 @@ public class MainMenuScreen extends ScreenAdapter {
         batch.begin();
         float w = backgroundVp.getWorldWidth();
         float h = backgroundVp.getWorldHeight();
-        batch.draw(background, 0, 0, w, h);
+        batch.draw(CoreResources.SPACE_BACKGROUND.getRegion(), 0, 0, w, h);
         batch.end();
         viewport.apply();
         stage.act(delta);
@@ -102,6 +100,5 @@ public class MainMenuScreen extends ScreenAdapter {
         this.stage.dispose();
         this.skin.dispose();
         this.batch.dispose();
-        this.background.dispose();
     }
 }

@@ -39,4 +39,8 @@ public class CoreEvents {
         }
         
     }
+    
+    public static class ExitEvent extends Event {
+        
+    }
 }

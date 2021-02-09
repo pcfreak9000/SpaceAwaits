@@ -1,10 +1,10 @@
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.tileworld.WorldAccessor;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Chunk;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tickable;
-import de.pcfreak9000.spaceawaits.tileworld.tile.Tile;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileEntity;
-import de.pcfreak9000.spaceawaits.tileworld.tile.TileState;
+import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.world.tile.Tickable;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.TileState;
 
 public class LaserTileEntity extends TileEntity implements Tickable {
     
