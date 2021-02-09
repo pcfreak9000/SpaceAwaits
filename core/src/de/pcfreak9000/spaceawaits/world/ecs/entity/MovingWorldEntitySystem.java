@@ -32,7 +32,7 @@ public class MovingWorldEntitySystem extends IteratingSystem {
     }
     
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {//This is buggy if an entity leaves the world (the chunks stuff becomes confused)
+    protected void processEntity(Entity entity, float deltaTime) {
         TransformComponent tc = transformMapper.get(entity);
         MovingWorldEntityComponent mwec = mwecMapper.get(entity);
         this.world.adjustChunk(entity, mwec, tc);
