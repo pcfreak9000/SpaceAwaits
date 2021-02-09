@@ -45,7 +45,6 @@ public class WorldManager {
         this.ecsManager.addSystem(new RenderChunkSystem());//TODO fix order of rendering and logic...
         this.ecsManager.addSystem(new RenderEntitySystem());
         this.ecsManager.addSystem(lightCalc = new LightCalculator());
-        lightCalc.setProcessing(false);
     }
     
     public Engine getECSManager() {

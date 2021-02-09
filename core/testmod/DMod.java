@@ -65,6 +65,7 @@ public class DMod {
         //dirttile.setFilterColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("dirt", dirttile);
         
+        torch.setLightColor(new Color(0, 1, 0, 1));
         GameRegistry.TILE_REGISTRY.register("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         

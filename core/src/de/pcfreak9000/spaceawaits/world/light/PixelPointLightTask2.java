@@ -21,19 +21,22 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     
     private float threshold = 0.02f;
     private WorldAccessor world;
+    private AmbientLightProvider ambientLight;
     private Consumer<Pixmap> consumer;
     private int atx;
     private int aty;
     private int areawidth;
     private int areaheight;
     
-    public PixelPointLightTask2(WorldAccessor world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight) {
+    public PixelPointLightTask2(WorldAccessor world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth,
+            int areaheight) {
         this.world = world;
         this.consumer = consumer;
         this.atx = tx;
         this.aty = ty;
         this.areawidth = areawidth;
         this.areaheight = areaheight;
+        this.ambientLight = world.getAmbientLight();
     }
     
     private boolean checkBounds(int i, int j) {
@@ -55,7 +58,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
                     Color light = null;
                     if (tile == null || !tile.isOpaque()) {
                         if (backTile == null || !backTile.isOpaque()) {
-                            light = this.world.getAmbientLight().getAmbientLightNew(gtx, gty);
+                            light = this.ambientLight.getAmbientLightNew(gtx, gty);
                         }
                         if (backTile != null && backTile.hasLight()) {
                             Color backTileLight = backTile.getLightColor();
@@ -109,11 +112,11 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
         }
         int tx = atx + i;
         int ty = aty + j;
-        Tile tile = Tile.EMPTY;//Hmmm...
+        Tile tile = null;
         if (world.getMeta().inBounds(tx, ty)) {
             tile = world.getTile(tx, ty);
         }
-        float loss = tile.getLightTransmission();
+        float loss = tile == null ? this.ambientLight.getEmptyTileTransmission(tx, ty) : tile.getLightTransmission();
         float nr = loss * intens[front.i][front.j].r;
         float ng = loss * intens[front.i][front.j].g;
         float nb = loss * intens[front.i][front.j].b;
