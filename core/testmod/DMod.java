@@ -12,7 +12,6 @@ import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldMeta;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
-import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileState;
@@ -77,6 +76,8 @@ public class DMod {
         Background back = new Background("Space.png", 1920 * 16f / 9, 1920);
         GameRegistry.BACKGROUND_REGISTRY.register("stars", back);
         
+        GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
+        
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
             
             @Override
@@ -86,9 +87,10 @@ public class DMod {
             
             @Override
             public WorldGenerationBundle generateWorld(long seed) {
-                return new WorldGenerationBundle(seed, new WorldMeta(400, 400, true),
-                        GameRegistry.BACKGROUND_REGISTRY.get("stars"), AmbientLightProvider.constant(Color.WHITE),
-                        new TestChunkGenerator());
+                return new WorldGenerationBundle(seed, new WorldMeta(400, 400, true), new TestChunkGenerator(), (g) ->{
+                    //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
+                    g.addEntity(GameRegistry.BACKGROUND_REGISTRY.get("stars").getEntity());//Hmmmmm... still not optimal i guess?
+                });
             }
         });
     }

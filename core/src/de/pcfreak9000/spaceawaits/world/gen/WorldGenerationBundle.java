@@ -1,8 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.gen;
 
-import de.pcfreak9000.spaceawaits.world.Background;
+import de.pcfreak9000.spaceawaits.world.GlobalGenerator;
 import de.pcfreak9000.spaceawaits.world.WorldMeta;
-import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
 /**
  * The output of a {@link WorldGenerator}
@@ -14,30 +13,22 @@ public class WorldGenerationBundle {
     
     private WorldMeta meta;
     
-    private Background back;//TMP?
-    
-    private AmbientLightProvider ambient;
-    
     private ChunkGenerator generator;
     
-    public WorldGenerationBundle(long seed, WorldMeta meta, Background back, AmbientLightProvider ambient,
-            ChunkGenerator generator) {
+    private GlobalGenerator globalgen;
+    
+    public WorldGenerationBundle(long seed, WorldMeta meta, ChunkGenerator generator, GlobalGenerator globalgen) {
         this.meta = meta;
-        this.back = back;
-        this.ambient = ambient;
         this.generator = generator;
+        this.globalgen = globalgen;
     }
     
     public WorldMeta getMeta() {
         return meta;
     }
     
-    public Background getBackground() {
-        return back;
-    }
-    
-    public AmbientLightProvider getAmbientLight() {
-        return ambient;
+    public GlobalGenerator getGlobalGenerator() {
+        return globalgen;
     }
     
     public ChunkGenerator getChunkGenerator() {

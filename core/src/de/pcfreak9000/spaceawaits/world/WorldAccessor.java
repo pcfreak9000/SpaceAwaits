@@ -179,12 +179,16 @@ public class WorldAccessor {
     public void setWorldProvider(WorldProvider wp) {//TMP?
         if (wp != this.worldProvider) {
             if (this.worldProvider != null) {
-                wmgr.getECSManager().removeEntity(worldProvider.getBackground().getEntity());
+                for (Entity e : worldProvider.getGlobal().getEntities()) {
+                    wmgr.getECSManager().removeEntity(e);
+                }
             }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
             this.worldProvider = wp;
             if (this.worldProvider != null) {
-                wmgr.getECSManager().addEntity(worldProvider.getBackground().getEntity());
+                for (Entity e : worldProvider.getGlobal().getEntities()) {
+                    wmgr.getECSManager().addEntity(e);
+                }
             }
         }
     }
@@ -344,6 +348,6 @@ public class WorldAccessor {
     }
     
     public AmbientLightProvider getAmbientLight() {
-        return worldProvider.getAmbientLight();
+        return worldProvider.getGlobal().getLightProvider();
     }
 }

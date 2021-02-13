@@ -43,9 +43,16 @@ public class RenderEntitySystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         RenderEntityComponent rec = renderMapper.get(entity);
-        if (transformMapper.has(entity)) {//TODO visibility (frustum) checks
+        if (transformMapper.has(entity)) {
             Vector2 p = transformMapper.get(entity).position;
             rec.sprite.setPosition(p.x, p.y);
+        }
+        float wh = 0.5f * rec.sprite.getWidth() * rec.sprite.getScaleX();
+        float hh = 0.5f * rec.sprite.getHeight() * rec.sprite.getScaleY();
+        float mx = rec.sprite.getX() + wh;
+        float my = rec.sprite.getY() + hh;
+        if (!cam.frustum.boundsInFrustum(mx, my, 0, wh, hh, 0)) {
+            return;
         }
         rec.action.act(rec.sprite);
         rec.sprite.draw(b);

@@ -31,17 +31,17 @@ public class Modloader {
     
     public static final String THIS_INSTANCE_ID = "this";
     
-    private static class TmpHolder {
+    private static class ModClassFileHolder {
         private final File file;
         private final Class<?> modclass;
         
-        private TmpHolder(final Class<?> clazz, final File file) {//TODO rename this class
+        private ModClassFileHolder(final Class<?> clazz, final File file) {
             this.file = file;
             this.modclass = clazz;
         }
     }
     
-    private static final Comparator<TmpHolder> COMP = (o1, o2) -> {
+    private static final Comparator<ModClassFileHolder> COMP = (o1, o2) -> {
         final Mod m1 = o1.modclass.getAnnotation(Mod.class);
         final Mod m2 = o2.modclass.getAnnotation(Mod.class);
         final int vt = m1.id().compareToIgnoreCase(m2.id());
@@ -62,7 +62,7 @@ public class Modloader {
     private static final Pattern ZIP_JAR_PATTERN = Pattern.compile("(.+).(zip|jar)$");
     private static final Logger LOGGER = Logger.getLogger(Modloader.class);
     
-    private final List<TmpHolder> modClasses = new ArrayList<>();
+    private final List<ModClassFileHolder> modClasses = new ArrayList<>();
     private final List<ModContainer> modList = new ArrayList<>();
     private final List<ModContainer> readOnlyModList = Collections.unmodifiableList(this.modList);
     
@@ -89,7 +89,7 @@ public class Modloader {
         LOGGER.info("Instantiating mods...");
 //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Constructing mods", true));
         int i = 0;
-        for (final TmpHolder th : this.modClasses) {
+        for (final ModClassFileHolder th : this.modClasses) {
             i++;
             final Class<?> modClass = th.modclass;
 //            LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingSubEvent(
@@ -241,7 +241,7 @@ public class Modloader {
                             continue;
                         }
                         if (clazz.isAnnotationPresent(Mod.class)) {
-                            this.modClasses.add(new TmpHolder(clazz, candidates.get(i)));
+                            this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
                         }
                     }
                 }

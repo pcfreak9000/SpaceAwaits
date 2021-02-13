@@ -29,11 +29,11 @@ public class WorldManager {
     }
     
     public void updateAndRender(float delta) {
-        //worldAccessor.unloadload();
         worldRenderInfo.applyViewport();
         ecsManager.update(delta);
     }
     
+    //TODO Make this configurable from the WorldGenerator and also have global systems
     private void addDefaultECSSystems() {//Create some indexed hook system thing instead?
         this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickChunkSystem());
