@@ -52,7 +52,7 @@ public class TestChunkGenerator implements ChunkGenerator {
         TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
         tc.position.set(chunk.getGlobalTileX() * Tile.TILE_SIZE,
                 worldAccess.getMeta().getHeight() * Tile.TILE_SIZE - 1);
-        chunk.addEntity(entity);
+        //chunk.addEntity(entity);
         
     }
 }

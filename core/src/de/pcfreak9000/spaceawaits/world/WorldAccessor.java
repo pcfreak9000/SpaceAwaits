@@ -269,6 +269,7 @@ public class WorldAccessor {
     private void addUpdated(String sc, Chunk c) {
         chunksUpdated.put(sc, c);
         addChunkToSystem(c);
+        SpaceAwaits.BUS.post(new WorldEvents.ChunkLoadedEvent(c));//Hmmmmm
     }
     
     private void addChunkToSystem(Chunk c) {

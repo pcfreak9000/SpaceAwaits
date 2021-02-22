@@ -31,14 +31,14 @@ public class PhysicsSystem extends IteratingSystem {
     
     private WorldManager wmgr;
     
-    @EventSubscription
-    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.wmgr = svwe.worldMgr;
-    }
-    
     public PhysicsSystem() {
         super(Family.all(PhysicsComponent.class, TransformComponent.class).get());
         SpaceAwaits.BUS.register(this);
+    }
+    
+    @EventSubscription
+    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
+        this.wmgr = svwe.worldMgr;
     }
     
     @Override
@@ -70,7 +70,7 @@ public class PhysicsSystem extends IteratingSystem {
         float posDeltaX = 0.5f * pc.acceleration.x * Mathf.square(STEPSIZE_SECONDS) + pc.velocity.x * STEPSIZE_SECONDS;
         float posDeltaY = 0.5f * pc.acceleration.y * Mathf.square(STEPSIZE_SECONDS) + pc.velocity.y * STEPSIZE_SECONDS;
         pc.velocity.add(pc.acceleration.x * STEPSIZE_SECONDS, pc.acceleration.y * STEPSIZE_SECONDS);
-
+        
         //Check and resolve collisions
         if (pc.w != 0 || pc.h != 0) {
             pc.onGround = false;
@@ -84,8 +84,8 @@ public class PhysicsSystem extends IteratingSystem {
                 //pc.onGround = false;
                 List<TileState> collisions = new ArrayList<>();
                 //Collect possible tile collisions
-                this.wmgr.getWorldAccess().collectTileIntersections(collisions, -1 + (int) Mathf.floor(pc.x / Tile.TILE_SIZE),
-                        -1 + (int) Mathf.floor(pc.y / Tile.TILE_SIZE),
+                this.wmgr.getWorldAccess().collectTileIntersections(collisions,
+                        -1 + (int) Mathf.floor(pc.x / Tile.TILE_SIZE), -1 + (int) Mathf.floor(pc.y / Tile.TILE_SIZE),
                         1 + (int) Mathf.ceil((pc.w + posDeltaX) / Tile.TILE_SIZE),
                         1 + (int) Mathf.ceil((pc.h + posDeltaY) / Tile.TILE_SIZE), (t) -> t.getTile().isSolid());
                 for (TileState t : collisions) {

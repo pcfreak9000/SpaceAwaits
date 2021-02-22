@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Engine;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystemJBump;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkReloadingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.RenderChunkSystem;
@@ -37,7 +37,8 @@ public class WorldManager {
     private void addDefaultECSSystems() {//Create some indexed hook system thing instead?
         this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickChunkSystem());
-        this.ecsManager.addSystem(new PhysicsSystem());
+        //this.ecsManager.addSystem(new PhysicsSystem());
+        this.ecsManager.addSystem(new PhysicsSystemJBump());
         //this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));

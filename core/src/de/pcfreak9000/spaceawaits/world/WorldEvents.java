@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.ashley.core.Engine;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class WorldEvents {
     
@@ -27,4 +28,19 @@ public class WorldEvents {
         
     }
     
+    public static class ChunkLoadedEvent extends Event {
+        public final Chunk chunk;
+        
+        public ChunkLoadedEvent(Chunk c) {
+            this.chunk = c;
+        }
+    }
+    
+    public static class ChunkUnloadedEvent extends Event {
+        public final Chunk chunk;
+        
+        public ChunkUnloadedEvent(Chunk c) {
+            this.chunk = c;
+        }
+    }
 }
