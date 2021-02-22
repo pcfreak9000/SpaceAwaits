@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Engine;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystemJBump;
+import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkReloadingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.RenderChunkSystem;
@@ -19,6 +19,7 @@ public class WorldManager {
     private final WorldRenderInfo worldRenderInfo;
     private final WorldAccessor worldAccessor;
     public LightCalculator lightCalc;//TODO lightcalc visibility
+    private PhysicsSystemBox2D phsys;
     
     public WorldManager() {
         this.ecsManager = new Engine();
@@ -31,6 +32,7 @@ public class WorldManager {
     public void updateAndRender(float delta) {
         worldRenderInfo.applyViewport();
         ecsManager.update(delta);
+        phsys.renderDebug();
     }
     
     //TODO Make this configurable from the WorldGenerator and also have global systems
@@ -38,7 +40,8 @@ public class WorldManager {
         this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickChunkSystem());
         //this.ecsManager.addSystem(new PhysicsSystem());
-        this.ecsManager.addSystem(new PhysicsSystemJBump());
+        //this.ecsManager.addSystem(new PhysicsSystemJBump());
+        this.ecsManager.addSystem(phsys = new PhysicsSystemBox2D());
         //this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));

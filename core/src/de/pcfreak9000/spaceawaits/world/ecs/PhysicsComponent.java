@@ -4,13 +4,15 @@ import java.util.BitSet;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.math.Vector2;
-import com.dongbat.jbump.Item;
+import com.badlogic.gdx.physics.box2d.Body;
 
 public class PhysicsComponent implements Component {
     
-    public Item<Object> item;
+    public Body body;
     
+    @Deprecated
     public final Vector2 velocity = new Vector2();
+    
     public final Vector2 acceleration = new Vector2();
     
     public boolean onGround = false;
