@@ -2,6 +2,8 @@ package de.pcfreak9000.spaceawaits.world.tile;
 
 import java.util.Objects;
 
+import com.badlogic.gdx.physics.box2d.Fixture;
+
 public class TileState {
     
     private final int globalTileX;
@@ -9,6 +11,7 @@ public class TileState {
     
     private final Tile type;
     
+    private Fixture fixture;
     private TileEntity tileEntity = null;
     
     public TileState(Tile type, int gtx, int gty) {
@@ -35,6 +38,14 @@ public class TileState {
     
     public TileEntity getTileEntity() {
         return tileEntity;
+    }
+    
+    Fixture getFixture() {
+        return fixture;
+    }
+    
+    public void setFixture(Fixture fix) {
+        this.fixture = fix;
     }
     
     @Override

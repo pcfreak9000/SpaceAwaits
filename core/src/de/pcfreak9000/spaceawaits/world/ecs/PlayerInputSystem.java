@@ -62,7 +62,7 @@ public class PlayerInputSystem extends IteratingSystem {
         if (right) {
             vx += play.maxXv * 5;
         }
-        this.physicsMapper.get(entity).acceleration.set(vx * 3, vy * 3 - 98.1f);
+        this.physicsMapper.get(entity).acceleration.set(vx * 3, vy * 3);
         if (explode) {
             //TODO Well that is ugly...
             Vector2 mouse = worldManager.getRenderInfo().getViewport()

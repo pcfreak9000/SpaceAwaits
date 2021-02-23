@@ -9,9 +9,15 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 
@@ -37,6 +43,8 @@ public class Chunk {
     private final List<Tickable> tickables;
     private final List<Entity> entities;
     
+    private final List<ChunkChangeListener> listeners;
+    
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
@@ -57,6 +65,17 @@ public class Chunk {
         this.regionEntity.add(new ChunkComponent(this));
         this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
         this.worldAccessor = worldAccessor;
+        this.listeners = new ArrayList<>();
+    }
+    
+    private void notifyListeners(TileState newstate, TileState oldstate) {
+        for (ChunkChangeListener l : listeners) {
+            l.onTileStateChange(this, newstate, oldstate);
+        }
+    }
+    
+    public void addListener(ChunkChangeListener listener) {
+        listeners.add(listener);
     }
     
     public int getGlobalChunkX() {
@@ -101,16 +120,9 @@ public class Chunk {
         return this.tiles.get(tx, ty).getTile();
     }
     
-    //    private TileState getTileStateGlobal(int tx, int ty) {
-    //        int rx = Chunk.toGlobalChunk(tx);
-    //        int ry = Chunk.toGlobalChunk(ty);
-    //        Chunk r = tileWorld.requestRegion(rx, ry);
-    //        return r.getTileState(tx, ty);
-    //    }
-    //    
-    //    private TileState getTileState(int x, int y) {
-    //        return this.tiles.get(x, y);
-    //    }
+    public TileState getTileState(int tx, int ty) {//TODO not public...
+        return this.tiles.get(tx, ty);
+    }
     
     //Maybe save the set for later somehow? 
     
@@ -139,6 +151,8 @@ public class Chunk {
                 tickables.add((Tickable) te);
             }
         }
+        adjustFixtures(newTileState, old);
+        notifyListeners(newTileState, old);
         //TODO neighbour change notifications
         //        if (tileWorld.inBounds(tx + 1, ty)) {
         //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
@@ -153,6 +167,65 @@ public class Chunk {
         //            getTileStateGlobal(tx, ty - 1).getTile().neighbourChanged(tileWorld, newTileState);
         //        }
         return old.getTile();
+    }
+    
+    private Body body;
+    
+    private void adjustFixtures(TileState newstate, TileState oldstate) {
+        if (body == null) {
+            if (newstate.getFixture() != null) {
+                body = newstate.getFixture().getBody();
+            } else if (oldstate.getFixture() != null) {
+                body = oldstate.getFixture().getBody();
+            }
+        }
+        if (oldstate.getTile().isSolid() != newstate.getTile().isSolid()) {
+            if (!newstate.getTile().isSolid() && body != null) { // oldstate was solid
+                if (oldstate.getFixture() != null) {
+                    body.destroyFixture(oldstate.getFixture());
+                    oldstate.setFixture(null);
+                }
+                int x = newstate.getGlobalTileX();
+                int y = newstate.getGlobalTileY();
+                int topy = y + 1;
+                int boty = y - 1;
+                int rightx = x + 1;
+                int leftx = x - 1;
+                TileState top = inBounds(x, topy) ? getTileState(x, topy) : null;
+                TileState bot = inBounds(x, boty) ? getTileState(x, boty) : null;
+                TileState right = inBounds(rightx, y) ? getTileState(rightx, y) : null;
+                TileState left = inBounds(leftx, y) ? getTileState(leftx, y) : null;
+                if (top != null && top.getTile().isSolid() && top.getFixture() == null) {
+                    createFixture(x, topy, body);
+                }
+                if (bot != null && bot.getTile().isSolid() && bot.getFixture() == null) {
+                    createFixture(x, boty, body);
+                }
+                if (right != null && right.getTile().isSolid() && right.getFixture() == null) {
+                    createFixture(rightx, y, body);
+                }
+                if (left != null && left.getTile().isSolid() && left.getFixture() == null) {
+                    createFixture(leftx, y, body);
+                }
+            } else { //newstate is solid, oldstate wasn't
+                //TODO
+            }
+        }
+    }
+    
+    private void createFixture(int gtx, int gty, Body chunkbody) {
+        PolygonShape shape = new PolygonShape();
+        FixtureDef fd = new FixtureDef();
+        fd.shape = shape;
+        shape.setAsBox(PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
+                PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
+                new Vector2(PhysicsSystemBox2D.METER_CONV.in((gtx - this.tx) * Tile.TILE_SIZE),
+                        PhysicsSystemBox2D.METER_CONV.in((gty - this.ty) * Tile.TILE_SIZE)),
+                0);
+        Fixture fix = chunkbody.createFixture(fd);
+        getTileState(gtx, gty).setFixture(fix);
+        shape.dispose();
+        //fix.setUserData(t); //TODO
     }
     
     public Tile getBackground(int tx, int ty) {
@@ -185,7 +258,7 @@ public class Chunk {
         this.entities.remove(e);
     }
     
-    public List<Entity> getEntities(){
+    public List<Entity> getEntities() {
         return this.entities;
     }
     
@@ -193,4 +266,5 @@ public class Chunk {
     public String toString() {
         return String.format("Region[x=%d, y=%d]", this.tx, this.ty);
     }
+    
 }
