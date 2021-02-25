@@ -29,8 +29,10 @@ import de.pcfreak9000.spaceawaits.world.tile.TileState;
 public class WorldAccessor {
     private static final int LOAD_OFFSET = 2;
     
-    private static String coordsToString(int gcx, int gcy) {
-        return gcx + ":" + gcy;
+    private static ChunkCoordinateKey coordsToString(int gcx, int gcy) {
+        ChunkCoordinateKey k = new ChunkCoordinateKey();
+        k.set(gcx, gcy);
+        return k;
     }
     
     //Entities in the Chunks?
@@ -40,12 +42,12 @@ public class WorldAccessor {
     //NICE! Forgot that there can be multiple worlds... FUCK -> multiple "Loading" i guess for the server
     
     //Map: loaded chunks
-    private Map<String, Chunk> chunksLoaded;
+    private Map<ChunkCoordinateKey, Chunk> chunksLoaded;
     //Map: updated chunks
-    private Map<String, Chunk> chunksUpdated;
+    private Map<ChunkCoordinateKey, Chunk> chunksUpdated;
     //(Map: rendering chunks?) -> ChunkRenderComponent involvement?
     
-    private Set<String> requested;
+    private Set<ChunkCoordinateKey> requested;
     private Queue<Chunk> fulfilledRequested;
     
     //WorldProvider or something, abstract, handles loading chunks from the network, from files or generating them (mind the often asynchronous nature though)
@@ -107,7 +109,7 @@ public class WorldAccessor {
     }
     
     public Chunk getChunk(int gcx, int gcy) {
-        String sc = coordsToString(gcx, gcy);
+        ChunkCoordinateKey sc = coordsToString(gcx, gcy);
         Chunk c = null;
         c = chunksLoaded.get(sc);
         if (c == null) {
@@ -118,8 +120,8 @@ public class WorldAccessor {
     
     //This hopefully works properly... it seems like it doesn't
     public void adjustChunk(Entity e, MovingWorldEntityComponent c, TransformComponent t) {
-        int supposedChunkX = Chunk.toGlobalChunk(Tile.toGlobalTile(t.position.x));
-        int supposedChunkY = Chunk.toGlobalChunk(Tile.toGlobalTile(t.position.y));
+        int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
+        int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
         if (c.currentChunk == null) {
             c.currentChunk = getChunk(supposedChunkX, supposedChunkY);//This shouldn't be null...
         } else if (supposedChunkX != c.currentChunk.getGlobalChunkX()
@@ -134,6 +136,7 @@ public class WorldAccessor {
                         coordsToString(c.currentChunk.getGlobalChunkX(), c.currentChunk.getGlobalChunkY()))) {
                     //Calling this method means the supplied entity is updating, but after the switch it might not be supposed to be anymore so it will be removed
                     wmgr.getECSManager().removeEntity(e);
+                    c.currentChunk = null;
                 }
             }
         }
@@ -203,8 +206,8 @@ public class WorldAccessor {
     
     private void downgrade() {
         //Find updating chunks to move down to loaded (-> loaded, unload)
-        for (Iterator<Entry<String, Chunk>> it = chunksUpdated.entrySet().iterator(); it.hasNext();) {
-            Entry<String, Chunk> e = it.next();
+        for (Iterator<Entry<ChunkCoordinateKey, Chunk>> it = chunksUpdated.entrySet().iterator(); it.hasNext();) {
+            Entry<ChunkCoordinateKey, Chunk> e = it.next();
             Chunk c = e.getValue();
             if (!inLoadingRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                 removeChunkFromSystem(c);
@@ -217,8 +220,8 @@ public class WorldAccessor {
             }
         }
         //Find loaded chunks to unload (-> unload)
-        for (Iterator<Entry<String, Chunk>> it = chunksLoaded.entrySet().iterator(); it.hasNext();) {
-            Entry<String, Chunk> e = it.next();
+        for (Iterator<Entry<ChunkCoordinateKey, Chunk>> it = chunksLoaded.entrySet().iterator(); it.hasNext();) {
+            Entry<ChunkCoordinateKey, Chunk> e = it.next();
             Chunk c = e.getValue();
             if (!inLoadingRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                 unload(c);
@@ -233,7 +236,7 @@ public class WorldAccessor {
         while (!fulfilledRequested.isEmpty()) {
             Chunk c = fulfilledRequested.poll();
             if (c != null) {//Shouldn't be false, but multithreading is weird sometimes
-                String sc = coordsToString(c.getGlobalChunkX(), c.getGlobalChunkY());
+                ChunkCoordinateKey sc = coordsToString(c.getGlobalChunkX(), c.getGlobalChunkY());
                 requested.remove(sc);
                 if (this.chunksLoaded.containsKey(sc) || this.chunksUpdated.containsKey(sc)) {
                     continue;//Requested chunk is already loaded
@@ -248,8 +251,8 @@ public class WorldAccessor {
             }
         }
         //Find loaded chunks to update (-> updated)
-        for (Iterator<Entry<String, Chunk>> it = chunksLoaded.entrySet().iterator(); it.hasNext();) {
-            Entry<String, Chunk> e = it.next();
+        for (Iterator<Entry<ChunkCoordinateKey, Chunk>> it = chunksLoaded.entrySet().iterator(); it.hasNext();) {
+            Entry<ChunkCoordinateKey, Chunk> e = it.next();
             Chunk c = e.getValue();
             if (inUpdateRange(c.getGlobalChunkX(), c.getGlobalChunkY())) {
                 addUpdated(e.getKey(), e.getValue());
@@ -262,11 +265,11 @@ public class WorldAccessor {
         this.worldProvider.unload(c);
     }
     
-    private void addLoaded(String sc, Chunk c) {
+    private void addLoaded(ChunkCoordinateKey sc, Chunk c) {
         chunksLoaded.put(sc, c);
     }
     
-    private void addUpdated(String sc, Chunk c) {
+    private void addUpdated(ChunkCoordinateKey sc, Chunk c) {
         chunksUpdated.put(sc, c);
         addChunkToSystem(c);
         SpaceAwaits.BUS.post(new WorldEvents.ChunkLoadedEvent(c));//Hmmmmm
@@ -289,7 +292,7 @@ public class WorldAccessor {
     }
     
     private void requestChunk(int gcx, int gcy) {
-        String sc = coordsToString(gcx, gcy);
+        ChunkCoordinateKey sc = coordsToString(gcx, gcy);
         if (!requested.contains(sc) && !this.chunksLoaded.containsKey(sc) && !this.chunksUpdated.containsKey(sc)) {
             requested.add(sc);
             this.worldProvider.requestChunk(gcx, gcy, (c) -> {

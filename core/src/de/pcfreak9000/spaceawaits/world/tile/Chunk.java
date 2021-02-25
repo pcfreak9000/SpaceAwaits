@@ -21,7 +21,12 @@ public class Chunk {
     public static final int CHUNK_TILE_SIZE = 64;
     
     public static int toGlobalChunk(int globalTile) {
-        return (int) Math.floor(globalTile / (double) CHUNK_TILE_SIZE);//TODO use other floor
+        return globalTile / CHUNK_TILE_SIZE;
+        //return (int) Math.floor(globalTile / (double) CHUNK_TILE_SIZE);
+    }
+    
+    public static int toGlobalChunkf(float x) {
+        return (int) Math.floor(x / (double) (CHUNK_TILE_SIZE * Tile.TILE_SIZE));//TODO use other floor
     }
     
     private final int rx;
