@@ -44,7 +44,7 @@ public class TileState {
         return fixture;
     }
     
-    public void setFixture(Fixture fix) {
+    void setFixture(Fixture fix) {
         this.fixture = fix;
     }
     

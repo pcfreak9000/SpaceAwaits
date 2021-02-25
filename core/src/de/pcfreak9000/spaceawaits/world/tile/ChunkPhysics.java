@@ -32,7 +32,6 @@ public class ChunkPhysics implements BodyFactory {
         bd.type = BodyType.StaticBody;
         Body b = world.createBody(bd);
         this.body = b;
-        //TMP
         for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
@@ -46,16 +45,25 @@ public class ChunkPhysics implements BodyFactory {
                         || (right == null || !right.isSolid()) || (left == null || !left.isSolid())) {
                     if (t.isSolid()) {
                         createFixture(x, y);
-                        //                        shape.setAsBox(meterconv.in(Tile.TILE_SIZE / 2), meterconv.in(Tile.TILE_SIZE / 2),
-                        //                                new Vector2(meterconv.in(i * Tile.TILE_SIZE), meterconv.in(j * Tile.TILE_SIZE)), 0);
-                        //                        Fixture fix = b.createFixture(fd);
-                        //                        fix.setUserData(t);
-                        //                        chunk.getTileState(x, y).setFixture(fix);
                     }
                 }
             }
         }
         return b;
+    }
+    
+    @Override
+    public void destroyBody(Body body, World world, UnitConversion meterconv) {
+        for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
+            for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
+                int x = chunk.getGlobalTileX() + i;
+                int y = chunk.getGlobalTileY() + j;
+                TileState state = chunk.getTileState(x, y);
+                state.setFixture(null);
+            }
+        }
+        this.body = null;
+        BodyFactory.super.destroyBody(body, world, meterconv);
     }
     
     private void createFixture(int gtx, int gty) {

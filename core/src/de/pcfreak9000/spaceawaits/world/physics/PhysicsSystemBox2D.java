@@ -97,7 +97,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     @Override
     public void entityRemoved(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
-        bworld.destroyBody(pc.body.getBody());
+        pc.factory.destroyBody(pc.body.getBody(), bworld, METER_CONV);
         pc.body = null;
     }
 }
