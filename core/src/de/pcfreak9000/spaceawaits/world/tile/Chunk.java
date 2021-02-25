@@ -9,17 +9,12 @@ import java.util.Queue;
 import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
-import de.pcfreak9000.spaceawaits.world.ecs.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
 public class Chunk {
     
@@ -55,6 +50,7 @@ public class Chunk {
         this.ry = ry;
         this.tx = rx * CHUNK_TILE_SIZE;
         this.ty = ry * CHUNK_TILE_SIZE;
+        this.listeners = new ArrayList<>();
         this.tiles = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
         this.tilesBackground = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
@@ -64,8 +60,10 @@ public class Chunk {
         this.regionEntity = new Entity();
         this.regionEntity.add(new ChunkComponent(this));
         this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
+        PhysicsComponent pc = new PhysicsComponent();
+        pc.factory = new ChunkPhysics(this);
+        this.regionEntity.add(pc);
         this.worldAccessor = worldAccessor;
-        this.listeners = new ArrayList<>();
     }
     
     private void notifyListeners(TileState newstate, TileState oldstate) {
@@ -151,7 +149,6 @@ public class Chunk {
                 tickables.add((Tickable) te);
             }
         }
-        adjustFixtures(newTileState, old);
         notifyListeners(newTileState, old);
         //TODO neighbour change notifications
         //        if (tileWorld.inBounds(tx + 1, ty)) {
@@ -167,65 +164,6 @@ public class Chunk {
         //            getTileStateGlobal(tx, ty - 1).getTile().neighbourChanged(tileWorld, newTileState);
         //        }
         return old.getTile();
-    }
-    
-    private Body body;
-    
-    private void adjustFixtures(TileState newstate, TileState oldstate) {
-        if (body == null) {
-            if (newstate.getFixture() != null) {
-                body = newstate.getFixture().getBody();
-            } else if (oldstate.getFixture() != null) {
-                body = oldstate.getFixture().getBody();
-            }
-        }
-        if (oldstate.getTile().isSolid() != newstate.getTile().isSolid()) {
-            if (!newstate.getTile().isSolid() && body != null) { // oldstate was solid
-                if (oldstate.getFixture() != null) {
-                    body.destroyFixture(oldstate.getFixture());
-                    oldstate.setFixture(null);
-                }
-                int x = newstate.getGlobalTileX();
-                int y = newstate.getGlobalTileY();
-                int topy = y + 1;
-                int boty = y - 1;
-                int rightx = x + 1;
-                int leftx = x - 1;
-                TileState top = inBounds(x, topy) ? getTileState(x, topy) : null;
-                TileState bot = inBounds(x, boty) ? getTileState(x, boty) : null;
-                TileState right = inBounds(rightx, y) ? getTileState(rightx, y) : null;
-                TileState left = inBounds(leftx, y) ? getTileState(leftx, y) : null;
-                if (top != null && top.getTile().isSolid() && top.getFixture() == null) {
-                    createFixture(x, topy, body);
-                }
-                if (bot != null && bot.getTile().isSolid() && bot.getFixture() == null) {
-                    createFixture(x, boty, body);
-                }
-                if (right != null && right.getTile().isSolid() && right.getFixture() == null) {
-                    createFixture(rightx, y, body);
-                }
-                if (left != null && left.getTile().isSolid() && left.getFixture() == null) {
-                    createFixture(leftx, y, body);
-                }
-            } else { //newstate is solid, oldstate wasn't
-                //TODO
-            }
-        }
-    }
-    
-    private void createFixture(int gtx, int gty, Body chunkbody) {
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fd = new FixtureDef();
-        fd.shape = shape;
-        shape.setAsBox(PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
-                PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
-                new Vector2(PhysicsSystemBox2D.METER_CONV.in((gtx - this.tx) * Tile.TILE_SIZE),
-                        PhysicsSystemBox2D.METER_CONV.in((gty - this.ty) * Tile.TILE_SIZE)),
-                0);
-        Fixture fix = chunkbody.createFixture(fd);
-        getTileState(gtx, gty).setFixture(fix);
-        shape.dispose();
-        //fix.setUserData(t); //TODO
     }
     
     public Tile getBackground(int tx, int ty) {

@@ -4,11 +4,12 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
-import de.pcfreak9000.spaceawaits.world.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.TextureSpriteAction;
+import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class PlayerEntityFactory implements WorldEntityFactory {
@@ -30,8 +31,8 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         tc.position.set(500, 2900);
         e.add(tc);
         e.add(pc);
-        pc.w = sprite.getWidth() * 0.95f;
-        pc.h = sprite.getHeight() * 0.95f;
+        pc.factory = new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f,
+                sprite.getWidth() / 2, sprite.getHeight()/2 * 0.9f);
         return e;
     }
 }

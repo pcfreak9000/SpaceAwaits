@@ -14,6 +14,7 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class PlayerInputSystem extends IteratingSystem {
@@ -62,7 +63,7 @@ public class PlayerInputSystem extends IteratingSystem {
         if (right) {
             vx += play.maxXv * 5;
         }
-        this.physicsMapper.get(entity).acceleration.set(vx * 3, vy * 3);
+        this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
             //TODO Well that is ugly...
             Vector2 mouse = worldManager.getRenderInfo().getViewport()
@@ -110,7 +111,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         PhysicsComponent pc = physicsMapper.get(entity);
-        pc.acceleration.sub(pc.velocity.x * 1.5f, pc.velocity.y * 1.5f);
+        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
     }
     
 }
