@@ -29,10 +29,8 @@ import de.pcfreak9000.spaceawaits.world.tile.TileState;
 public class WorldAccessor {
     private static final int LOAD_OFFSET = 2;
     
-    private static ChunkCoordinateKey coordsToString(int gcx, int gcy) {
-        ChunkCoordinateKey k = new ChunkCoordinateKey();
-        k.set(gcx, gcy);
-        return k;
+    private static ChunkCoordinateKey coordsToKey(int gcx, int gcy) {
+        return new ChunkCoordinateKey(gcx, gcy);
     }
     
     //Entities in the Chunks?
@@ -109,7 +107,7 @@ public class WorldAccessor {
     }
     
     public Chunk getChunk(int gcx, int gcy) {
-        ChunkCoordinateKey sc = coordsToString(gcx, gcy);
+        ChunkCoordinateKey sc = coordsToKey(gcx, gcy);
         Chunk c = null;
         c = chunksLoaded.get(sc);
         if (c == null) {
@@ -133,7 +131,7 @@ public class WorldAccessor {
                 c.currentChunk = newchunk;
                 c.currentChunk.addEntity(e);
                 if (!chunksUpdated.containsKey(
-                        coordsToString(c.currentChunk.getGlobalChunkX(), c.currentChunk.getGlobalChunkY()))) {
+                        coordsToKey(c.currentChunk.getGlobalChunkX(), c.currentChunk.getGlobalChunkY()))) {
                     //Calling this method means the supplied entity is updating, but after the switch it might not be supposed to be anymore so it will be removed
                     wmgr.getECSManager().removeEntity(e);
                     c.currentChunk = null;
@@ -236,7 +234,7 @@ public class WorldAccessor {
         while (!fulfilledRequested.isEmpty()) {
             Chunk c = fulfilledRequested.poll();
             if (c != null) {//Shouldn't be false, but multithreading is weird sometimes
-                ChunkCoordinateKey sc = coordsToString(c.getGlobalChunkX(), c.getGlobalChunkY());
+                ChunkCoordinateKey sc = coordsToKey(c.getGlobalChunkX(), c.getGlobalChunkY());
                 requested.remove(sc);
                 if (this.chunksLoaded.containsKey(sc) || this.chunksUpdated.containsKey(sc)) {
                     continue;//Requested chunk is already loaded
@@ -292,7 +290,7 @@ public class WorldAccessor {
     }
     
     private void requestChunk(int gcx, int gcy) {
-        ChunkCoordinateKey sc = coordsToString(gcx, gcy);
+        ChunkCoordinateKey sc = coordsToKey(gcx, gcy);
         if (!requested.contains(sc) && !this.chunksLoaded.containsKey(sc) && !this.chunksUpdated.containsKey(sc)) {
             requested.add(sc);
             this.worldProvider.requestChunk(gcx, gcy, (c) -> {

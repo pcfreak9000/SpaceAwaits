@@ -2,19 +2,17 @@ package de.pcfreak9000.spaceawaits.world;
 
 public class ChunkCoordinateKey {
     
-    private int x, y;
-    private int hash;
+    private final int x, y;
+    private final int hash;
     
-    public void set(int x, int y) {
-        if (x != this.x || y != this.y) {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + x;
-            result = prime * result + y;
-            this.hash = result;
-        }
+    public ChunkCoordinateKey(int x, int y) {
         this.x = x;
         this.y = y;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + x;
+        result = prime * result + y;
+        this.hash = result;
     }
     
     @Override
