@@ -51,8 +51,8 @@ public class TestChunkGenerator implements ChunkGenerator {
         Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
         TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
         tc.position.set(chunk.getGlobalTileX() * Tile.TILE_SIZE,
-                worldAccess.getMeta().getHeight() * Tile.TILE_SIZE - 1);
-        //chunk.addEntity(entity);
+                chunk.getGlobalTileY() * Tile.TILE_SIZE - 1);
+        chunk.addEntity(entity);
         
     }
 }

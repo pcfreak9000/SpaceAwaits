@@ -9,7 +9,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkReloadingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.RenderChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
@@ -41,7 +40,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new TickChunkSystem());
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D();
         this.ecsManager.addSystem(phsys);
-        this.ecsManager.addSystem(new MovingWorldEntitySystem());
+        //FIXME this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));
         this.ecsManager.addSystem(new ParallaxSystem());

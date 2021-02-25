@@ -116,7 +116,7 @@ public class WorldAccessor {
         return c;
     }
     
-    //This hopefully works properly...
+    //This hopefully works properly... it seems like it doesn't
     public void adjustChunk(Entity e, MovingWorldEntityComponent c, TransformComponent t) {
         int supposedChunkX = Chunk.toGlobalChunk(Tile.toGlobalTile(t.position.x));
         int supposedChunkY = Chunk.toGlobalChunk(Tile.toGlobalTile(t.position.y));
