@@ -139,6 +139,14 @@ public class ChunkPhysics implements BodyFactory {
                     checkDestroy(right, rightx, y);
                     checkDestroy(left, leftx, y);
                 }
+            } else {
+                //newstate and oldstate are both solid or both not solid. A possibly existing fixture needs to be transferred to it's new owner.
+                //The restitution might have to change
+                if (oldstate.getTile().isSolid() && oldstate.getFixture() != null) {
+                    newstate.setFixture(oldstate.getFixture());
+                    oldstate.setFixture(null);//Doesn't seem necessary but whatever
+                    newstate.getFixture().setRestitution(newstate.getTile().getBouncyness());
+                }
             }
         }
         
