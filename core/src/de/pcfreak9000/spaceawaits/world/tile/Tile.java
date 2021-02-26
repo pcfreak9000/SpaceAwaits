@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.world.tile;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.TestWorldProvider;
@@ -17,7 +18,7 @@ public class Tile {
     public static final float TILE_SIZE = 16 * 1.5f;
     
     public static int toGlobalTile(float x) {
-        return (int) Math.floor(x / (double) TILE_SIZE);//TODO Use other floor
+        return (int) Mathf.floor(x / TILE_SIZE);//well i hope this floor function works properly
     }
     
     static {
@@ -39,7 +40,7 @@ public class Tile {
     private boolean opaque = true;
     private boolean solid = true;
     
-    private final Color color = new Color(1,1,1,1);
+    private final Color color = new Color(1, 1, 1, 1);
     
     private Color lightColor;
     private float lighttransmission = 0.8f;
@@ -140,7 +141,7 @@ public class Tile {
     public String toString() {
         return String.format("Tile[texture=%s]", this.getTextureName());
     }
-
+    
     public TextureRegion getTextureRegion() {
         return this.texture.getRegion();
     }

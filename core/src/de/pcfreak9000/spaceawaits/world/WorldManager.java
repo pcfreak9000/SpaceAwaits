@@ -48,6 +48,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new RenderChunkSystem());
         this.ecsManager.addSystem(new RenderEntitySystem());
         this.ecsManager.addSystem(lightCalc = new LightCalculator());
+        //lightCalc.setProcessing(false);
         this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
     }
     

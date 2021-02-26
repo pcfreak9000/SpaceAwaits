@@ -13,8 +13,8 @@ import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class MovingWorldEntitySystem extends IteratingSystem {
     
-    private final ComponentMapper<MovingWorldEntityComponent> mwecMapper = ComponentMapper
-            .getFor(MovingWorldEntityComponent.class);
+    private final ComponentMapper<ChunkMarkerComponent> mwecMapper = ComponentMapper
+            .getFor(ChunkMarkerComponent.class);
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
@@ -22,7 +22,7 @@ public class MovingWorldEntitySystem extends IteratingSystem {
     private WorldAccessor world;
     
     public MovingWorldEntitySystem() {
-        super(Family.all(MovingWorldEntityComponent.class, TransformComponent.class).get());
+        super(Family.all(ChunkMarkerComponent.class, TransformComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
     
@@ -34,7 +34,7 @@ public class MovingWorldEntitySystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         TransformComponent tc = transformMapper.get(entity);
-        MovingWorldEntityComponent mwec = mwecMapper.get(entity);
+        ChunkMarkerComponent mwec = mwecMapper.get(entity);
         this.world.adjustChunk(entity, mwec, tc);
     }
 }

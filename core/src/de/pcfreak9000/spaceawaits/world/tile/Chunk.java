@@ -3,30 +3,36 @@ package de.pcfreak9000.spaceawaits.world.tile;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Predicate;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
 public class Chunk {
     
+    private static final ComponentMapper<ChunkMarkerComponent> ChunkMarkerCompMapper = ComponentMapper
+            .getFor(ChunkMarkerComponent.class); //Having ECS code in this class isn't entirely fancy either
+    
     public static final int CHUNK_TILE_SIZE = 64;
     
     public static int toGlobalChunk(int globalTile) {
-        return globalTile / CHUNK_TILE_SIZE;
-        //return (int) Math.floor(globalTile / (double) CHUNK_TILE_SIZE);
+        return globalTile / CHUNK_TILE_SIZE; //<- This brings problems with negative numbers, but we dont use negative tile coordinates anyways
     }
     
     public static int toGlobalChunkf(float x) {
-        return (int) Math.floor(x / (double) (CHUNK_TILE_SIZE * Tile.TILE_SIZE));//TODO use other floor
+        return (int) Mathf.floor(x / (CHUNK_TILE_SIZE * Tile.TILE_SIZE)); //well i hope this floor function works properly
     }
     
     private final int rx;
@@ -42,6 +48,7 @@ public class Chunk {
     private final List<TileEntity> tileEntities;
     private final List<Tickable> tickables;
     private final List<Entity> entities;
+    private final List<Entity> immutableEntities;
     
     private final List<ChunkChangeListener> listeners;
     
@@ -61,6 +68,7 @@ public class Chunk {
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
         this.entities = new ArrayList<>();
+        this.immutableEntities = Collections.unmodifiableList(this.entities);
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new Entity();
         this.regionEntity.add(new ChunkComponent(this));
@@ -194,20 +202,34 @@ public class Chunk {
     }
     
     public void addEntity(Entity e) {
+        if (ChunkMarkerCompMapper.has(e)) {
+            ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
+            if (mw.currentChunk != null) {
+                throw new IllegalStateException();
+            }
+            mw.currentChunk = this;
+        }
         this.entities.add(e);
     }
     
     public void removeEntity(Entity e) {
+        if (ChunkMarkerCompMapper.has(e)) {
+            ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
+            if (mw.currentChunk == null) {
+                throw new IllegalStateException();
+            }
+            mw.currentChunk = null;
+        }
         this.entities.remove(e);
     }
     
     public List<Entity> getEntities() {
-        return this.entities;
+        return this.immutableEntities;
     }
     
     @Override
     public String toString() {
-        return String.format("Region[x=%d, y=%d]", this.tx, this.ty);
+        return String.format("Chunk[x=%d, y=%d]", this.tx, this.ty);
     }
     
 }

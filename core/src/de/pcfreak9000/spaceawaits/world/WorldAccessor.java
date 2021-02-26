@@ -20,7 +20,7 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntityComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -75,6 +75,9 @@ public class WorldAccessor {
     }
     
     public Tile getTile(int tx, int ty) {
+        if (!getMeta().inBounds(tx, ty)) {
+            return null;
+        }
         int rx = Chunk.toGlobalChunk(tx);
         int ry = Chunk.toGlobalChunk(ty);
         Chunk r = getChunk(rx, ry);
@@ -82,6 +85,9 @@ public class WorldAccessor {
     }
     
     public Tile getTileBackground(int tx, int ty) {
+        if (!getMeta().inBounds(tx, ty)) {
+            return null;
+        }
         int rx = Chunk.toGlobalChunk(tx);
         int ry = Chunk.toGlobalChunk(ty);
         Chunk r = getChunk(rx, ry);
@@ -109,32 +115,31 @@ public class WorldAccessor {
     public Chunk getChunk(int gcx, int gcy) {
         ChunkCoordinateKey sc = coordsToKey(gcx, gcy);
         Chunk c = null;
-        c = chunksLoaded.get(sc);
+        c = chunksUpdated.get(sc);
         if (c == null) {
-            c = chunksUpdated.get(sc);
+            c = chunksLoaded.get(sc);
         }
         return c;
     }
     
     //This hopefully works properly... it seems like it doesn't
-    public void adjustChunk(Entity e, MovingWorldEntityComponent c, TransformComponent t) {
+    public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
         int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
         int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
         if (c.currentChunk == null) {
-            c.currentChunk = getChunk(supposedChunkX, supposedChunkY);//This shouldn't be null...
+            throw new NullPointerException();
         } else if (supposedChunkX != c.currentChunk.getGlobalChunkX()
                 || supposedChunkY != c.currentChunk.getGlobalChunkY()) {
             Chunk newchunk = getChunk(supposedChunkX, supposedChunkY);
             //If for some reason the new chunk doesn't exist, keep the old link
             if (newchunk != null) {
                 c.currentChunk.removeEntity(e);
-                c.currentChunk = newchunk;
-                c.currentChunk.addEntity(e);
-                if (!chunksUpdated.containsKey(
-                        coordsToKey(c.currentChunk.getGlobalChunkX(), c.currentChunk.getGlobalChunkY()))) {
+                newchunk.addEntity(e);
+                ChunkCoordinateKey key = coordsToKey(c.currentChunk.getGlobalChunkX(),
+                        c.currentChunk.getGlobalChunkY());
+                if (!chunksUpdated.containsKey(key)) {
                     //Calling this method means the supplied entity is updating, but after the switch it might not be supposed to be anymore so it will be removed
                     wmgr.getECSManager().removeEntity(e);
-                    c.currentChunk = null;
                 }
             }
         }
@@ -270,7 +275,6 @@ public class WorldAccessor {
     private void addUpdated(ChunkCoordinateKey sc, Chunk c) {
         chunksUpdated.put(sc, c);
         addChunkToSystem(c);
-        SpaceAwaits.BUS.post(new WorldEvents.ChunkLoadedEvent(c));//Hmmmmm
     }
     
     private void addChunkToSystem(Chunk c) {
