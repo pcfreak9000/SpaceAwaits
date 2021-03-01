@@ -18,7 +18,7 @@ public class Tile {
     public static final float TILE_SIZE = 16;
     
     public static int toGlobalTile(float x) {
-        return (int) Mathf.floor(x / TILE_SIZE);//well i hope this floor function works properly
+        return Mathf.floori(x / TILE_SIZE);//well i hope this floor function works properly
     }
     
     static {

@@ -32,7 +32,7 @@ public class Chunk {
     }
     
     public static int toGlobalChunkf(float x) {
-        return (int) Mathf.floor(x / (CHUNK_TILE_SIZE * Tile.TILE_SIZE)); //well i hope this floor function works properly
+        return Mathf.floori(x / (CHUNK_TILE_SIZE * Tile.TILE_SIZE)); //well i hope this floor function works properly
     }
     
     private final int rx;
