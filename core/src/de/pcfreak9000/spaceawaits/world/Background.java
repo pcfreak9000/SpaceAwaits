@@ -2,34 +2,32 @@ package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.entity.TextureSpriteAction;
 
-public class Background {
-        
-    private final String texture;
+public class Background implements WorldEntityFactory {
     
-    private final Entity entity;
-    private final Sprite sprite;
+    private final TextureProvider texture;
     
-    public Background(String texture, float width, float height) {
+    private final float width;
+    private final float height;
+    
+    public Background(TextureProvider texture, float width, float height) {
         this.texture = texture;
-        this.entity = new Entity();
-        this.sprite = new Sprite();        
-        this.entity.add(new ParallaxComponent(sprite));
-        this.sprite.setSize(width, height);
+        this.width = width;
+        this.height = height;
     }
     
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public String getTextureName() {
-        return texture;
-    }
-
-    public void setTextureRegion(TextureRegion textureRegion) {
-        this.sprite.setRegion(textureRegion);
+    @Override
+    public Entity createEntity() {
+        Entity e = new Entity();
+        ParallaxComponent pc = new ParallaxComponent();
+        pc.sprite = new Sprite();
+        pc.sprite.setSize(width, height);
+        pc.action = new TextureSpriteAction(texture);
+        e.add(pc);
+        return e;
     }
 }

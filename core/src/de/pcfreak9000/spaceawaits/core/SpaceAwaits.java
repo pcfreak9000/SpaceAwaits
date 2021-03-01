@@ -80,11 +80,9 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
         BUS.post(new CoreEvents.QueueResourcesEvent(assetManager));
-        GameRegistry.BACKGROUND_REGISTRY.reloadResources(assetManager);//Ugh
         this.assetManager.finishLoading();
         LOGGER.info("Updating resources...");
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
-        GameRegistry.BACKGROUND_REGISTRY.setupBackgroundss(assetManager);//Ugh
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
         //Testing stuff below

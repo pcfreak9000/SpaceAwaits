@@ -3,12 +3,11 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import de.pcfreak9000.spaceawaits.world.ecs.entity.SpriteRenderPreAction;
+
 public class ParallaxComponent implements Component {
     
     public Sprite sprite;
-    
-    public ParallaxComponent(Sprite sprite) {
-        this.sprite = sprite;
-    }
+    public SpriteRenderPreAction action;
     
 }

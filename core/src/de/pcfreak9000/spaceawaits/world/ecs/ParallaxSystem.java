@@ -48,6 +48,7 @@ public class ParallaxSystem extends IteratingSystem {
         float possibleH = pc.sprite.getHeight() - this.render.getCamera().viewportHeight;
         pc.sprite.setPosition(positionState.x - this.render.getCamera().viewportWidth / 2 - xratio * possibleW,
                 positionState.y - this.render.getCamera().viewportHeight / 2 - yratio * possibleH);
+        pc.action.act(pc.sprite);
         pc.sprite.draw(this.render.getSpriteBatch());
     }
     

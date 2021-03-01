@@ -22,8 +22,6 @@ public class GameRegistry<T> {
     
     public static final GeneratorRegistry GENERATOR_REGISTRY = new GeneratorRegistry();
     
-    public static final BackgroundRegistry BACKGROUND_REGISTRY = new BackgroundRegistry();
-    
     public static final ItemRegistry ITEM_REGISTRY = new ItemRegistry();
     
     protected final Logger LOGGER = Logger.getLogger(getClass());
