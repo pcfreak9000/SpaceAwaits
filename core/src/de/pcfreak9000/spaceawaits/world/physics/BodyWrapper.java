@@ -5,12 +5,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public class BodyWrapper {
     
-    private final Body body;
-    private final UnitConversion meterconv;
+    //If this class is reused for space as well this isn't suitable anymore
+    private static final UnitConversion METER_CONV = PhysicsSystemBox2D.METER_CONV;
     
-    public BodyWrapper(Body body, UnitConversion meterconv) {
+    private final Body body;
+    
+    public BodyWrapper(Body body) {
         this.body = body;
-        this.meterconv = meterconv;
     }
     
     public Body getBody() {
@@ -18,11 +19,11 @@ public class BodyWrapper {
     }
     
     public UnitConversion getMeterConv() {
-        return meterconv;
+        return METER_CONV;
     }
     
     public Vector2 getLinearVelocityW() {
-        return meterconv.out(body.getLinearVelocity());
+        return METER_CONV.out(body.getLinearVelocity());
     }
     
     public Vector2 getLinearVelocityPh() {
@@ -30,8 +31,8 @@ public class BodyWrapper {
     }
     
     public void applyAccelerationW(float ax, float ay) {
-        this.body.applyForceToCenter(this.meterconv.in(ax) * this.body.getMass(),
-                this.meterconv.in(ay) * this.body.getMass(), true);
+        this.body.applyForceToCenter(METER_CONV.in(ax) * this.body.getMass(), METER_CONV.in(ay) * this.body.getMass(),
+                true);
     }
     
     public void applyAccelerationPh(float ax, float ay) {
@@ -39,11 +40,11 @@ public class BodyWrapper {
     }
     
     public void setTransformW(float x, float y, float angle) {
-        this.body.setTransform(meterconv.in(x), meterconv.in(y), angle);
+        this.body.setTransform(METER_CONV.in(x), METER_CONV.in(y), angle);
     }
     
     public Vector2 getPositionW() {
-        return meterconv.out(this.body.getPosition());
+        return METER_CONV.out(this.body.getPosition());
     }
     
 }

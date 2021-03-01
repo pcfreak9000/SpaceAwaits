@@ -6,9 +6,12 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public interface BodyFactory {
     
-    Body createBody(World world, UnitConversion meterconv);
+    //If this class is reused for space as well this isn't suitable anymore
+    public static final UnitConversion METER_CONV = PhysicsSystemBox2D.METER_CONV;
     
-    default void destroyBody(Body body, World world, UnitConversion meterconv) {
+    Body createBody(World world);
+    
+    default void destroyBody(Body body, World world) {
         world.destroyBody(body);
     }
     

@@ -21,7 +21,9 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     private static final float STEPSIZE_SECONDS = 1 / 60f;
     private static final float PIXELS_PER_METER = Tile.TILE_SIZE * 1.5f;
-    public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);//TODO not public?
+    
+    //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
+    public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);
     
     private float deltaAcc = 0;
     
@@ -91,13 +93,13 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
-        pc.body = new BodyWrapper(pc.factory.createBody(bworld, METER_CONV), METER_CONV);
+        pc.body = new BodyWrapper(pc.factory.createBody(bworld));
     }
     
     @Override
     public void entityRemoved(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
-        pc.factory.destroyBody(pc.body.getBody(), bworld, METER_CONV);
+        pc.factory.destroyBody(pc.body.getBody(), bworld);
         pc.body = null;
     }
 }

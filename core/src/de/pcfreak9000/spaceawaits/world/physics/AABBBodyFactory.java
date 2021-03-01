@@ -41,15 +41,15 @@ public class AABBBodyFactory implements BodyFactory {
     
     //What about a dynamic initial position?
     @Override
-    public Body createBody(World world, UnitConversion meterconv) {
+    public Body createBody(World world) {
         BodyDef bd = new BodyDef();
         bd.fixedRotation = true;
         bd.type = t;
-        bd.position.set(meterconv.in(initx), meterconv.in(inity));
-        bd.position.add(meterconv.in(offset.x), meterconv.in(offset.y));
+        bd.position.set(METER_CONV.in(initx), METER_CONV.in(inity));
+        bd.position.add(METER_CONV.in(offset.x), METER_CONV.in(offset.y));
         FixtureDef fd = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(meterconv.in(width / 2), meterconv.in(height / 2));
+        shape.setAsBox(METER_CONV.in(width / 2), METER_CONV.in(height / 2));
         fd.shape = shape;
         Body b = world.createBody(bd);
         b.createFixture(fd);//PhysicsComponent userdata?

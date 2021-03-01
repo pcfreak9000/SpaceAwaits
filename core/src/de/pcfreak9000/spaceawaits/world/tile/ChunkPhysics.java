@@ -10,12 +10,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
-import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
 public class ChunkPhysics implements BodyFactory {
     
     private static final Vector2 BODY_OFFSET = new Vector2(0.5f * Tile.TILE_SIZE, 0.5f * Tile.TILE_SIZE);
+    
     private final Chunk chunk;
     private Body body;
     
@@ -25,10 +24,10 @@ public class ChunkPhysics implements BodyFactory {
     }
     
     @Override
-    public Body createBody(World world, UnitConversion meterconv) {
+    public Body createBody(World world) {
         BodyDef bd = new BodyDef();
-        bd.position.set(meterconv.in(chunk.getGlobalTileX() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE),
-                meterconv.in(chunk.getGlobalTileY() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE));
+        bd.position.set(METER_CONV.in(chunk.getGlobalTileX() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE),
+                METER_CONV.in(chunk.getGlobalTileY() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE));
         bd.type = BodyType.StaticBody;
         Body b = world.createBody(bd);
         this.body = b;
@@ -53,7 +52,7 @@ public class ChunkPhysics implements BodyFactory {
     }
     
     @Override
-    public void destroyBody(Body body, World world, UnitConversion meterconv) {
+    public void destroyBody(Body body, World world) {
         for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
@@ -63,7 +62,7 @@ public class ChunkPhysics implements BodyFactory {
             }
         }
         this.body = null;
-        BodyFactory.super.destroyBody(body, world, meterconv);
+        BodyFactory.super.destroyBody(body, world);
     }
     
     private void createFixture(Tile tile, int gtx, int gty) { //This could be more memory efficient
@@ -71,11 +70,9 @@ public class ChunkPhysics implements BodyFactory {
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
         fd.restitution = tile.getBouncyness();
-        //Should we use the static access of METER_CONV here? Or pass it in/save it as member variable...
-        shape.setAsBox(PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
-                PhysicsSystemBox2D.METER_CONV.in(Tile.TILE_SIZE / 2),
-                new Vector2(PhysicsSystemBox2D.METER_CONV.in((gtx - chunk.getGlobalTileX()) * Tile.TILE_SIZE),
-                        PhysicsSystemBox2D.METER_CONV.in((gty - chunk.getGlobalTileY()) * Tile.TILE_SIZE)),
+        shape.setAsBox(METER_CONV.in(Tile.TILE_SIZE / 2), METER_CONV.in(Tile.TILE_SIZE / 2),
+                new Vector2(METER_CONV.in((gtx - chunk.getGlobalTileX()) * Tile.TILE_SIZE),
+                        METER_CONV.in((gty - chunk.getGlobalTileY()) * Tile.TILE_SIZE)),
                 0);
         Fixture fix = body.createFixture(fd);
         chunk.getTileState(gtx, gty).setFixture(fix);
