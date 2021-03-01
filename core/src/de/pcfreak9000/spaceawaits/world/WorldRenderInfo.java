@@ -17,7 +17,7 @@ public class WorldRenderInfo {
     private SpriteBatch spriteBatch;
     
     public WorldRenderInfo() {
-        this.camera = new OrthographicCamera(1920, 1920);
+        this.camera = new OrthographicCamera(1920, 1080);
         this.viewport = new FitViewport(1920, 1080, camera);
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
     }

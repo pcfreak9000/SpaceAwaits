@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.Background;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldMeta;
+import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -79,6 +80,8 @@ public class DMod {
         GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
+            private static final int WIDTH = 500;
+            private static final int HEIGHT = 250;
             
             @Override
             protected void initCaps() {
@@ -87,10 +90,12 @@ public class DMod {
             
             @Override
             public WorldGenerationBundle generateWorld(long seed) {
-                return new WorldGenerationBundle(seed, new WorldMeta(400, 400, true), new TestChunkGenerator(), (g) ->{
-                    //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
-                    g.addEntity(GameRegistry.BACKGROUND_REGISTRY.get("stars").getEntity());//Hmmmmm... still not optimal i guess?
-                });
+                return new WorldGenerationBundle(seed, new WorldMeta(WIDTH, HEIGHT, true), new TestChunkGenerator(),
+                        (g) -> {
+                            //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
+                            WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
+                            g.addEntity(GameRegistry.BACKGROUND_REGISTRY.get("stars").getEntity());//Hmmmmm... still not optimal i guess!
+                        });
             }
         });
     }

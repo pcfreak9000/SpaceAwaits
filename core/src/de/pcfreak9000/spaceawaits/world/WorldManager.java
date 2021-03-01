@@ -12,7 +12,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 
 public class WorldManager {
@@ -49,7 +48,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new RenderEntitySystem());
         this.ecsManager.addSystem(lightCalc = new LightCalculator());
         //lightCalc.setProcessing(false);
-        this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
+        //dthis.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
     }
     
     public Engine getECSManager() {

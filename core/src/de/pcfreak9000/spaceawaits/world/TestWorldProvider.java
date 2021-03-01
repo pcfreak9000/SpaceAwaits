@@ -16,7 +16,7 @@ public class TestWorldProvider implements WorldProvider {
     public TestWorldProvider(WorldGenerationBundle bundle) {
         this.gen = bundle;
         this.global = new Global();
-        this.gen.getGlobalGenerator().populateGlobal(global);//Ooof... possibly to this outside the constructor, #requestGlobal or something?
+        this.gen.getGlobalGenerator().populateGlobal(global);//Ooof... possibly to this outside the constructor, #requestGlobal or something? Also, maybe supply the WorldGenerationBundle as well?
         this.chunks = new Chunk[gen.getMeta().getWidthChunks()][gen.getMeta().getHeightChunks()];
     }
     

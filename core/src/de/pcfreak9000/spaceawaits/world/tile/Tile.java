@@ -15,7 +15,7 @@ public class Tile {
     
     public static final Tile EMPTY = new Tile();//TODO replace with usefulness
     
-    public static final float TILE_SIZE = 16 * 1.5f;
+    public static final float TILE_SIZE = 16;
     
     public static int toGlobalTile(float x) {
         return (int) Mathf.floor(x / TILE_SIZE);//well i hope this floor function works properly
@@ -45,7 +45,7 @@ public class Tile {
     private Color lightColor;
     private float lighttransmission = 0.8f;
     
-    private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0);
+    private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0); //TODO deal with this
     
     private float bouncyness = 0;
     
@@ -94,7 +94,7 @@ public class Tile {
     }
     
     public boolean hasLight() {
-        return this.lightColor != null && (this.lightColor.r >= 1 || this.lightColor.g >= 1 || this.lightColor.b >= 1);
+        return this.lightColor != null && (this.lightColor.r > 0 || this.lightColor.g > 0 || this.lightColor.b > 0);
     }
     
     public void setFilterColor(Color color) {

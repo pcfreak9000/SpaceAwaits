@@ -19,7 +19,7 @@ public class TestChunkGenerator implements ChunkGenerator {
                     continue;
                 }
                 int value = 75 + Mathf.round(6 * Mathf.abs(MathUtils.sin(0.2f * (i + chunk.getGlobalTileX())))
-                        + 20 * Mathf.abs(MathUtils.sin(0.05f * (i + chunk.getGlobalTileX()))));
+                        + 20 * Mathf.abs(MathUtils.sin(0.05f * (i + chunk.getGlobalTileX()))) + 40 * MathUtils.sin(0.02f * (i + chunk.getGlobalTileX())));
                 if (j + chunk.getGlobalTileY() > value) {
                     continue;
                 }

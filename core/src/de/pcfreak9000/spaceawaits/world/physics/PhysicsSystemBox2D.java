@@ -61,7 +61,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         }
         while (deltaAcc >= STEPSIZE_SECONDS) {
             deltaAcc -= STEPSIZE_SECONDS;
-            this.bworld.step(STEPSIZE_SECONDS, 6, 2);
+            this.bworld.step(STEPSIZE_SECONDS, 5, 2);
         }
         this.bworld.clearForces();
         for (Entity e : getEntities()) {

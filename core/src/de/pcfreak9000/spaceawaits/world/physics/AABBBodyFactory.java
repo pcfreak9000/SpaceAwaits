@@ -10,24 +10,33 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class AABBBodyFactory implements BodyFactory {
     
+    //TODO fix this class
+    
     private final Vector2 offset;
     private final float width, height;
     private final float initx, inity;
-    
+    private final BodyType t;
+
     public AABBBodyFactory(float width, float height) {
-        this(width, height, width / 2, height / 2, 0, 0);
+        this(width, height, width / 2, height / 2, 0, 0, BodyType.DynamicBody);
     }
     
     public AABBBodyFactory(float width, float height, float xoffset, float yoffset) {
-        this(width, height, xoffset, yoffset, 0, 0);
+        this(width, height, xoffset, yoffset, 0, 0, BodyType.DynamicBody);
     }
     
-    public AABBBodyFactory(float width, float height, float xoffset, float yoffset, float initx, float inity) {
+    public static AABBBodyFactory create(float width, float height, float initx, float inity) {
+        return new AABBBodyFactory(width, height, width / 2, height / 2, initx, inity, BodyType.StaticBody);
+    }
+
+    public AABBBodyFactory(float width, float height, float xoffset, float yoffset, float initx, float inity,
+            BodyType type) {
         this.offset = new Vector2(xoffset, yoffset);
         this.width = width;
         this.height = height;
         this.initx = initx;
         this.inity = inity;
+        this.t = type;
     }
     
     //What about a dynamic initial position?
@@ -35,9 +44,9 @@ public class AABBBodyFactory implements BodyFactory {
     public Body createBody(World world, UnitConversion meterconv) {
         BodyDef bd = new BodyDef();
         bd.fixedRotation = true;
-        bd.type = BodyType.DynamicBody;
+        bd.type = t;
         bd.position.set(meterconv.in(initx), meterconv.in(inity));
-        bd.position.add(meterconv.in(offset.y), meterconv.in(offset.x));
+        bd.position.add(meterconv.in(offset.x), meterconv.in(offset.y));
         FixtureDef fd = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(meterconv.in(width / 2), meterconv.in(height / 2));
