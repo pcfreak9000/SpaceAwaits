@@ -34,7 +34,9 @@ public class GameManager {
     public void createAndLoadGame(String name, long seed) {
         ISave save = this.saveManager.createSave(name);
         Game game = new Game(save, new Player());
-        game.createAndJoinWorld(pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)), "Gurke", 0);
+        game.createAndJoinWorld(
+                pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)), "Gurke",
+                0);
         this.gameCurrent = game;
     }
     
@@ -51,6 +53,14 @@ public class GameManager {
         Player player = Player.ofNBT(save.readPlayerNBT());
         Game game = new Game(save, player);
         this.gameCurrent = game;
+    }
+    
+    public void unloadGame() {
+        if (getGameCurrent() == null) {
+            throw new IllegalStateException();
+        }
+        this.gameCurrent.saveAndLeave();
+        this.gameCurrent = null;
     }
     
     public List<SaveMeta> listSaves() {

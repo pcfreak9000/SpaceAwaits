@@ -265,7 +265,7 @@ public class WorldAccessor {
     }
     
     private void unload(Chunk c) {
-        this.worldProvider.unload(c);
+        this.worldProvider.saveChunk(c);
     }
     
     private void addLoaded(ChunkCoordinateKey sc, Chunk c) {

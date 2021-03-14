@@ -34,8 +34,8 @@ public class Player {
         return this.inventory;
     }
     
-    public void fromNBT(NBTCompound nbt) {
-        
+    public NBTCompound toNBTCompound() {
+        return new NBTCompound();
     }
     
 }

@@ -44,7 +44,7 @@ public class TestWorldProvider implements WorldProvider {
     }
     
     @Override
-    public void unload(Chunk c) {
+    public void saveChunk(Chunk c) {
         //Do nothing
     }
     

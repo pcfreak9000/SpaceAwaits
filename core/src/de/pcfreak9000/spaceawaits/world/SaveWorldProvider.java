@@ -56,7 +56,7 @@ public class SaveWorldProvider implements WorldProvider {
     }
     
     @Override
-    public void unload(Chunk c) {
+    public void saveChunk(Chunk c) {
         //myWorldSave.writeChunk(0, 0, null);
     }
     

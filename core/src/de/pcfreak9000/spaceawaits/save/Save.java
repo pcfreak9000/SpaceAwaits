@@ -2,13 +2,10 @@ package de.pcfreak9000.spaceawaits.save;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
 import de.pcfreak9000.nbt.CompressedNbtReader;
-import de.pcfreak9000.nbt.CompressedNbtWriter;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.TagReader;
 
@@ -60,11 +57,22 @@ public class Save implements ISave {
     
     @Override
     public void writePlayerNBT(NBTCompound nbtc) {
+        try {
+            TagReader.toCompressedBinaryNBTFile(new File(myDir, "player.dat"), nbtc);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     @Override
     public NBTCompound readPlayerNBT() {
-        return null;
+        File metafile = new File(myDir, "player.dat");
+        try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
+            NBTCompound compound = nbtreader.toCompoundTag();
+            return compound;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     private WorldMeta getWorldMetaFor(File world) {
@@ -72,8 +80,6 @@ public class Save implements ISave {
         try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
             return WorldMeta.ofNBT(compound);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException();//Shouldn't happen
         } catch (IOException e) {
             throw new RuntimeException(e);//Meh...
         }
@@ -81,10 +87,8 @@ public class Save implements ISave {
     
     private void writeWorldMetaFor(File world, WorldMeta meta) {
         File metaFile = new File(world, "meta.dat");
-        try (CompressedNbtWriter writer = new CompressedNbtWriter(new FileOutputStream(metaFile))) {
-            TagReader.applyVisitor(writer, meta.toNBTCompound());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        try {
+            TagReader.toCompressedBinaryNBTFile(metaFile, meta.toNBTCompound());
         } catch (IOException e) {
             e.printStackTrace();
         }

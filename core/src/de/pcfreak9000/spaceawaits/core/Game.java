@@ -61,6 +61,12 @@ public class Game {
         return uuid;
     }
     
+    public void saveAndLeave() {
+        //What about global? Saving all in all is oof rn
+        worldMgr.getWorldAccess().setWorldProvider(null);
+        mySave.writePlayerNBT(this.player.toNBTCompound());
+    }
+    
     public Player getPlayer() {
         return this.player;
     }

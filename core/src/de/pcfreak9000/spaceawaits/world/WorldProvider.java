@@ -12,5 +12,5 @@ public interface WorldProvider {
     
     void requestChunk(int gcx, int gcy, Consumer<Chunk> onChunkLoaded);
     
-    void unload(Chunk c);
+    void saveChunk(Chunk c);
 }
