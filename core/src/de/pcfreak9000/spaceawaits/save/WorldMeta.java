@@ -1,6 +1,20 @@
 package de.pcfreak9000.spaceawaits.save;
 
+import de.pcfreak9000.nbt.NBTCompound;
+
 public class WorldMeta {
+    
+    public static WorldMeta ofNBT(NBTCompound comp) {
+        WorldMeta meta = new WorldMeta();
+        meta.setDisplayName(comp.getString("displayName"));
+        meta.setLastPlayed(comp.getLong("lastPlayed"));
+        meta.setWorldSeed(comp.getLong("worldSeed"));
+        meta.setWorldGeneratorUsed(comp.getString("worldGeneratorUsed"));
+        meta.setWidth(comp.getInt("width"));
+        meta.setHeight(comp.getInt("height"));
+        meta.setWrapsAround(comp.getByte("wrapsAround") != 0);
+        return meta;
+    }
     
     private String displayName;
     private long lastPlayed;
@@ -67,7 +81,19 @@ public class WorldMeta {
     public void setWrapsAround(boolean wrapsAround) {
         this.wrapsAround = wrapsAround;
     }
-
+    
+    public NBTCompound toNBTCompound() {
+        NBTCompound comp = new NBTCompound();
+        comp.putString("displayName", displayName);
+        comp.putLong("lastPlayed", lastPlayed);
+        comp.putLong("worldSeed", worldSeed);
+        comp.putString("worldGeneratorUsed", worldGeneratorUsed);
+        comp.putInt("width", width);
+        comp.putInt("height", height);
+        comp.putByte("wrapsAround", wrapsAround ? (byte) 1 : (byte) 0);
+        return comp;
+    }
+    
     @Override
     public String toString() {
         return "WorldMeta [displayName=" + displayName + ", lastPlayed=" + lastPlayed + ", worldSeed=" + worldSeed

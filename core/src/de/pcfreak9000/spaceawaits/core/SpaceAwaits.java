@@ -15,7 +15,7 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
-import de.pcfreak9000.spaceawaits.save.TestWorldSaveMgr;
+import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.WorldScreen;
@@ -63,7 +63,8 @@ public class SpaceAwaits extends Game {
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
-        this.gameManager = new GameManager(new TestWorldSaveMgr());
+        AdvancedFile savesFolderFile = mkdirIfNonExisting(new AdvancedFile(FOLDER, SAVES));
+        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
         this.worldScreen = new WorldScreen(worldManager);
         
         preloadResources();
@@ -90,8 +91,6 @@ public class SpaceAwaits extends Game {
     public WorldManager getWorldManager() {
         return worldManager;
     }
-    
- 
     
     private void preloadResources() {//What happens on resource reload?
         this.assetManager.load("hyperraum.png", Texture.class);

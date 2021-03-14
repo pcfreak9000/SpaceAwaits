@@ -12,17 +12,15 @@ public interface ISaveManager {
     
     //Does a save already exist?
     //Create a save -> directory structure
-    //What about save versions? How to handle older versions?
+    //What about save versions? How to handle older versions? -> introduce a version file when there actually comes nother version
     //There are multiple worlds per save and information about the player
     //Can give out some object which holds information about a save and can be used to save stuff in a WorldProvider
-    //Version converters
+    //(Version converters)
     
     //In Exploration: Save: Folder with version file
     //Depending on the version, various other stuff
     
     boolean exists(String foldername);
-    
-    //String getNewNameOnDisk(String name);
     
     ISave createSave(String name);
     

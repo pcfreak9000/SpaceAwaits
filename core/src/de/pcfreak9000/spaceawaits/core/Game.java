@@ -43,9 +43,17 @@ public class Game {
     }
     
     public String createAndJoinWorld(WorldGenerator generator, String name, long seed) {
-        String uuid = this.mySave.createWorld(name);
-        IWorldSave worldSave = this.mySave.getWorld(uuid);
         WorldGenerationBundle worldGenBundle = generator.generateWorld(seed);
+        WorldMeta wMeta = new WorldMeta();
+        wMeta.setDisplayName(name);
+        wMeta.setWorldSeed(seed);
+        wMeta.setLastPlayed(System.currentTimeMillis());
+        wMeta.setWorldGeneratorUsed("oof");//TODO generator used
+        wMeta.setWidth(worldGenBundle.getBounds().getWidth());
+        wMeta.setHeight(worldGenBundle.getBounds().getHeight());
+        wMeta.setWrapsAround(worldGenBundle.getBounds().isWrappingAround());
+        String uuid = this.mySave.createWorld(name, wMeta);
+        IWorldSave worldSave = this.mySave.getWorld(uuid);
         SaveWorldProvider provider = new SaveWorldProvider(worldGenBundle.getChunkGenerator(),
                 worldGenBundle.getGlobalGenerator(), worldSave, worldGenBundle.getBounds());
         worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player

@@ -10,7 +10,7 @@ public interface ISave {
     
     SaveMeta getSaveMeta();
     
-    String createWorld(String name);
+    String createWorld(String name, WorldMeta worldMeta);
     
     IWorldSave getWorld(String uuid);
     

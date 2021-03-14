@@ -64,7 +64,7 @@ public class TestWorldSaveMgr implements ISaveManager {
             }
             
             @Override
-            public String createWorld(String name) {
+            public String createWorld(String name, WorldMeta m) {
                 return "";
             }
         };
@@ -127,8 +127,8 @@ public class TestWorldSaveMgr implements ISaveManager {
             }
             
             @Override
-            public String createWorld(String name) {
-                return null;
+            public String createWorld(String name, WorldMeta m) {
+                return "";
             }
         };
     }
