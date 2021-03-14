@@ -1,8 +1,5 @@
 package de.pcfreak9000.spaceawaits.core;
 
-import java.util.List;
-import java.util.Random;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -15,20 +12,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
-import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.save.TestWorldSaveMgr;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
-import de.pcfreak9000.spaceawaits.world.TestWorldProvider;
-import de.pcfreak9000.spaceawaits.world.WorldLoadingBounds;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.WorldScreen;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -38,6 +28,7 @@ public class SpaceAwaits extends Game {
     public static final AdvancedFile FOLDER = new AdvancedFile(OSUtil.getAppDataSubDirectory("." + NAME));
     public static final String RESOURCEPACKS = "resourcepacks";
     public static final String MODS = "mods";
+    public static final String SAVES = "saves";
     
     public static final EventBus BUS = new EventBus();//Hmmm
     
@@ -51,6 +42,9 @@ public class SpaceAwaits extends Game {
     
     private Modloader modloader;
     private AssetManager assetManager;
+    
+    private GameManager gameManager; //This the correct place for that?
+    
     private WorldManager worldManager;
     
     public WorldScreen worldScreen;
@@ -69,6 +63,7 @@ public class SpaceAwaits extends Game {
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
+        this.gameManager = new GameManager(new TestWorldSaveMgr());
         this.worldScreen = new WorldScreen(worldManager);
         
         preloadResources();
@@ -86,13 +81,7 @@ public class SpaceAwaits extends Game {
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
         //Testing stuff below
-        Player p = new Player();
-        this.worldManager.getWorldAccess().addLoadingBounds(
-                new WorldLoadingBounds(p.getPlayerEntity().getComponent(TransformComponent.class).position));
-        WorldGenerationBundle testWorld = pickGenerator(
-                GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)).generateWorld(0);
-        this.worldManager.getECSManager().addEntity(p.getPlayerEntity());
-        this.worldManager.getWorldAccess().setWorldProvider(new TestWorldProvider(testWorld));
+        this.gameManager.createAndLoadGame("Empty hehehe", 0);
         //Testing stuff above
         this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
@@ -102,10 +91,7 @@ public class SpaceAwaits extends Game {
         return worldManager;
     }
     
-    //TMP
-    private WorldGenerator pickGenerator(List<WorldGenerator> list) {
-        return MathUtil.getWeightedRandom(new Random(), list);
-    }
+ 
     
     private void preloadResources() {//What happens on resource reload?
         this.assetManager.load("hyperraum.png", Texture.class);

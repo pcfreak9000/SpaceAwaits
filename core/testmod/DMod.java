@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.Background;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
-import de.pcfreak9000.spaceawaits.world.WorldMeta;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
@@ -91,7 +91,7 @@ public class DMod {
             
             @Override
             public WorldGenerationBundle generateWorld(long seed) {
-                return new WorldGenerationBundle(seed, new WorldMeta(WIDTH, HEIGHT, true), new TestChunkGenerator(),
+                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT, true), new TestChunkGenerator(),
                         (g) -> {
                             //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
                             WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);

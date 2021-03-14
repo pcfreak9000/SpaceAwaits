@@ -75,7 +75,7 @@ public class WorldAccessor {
     }
     
     public Tile getTile(int tx, int ty) {
-        if (!getMeta().inBounds(tx, ty)) {
+        if (!getWorldBounds().inBounds(tx, ty)) {
             return null;
         }
         int rx = Chunk.toGlobalChunk(tx);
@@ -85,7 +85,7 @@ public class WorldAccessor {
     }
     
     public Tile getTileBackground(int tx, int ty) {
-        if (!getMeta().inBounds(tx, ty)) {
+        if (!getWorldBounds().inBounds(tx, ty)) {
             return null;
         }
         int rx = Chunk.toGlobalChunk(tx);
@@ -185,14 +185,14 @@ public class WorldAccessor {
     public void setWorldProvider(WorldProvider wp) {//TMP?
         if (wp != this.worldProvider) {
             if (this.worldProvider != null) {
-                for (Entity e : worldProvider.getGlobal().getEntities()) {
+                for (Entity e : worldProvider.requestGlobal().getEntities()) {
                     wmgr.getECSManager().removeEntity(e);
                 }
             }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
             this.worldProvider = wp;
             if (this.worldProvider != null) {
-                for (Entity e : worldProvider.getGlobal().getEntities()) {
+                for (Entity e : worldProvider.requestGlobal().getEntities()) {
                     wmgr.getECSManager().addEntity(e);
                 }
             }
@@ -349,11 +349,11 @@ public class WorldAccessor {
         return false;
     }
     
-    public WorldMeta getMeta() {
+    public WorldBounds getWorldBounds() {
         return worldProvider.getMeta();
     }
     
     public AmbientLightProvider getAmbientLight() {
-        return worldProvider.getGlobal().getLightProvider();
+        return worldProvider.requestGlobal().getLightProvider();
     }
 }

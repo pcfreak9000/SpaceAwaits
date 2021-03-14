@@ -189,7 +189,7 @@ public class Chunk {
     
     public boolean inBounds(int gtx, int gty) {
         return gtx >= this.tx && gtx < this.tx + CHUNK_TILE_SIZE && gty >= this.ty && gty < this.ty + CHUNK_TILE_SIZE
-                && worldAccessor.getMeta().inBounds(gtx, gty);
+                && worldAccessor.getWorldBounds().inBounds(gtx, gty);
     }
     
     public void tick(float time) {

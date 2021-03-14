@@ -15,7 +15,7 @@ public class TestChunkGenerator implements ChunkGenerator {
     public void generateChunk(Chunk chunk, WorldAccessor worldAccess) {
         for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
-                if (!worldAccess.getMeta().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
+                if (!worldAccess.getWorldBounds().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
                     continue;
                 }
                 int value = 75 + Mathf.round(6 * Mathf.abs(MathUtils.sin(0.2f * (i + chunk.getGlobalTileX())))

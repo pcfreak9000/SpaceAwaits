@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.ashley.core.Entity;
 
+import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.item.Inventory;
 
 /**
@@ -12,6 +13,9 @@ import de.pcfreak9000.spaceawaits.item.Inventory;
  *
  */
 public class Player {
+    public static Player ofNBT(NBTCompound readPlayerNBT) {
+        return new Player();
+    }
     
     private final Entity playerEntity;
     
@@ -29,4 +33,9 @@ public class Player {
     public Inventory getInventory() {
         return this.inventory;
     }
+    
+    public void fromNBT(NBTCompound nbt) {
+        
+    }
+    
 }

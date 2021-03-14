@@ -38,6 +38,7 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url 'https://jitpack.io' }
+    	maven { url 'https://maven.izzel.io/releases' }
     }
 }
 
@@ -52,7 +53,6 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        
     }
 }
 
@@ -66,7 +66,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
-        //implementation 'com.github.tommyettinger:jbump:v1.0.0'
+        compile "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
+       	compile files('lib/Java-NBT.jar')    
     }
 }

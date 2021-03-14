@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.world;
 
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
-public class WorldMeta {
+public class WorldBounds {
     
     private boolean wrapsAround;
     private int tWidth;
@@ -10,7 +10,7 @@ public class WorldMeta {
     private final int arrayWidth;
     private final int arrayHeight;
     
-    public WorldMeta(int twidth, int theight, boolean wraparound) {
+    public WorldBounds(int twidth, int theight, boolean wraparound) {
         this.tWidth = twidth;
         this.tHeight = theight;
         this.wrapsAround = wraparound;

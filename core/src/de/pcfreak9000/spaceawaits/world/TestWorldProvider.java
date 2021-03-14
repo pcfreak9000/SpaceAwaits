@@ -6,22 +6,21 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
+@Deprecated
 public class TestWorldProvider implements WorldProvider {
     
     private WorldGenerationBundle gen;
     
-    private final Global global;
+    private Global global;
     private final Chunk[][] chunks;
     
     public TestWorldProvider(WorldGenerationBundle bundle) {
         this.gen = bundle;
-        this.global = new Global();
-        this.gen.getGlobalGenerator().populateGlobal(global);//Ooof... possibly to this outside the constructor, #requestGlobal or something? Also, maybe supply the WorldGenerationBundle as well?
-        this.chunks = new Chunk[gen.getMeta().getWidthChunks()][gen.getMeta().getHeightChunks()];
+        this.chunks = new Chunk[gen.getBounds().getWidthChunks()][gen.getBounds().getHeightChunks()];
     }
     
     private Chunk requestRegion(int rx, int ry) {
-        if (gen.getMeta().inChunkBounds(rx, ry)) {
+        if (gen.getBounds().inChunkBounds(rx, ry)) {
             Chunk r = this.chunks[rx][ry];
             if (r == null) {
                 r = new Chunk(rx, ry, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
@@ -33,11 +32,10 @@ public class TestWorldProvider implements WorldProvider {
         }
         return null;
     }
-
     
     @Override
-    public WorldMeta getMeta() {
-        return gen.getMeta();
+    public WorldBounds getMeta() {
+        return gen.getBounds();
     }
     
     @Override
@@ -51,9 +49,16 @@ public class TestWorldProvider implements WorldProvider {
     }
     
     @Override
-    public Global getGlobal() {
+    public Global requestGlobal() {
+        if (global == null) {
+            createAndPopulateGlobal();
+        }
         return global;
     }
-
+    
+    private void createAndPopulateGlobal() {
+        this.global = new Global();
+        this.gen.getGlobalGenerator().populateGlobal(global);//Also, maybe supply the WorldGenerationBundle as well?
+    }
     
 }

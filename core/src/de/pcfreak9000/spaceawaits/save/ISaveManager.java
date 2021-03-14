@@ -1,12 +1,14 @@
-package de.pcfreak9000.spaceawaits.core.save;
+package de.pcfreak9000.spaceawaits.save;
+
+import java.util.List;
 
 /**
  * Create, load and manage save games
  *
  */
-public class SaveManager {
+public interface ISaveManager {
     
-    public static final int CURRENT_VERSION = 1;
+    //public static final int CURRENT_VERSION = 1;
     
     //Does a save already exist?
     //Create a save -> directory structure
@@ -17,4 +19,17 @@ public class SaveManager {
     
     //In Exploration: Save: Folder with version file
     //Depending on the version, various other stuff
+    
+    boolean exists(String foldername);
+    
+    //String getNewNameOnDisk(String name);
+    
+    ISave createSave(String name);
+    
+    void deleteSave(String foldername);
+    
+    ISave getSave(String foldername);
+    
+    List<SaveMeta> listSaves();
+    
 }

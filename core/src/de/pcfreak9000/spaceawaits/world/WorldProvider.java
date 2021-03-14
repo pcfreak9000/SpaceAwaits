@@ -6,9 +6,9 @@ import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public interface WorldProvider {
     
-    Global getGlobal();
+    Global requestGlobal();
     
-    WorldMeta getMeta();
+    WorldBounds getMeta();
     
     void requestChunk(int gcx, int gcy, Consumer<Chunk> onChunkLoaded);
     

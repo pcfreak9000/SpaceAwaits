@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class DesktopLauncher {
+    
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.useOpenGL3(true, 3, 3);
