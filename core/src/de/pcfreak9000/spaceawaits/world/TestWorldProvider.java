@@ -44,7 +44,7 @@ public class TestWorldProvider implements WorldProvider {
     }
     
     @Override
-    public void saveChunk(Chunk c) {
+    public void unloadChunk(Chunk c) {
         //Do nothing
     }
     
@@ -59,6 +59,11 @@ public class TestWorldProvider implements WorldProvider {
     private void createAndPopulateGlobal() {
         this.global = new Global();
         this.gen.getGlobalGenerator().populateGlobal(global);//Also, maybe supply the WorldGenerationBundle as well?
+    }
+
+    @Override
+    public void unloadGlobal() {
+        //Do nothing
     }
     
 }

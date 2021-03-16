@@ -11,12 +11,10 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.WorldRenderInfo;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class CameraSystem extends IteratingSystem {
     private static final boolean DEBUG = false;
-    private WorldRenderInfo render;
     private WorldAccessor world;
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
@@ -29,7 +27,6 @@ public class CameraSystem extends IteratingSystem {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.render = svwe.worldMgr.getRenderInfo();
         this.world = svwe.worldMgr.getWorldAccess();
     }
     
@@ -38,7 +35,7 @@ public class CameraSystem extends IteratingSystem {
         TransformComponent tc = this.transformMapper.get(entity);
         float x = tc.position.x;
         float y = tc.position.y;
-        Camera camera = render.getCamera();
+        Camera camera = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
         if (!DEBUG) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
@@ -46,6 +43,6 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(world.getWorldBounds().getHeight() * Tile.TILE_SIZE - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        this.render.applyViewport();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.applyViewport();
     }
 }

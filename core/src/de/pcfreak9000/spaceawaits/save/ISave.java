@@ -14,6 +14,8 @@ public interface ISave {
     
     IWorldSave getWorld(String uuid);
     
+    boolean hasPlayer();
+    
     void writePlayerNBT(NBTCompound nbtc);
     
     NBTCompound readPlayerNBT();

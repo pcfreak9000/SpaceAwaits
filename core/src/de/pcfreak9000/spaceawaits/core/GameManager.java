@@ -50,7 +50,8 @@ public class GameManager {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Player player = Player.ofNBT(save.readPlayerNBT());
+        Player player = new Player();
+        player.readNBT(save.readPlayerNBT());
         Game game = new Game(save, player);
         this.gameCurrent = game;
     }
@@ -59,7 +60,7 @@ public class GameManager {
         if (getGameCurrent() == null) {
             throw new IllegalStateException();
         }
-        this.gameCurrent.saveAndLeave();
+        this.gameCurrent.saveAndLeaveCurrentWorld();
         this.gameCurrent = null;
     }
     

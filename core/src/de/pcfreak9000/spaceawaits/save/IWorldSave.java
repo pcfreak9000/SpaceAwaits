@@ -8,6 +8,8 @@ public interface IWorldSave {
     
     WorldMeta getWorldMeta();
     
+    boolean hasGlobal();
+    
     NBTCompound readGlobal();
     
     void writeGlobal(NBTCompound nbtc);

@@ -16,16 +16,14 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.world.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
-import de.pcfreak9000.spaceawaits.world.WorldRenderInfo;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {
     
     private static final ComponentMapper<LightComponent> lMapper = ComponentMapper.getFor(LightComponent.class);
-    
-    private WorldRenderInfo info;
     
     private WorldManager wmgr;
     
@@ -37,10 +35,14 @@ public class LightCalculator extends IteratingSystem {
     }
     
     @EventSubscription
+    public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
+        resize(ev.renderer.getCamera().viewportWidth, ev.renderer.getCamera().viewportHeight);
+    }
+    
+    @EventSubscription
     public void event(WorldEvents.SetWorldEvent ev) {
-        this.info = ev.worldMgr.getRenderInfo();
         this.wmgr = ev.worldMgr;
-        Camera cam = ev.worldMgr.getRenderInfo().getCamera();
+        Camera cam = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
         resize(cam.viewportWidth, cam.viewportHeight);
     }
     
@@ -58,7 +60,7 @@ public class LightCalculator extends IteratingSystem {
     
     @Override
     public void update(float deltaTime) {
-        Camera cam = info.getCamera();
+        Camera cam = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
         int wi = Mathf.ceili(cam.viewportWidth / Tile.TILE_SIZE);
@@ -78,12 +80,12 @@ public class LightCalculator extends IteratingSystem {
             e.printStackTrace();
         }
         //}
-        SpriteBatch batch = info.getSpriteBatch();
+        SpriteBatch batch = SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch();
         this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            info.setAdditiveBlending();
+            SpaceAwaits.getSpaceAwaits().worldRenderer.setAdditiveBlending();
             batch.begin();
             if (texture != null) {
                 batch.draw(texture, Tile.TILE_SIZE * xi, Tile.TILE_SIZE * yi, gwi * Tile.TILE_SIZE,
@@ -92,14 +94,14 @@ public class LightCalculator extends IteratingSystem {
             batch.end();
         }
         this.lightsBuffer.end();
-        info.applyViewport();
-        info.setMultiplicativeBlending();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.applyViewport();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.setMultiplicativeBlending();
         batch.begin();
         batch.draw(this.lightsBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.lightsBuffer.getWidth(), this.lightsBuffer.getHeight(), false, true);
         batch.end();
-        info.setDefaultBlending();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.setDefaultBlending();
     }
     
     @Override

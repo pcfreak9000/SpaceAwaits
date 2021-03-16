@@ -8,9 +8,11 @@ public interface WorldProvider {
     
     Global requestGlobal();
     
+    void unloadGlobal();
+    
     WorldBounds getMeta();
     
     void requestChunk(int gcx, int gcy, Consumer<Chunk> onChunkLoaded);
     
-    void saveChunk(Chunk c);
+    void unloadChunk(Chunk c);
 }

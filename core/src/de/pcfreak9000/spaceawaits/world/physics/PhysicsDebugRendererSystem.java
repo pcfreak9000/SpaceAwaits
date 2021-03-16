@@ -13,7 +13,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     
     //maybe there is a better way of doing this, seems kinda crude to injekt the PhysicsSystem...
     
-    private Box2DDebugRenderer debugRend;
+    private Box2DDebugRenderer debugRend;//TODO Box2DDebugRenderer needs disposal
     private Camera cam;
     private PhysicsSystemBox2D phsystem;
     
@@ -25,7 +25,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     
     @EventSubscription
     private void ev(WorldEvents.SetWorldEvent ev) {
-        this.cam = ev.worldMgr.getRenderInfo().getCamera();
+        this.cam = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
     }
     
     @Override

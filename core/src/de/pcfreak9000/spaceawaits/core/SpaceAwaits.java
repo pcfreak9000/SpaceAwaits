@@ -13,12 +13,13 @@ import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
+import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
-import de.pcfreak9000.spaceawaits.world.WorldScreen;
+import de.pcfreak9000.spaceawaits.world.WorldRenderer;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -43,12 +44,15 @@ public class SpaceAwaits extends Game {
     private Modloader modloader;
     private AssetManager assetManager;
     
-    private GameManager gameManager; //This the correct place for that?
+    private GameManager gameManager; //Is this the correct place for that?
     
     private WorldManager worldManager;
     
-    public WorldScreen worldScreen;
-    public MainMenuScreen mainMenuScreen;//also private??
+    //TODO make this private or something:
+    @Deprecated //Public access is deprecated
+    public WorldRenderer worldRenderer;
+    @Deprecated //Public access is deprecated
+    public MainMenuScreen mainMenuScreen;
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
@@ -59,18 +63,23 @@ public class SpaceAwaits extends Game {
     
     @Override
     public void create() {
+        //Setup debugging stuff
+        Logger.setMinLogType(DEBUG ? LogType.Debug : LogType.Info);
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
+        
+        //Instantiate stuff
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
         this.worldManager = new WorldManager();
-        AdvancedFile savesFolderFile = mkdirIfNonExisting(new AdvancedFile(FOLDER, SAVES));
+        AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
-        this.worldScreen = new WorldScreen(worldManager);
+        this.worldRenderer = new WorldRenderer(worldManager);
         
+        //Load mods and resources
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
-        this.modloader.load(mkdirIfNonExisting(new AdvancedFile(FOLDER, MODS)));
+        this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
         CoreResources.init();
         LOGGER.info("Init...");
         BUS.post(new CoreEvents.InitEvent());
@@ -81,9 +90,11 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
+        
         //Testing stuff below
         this.gameManager.createAndLoadGame("Empty hehehe", 0);
         //Testing stuff above
+        
         this.mainMenuScreen = new MainMenuScreen();
         setScreen(mainMenuScreen);
     }
@@ -106,9 +117,15 @@ public class SpaceAwaits extends Game {
     
     @Override
     public void dispose() {
+        if (this.gameManager.getGameCurrent() != null) {//this could be better, like some isIngame or smth
+            LOGGER.warn("Exiting while in loaded game");
+            this.gameManager.unloadGame();
+        }
         LOGGER.info("Exit...");
         BUS.post(new CoreEvents.ExitEvent());
         super.dispose();
+        this.worldRenderer.dispose();
+        this.mainMenuScreen.dispose();
         this.assetManager.dispose();
     }
     
@@ -122,7 +139,7 @@ public class SpaceAwaits extends Game {
         return manager;
     }
     
-    private AdvancedFile mkdirIfNonExisting(AdvancedFile file) {
+    private AdvancedFile mkdirIfNotExisting(AdvancedFile file) {
         if (!file.exists()) {
             try {
                 file.mkdirs();
@@ -132,4 +149,5 @@ public class SpaceAwaits extends Game {
         }
         return file;
     }
+    
 }

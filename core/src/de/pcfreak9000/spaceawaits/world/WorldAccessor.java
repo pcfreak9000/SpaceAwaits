@@ -188,6 +188,7 @@ public class WorldAccessor {
                 for (Entity e : worldProvider.requestGlobal().getEntities()) {
                     wmgr.getECSManager().removeEntity(e);
                 }
+                worldProvider.unloadGlobal();
             }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
             this.worldProvider = wp;
@@ -265,7 +266,7 @@ public class WorldAccessor {
     }
     
     private void unload(Chunk c) {
-        this.worldProvider.saveChunk(c);
+        this.worldProvider.unloadChunk(c);
     }
     
     private void addLoaded(ChunkCoordinateKey sc, Chunk c) {

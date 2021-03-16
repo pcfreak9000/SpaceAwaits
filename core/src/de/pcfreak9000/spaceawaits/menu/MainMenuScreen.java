@@ -38,7 +38,7 @@ public class MainMenuScreen extends ScreenAdapter {
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldScreen);
+                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
             }
         });
         TextButton exitButton = new TextButton("Quit", skin);

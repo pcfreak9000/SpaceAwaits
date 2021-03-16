@@ -28,7 +28,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
     private static final float BACKGROUND_FACTOR = 0.5f;
     
-    private SpriteCache regionCache;
+    private SpriteCache regionCache;//TODO SpriteCache needs disposal
     private IntSet freeCacheIds;
     private Camera camera;
     
@@ -41,7 +41,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
-        camera = ev.worldMgr.getRenderInfo().getCamera();
+        camera = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
     }
     
     @Override
@@ -88,8 +88,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     @Override
     public void update(float deltaTime) {
         //this.regionCache.clear();
-        regionCache.setProjectionMatrix(
-                SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getCamera().combined);
+        regionCache.setProjectionMatrix(SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera().combined);
         for (int i = 0; i < getEntities().size(); i++) {
             processEntity(getEntities().get(i), deltaTime);
         }

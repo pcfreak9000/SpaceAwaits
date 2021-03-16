@@ -5,9 +5,11 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.save.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
-public class Global {
+public class Global implements NBTSerializable {
     
     private AmbientLightProvider lightProvider;
     
@@ -40,4 +42,14 @@ public class Global {
         this.entities.removeValue(e, true);
     }
     
+    @Override
+    public void readNBT(NBTCompound compound) {
+    }
+    
+    @Override
+    public NBTCompound writeNBT() {
+        NBTCompound nbtc = new NBTCompound();
+        return null;
+        //return nbtc;
+    }
 }

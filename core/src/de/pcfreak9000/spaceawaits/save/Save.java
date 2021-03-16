@@ -14,13 +14,15 @@ public class Save implements ISave {
     private SaveMeta meta;
     private File myDir;
     private File worldsDir;
-    //  private File metaFile;
+    
+    private File playerFile;
     
     public Save(SaveMeta meta, File dir) {
         this.meta = meta;
         this.myDir = dir;
         this.worldsDir = new File(myDir, "worlds");
         this.worldsDir.mkdir();
+        this.playerFile = new File(myDir, "player.dat");
         //  this.metaFile = new File(myDir, "meta.dat");
     }
     
@@ -56,9 +58,14 @@ public class Save implements ISave {
     }
     
     @Override
+    public boolean hasPlayer() {
+        return this.playerFile.exists() && this.playerFile.isFile();
+    }
+    
+    @Override
     public void writePlayerNBT(NBTCompound nbtc) {
         try {
-            TagReader.toCompressedBinaryNBTFile(new File(myDir, "player.dat"), nbtc);
+            TagReader.toCompressedBinaryNBTFile(this.playerFile, nbtc);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,8 +73,7 @@ public class Save implements ISave {
     
     @Override
     public NBTCompound readPlayerNBT() {
-        File metafile = new File(myDir, "player.dat");
-        try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
+        try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(this.playerFile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
             return compound;
         } catch (IOException e) {
@@ -90,7 +96,8 @@ public class Save implements ISave {
         try {
             TagReader.toCompressedBinaryNBTFile(metaFile, meta.toNBTCompound());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
+    
 }

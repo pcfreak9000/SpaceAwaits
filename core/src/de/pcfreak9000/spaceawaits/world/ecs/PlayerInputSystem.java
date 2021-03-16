@@ -38,6 +38,9 @@ public class PlayerInputSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+            SpaceAwaits.getSpaceAwaits().exit();
+        }
         PlayerInputComponent play = this.mapper.get(entity);
         float vy = 0;
         float vx = 0;
@@ -66,7 +69,7 @@ public class PlayerInputSystem extends IteratingSystem {
         this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
             //TODO Well that is ugly...
-            Vector2 mouse = worldManager.getRenderInfo().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().worldRenderer.getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
@@ -87,7 +90,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         if (destroy) {
-            Vector2 mouse = worldManager.getRenderInfo().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().worldRenderer.getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
@@ -99,7 +102,7 @@ public class PlayerInputSystem extends IteratingSystem {
             
         }
         if (build) {
-            Vector2 mouse = worldManager.getRenderInfo().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().worldRenderer.getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);

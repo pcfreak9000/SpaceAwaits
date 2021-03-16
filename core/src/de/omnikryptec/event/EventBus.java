@@ -166,7 +166,7 @@ public class EventBus implements IEventListener {
      */
     public void register(Object object) {
         if (this.verbose) {
-            LOGGER.debug("Registering " + object);
+            LOGGER.debug("Trying to register @EventSubscriptions in " + object);
         }
         Method[] methods;
         if (object instanceof Class<?>) {
@@ -197,6 +197,9 @@ public class EventBus implements IEventListener {
                         final ObjMapping ma = new ObjMapping(handler, eventType);
                         this.objMappings.put(object, ma);
                         register(handler, eventType);
+                        if (this.verbose) {
+                            LOGGER.debug("Found and registered @EventSubscription for event " + eventType);
+                        }
                     } else {
                         throw new IllegalArgumentException("Wrong type of parameter in event listener: " + object);
                     }
@@ -204,7 +207,7 @@ public class EventBus implements IEventListener {
             }
         }
         if (!annotationFound && this.verbose) {
-            LOGGER.debug("No EventSubscriptions were found: " + object);
+            LOGGER.debug("No @EventSubscriptions were found");
         }
     }
     
@@ -261,6 +264,9 @@ public class EventBus implements IEventListener {
             someclazz = someclazz.getSuperclass();
         } while (someclazz != Object.class && someclazz != null);
         filteredListeners.sort(LISTENER_COMP);
+        if (this.verbose) {
+            LOGGER.debugf("Found %d listeners listening for an event of this type", filteredListeners.size());
+        }
         for (final IEventListener l : filteredListeners) {
             if (!event.isConsumeable() || !event.isConsumed() || l.receiveConsumed()) {
                 l.invoke(event);

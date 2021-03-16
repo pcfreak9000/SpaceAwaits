@@ -17,20 +17,16 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 public class WorldManager {
     
     private final Engine ecsManager;
-    private final WorldRenderInfo worldRenderInfo;
     private final WorldAccessor worldAccessor;
-    public LightCalculator lightCalc;//TODO lightcalc visibility
     
     public WorldManager() {
         this.ecsManager = new Engine();
-        this.worldRenderInfo = new WorldRenderInfo();
         this.worldAccessor = new WorldAccessor(this);
         addDefaultECSSystems();
         SpaceAwaits.BUS.post(new WorldEvents.InitWorldManagerEvent(this.ecsManager));
     }
     
     public void updateAndRender(float delta) {
-        worldRenderInfo.applyViewport();
         ecsManager.update(delta);
     }
     
@@ -46,7 +42,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new ParallaxSystem());
         this.ecsManager.addSystem(new RenderChunkSystem());
         this.ecsManager.addSystem(new RenderEntitySystem());
-        this.ecsManager.addSystem(lightCalc = new LightCalculator());
+        this.ecsManager.addSystem(new LightCalculator());
         //lightCalc.setProcessing(false);
         //dthis.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
     }
@@ -57,13 +53,5 @@ public class WorldManager {
     
     public WorldAccessor getWorldAccess() {
         return worldAccessor;
-    }
-    
-    public WorldRenderInfo getRenderInfo() {
-        return worldRenderInfo;
-    }
-    
-    public void dispose() {
-        this.worldRenderInfo.dispose();
     }
 }

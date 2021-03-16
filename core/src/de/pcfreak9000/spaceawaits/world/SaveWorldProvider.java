@@ -56,7 +56,7 @@ public class SaveWorldProvider implements WorldProvider {
     }
     
     @Override
-    public void saveChunk(Chunk c) {
+    public void unloadChunk(Chunk c) {
         //myWorldSave.writeChunk(0, 0, null);
     }
     
@@ -68,13 +68,21 @@ public class SaveWorldProvider implements WorldProvider {
         return global;
     }
     
+    @Override
+    public void unloadGlobal() {
+        NBTCompound nbtc = this.global.writeNBT();
+        if (nbtc != null) {
+            this.myWorldSave.writeGlobal(nbtc);
+        }
+    }
+    
     private void createAndPopulateGlobal() {
-        NBTCompound nbtc = myWorldSave.readGlobal();
         this.global = new Global();
-        if (nbtc == null) {
-            this.globalGen.populateGlobal(global);//Also, maybe supply the WorldGenerationBundle as well?
+        if (myWorldSave.hasGlobal()) {
+            NBTCompound nbtc = myWorldSave.readGlobal();
+            this.global.readNBT(nbtc);
         } else {
-            //global.from(...)
+            this.globalGen.populateGlobal(global);//Also, maybe supply the WorldGenerationBundle as well?
         }
     }
 }

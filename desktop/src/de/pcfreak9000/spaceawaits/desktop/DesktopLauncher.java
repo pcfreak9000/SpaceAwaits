@@ -7,13 +7,21 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class DesktopLauncher {
     
+    private static SpaceAwaits instance;
+    
     public static void main(String[] arg) {
+        //        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+        //            e.printStackTrace();
+        //            if (instance != null) {
+        //                instance.dispose();
+        //            }
+        //        });
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.useOpenGL3(true, 3, 3);
         config.useVsync(!SpaceAwaits.DEBUG);
         config.setTitle(SpaceAwaits.NAME + " " + SpaceAwaits.VERSION);
         config.enableGLDebugOutput(SpaceAwaits.DEBUG, System.out);
-        new Lwjgl3Application(new SpaceAwaits(), config);
+        new Lwjgl3Application(instance = new SpaceAwaits(), config);
     }
     
 }

@@ -10,7 +10,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.WorldRenderInfo;
+import de.pcfreak9000.spaceawaits.world.WorldRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class ParallaxSystem extends IteratingSystem {
@@ -23,19 +23,19 @@ public class ParallaxSystem extends IteratingSystem {
     private final ComponentMapper<ParallaxComponent> parallaxMapper = ComponentMapper.getFor(ParallaxComponent.class);
     
     private WorldAccessor tileWorld;
-    private WorldRenderInfo render;
+    private WorldRenderer render;
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.tileWorld = svwe.worldMgr.getWorldAccess();
-        this.render = svwe.worldMgr.getRenderInfo();
+        this.render = SpaceAwaits.getSpaceAwaits().worldRenderer;
     }
     
     @Override
     public void update(float deltaTime) {
-        this.render.getSpriteBatch().begin();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch().begin();
         super.update(deltaTime);
-        this.render.getSpriteBatch().end();
+        SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch().end();
     }
     
     @Override

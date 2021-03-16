@@ -1,6 +1,9 @@
 package de.pcfreak9000.spaceawaits.world;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,14 +12,19 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
-public class WorldRenderInfo {
+public class WorldRenderer extends ScreenAdapter {
+    
+    private WorldManager worldManager;
+    private FPSLogger fps;
     
     private OrthographicCamera camera;
     private FitViewport viewport;
     
     private SpriteBatch spriteBatch;
     
-    public WorldRenderInfo() {
+    public WorldRenderer(WorldManager mgr) {
+        this.worldManager = mgr;
+        this.fps = new FPSLogger();
         this.camera = new OrthographicCamera(1920, 1080);
         this.viewport = new FitViewport(1920, 1080, camera);
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
@@ -54,12 +62,25 @@ public class WorldRenderInfo {
         this.spriteBatch.setProjectionMatrix(camera.combined);
     }
     
-    public void dispose() {
-        this.spriteBatch.dispose();
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0.05f, 0.05f, 0.05f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        applyViewport();
+        this.worldManager.updateAndRender(delta);
+        //Render Game HUD here?
+        fps.log();
     }
     
+    @Override
     public void resize(int width, int height) {
         this.viewport.update(width, height);
-        SpaceAwaits.getSpaceAwaits().getWorldManager().lightCalc.resize(this.viewport.getCamera().viewportWidth, this.viewport.getCamera().viewportHeight);//TODO hacky
+        SpaceAwaits.BUS.post(new RendererEvents.ResizeWorldRendererEvent(this, width, height));
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.spriteBatch.dispose();
     }
 }

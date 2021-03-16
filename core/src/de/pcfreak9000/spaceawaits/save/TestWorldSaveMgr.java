@@ -55,6 +55,11 @@ public class TestWorldSaveMgr implements ISaveManager {
                     public WorldMeta getWorldMeta() {
                         return null;
                     }
+
+                    @Override
+                    public boolean hasGlobal() {
+                        return false;
+                    }
                 };
             }
             
@@ -66,6 +71,11 @@ public class TestWorldSaveMgr implements ISaveManager {
             @Override
             public String createWorld(String name, WorldMeta m) {
                 return "";
+            }
+
+            @Override
+            public boolean hasPlayer() {
+                return false;
             }
         };
     }
@@ -118,6 +128,11 @@ public class TestWorldSaveMgr implements ISaveManager {
                     public WorldMeta getWorldMeta() {
                         return null;
                     }
+
+                    @Override
+                    public boolean hasGlobal() {
+                        return false;
+                    }
                 };
             }
             
@@ -129,6 +144,11 @@ public class TestWorldSaveMgr implements ISaveManager {
             @Override
             public String createWorld(String name, WorldMeta m) {
                 return "";
+            }
+
+            @Override
+            public boolean hasPlayer() {
+                return false;
             }
         };
     }
