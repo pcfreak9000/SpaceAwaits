@@ -36,7 +36,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new TickChunkSystem());
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D();
         this.ecsManager.addSystem(phsys);
-        this.ecsManager.addSystem(new MovingWorldEntitySystem());//FIXME
+        this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));
         this.ecsManager.addSystem(new ParallaxSystem());

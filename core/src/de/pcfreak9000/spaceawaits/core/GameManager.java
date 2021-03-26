@@ -51,7 +51,7 @@ public class GameManager {
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
         Player player = new Player();
-        player.readNBT(save.readPlayerNBT());
+        player.readNBT(save.readPlayerNBT());//Maybe move this into Game?
         Game game = new Game(save, player);
         this.gameCurrent = game;
     }

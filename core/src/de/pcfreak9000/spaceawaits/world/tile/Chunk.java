@@ -13,14 +13,19 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTList;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.save.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
-public class Chunk {
+public class Chunk implements NBTSerializable {
     
     private static final ComponentMapper<ChunkMarkerComponent> ChunkMarkerCompMapper = ComponentMapper
             .getFor(ChunkMarkerComponent.class); //Having ECS code in this class isn't entirely fancy either
@@ -230,6 +235,23 @@ public class Chunk {
     @Override
     public String toString() {
         return String.format("Chunk[x=%d, y=%d]", this.tx, this.ty);
+    }
+    
+    @Override
+    public void readNBT(NBTTag compound) {
+    }
+    
+    @Override
+    public NBTTag writeNBT() {
+        NBTCompound chunkMaster = new NBTCompound();
+        NBTList tileList = new NBTList(NBTType.String);
+        NBTList tileBkgrList = new NBTList(NBTType.String);
+        for (int i = 0; i < CHUNK_TILE_SIZE; i++) {
+            for (int j = 0; j < CHUNK_TILE_SIZE; j++) {
+                //tileList.add(getTile(i, j));
+            }
+        }
+        return null;
     }
     
 }

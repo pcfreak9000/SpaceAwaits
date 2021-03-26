@@ -118,7 +118,7 @@ public class SpaceAwaits extends Game {
     @Override
     public void dispose() {
         if (this.gameManager.getGameCurrent() != null) {//this could be better, like some isIngame or smth
-            LOGGER.warn("Exiting while in loaded game");
+            LOGGER.warn("Unloading world (Exit while in loaded world)");
             this.gameManager.unloadGame();
         }
         LOGGER.info("Exit...");

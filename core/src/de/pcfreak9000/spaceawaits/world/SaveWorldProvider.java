@@ -70,7 +70,7 @@ public class SaveWorldProvider implements WorldProvider {
     
     @Override
     public void unloadGlobal() {
-        NBTCompound nbtc = this.global.writeNBT();
+        NBTCompound nbtc = (NBTCompound) this.global.writeNBT();
         if (nbtc != null) {
             this.myWorldSave.writeGlobal(nbtc);
         }

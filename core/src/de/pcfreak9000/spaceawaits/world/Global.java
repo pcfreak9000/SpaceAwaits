@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.save.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
@@ -43,11 +44,11 @@ public class Global implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTCompound compound) {
+    public void readNBT(NBTTag compound) {
     }
     
     @Override
-    public NBTCompound writeNBT() {
+    public NBTTag writeNBT() {
         NBTCompound nbtc = new NBTCompound();
         return null;
         //return nbtc;
