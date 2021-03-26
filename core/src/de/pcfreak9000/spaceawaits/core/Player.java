@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.Inventory;
 import de.pcfreak9000.spaceawaits.save.NBTSerializable;
 
@@ -37,11 +38,11 @@ public class Player implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTCompound compound) {
+    public void readNBT(NBTTag compound) {
     }
     
     @Override
-    public NBTCompound writeNBT() {
+    public NBTTag writeNBT() {
         return null;
     }
     
