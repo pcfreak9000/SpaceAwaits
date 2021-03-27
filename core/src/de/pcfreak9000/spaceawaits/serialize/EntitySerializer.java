@@ -19,7 +19,7 @@ public class EntitySerializer {
     
     private static final EntityComponentHolderWrapper ENTITY_WRAPPER = new EntityComponentHolderWrapper();
     
-    //Check for illegal characters!!
+    //TODO Check for illegal characters!!
     
     public static NBTCompound serializeEntity(Entity entity) {
         NBTCompound nbt = null;
@@ -29,6 +29,7 @@ public class EntitySerializer {
             GameRegistry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
             String facId = GameRegistry.WORLD_ENTITY_REGISTRY.getId(seMapper.get(entity).factory);
             nbt.putString("entityFactoryId", facId);
+            //This could also happen in a serialize function in the factory
             nbt.putCompound("components", serializeEntityComponents(entity));
             return nbt;
         }
@@ -40,12 +41,12 @@ public class EntitySerializer {
         if (!GameRegistry.WORLD_ENTITY_REGISTRY.isRegistered(entityFactoryId)) {
             return null;
         }
-        //TODO What about the physics stuff?
         Entity ent = GameRegistry.WORLD_ENTITY_REGISTRY.get(entityFactoryId).recreateEntity();
         if (!seMapper.has(ent)) {
             throw new IllegalArgumentException("Entity is not serializable but was serialized");//Hmm, throw or not throw?
         }
-        deserializeEntityComponents(ent, compound.getNode("components"));//<- could be moved into recreateEntity()?
+        //This could also happen in a deserialize function in the factory
+        deserializeEntityComponents(ent, compound.getNode("components"));
         return ent;
     }
     

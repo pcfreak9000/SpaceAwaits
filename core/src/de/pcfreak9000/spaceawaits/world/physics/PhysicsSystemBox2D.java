@@ -87,6 +87,10 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
             PhysicsComponent pc = this.physicsMapper.get(entity);
             Vector2 pos = pc.body.getPositionW();
             tc.position.set(pos.x - pc.factory.bodyOffset().x, pos.y - pc.factory.bodyOffset().y);
+            Vector2 vel = pc.body.getLinearVelocityPh();
+            pc.xVel = vel.x;
+            pc.yVel = vel.y;
+            pc.rotVel = pc.body.getBody().getAngularVelocity();
         }
     }
     
@@ -94,6 +98,8 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
         pc.body = new BodyWrapper(pc.factory.createBody(bworld));
+        pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
+        pc.body.getBody().setAngularVelocity(pc.rotVel);
     }
     
     @Override
