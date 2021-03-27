@@ -17,6 +17,7 @@ import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
+import de.pcfreak9000.spaceawaits.save.SaveMeta;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.WorldRenderer;
@@ -92,7 +93,10 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.PostInitEvent());
         
         //Testing stuff below
-        this.gameManager.createAndLoadGame("Empty hehehe", 0);
+        //this.gameManager.createAndLoadGame("Empty hehehe", 0);
+        for (SaveMeta m : this.gameManager.listSaves()) {
+            this.gameManager.loadGame(m.getNameOnDisk());
+        }
         //Testing stuff above
         
         this.mainMenuScreen = new MainMenuScreen();

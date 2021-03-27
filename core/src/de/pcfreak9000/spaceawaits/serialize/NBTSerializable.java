@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.save;
+package de.pcfreak9000.spaceawaits.serialize;
 
 import de.pcfreak9000.nbt.NBTTag;
 

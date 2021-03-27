@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
@@ -48,7 +49,7 @@ public class Game {
         wMeta.setDisplayName(name);
         wMeta.setWorldSeed(seed);
         wMeta.setLastPlayed(System.currentTimeMillis());
-        wMeta.setWorldGeneratorUsed("oof");//TODO generator used
+        wMeta.setWorldGeneratorUsed(GameRegistry.GENERATOR_REGISTRY.getId(generator));
         wMeta.setWidth(worldGenBundle.getBounds().getWidth());
         wMeta.setHeight(worldGenBundle.getBounds().getHeight());
         wMeta.setWrapsAround(worldGenBundle.getBounds().isWrappingAround());
@@ -63,7 +64,7 @@ public class Game {
     
     public void saveAndLeaveCurrentWorld() {
         worldMgr.getWorldAccess().setWorldProvider(null);
-        mySave.writePlayerNBT(this.player.toNBTCompound());
+        mySave.writePlayerNBT((NBTCompound) this.player.writeNBT());
     }
     
     public Player getPlayer() {

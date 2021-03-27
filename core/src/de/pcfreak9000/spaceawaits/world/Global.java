@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.save.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
 public class Global implements NBTSerializable {

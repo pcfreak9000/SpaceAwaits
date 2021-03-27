@@ -5,7 +5,8 @@ import com.badlogic.ashley.core.Entity;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.Inventory;
-import de.pcfreak9000.spaceawaits.save.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 /**
  * Information about the player: level, ships, inventory, etc. Also the player
@@ -33,17 +34,14 @@ public class Player implements NBTSerializable {
         return this.inventory;
     }
     
-    public NBTCompound toNBTCompound() {
-        return new NBTCompound();
-    }
-    
     @Override
     public void readNBT(NBTTag compound) {
+        EntitySerializer.deserializeEntity(playerEntity, (NBTCompound) compound);
     }
     
     @Override
     public NBTTag writeNBT() {
-        return null;
+        return EntitySerializer.serializeEntity(playerEntity);
     }
     
 }

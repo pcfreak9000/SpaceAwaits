@@ -18,7 +18,7 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.save.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;

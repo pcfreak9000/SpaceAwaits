@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
@@ -33,6 +34,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         e.add(pc);
         pc.factory = new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2,
                 sprite.getHeight() / 2 * 0.9f);
+        e.add(new SerializeEntityComponent(this));
         return e;
     }
 }
