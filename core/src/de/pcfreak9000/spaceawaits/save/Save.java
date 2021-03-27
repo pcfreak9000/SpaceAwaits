@@ -23,7 +23,6 @@ public class Save implements ISave {
         this.worldsDir = new File(myDir, "worlds");
         this.worldsDir.mkdir();
         this.playerFile = new File(myDir, "player.dat");
-        //  this.metaFile = new File(myDir, "meta.dat");
     }
     
     @Override
@@ -39,7 +38,7 @@ public class Save implements ISave {
         File worldFile = new File(worldsDir, combinedUUID);
         if (worldFile.exists()) {
             throw new RuntimeException(
-                    "This should be more unlikely than winning in the lotto while being hit by a lightning");
+                    "This should be more unlikely than winning in the lotto while being hit by a lightning (or someone copied a world around)");
         }
         worldFile.mkdir();
         writeWorldMetaFor(worldFile, meta);
@@ -53,6 +52,7 @@ public class Save implements ISave {
             throw new IllegalArgumentException();
         }
         WorldMeta meta = getWorldMetaFor(file);
+        writeWorldMetaFor(file, meta);//Update meta or smth...
         WorldSave save = new WorldSave(meta, file);
         return save;
     }

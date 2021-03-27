@@ -5,28 +5,28 @@ import de.pcfreak9000.nbt.NBTCompound;
 public class SaveMeta {
     
     public static SaveMeta ofNBT(NBTCompound compound, String diskname) {
-        String displayName = compound.getString("displayName");
-        long lastPlayed = compound.getLong("lastPlayed");
-        return new SaveMeta(displayName, lastPlayed, diskname);
+        String displayName = compound.getStringOrDefault("displayName", "Error reading name");
+        long created = compound.getLongOrDefault("created", System.currentTimeMillis());
+        return new SaveMeta(displayName, diskname, created);
     }
     
     private String displayName;
-    private long lastPlayed;
+    private long created;
     
     private String nameOnDisk;
     
-    public SaveMeta(String displayname, long lastPlayed, String nameOnDisk) {
+    public SaveMeta(String displayname, String nameOnDisk, long created) {
         this.displayName = displayname;
-        this.lastPlayed = lastPlayed;
         this.nameOnDisk = nameOnDisk;
+        this.created = created;
     }
     
     public String getDisplayName() {
         return this.displayName;
     }
     
-    public long getLastPlayed() {
-        return lastPlayed;
+    public long getCreationTime() {
+        return created;
     }
     
     public String getNameOnDisk() {
@@ -36,7 +36,7 @@ public class SaveMeta {
     public NBTCompound toNBTCompound() {
         NBTCompound comp = new NBTCompound();
         comp.putString("displayName", displayName);
-        comp.putLong("lastPlayed", lastPlayed);
+        comp.putLong("created", created);
         return comp;
     }
 }

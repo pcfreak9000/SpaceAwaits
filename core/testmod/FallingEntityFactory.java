@@ -1,6 +1,7 @@
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
@@ -25,6 +26,7 @@ public class FallingEntityFactory implements WorldEntityFactory {
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new AABBBodyFactory(200, 100);
         entity.add(pc);
+        entity.add(new SerializeEntityComponent(this));
         return entity;
     }
 }

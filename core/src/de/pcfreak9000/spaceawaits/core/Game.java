@@ -39,8 +39,9 @@ public class Game {
         WorldGenerationBundle bundle = gen.generateWorld(worldSeed);
         SaveWorldProvider provider = new SaveWorldProvider(bundle.getChunkGenerator(), bundle.getGlobalGenerator(),
                 save, new WorldBounds(meta.getWidth(), meta.getHeight(), meta.isWrapsAround()));//Hmmm - do this a better way
+        worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
+        this.player.setCurrentWorld(uuid);
         worldMgr.getWorldAccess().setWorldProvider(provider);
-        //Add player todo
     }
     
     public String createAndJoinWorld(WorldGenerator generator, String name, long seed) {
@@ -48,7 +49,7 @@ public class Game {
         WorldMeta wMeta = new WorldMeta();
         wMeta.setDisplayName(name);
         wMeta.setWorldSeed(seed);
-        wMeta.setLastPlayed(System.currentTimeMillis());
+        wMeta.setCreated(System.currentTimeMillis());
         wMeta.setWorldGeneratorUsed(GameRegistry.GENERATOR_REGISTRY.getId(generator));
         wMeta.setWidth(worldGenBundle.getBounds().getWidth());
         wMeta.setHeight(worldGenBundle.getBounds().getHeight());
@@ -58,6 +59,7 @@ public class Game {
         SaveWorldProvider provider = new SaveWorldProvider(worldGenBundle.getChunkGenerator(),
                 worldGenBundle.getGlobalGenerator(), worldSave, worldGenBundle.getBounds());
         worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
+        this.player.setCurrentWorld(uuid);
         worldMgr.getWorldAccess().setWorldProvider(provider);
         return uuid;
     }

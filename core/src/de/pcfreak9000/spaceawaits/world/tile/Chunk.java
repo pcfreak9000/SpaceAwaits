@@ -246,10 +246,14 @@ public class Chunk implements NBTSerializable {
         NBTCompound chunkMaster = new NBTCompound();
         NBTList tileList = new NBTList(NBTType.String);
         NBTList tileBkgrList = new NBTList(NBTType.String);
+        NBTList entities = new NBTList(NBTType.Compound);
         for (int i = 0; i < CHUNK_TILE_SIZE; i++) {
             for (int j = 0; j < CHUNK_TILE_SIZE; j++) {
                 //tileList.add(getTile(i, j));
             }
+        }
+        for(Entity e : this.entities) {
+            
         }
         return null;
     }

@@ -36,7 +36,7 @@ public class SaveManager implements ISaveManager {
             file = new File(savesDir, name);
         }
         file.mkdir();
-        SaveMeta meta = new SaveMeta(name, System.currentTimeMillis(), file.getName());
+        SaveMeta meta = new SaveMeta(name, file.getName(), System.currentTimeMillis());
         writeSaveMetaFor(file, meta);
         return new Save(meta, file);
     }
@@ -61,6 +61,7 @@ public class SaveManager implements ISaveManager {
             return null;
         }
         SaveMeta meta = getSaveMetaFor(saveFolder);
+        writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc)
         return new Save(meta, saveFolder);
     }
     

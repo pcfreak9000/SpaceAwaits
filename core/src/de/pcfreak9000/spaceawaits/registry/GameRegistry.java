@@ -3,8 +3,6 @@ package de.pcfreak9000.spaceawaits.registry;
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.badlogic.ashley.core.Component;
-
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -26,7 +24,7 @@ public class GameRegistry<T> {
     
     public static final ItemRegistry ITEM_REGISTRY = new ItemRegistry();
     
-    public static final GameRegistry<Class<? extends Component>> WORLD_COMPONENT_REGISTRY = new GameRegistry<>();
+    public static final WorldComponentRegistry WORLD_COMPONENT_REGISTRY = new WorldComponentRegistry();
     
     protected final Logger LOGGER = Logger.getLogger(getClass());
     

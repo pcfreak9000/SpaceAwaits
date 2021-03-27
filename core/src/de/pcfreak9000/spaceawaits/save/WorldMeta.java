@@ -7,17 +7,18 @@ public class WorldMeta {
     public static WorldMeta ofNBT(NBTCompound comp) {
         WorldMeta meta = new WorldMeta();
         meta.setDisplayName(comp.getString("displayName"));
-        meta.setLastPlayed(comp.getLong("lastPlayed"));
         meta.setWorldSeed(comp.getLong("worldSeed"));
         meta.setWorldGeneratorUsed(comp.getString("worldGeneratorUsed"));
         meta.setWidth(comp.getInt("width"));
         meta.setHeight(comp.getInt("height"));
         meta.setWrapsAround(comp.getByte("wrapsAround") != 0);
+        meta.setCreated(comp.getLong("created"));
         return meta;
     }
     
     private String displayName;
-    private long lastPlayed;
+    
+    private long created;
     
     private long worldSeed;
     private String worldGeneratorUsed;
@@ -32,14 +33,6 @@ public class WorldMeta {
     
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-    
-    public long getLastPlayed() {
-        return lastPlayed;
-    }
-    
-    public void setLastPlayed(long lastPlayed) {
-        this.lastPlayed = lastPlayed;
     }
     
     public long getWorldSeed() {
@@ -82,23 +75,24 @@ public class WorldMeta {
         this.wrapsAround = wrapsAround;
     }
     
+    public long getCreated() {
+        return created;
+    }
+    
+    public void setCreated(long created) {
+        this.created = created;
+    }
+    
     public NBTCompound toNBTCompound() {
         NBTCompound comp = new NBTCompound();
         comp.putString("displayName", displayName);
-        comp.putLong("lastPlayed", lastPlayed);
         comp.putLong("worldSeed", worldSeed);
         comp.putString("worldGeneratorUsed", worldGeneratorUsed);
         comp.putInt("width", width);
         comp.putInt("height", height);
         comp.putByte("wrapsAround", wrapsAround ? (byte) 1 : (byte) 0);
+        comp.putLong("created", created);
         return comp;
-    }
-    
-    @Override
-    public String toString() {
-        return "WorldMeta [displayName=" + displayName + ", lastPlayed=" + lastPlayed + ", worldSeed=" + worldSeed
-                + ", worldGeneratorUsed=" + worldGeneratorUsed + ", width=" + width + ", height=" + height
-                + ", wrapsAround=" + wrapsAround + "]";
     }
     
 }

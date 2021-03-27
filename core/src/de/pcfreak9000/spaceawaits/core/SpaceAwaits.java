@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.util.List;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -93,9 +95,11 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.PostInitEvent());
         
         //Testing stuff below
-        //this.gameManager.createAndLoadGame("Empty hehehe", 0);
-        for (SaveMeta m : this.gameManager.listSaves()) {
-            this.gameManager.loadGame(m.getNameOnDisk());
+        List<SaveMeta> saves = this.gameManager.listSaves();
+        if (saves.isEmpty()) {
+            this.gameManager.createAndLoadGame("Empty hehehe", 0);
+        } else {
+            this.gameManager.loadGame(saves.get(0).getNameOnDisk());
         }
         //Testing stuff above
         

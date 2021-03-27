@@ -53,6 +53,7 @@ public class GameManager {
         Player player = new Player();
         player.readNBT(save.readPlayerNBT());//Maybe move this into Game?
         Game game = new Game(save, player);
+        game.joinWorld(player.getCurrentWorld());//TMP
         this.gameCurrent = game;
     }
     
