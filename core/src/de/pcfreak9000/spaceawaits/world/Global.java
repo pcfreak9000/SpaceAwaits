@@ -66,8 +66,10 @@ public class Global implements NBTSerializable {
         NBTCompound nbtc = new NBTCompound();
         NBTList entities = new NBTList(NBTType.Compound);
         for (Entity e : this.entities) {
-            NBTCompound nbt = EntitySerializer.serializeEntity(e);
-            entities.add(nbt);
+            if (EntitySerializer.isSerializable(e)) {
+                NBTCompound nbt = EntitySerializer.serializeEntity(e);
+                entities.add(nbt);
+            }
         }
         nbtc.putList("entities", entities);
         return null;

@@ -265,8 +265,10 @@ public class Chunk implements NBTSerializable {
             }
         }
         for (Entity e : this.entities) {
-            NBTCompound nbt = EntitySerializer.serializeEntity(e);
-            entities.add(nbt);
+            if (EntitySerializer.isSerializable(e)) {
+                NBTCompound nbt = EntitySerializer.serializeEntity(e);
+                entities.add(nbt);
+            }
         }
         chunkMaster.putList("entities", entities);
         return null;
