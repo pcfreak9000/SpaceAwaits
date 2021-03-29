@@ -24,7 +24,6 @@ public class Tile {
     static {
         EMPTY.setBouncyness(0);
         EMPTY.setCanBreak(false);
-        EMPTY.setFilterColor(null);
         EMPTY.setLightColor(null);
         EMPTY.setOpaque(false);
         EMPTY.setTexture(null);
@@ -44,8 +43,6 @@ public class Tile {
     
     private Color lightColor;
     private float lighttransmission = 0.8f;
-    
-    private Color filterColor = new Color(0.99f, 0.99f, 0.99f, 0); //TODO deal with this
     
     private float bouncyness = 0;
     
@@ -95,18 +92,6 @@ public class Tile {
     
     public boolean hasLight() {
         return this.lightColor != null && (this.lightColor.r > 0 || this.lightColor.g > 0 || this.lightColor.b > 0);
-    }
-    
-    public void setFilterColor(Color color) {
-        //this.filterColor = color;
-    }
-    
-    public Color getFilterColor() {
-        return this.filterColor;
-    }
-    
-    public boolean hasLightFilter() {
-        return this.filterColor != null;
     }
     
     public Color color() {

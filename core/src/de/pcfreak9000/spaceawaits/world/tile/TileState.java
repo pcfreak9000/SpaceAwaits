@@ -32,7 +32,7 @@ public class TileState {
         return this.globalTileY;
     }
     
-    public void setTileEntity(TileEntity te) {
+    void setTileEntity(TileEntity te) {
         this.tileEntity = te;
     }
     

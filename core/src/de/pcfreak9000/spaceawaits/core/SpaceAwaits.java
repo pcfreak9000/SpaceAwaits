@@ -97,7 +97,7 @@ public class SpaceAwaits extends Game {
         //Testing stuff below
         List<SaveMeta> saves = this.gameManager.listSaves();
         if (saves.isEmpty()) {
-            this.gameManager.createAndLoadGame("Empty hehehe", 0);
+            this.gameManager.createAndLoadGame("Test-World 0", 0);
         } else {
             this.gameManager.loadGame(saves.get(0).getNameOnDisk());
         }
