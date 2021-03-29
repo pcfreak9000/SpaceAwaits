@@ -22,9 +22,8 @@ public class EntitySerializer {
     //TODO Check for illegal characters!!
     
     public static NBTCompound serializeEntity(Entity entity) {
-        NBTCompound nbt = null;
         if (seMapper.has(entity)) {
-            nbt = new NBTCompound();
+            NBTCompound nbt = new NBTCompound();
             WorldEntityFactory fac = seMapper.get(entity).factory;
             GameRegistry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
             String facId = GameRegistry.WORLD_ENTITY_REGISTRY.getId(seMapper.get(entity).factory);
@@ -46,7 +45,7 @@ public class EntitySerializer {
             throw new IllegalArgumentException("Entity is not serializable but was serialized");//Hmm, throw or not throw?
         }
         //This could also happen in a deserialize function in the factory
-        deserializeEntityComponents(ent, compound.getNode("components"));
+        deserializeEntityComponents(ent, compound.getCompound("components"));
         return ent;
     }
     

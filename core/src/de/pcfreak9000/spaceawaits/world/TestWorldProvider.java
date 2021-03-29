@@ -34,7 +34,7 @@ public class TestWorldProvider implements WorldProvider {
     }
     
     @Override
-    public WorldBounds getMeta() {
+    public WorldBounds getBounds() {
         return gen.getBounds();
     }
     

@@ -6,7 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.nbt.NBTType;
+import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
@@ -45,11 +48,28 @@ public class Global implements NBTSerializable {
     
     @Override
     public void readNBT(NBTTag compound) {
+        NBTCompound nbtc = (NBTCompound) compound;
+        NBTList entities = nbtc.getList("entities");
+        if (entities.getEntryType() != NBTType.Compound) {
+            throw new IllegalArgumentException("Entity list is not a compound list");
+        }
+        for (NBTTag t : entities.getContent()) {
+            Entity e = EntitySerializer.deserializeEntity((NBTCompound) t);
+            if (e != null) {
+                addEntity(e);
+            }
+        }
     }
     
     @Override
     public NBTTag writeNBT() {
         NBTCompound nbtc = new NBTCompound();
+        NBTList entities = new NBTList(NBTType.Compound);
+        for (Entity e : this.entities) {
+            NBTCompound nbt = EntitySerializer.serializeEntity(e);
+            entities.add(nbt);
+        }
+        nbtc.putList("entities", entities);
         return null;
         //return nbtc;
     }

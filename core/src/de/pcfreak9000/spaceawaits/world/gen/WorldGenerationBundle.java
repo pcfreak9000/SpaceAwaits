@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.gen;
 
-import de.pcfreak9000.spaceawaits.world.GlobalGenerator;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 
 /**

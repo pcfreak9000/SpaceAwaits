@@ -13,4 +13,6 @@ public interface ChunkGenerator {
     
     void generateChunk(Chunk chunk, WorldAccessor worldAccess);
     
+    default void regenerateChunk(Chunk chunk, WorldAccessor worldAccess) {
+    }
 }

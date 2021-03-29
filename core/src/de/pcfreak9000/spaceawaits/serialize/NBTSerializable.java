@@ -4,7 +4,7 @@ import de.pcfreak9000.nbt.NBTTag;
 
 public interface NBTSerializable {
     
-    void readNBT(NBTTag compound);
+    void readNBT(NBTTag tag);
     
     NBTTag writeNBT();
 }

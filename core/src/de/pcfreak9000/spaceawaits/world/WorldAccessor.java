@@ -147,8 +147,8 @@ public class WorldAccessor {
     
     public void collectTileIntersections(Collection<TileState> output, int x, int y, int w, int h,
             Predicate<TileState> predicate) {
-        boolean xy = worldProvider.getMeta().inBounds(x, y);
-        boolean xwyh = worldProvider.getMeta().inBounds(x + w, y + h);
+        boolean xy = worldProvider.getBounds().inBounds(x, y);
+        boolean xwyh = worldProvider.getBounds().inBounds(x + w, y + h);
         if (!xy && !xwyh) {
             return;
         }
@@ -165,13 +165,13 @@ public class WorldAccessor {
                 chunks.add(reg);
             }
         }
-        if (worldProvider.getMeta().inBounds(x + w, y)) {
+        if (worldProvider.getBounds().inBounds(x + w, y)) {
             Chunk reg = getChunk(Chunk.toGlobalChunk(x + w), Chunk.toGlobalChunk(y));
             if (reg != null) {
                 chunks.add(reg);
             }
         }
-        if (worldProvider.getMeta().inBounds(x, y + h)) {
+        if (worldProvider.getBounds().inBounds(x, y + h)) {
             Chunk reg = getChunk(Chunk.toGlobalChunk(x), Chunk.toGlobalChunk(y + h));
             if (reg != null) {
                 chunks.add(reg);
@@ -312,7 +312,7 @@ public class WorldAccessor {
                 for (int y = 0; y <= yrad * 2; y++) {
                     int gcx = wlb.getChunkMidpointX() + x - xrad;
                     int gcy = wlb.getChunkMidpointY() + y - yrad;
-                    if (this.worldProvider.getMeta().inChunkBounds(gcx, gcy)) {
+                    if (this.worldProvider.getBounds().inChunkBounds(gcx, gcy)) {
                         requestChunk(gcx, gcy);
                     }
                 }
@@ -351,7 +351,7 @@ public class WorldAccessor {
     }
     
     public WorldBounds getWorldBounds() {
-        return worldProvider.getMeta();
+        return worldProvider.getBounds();
     }
     
     public AmbientLightProvider getAmbientLight() {

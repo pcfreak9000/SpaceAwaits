@@ -47,7 +47,7 @@ public class Player implements NBTSerializable {
     @Override
     public void readNBT(NBTTag compound) {
         NBTCompound pc = (NBTCompound) compound;
-        EntitySerializer.deserializeEntityComponents(playerEntity, pc.getNode("entity"));
+        EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.currentWorld = pc.getString("currentWorld");
     }
     

@@ -46,6 +46,12 @@ public class Save implements ISave {
     }
     
     @Override
+    public boolean hasWorld(String uuid) {
+        File file = new File(worldsDir, uuid);
+        return file.exists() && file.isDirectory();
+    }
+    
+    @Override
     public IWorldSave getWorld(String uuid) {
         File file = new File(worldsDir, uuid);
         if (!file.isDirectory() || !file.exists()) {

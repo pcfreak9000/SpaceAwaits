@@ -77,6 +77,11 @@ public class TestWorldSaveMgr implements ISaveManager {
             public boolean hasPlayer() {
                 return false;
             }
+
+            @Override
+            public boolean hasWorld(String uuid) {
+                return false;
+            }
         };
     }
     
@@ -148,6 +153,11 @@ public class TestWorldSaveMgr implements ISaveManager {
 
             @Override
             public boolean hasPlayer() {
+                return false;
+            }
+
+            @Override
+            public boolean hasWorld(String uuid) {
                 return false;
             }
         };

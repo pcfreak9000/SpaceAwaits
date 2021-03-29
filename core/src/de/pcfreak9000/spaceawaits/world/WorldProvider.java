@@ -10,7 +10,7 @@ public interface WorldProvider {
     
     void unloadGlobal();
     
-    WorldBounds getMeta();
+    WorldBounds getBounds();
     
     void requestChunk(int gcx, int gcy, Consumer<Chunk> onChunkLoaded);
     

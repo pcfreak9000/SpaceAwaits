@@ -18,6 +18,7 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
@@ -238,7 +239,18 @@ public class Chunk implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag compound) {
+    public void readNBT(NBTTag tag) {
+        NBTCompound nbtc = (NBTCompound) tag;
+        NBTList entities = nbtc.getList("entities");
+        if (entities.getEntryType() != NBTType.Compound) {
+            throw new IllegalArgumentException("Entity list is not a compound list");
+        }
+        for (NBTTag t : entities.getContent()) {
+            Entity e = EntitySerializer.deserializeEntity((NBTCompound) t);
+            if (e != null) {
+                addEntity(e);
+            }
+        }
     }
     
     @Override
@@ -252,9 +264,11 @@ public class Chunk implements NBTSerializable {
                 //tileList.add(getTile(i, j));
             }
         }
-        for(Entity e : this.entities) {
-            
+        for (Entity e : this.entities) {
+            NBTCompound nbt = EntitySerializer.serializeEntity(e);
+            entities.add(nbt);
         }
+        chunkMaster.putList("entities", entities);
         return null;
     }
     
