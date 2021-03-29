@@ -73,7 +73,7 @@ public class WorldSave implements IWorldSave {
     
     @Override
     public void writeChunk(int cx, int cy, NBTCompound nbtc) {
-        DataOutputStream os = RegionFileCache.getChunkDataOutputStream(globalFile, cx, cy);
+        DataOutputStream os = RegionFileCache.getChunkDataOutputStream(myDir, cx, cy);
         try (NbtWriter writer = new NbtWriter(os)) {
             nbtc.accept(writer);
         } catch (IOException e) {

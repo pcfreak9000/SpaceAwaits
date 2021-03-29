@@ -72,7 +72,7 @@ public class Global implements NBTSerializable {
             }
         }
         nbtc.putList("entities", entities);
-        return null;
-        //return nbtc;
+        //return null;
+        return nbtc;
     }
 }

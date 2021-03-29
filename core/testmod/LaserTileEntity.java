@@ -1,4 +1,6 @@
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
@@ -6,7 +8,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileState;
 
-public class LaserTileEntity extends TileEntity implements Tickable {
+public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializable {
     
     private float progress = 0;
     
@@ -31,6 +33,16 @@ public class LaserTileEntity extends TileEntity implements Tickable {
         } else if (myState.getGlobalTileY() - progress < 0) {
             progress = 0;
         }
-        
+    }
+    
+    @Override
+    public void readNBT(NBTTag tag) {
+        NBTTag.FloatEntry e = (NBTTag.FloatEntry) tag;
+        this.progress = e.getFloat();
+    }
+    
+    @Override
+    public NBTTag writeNBT() {
+        return new NBTTag.FloatEntry(progress);
     }
 }

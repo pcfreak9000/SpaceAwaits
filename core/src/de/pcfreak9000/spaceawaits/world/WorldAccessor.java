@@ -185,10 +185,18 @@ public class WorldAccessor {
     public void setWorldProvider(WorldProvider wp) {//TMP?
         if (wp != this.worldProvider) {
             if (this.worldProvider != null) {
+                this.requested.clear();
+                this.fulfilledRequested.clear();//These chunks haven't been modified yet and can just be regenerated
                 for (Entity e : worldProvider.requestGlobal().getEntities()) {
                     wmgr.getECSManager().removeEntity(e);
                 }
                 worldProvider.unloadGlobal();
+                for (Chunk c : chunksLoaded.values()) {
+                    worldProvider.unloadChunk(c);
+                }
+                for (Chunk c : chunksUpdated.values()) {
+                    worldProvider.unloadChunk(c);
+                }
             }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
             this.worldProvider = wp;

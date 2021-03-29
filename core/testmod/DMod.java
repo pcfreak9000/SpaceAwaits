@@ -9,9 +9,11 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.Background;
+import de.pcfreak9000.spaceawaits.world.Global;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
+import de.pcfreak9000.spaceawaits.world.gen.GlobalGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -92,10 +94,20 @@ public class DMod {
             @Override
             public WorldGenerationBundle generateWorld(long seed) {
                 return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT, true), new TestChunkGenerator(),
-                        (g) -> {
-                            //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
-                            WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
-                            g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                        new GlobalGenerator() {
+                            
+                            @Override
+                            public void populateGlobal(Global g) {
+                                //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
+                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
+                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                            }
+                            
+                            @Override
+                            public void repopulateGlobal(Global g) {
+                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);//TODO Create borders internally and save them?
+                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                            }
                         });
             }
         });
