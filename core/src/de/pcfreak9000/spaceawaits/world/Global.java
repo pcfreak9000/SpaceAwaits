@@ -68,11 +68,10 @@ public class Global implements NBTSerializable {
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {
                 NBTCompound nbt = EntitySerializer.serializeEntity(e);
-                entities.add(nbt);
+                entities.addCompound(nbt);
             }
         }
         nbtc.putList("entities", entities);
-        //return null;
         return nbtc;
     }
 }

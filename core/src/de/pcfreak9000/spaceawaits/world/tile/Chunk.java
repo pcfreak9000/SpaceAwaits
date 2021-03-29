@@ -245,23 +245,21 @@ public class Chunk implements NBTSerializable {
         NBTList tileList = nbtc.getList("vgr");
         NBTList tileBkgrList = nbtc.getList("bkr");
         NBTList tileEntities = nbtc.getList("tileEntities");
-        int index = 0;
-        for (NBTTag idtag : tileList.getContent()) {
-            String id = ((NBTTag.StringEntry) idtag).getString();//TODO improve NBTList with functionality for this
+        for (int i = 0; i < tileList.size(); i++) {
+            String id = tileList.getString(i);
             Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
-            int x = index / CHUNK_TILE_SIZE;
-            int y = index % CHUNK_TILE_SIZE;
+            int x = i / CHUNK_TILE_SIZE;
+            int y = i % CHUNK_TILE_SIZE;
             setTile(t, getGlobalTileX() + x, getGlobalTileY() + y);
-            index++;
+            i++;
         }
-        index = 0;
-        for (NBTTag idtag : tileBkgrList.getContent()) {
-            String id = ((NBTTag.StringEntry) idtag).getString();//TODO improve NBTList with functionality for this
+        for (int i = 0; i < tileBkgrList.size(); i++) {
+            String id = tileBkgrList.getString(i);
             Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
-            int x = index / CHUNK_TILE_SIZE;
-            int y = index % CHUNK_TILE_SIZE;
+            int x = i / CHUNK_TILE_SIZE;
+            int y = i % CHUNK_TILE_SIZE;
             setTileBackground(t, getGlobalTileX() + x, getGlobalTileY() + y);
-            index++;
+            i++;
         }
         for (NBTTag tet : tileEntities.getContent()) {
             NBTCompound comp = (NBTCompound) tet;
@@ -298,7 +296,7 @@ public class Chunk implements NBTSerializable {
             for (int j = 0; j < CHUNK_TILE_SIZE; j++) {
                 TileState st = this.tiles.get(this.getGlobalTileX() + i, this.getGlobalTileY() + j);
                 String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
-                tileList.add(id);
+                tileList.addString(id);
                 Tile t = st.getTile();
                 if (t.hasTileEntity()) {
                     TileEntity e = st.getTileEntity();
@@ -315,7 +313,7 @@ public class Chunk implements NBTSerializable {
                 
                 TileState bst = this.tilesBackground.get(this.getGlobalTileX() + i, this.getGlobalTileY() + j);
                 String bid = GameRegistry.TILE_REGISTRY.getId(bst.getTile());
-                tileBkgrList.add(bid);
+                tileBkgrList.addString(bid);
             }
         }
         chunkMaster.putList("vgr", tileList);
