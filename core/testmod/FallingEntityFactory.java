@@ -24,7 +24,7 @@ public class FallingEntityFactory implements WorldEntityFactory {
         TransformComponent tc = new TransformComponent();
         entity.add(tc);
         PhysicsComponent pc = new PhysicsComponent();
-        pc.factory = new AABBBodyFactory(200, 100);
+        pc.factory = AABBBodyFactory.builder().dimensions(200, 100).create();//new AABBBodyFactory(200, 100);
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
         return entity;

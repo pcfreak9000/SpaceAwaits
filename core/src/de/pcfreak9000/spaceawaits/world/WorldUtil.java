@@ -20,7 +20,7 @@ public class WorldUtil {
     private static Entity createBorderEntity(float x, float y, float w, float h) {
         Entity e = new Entity();
         PhysicsComponent ph = new PhysicsComponent();
-        ph.factory = AABBBodyFactory.create(w, h, x, y);
+        ph.factory = AABBBodyFactory.builder().staticBody().dimensions(w, h).initialPosition(x, y).create();//AABBBodyFactory.create(w, h, x, y);
         e.add(ph);
         return e;
     }

@@ -32,8 +32,8 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         tc.position.set(500, 2900);
         e.add(tc);
         e.add(pc);
-        pc.factory = new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2,
-                sprite.getHeight() / 2 * 0.9f);
+        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
+                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));
         return e;
     }
