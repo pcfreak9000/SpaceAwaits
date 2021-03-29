@@ -251,7 +251,6 @@ public class Chunk implements NBTSerializable {
             int x = i / CHUNK_TILE_SIZE;
             int y = i % CHUNK_TILE_SIZE;
             setTile(t, getGlobalTileX() + x, getGlobalTileY() + y);
-            i++;
         }
         for (int i = 0; i < tileBkgrList.size(); i++) {
             String id = tileBkgrList.getString(i);
@@ -259,7 +258,6 @@ public class Chunk implements NBTSerializable {
             int x = i / CHUNK_TILE_SIZE;
             int y = i % CHUNK_TILE_SIZE;
             setTileBackground(t, getGlobalTileX() + x, getGlobalTileY() + y);
-            i++;
         }
         for (NBTTag tet : tileEntities.getContent()) {
             NBTCompound comp = (NBTCompound) tet;
