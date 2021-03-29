@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
+import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -46,6 +48,18 @@ public class LightCalculator extends IteratingSystem {
         resize(cam.viewportWidth, cam.viewportHeight);
     }
     
+    @EventSubscription
+    private void event3(CoreEvents.ExitEvent ex) {
+        Logger.getLogger(getClass()).debug("Disposing...");
+        if (this.texture != null) {
+            this.texture.dispose();
+            this.texture = null;
+        }
+        if (lightsBuffer != null) {
+            this.lightsBuffer.dispose();
+        }
+    }
+    
     public void resize(float widthf, float heightf) {
         if (lightsBuffer != null) {
             this.lightsBuffer.dispose();
@@ -68,7 +82,7 @@ public class LightCalculator extends IteratingSystem {
         try {
             new PixelPointLightTask2(wmgr.getWorldAccess(), (pix) -> {
                 if (texture != null) {
-                    texture.dispose();//TODO dispose when this region is deleted/unloaded
+                    texture.dispose();
                 }
                 texture = new Texture(pix);
                 texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);

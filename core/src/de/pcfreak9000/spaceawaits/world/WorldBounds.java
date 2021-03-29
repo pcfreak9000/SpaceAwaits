@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.world;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class WorldBounds {
@@ -14,8 +15,8 @@ public class WorldBounds {
         this.tWidth = twidth;
         this.tHeight = theight;
         this.wrapsAround = wraparound;
-        this.arrayWidth = (int) Math.ceil(twidth / (double) Chunk.CHUNK_TILE_SIZE);//TODO use other ceil?
-        this.arrayHeight = (int) Math.ceil(theight / (double) Chunk.CHUNK_TILE_SIZE);
+        this.arrayWidth = Mathf.ceili(twidth / (float) Chunk.CHUNK_TILE_SIZE);
+        this.arrayHeight = Mathf.ceili(theight / (float) Chunk.CHUNK_TILE_SIZE);
     }
     
     public boolean inBounds(int tx, int ty) {

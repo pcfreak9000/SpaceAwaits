@@ -30,7 +30,7 @@ public class WorldManager {
         ecsManager.update(delta);
     }
     
-    //TODO Make this configurable from the WorldGenerator and also have global systems
+    //-> Make this configurable from the WorldGenerator and also have global systems
     private void addDefaultECSSystems() {//Create some indexed hook system thing instead?
         this.ecsManager.addSystem(new PlayerInputSystem());
         this.ecsManager.addSystem(new TickChunkSystem());
@@ -44,7 +44,7 @@ public class WorldManager {
         this.ecsManager.addSystem(new RenderEntitySystem());
         this.ecsManager.addSystem(new LightCalculator());
         //lightCalc.setProcessing(false);
-        //dthis.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
+        //this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
     }
     
     public Engine getECSManager() {

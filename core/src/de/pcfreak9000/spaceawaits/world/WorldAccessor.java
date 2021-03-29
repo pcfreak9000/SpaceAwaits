@@ -35,7 +35,7 @@ public class WorldAccessor {
     
     //Entities in the Chunks?
     //What about force loading?
-    //Keep often visited chunks loaded? -> TODO switch to a chunk ticket system like minecraft?
+    //Keep often visited chunks loaded? -> switch to a chunk ticket system like minecraft?
     
     //NICE! Forgot that there can be multiple worlds... FUCK -> multiple "Loading" i guess for the server
     

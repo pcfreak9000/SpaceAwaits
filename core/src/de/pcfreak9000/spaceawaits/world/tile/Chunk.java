@@ -137,7 +137,8 @@ public class Chunk implements NBTSerializable {
         return this.tiles.get(tx, ty).getTile();
     }
     
-    public TileState getTileState(int tx, int ty) {//TODO not public...
+    //Not the best solution, but TileState visibility is a problem anyways
+    TileState getTileState(int tx, int ty) {
         return this.tiles.get(tx, ty);
     }
     
@@ -169,7 +170,7 @@ public class Chunk implements NBTSerializable {
             }
         }
         notifyListeners(newTileState, old);
-        //TODO neighbour change notifications
+        //-> neighbour change notifications
         //        if (tileWorld.inBounds(tx + 1, ty)) {
         //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
         //        }

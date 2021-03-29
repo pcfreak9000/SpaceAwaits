@@ -68,7 +68,6 @@ public class PlayerInputSystem extends IteratingSystem {
         }
         this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
-            //TODO Well that is ugly...
             Vector2 mouse = SpaceAwaits.getSpaceAwaits().worldRenderer.getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int txm = Tile.toGlobalTile(mouse.x);

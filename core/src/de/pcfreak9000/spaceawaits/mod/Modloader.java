@@ -83,17 +83,16 @@ public class Modloader {
     public URLClassLoader getModClassLoader() {
         return modClassLoader;
     }
-   
     
     private void instantiate() {
         LOGGER.info("Instantiating mods...");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Constructing mods", true));
+        //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Constructing mods", true));
         int i = 0;
         for (final ModClassFileHolder th : this.modClasses) {
             i++;
             final Class<?> modClass = th.modclass;
-//            LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingSubEvent(
-//                    modClass.getAnnotation(Mod.class).name(), i, this.modClasses.size()));
+            //            LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingSubEvent(
+            //                    modClass.getAnnotation(Mod.class).name(), i, this.modClasses.size()));
             Object instance = null;
             try {
                 modClass.getConstructor().setAccessible(true);
@@ -122,7 +121,6 @@ public class Modloader {
             final ModContainer container = new ModContainer(modClass, modClass.getAnnotation(Mod.class), instance,
                     th.file);
             if (this.modList.contains(container)) {
-                //TODO better
                 LOGGER.info("Skipping already loaded mod: " + container.getMod().id() + " (version "
                         + Arrays.toString(container.getMod().version()) + ")");
                 continue;
@@ -138,7 +136,7 @@ public class Modloader {
     
     private void registerEvents() {
         LOGGER.info("Registering container event handlers...");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Registering initializer"));
+        //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Registering initializer"));
         for (final ModContainer container : this.modList) {
             SpaceAwaits.BUS.register(container.getInstance());
         }
@@ -146,7 +144,7 @@ public class Modloader {
     
     private void dispatchInstances() {
         LOGGER.info("Dispatching instances...");
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Dispatching instances"));
+        //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Dispatching instances"));
         for (final ModContainer container : this.modList) {
             final Field[] fields = container.getModClass().getDeclaredFields();
             for (final Field f : fields) {
@@ -201,7 +199,7 @@ public class Modloader {
     }
     
     private void classLoadMods(final File moddir) {
-//        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Finding mods", true));
+        //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Finding mods", true));
         final List<File> candidates = new ArrayList<>();
         discover(candidates, moddir);
         load(candidates);
@@ -225,8 +223,8 @@ public class Modloader {
             JarFile jarfile = null;
             try {
                 jarfile = new JarFile(candidates.get(i));
-//                LoadingScreen.LOADING_STAGE_BUS
-//                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
+                //                LoadingScreen.LOADING_STAGE_BUS
+                //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
                 for (final JarEntry entry : Collections.list(jarfile.entries())) {
                     if (entry.getName().toLowerCase().endsWith(".class")) {
                         Class<?> clazz = null;
@@ -236,8 +234,7 @@ public class Modloader {
                             LOGGER.error("ClassNotFoundException: " + entry.getName());
                             continue;
                         } catch (final LinkageError e) {
-                            LOGGER.warn("LinkageError: "
-                                    + entry.getName().replace("/", ".").replace(".class", ""));
+                            LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
                             continue;
                         }
                         if (clazz.isAnnotationPresent(Mod.class)) {

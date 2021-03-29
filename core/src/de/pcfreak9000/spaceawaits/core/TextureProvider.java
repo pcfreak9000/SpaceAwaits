@@ -8,7 +8,16 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.QueueResourcesEvent;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.UpdateResourcesEvent;
 
-public class TextureProvider {
+public class TextureProvider implements ITextureProvider {
+    
+    public static final ITextureProvider EMPTY = new ITextureProvider() {
+        private final TextureProvider em = new TextureProvider();
+        
+        @Override
+        public TextureRegion getRegion() {
+            return em.getRegion();
+        }
+    };
     
     private String name;
     private TextureRegion region;
@@ -27,12 +36,18 @@ public class TextureProvider {
         this.name = name;
     }
     
+    @Override
     public TextureRegion getRegion() {
         return region;
     }
     
     public String getName() {
         return name;
+    }
+    
+    @Override
+    public String toString() {
+        return getName();
     }
     
     @EventSubscription

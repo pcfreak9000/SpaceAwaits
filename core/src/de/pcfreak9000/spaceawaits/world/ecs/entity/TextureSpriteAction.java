@@ -2,13 +2,13 @@ package de.pcfreak9000.spaceawaits.world.ecs.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 
 public class TextureSpriteAction implements SpriteRenderPreAction {
     
-    private TextureProvider texture;
+    private ITextureProvider texture;
     
-    public TextureSpriteAction(TextureProvider provider) {
+    public TextureSpriteAction(ITextureProvider provider) {
         this.texture = provider;
     }
     

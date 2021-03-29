@@ -77,7 +77,7 @@ public class ChunkPhysics implements BodyFactory {
         Fixture fix = body.createFixture(fd);
         chunk.getTileState(gtx, gty).setFixture(fix);
         shape.dispose();
-        //fix.setUserData(t); //TODO tile fixture user data
+        fix.setUserData(tile);//Enough for now
     }
     
     private final class ListenerClass implements ChunkChangeListener {

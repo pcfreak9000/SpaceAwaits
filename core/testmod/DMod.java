@@ -1,9 +1,12 @@
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 
 import de.omnikryptec.event.EventSubscription;
+import de.pcfreak9000.spaceawaits.core.AnimatedTextureProvider;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.CoreResources;
+import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
@@ -43,7 +46,10 @@ public class DMod {
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-        tstoneTile.setTexture("stone.png");
+        Animation<ITextureProvider> stoneanim = new Animation<>(5, new TextureProvider("stone.png"),
+                new TextureProvider("sand.png"));
+        
+        tstoneTile.setTextureProvider(new AnimatedTextureProvider(stoneanim));
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
         tstoneTile.setLightTransmission(0.55f);
         

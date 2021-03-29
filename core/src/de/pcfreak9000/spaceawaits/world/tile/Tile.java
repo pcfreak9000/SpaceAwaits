@@ -1,9 +1,11 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
+import java.util.Objects;
+
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.TestWorldProvider;
@@ -13,7 +15,7 @@ public class Tile {
     
     public static final float MAX_LIGHT_VALUE = 16;
     
-    public static final Tile EMPTY = new Tile();//TODO replace with usefulness
+    public static final Tile EMPTY = new Tile();//The last bastion against the void
     
     public static final float TILE_SIZE = 16;
     
@@ -29,11 +31,10 @@ public class Tile {
         EMPTY.setTexture(null);
         EMPTY.setSolid(false);
         EMPTY.color().set(0, 0, 0, 0);
-        //EMPTY.setLightLoss(0.0f);
         GameRegistry.TILE_REGISTRY.register("empty", EMPTY);
     }
     
-    private TextureProvider texture = new TextureProvider();
+    private ITextureProvider textureProvider;
     
     private boolean canBreak = true;
     private boolean opaque = true;
@@ -47,7 +48,12 @@ public class Tile {
     private float bouncyness = 0;
     
     public void setTexture(String name) {
-        this.texture.setTexture(name);
+        setTextureProvider(new TextureProvider(name));
+    }
+    
+    public void setTextureProvider(ITextureProvider prov) {
+        Objects.requireNonNull(prov);
+        this.textureProvider = prov;
     }
     
     public void setBouncyness(float b) {
@@ -106,10 +112,6 @@ public class Tile {
         this.lighttransmission = f;
     }
     
-    public String getTextureName() {
-        return texture.getName();
-    }
-    
     public boolean hasTileEntity() {
         return false;
     }
@@ -124,10 +126,10 @@ public class Tile {
     
     @Override
     public String toString() {
-        return String.format("Tile[texture=%s]", this.getTextureName());
+        return String.format("Tile[texture=%s]", Objects.toString(this.textureProvider));
     }
     
-    public TextureRegion getTextureRegion() {
-        return this.texture.getRegion();
+    public ITextureProvider getTextureProvider() {
+        return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
 }

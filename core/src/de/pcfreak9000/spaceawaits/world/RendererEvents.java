@@ -16,4 +16,11 @@ public class RendererEvents {
         }
     }
     
+    public static class UpdateAnimationEvent extends Event {
+        public final float dt;
+        
+        public UpdateAnimationEvent(float dt) {
+            this.dt = dt;
+        }
+    }
 }

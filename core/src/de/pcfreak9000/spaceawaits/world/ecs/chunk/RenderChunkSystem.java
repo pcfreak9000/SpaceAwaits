@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.IntSet;
 
 import de.omnikryptec.event.EventSubscription;
+import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
@@ -28,7 +29,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
     private static final float BACKGROUND_FACTOR = 0.5f;
     
-    private SpriteCache regionCache;//TODO SpriteCache needs disposal
+    private SpriteCache regionCache;//Maybe use something global instead
     private IntSet freeCacheIds;
     private Camera camera;
     
@@ -42,6 +43,11 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
         camera = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
+    }
+    
+    @EventSubscription
+    private void event2(CoreEvents.ExitEvent ex) {
+        this.regionCache.dispose();
     }
     
     @Override
@@ -156,8 +162,8 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
         }
     }
     
-    private void addTile(TileState t, SpriteCache c) {//TODO tile texture and animations and stuff
-        c.add(t.getTile().getTextureRegion(), t.getGlobalTileX() * Tile.TILE_SIZE, t.getGlobalTileY() * Tile.TILE_SIZE,
-                Tile.TILE_SIZE, Tile.TILE_SIZE);
+    private void addTile(TileState t, SpriteCache c) {
+        c.add(t.getTile().getTextureProvider().getRegion(), t.getGlobalTileX() * Tile.TILE_SIZE,
+                t.getGlobalTileY() * Tile.TILE_SIZE, Tile.TILE_SIZE, Tile.TILE_SIZE);
     }
 }

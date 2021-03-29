@@ -135,6 +135,7 @@ public class SpaceAwaits extends Game {
         this.worldRenderer.dispose();
         this.mainMenuScreen.dispose();
         this.assetManager.dispose();
+        LOGGER.info("Exit.");
     }
     
     private AssetManager createAssetmanager() {

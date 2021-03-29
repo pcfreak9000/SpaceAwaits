@@ -23,7 +23,7 @@ public class MainMenuScreen extends ScreenAdapter {
     private ExtendViewport viewport;
     private FillViewport backgroundVp;
     
-    private SpriteBatch batch;//TODO global batch?
+    private SpriteBatch batch;//TODO global batch? also see ChunkRenderer with SpriteCache
     
     private Stage stage;
     private Skin skin;

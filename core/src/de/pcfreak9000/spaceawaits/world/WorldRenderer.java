@@ -67,6 +67,7 @@ public class WorldRenderer extends ScreenAdapter {
         Gdx.gl.glClearColor(0.05f, 0.05f, 0.05f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         applyViewport();
+        SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         this.worldManager.updateAndRender(delta);
         //Render Game HUD here?
         fps.log();
