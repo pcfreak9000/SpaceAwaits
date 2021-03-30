@@ -55,10 +55,10 @@ public class SaveManager implements ISaveManager {
     }
     
     @Override
-    public ISave getSave(String foldername) {
+    public ISave getSave(String foldername) throws IOException {
         File saveFolder = new File(savesDir, foldername);
         if (!saveFolder.isDirectory() || !saveFolder.exists()) {
-            return null;
+            throw new IOException("Specified save isn't a directory or doesn't exist");
         }
         SaveMeta meta = getSaveMetaFor(saveFolder);
         writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc)
@@ -69,22 +69,25 @@ public class SaveManager implements ISaveManager {
     public List<SaveMeta> listSaves() {
         File[] files = savesDir.listFiles((pathname) -> {
             File metafile = new File(pathname, "meta.dat");
-            return pathname.isDirectory() && new File(pathname, "meta.dat").exists() && metafile.isFile();
+            return pathname.isDirectory() && metafile.exists() && metafile.isFile();
         });
         List<SaveMeta> list = new ArrayList<>();
         for (File f : files) {
-            list.add(getSaveMetaFor(f));
+            try {
+                SaveMeta meta = getSaveMetaFor(f);
+                list.add(meta);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
     
-    private SaveMeta getSaveMetaFor(File save) {
+    private SaveMeta getSaveMetaFor(File save) throws IOException {
         File metafile = new File(save, "meta.dat");
         try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
             return SaveMeta.ofNBT(compound, save.getName());
-        } catch (IOException e) {
-            throw new RuntimeException(e);//Meh...
         }
     }
     

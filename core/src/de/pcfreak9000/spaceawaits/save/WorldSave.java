@@ -77,7 +77,7 @@ public class WorldSave implements IWorldSave {
         try (NbtWriter writer = new NbtWriter(os)) {
             nbtc.accept(writer);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     

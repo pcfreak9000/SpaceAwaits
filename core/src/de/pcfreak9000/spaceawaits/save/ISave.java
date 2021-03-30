@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.save;
 
+import java.io.IOException;
+
 import de.pcfreak9000.nbt.NBTCompound;
 
 public interface ISave {
@@ -12,9 +14,9 @@ public interface ISave {
     
     boolean hasWorld(String uuid);
     
-    String createWorld(String name, WorldMeta worldMeta);
+    String createWorld(String name, WorldMeta worldMeta) throws IOException;
     
-    IWorldSave getWorld(String uuid);
+    IWorldSave getWorld(String uuid) throws IOException;
     
     boolean hasPlayer();
     

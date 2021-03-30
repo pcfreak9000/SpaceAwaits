@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -49,12 +50,16 @@ public class GameManager {
         if (!saveManager.exists(uniqueSaveDesc)) {
             throw new IllegalStateException(uniqueSaveDesc);
         }
-        ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Player player = new Player();
-        player.readNBT(save.readPlayerNBT());//Maybe move this into Game?
-        Game game = new Game(save, player);
-        game.joinWorld(player.getCurrentWorld());//TMP
-        this.gameCurrent = game;
+        try {
+            ISave save = this.saveManager.getSave(uniqueSaveDesc);
+            Player player = new Player();
+            player.readNBT(save.readPlayerNBT());//Maybe move this into Game?
+            Game game = new Game(save, player);
+            game.joinWorld(player.getCurrentWorld());//TMP
+            this.gameCurrent = game;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void unloadGame() {

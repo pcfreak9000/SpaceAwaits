@@ -22,7 +22,7 @@
 /*
  * 2021 March 14
  * 
- * See the above notices. The code has been slightly modified (auto-formatted) by pcfreak9000 to better suit his needs.
+ * See the above notices. The code has been slightly modified (auto-formatted, a debugln for chunks which are too big) by pcfreak9000 to better suit his needs.
  * 
  */
 
@@ -286,6 +286,7 @@ public class RegionFile {
             
             // maximum chunk size is 1MB
             if (sectorsNeeded >= 256) {
+                debugln("Exceeding max chunks size at " + x + "|" + z +", sectors needed: "+sectorsNeeded);
                 return;
             }
             

@@ -3,7 +3,10 @@ package de.pcfreak9000.spaceawaits.save;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.Random;
 
 import de.pcfreak9000.nbt.CompressedNbtReader;
 import de.pcfreak9000.nbt.NBTCompound;
@@ -32,17 +35,32 @@ public class Save implements ISave {
     
     @Override
     public String createWorld(String name, WorldMeta meta) {
-        UUID fromName = UUID.nameUUIDFromBytes(name.getBytes());
-        UUID random = UUID.randomUUID();
-        String combinedUUID = fromName.toString() + "_" + random.toString();
-        File worldFile = new File(worldsDir, combinedUUID);
-        if (worldFile.exists()) {
-            throw new RuntimeException(
-                    "This should be more unlikely than winning in the lotto while being hit by a lightning (or someone copied a world around)");
-        }
+        String combinedID = null;
+        File worldFile = null;
+        do {
+            combinedID = createNewID(name);
+            worldFile = new File(worldsDir, combinedID);
+        } while (worldFile.exists());//In theory this could take forever but in practice it won't
         worldFile.mkdir();
         writeWorldMetaFor(worldFile, meta);
-        return combinedUUID;
+        return combinedID;
+    }
+    
+    private String createNewID(String wname) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new InternalError("MD5 not supported", nsae);
+        }
+        byte[] md5Bytes = md.digest(wname.getBytes());
+        Random random = new Random();
+        byte[] additional = new byte[6];
+        random.nextBytes(additional);
+        byte[] bytes = new byte[md5Bytes.length + additional.length];
+        System.arraycopy(md5Bytes, 0, bytes, 0, md5Bytes.length);
+        System.arraycopy(additional, 0, bytes, md5Bytes.length, additional.length);
+        return Base64.getEncoder().encodeToString(bytes);
     }
     
     @Override
@@ -52,7 +70,7 @@ public class Save implements ISave {
     }
     
     @Override
-    public IWorldSave getWorld(String uuid) {
+    public IWorldSave getWorld(String uuid) throws IOException {
         File file = new File(worldsDir, uuid);
         if (!file.isDirectory() || !file.exists()) {
             throw new IllegalArgumentException();
@@ -73,7 +91,7 @@ public class Save implements ISave {
         try {
             TagReader.toCompressedBinaryNBTFile(this.playerFile, nbtc);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     
@@ -83,17 +101,15 @@ public class Save implements ISave {
             NBTCompound compound = nbtreader.toCompoundTag();
             return compound;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e);//ugh, this needs better exception handling
         }
     }
     
-    private WorldMeta getWorldMetaFor(File world) {
+    private WorldMeta getWorldMetaFor(File world) throws IOException {
         File metafile = new File(world, "meta.dat");
         try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
             return WorldMeta.ofNBT(compound);
-        } catch (IOException e) {
-            throw new RuntimeException(e);//Meh...
         }
     }
     
@@ -102,7 +118,7 @@ public class Save implements ISave {
         try {
             TagReader.toCompressedBinaryNBTFile(metaFile, meta.toNBTCompound());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     

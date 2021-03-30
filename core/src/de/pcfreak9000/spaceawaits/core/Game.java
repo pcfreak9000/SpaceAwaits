@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.io.IOException;
+
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
@@ -31,17 +33,21 @@ public class Game {
     }
     
     public void joinWorld(String uuid) {
-        IWorldSave save = this.mySave.getWorld(uuid);
-        WorldMeta meta = save.getWorldMeta();
-        String genId = meta.getWorldGeneratorUsed();
-        long worldSeed = meta.getWorldSeed();
-        WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId); //TODO default WorldGenerator
-        WorldGenerationBundle bundle = gen.generateWorld(worldSeed);
-        SaveWorldProvider provider = new SaveWorldProvider(bundle.getChunkGenerator(), bundle.getGlobalGenerator(),
-                save, new WorldBounds(meta.getWidth(), meta.getHeight(), meta.isWrapsAround()));//Hmmm - do this a better way
-        worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
-        this.player.setCurrentWorld(uuid);
-        worldMgr.getWorldAccess().setWorldProvider(provider);
+        try {
+            IWorldSave save = this.mySave.getWorld(uuid);
+            WorldMeta meta = save.getWorldMeta();
+            String genId = meta.getWorldGeneratorUsed();
+            long worldSeed = meta.getWorldSeed();
+            WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId); //TODO default WorldGenerator
+            WorldGenerationBundle bundle = gen.generateWorld(worldSeed);
+            SaveWorldProvider provider = new SaveWorldProvider(bundle.getChunkGenerator(), bundle.getGlobalGenerator(),
+                    save, new WorldBounds(meta.getWidth(), meta.getHeight(), meta.isWrapsAround()));//Hmmm - do this a better way
+            worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
+            this.player.setCurrentWorld(uuid);
+            worldMgr.getWorldAccess().setWorldProvider(provider);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public String createAndJoinWorld(WorldGenerator generator, String name, long seed) {
@@ -54,14 +60,18 @@ public class Game {
         wMeta.setWidth(worldGenBundle.getBounds().getWidth());
         wMeta.setHeight(worldGenBundle.getBounds().getHeight());
         wMeta.setWrapsAround(worldGenBundle.getBounds().isWrappingAround());
-        String uuid = this.mySave.createWorld(name, wMeta);
-        IWorldSave worldSave = this.mySave.getWorld(uuid);
-        SaveWorldProvider provider = new SaveWorldProvider(worldGenBundle.getChunkGenerator(),
-                worldGenBundle.getGlobalGenerator(), worldSave, worldGenBundle.getBounds());
-        worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
-        this.player.setCurrentWorld(uuid);
-        worldMgr.getWorldAccess().setWorldProvider(provider);
-        return uuid;
+        try {
+            String uuid = this.mySave.createWorld(name, wMeta);
+            IWorldSave worldSave = this.mySave.getWorld(uuid);
+            SaveWorldProvider provider = new SaveWorldProvider(worldGenBundle.getChunkGenerator(),
+                    worldGenBundle.getGlobalGenerator(), worldSave, worldGenBundle.getBounds());
+            worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
+            this.player.setCurrentWorld(uuid);
+            worldMgr.getWorldAccess().setWorldProvider(provider);
+            return uuid;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     public void saveAndLeaveCurrentWorld() {

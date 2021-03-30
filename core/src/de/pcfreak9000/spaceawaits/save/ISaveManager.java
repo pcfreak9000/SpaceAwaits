@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.save;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,9 +25,9 @@ public interface ISaveManager {
     
     ISave createSave(String name);
     
-    void deleteSave(String foldername);
+    void deleteSave(String foldername) throws IOException;
     
-    ISave getSave(String foldername);
+    ISave getSave(String foldername) throws IOException;
     
     List<SaveMeta> listSaves();
     
