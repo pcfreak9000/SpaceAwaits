@@ -60,7 +60,7 @@ public class Save implements ISave {
         byte[] bytes = new byte[md5Bytes.length + additional.length];
         System.arraycopy(md5Bytes, 0, bytes, 0, md5Bytes.length);
         System.arraycopy(additional, 0, bytes, md5Bytes.length, additional.length);
-        return Base64.getEncoder().encodeToString(bytes);
+        return Base64.getEncoder().encodeToString(bytes).replace('/', '_').replace('+', '-').replace("==", "");
     }
     
     @Override
