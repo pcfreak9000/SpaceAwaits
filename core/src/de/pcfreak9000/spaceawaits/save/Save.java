@@ -65,6 +65,9 @@ public class Save implements ISave {
     
     @Override
     public boolean hasWorld(String uuid) {
+        if (uuid == null) {//Hmm
+            return false;
+        }
         File file = new File(worldsDir, uuid);
         return file.exists() && file.isDirectory();
     }
@@ -101,7 +104,7 @@ public class Save implements ISave {
             NBTCompound compound = nbtreader.toCompoundTag();
             return compound;
         } catch (IOException e) {
-            throw new RuntimeException(e);//ugh, this needs better exception handling
+            throw new RuntimeException(e);
         }
     }
     

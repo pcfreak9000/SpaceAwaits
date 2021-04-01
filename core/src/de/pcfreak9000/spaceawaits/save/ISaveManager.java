@@ -23,7 +23,7 @@ public interface ISaveManager {
     
     boolean exists(String foldername);
     
-    ISave createSave(String name);
+    ISave createSave(String name, long seed);
     
     void deleteSave(String foldername) throws IOException;
     

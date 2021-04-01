@@ -1,24 +1,43 @@
 package de.pcfreak9000.spaceawaits.menu;
 
+import java.util.Random;
+import java.util.UUID;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
 import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.save.SaveMeta;
 
-public class MainMenuScreen extends ScreenAdapter {
+public class SelectSaveScreen extends ScreenAdapter {
+    
+    private static final class SaveMetaUi {
+        private final SaveMeta meta;
+        
+        public SaveMetaUi(SaveMeta m) {
+            this.meta = m;
+        }
+        
+        @Override
+        public String toString() {
+            return meta.getDisplayName();
+        }
+    }
     
     private ExtendViewport viewport;
     private FillViewport backgroundVp;
@@ -28,38 +47,62 @@ public class MainMenuScreen extends ScreenAdapter {
     private Stage stage;
     private Skin skin;
     private Table table = new Table();
+    private List<SaveMetaUi> savesList;
     
-    public MainMenuScreen() {
+    public SelectSaveScreen() {
         this.skin = new Skin(Gdx.files.internal("ui/skin.json"));//TODO license stuff, resource loading stuff
         viewport = new ExtendViewport(200, 200);
         this.stage = new Stage(viewport);
+        savesList = new List<>(skin);
         backgroundVp = new FillViewport(200 * 16 / 9f, 200);
-        TextButton playButton = new TextButton("Play", skin);
-        playButton.addListener(new ClickListener() {
+        TextButton newButton = new TextButton("New", skin);
+        newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().selectSaveScreen);
+                SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(UUID.randomUUID().toString(),
+                        new Random().nextLong());//TODO Use some other random instead
+                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
             }
         });
-        TextButton exitButton = new TextButton("Quit", skin);
-        exitButton.addListener(new ClickListener() {
+        
+        TextButton playSelectedButton = new TextButton("Play selected", skin);
+        playSelectedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SpaceAwaits.getSpaceAwaits().exit();
+                SaveMetaUi selected = savesList.getSelected();
+                SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
             }
         });
-        Label label = new Label(SpaceAwaits.NAME, this.skin);
-        label.setFontScale(2);
+        
+        ClickListener listListener = new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                SaveMetaUi selected = savesList.getSelected();
+                SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
+            };
+        };
+        savesList.addListener(listListener);
+        ScrollPane pane = new ScrollPane(savesList);
         this.batch = new SpriteBatch();
         table.setWidth(this.stage.getWidth());
         table.setHeight(this.stage.getHeight());
-        table.align(Align.center);
-        table.add(label);
-        table.row();
-        table.add(playButton).width(110).padBottom(5);
-        table.row();
-        table.add(exitButton).width(110);
+        table.align(Align.left);
+        
+        Table buttontable = new Table();
+        buttontable.add(newButton).width(100).padBottom(5);
+        buttontable.row();
+        buttontable.add(playSelectedButton).width(100);
+        table.add(buttontable);
+        table.add(pane);
         stage.addActor(table);
+    }
+    
+    private void updateSavesListEntries() {
+        Array<SaveMetaUi> array = new Array<>(SpaceAwaits.getSpaceAwaits().getGameManager().listSaves().stream()
+                .map((sm) -> new SaveMetaUi(sm)).toArray(SaveMetaUi[]::new));
+        savesList.setItems(array);
     }
     
     @Override
@@ -71,6 +114,7 @@ public class MainMenuScreen extends ScreenAdapter {
     
     @Override
     public void show() {
+        updateSavesListEntries();
         Gdx.input.setInputProcessor(stage);
     }
     

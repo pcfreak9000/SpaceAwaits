@@ -1,7 +1,5 @@
 package de.pcfreak9000.spaceawaits.core;
 
-import java.util.List;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -17,9 +15,9 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.menu.MainMenuScreen;
+import de.pcfreak9000.spaceawaits.menu.SelectSaveScreen;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
-import de.pcfreak9000.spaceawaits.save.SaveMeta;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.WorldRenderer;
@@ -56,6 +54,8 @@ public class SpaceAwaits extends Game {
     public WorldRenderer worldRenderer;
     @Deprecated //Public access is deprecated
     public MainMenuScreen mainMenuScreen;
+    @Deprecated
+    public SelectSaveScreen selectSaveScreen;
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
@@ -93,22 +93,17 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
-        
-        //Testing stuff below
-        List<SaveMeta> saves = this.gameManager.listSaves();
-        if (saves.isEmpty()) {
-            this.gameManager.createAndLoadGame("Test-World 0", 0);
-        } else {
-            this.gameManager.loadGame(saves.get(0).getNameOnDisk());
-        }
-        //Testing stuff above
-        
         this.mainMenuScreen = new MainMenuScreen();
+        this.selectSaveScreen = new SelectSaveScreen();
         setScreen(mainMenuScreen);
     }
     
     public WorldManager getWorldManager() {
-        return worldManager;
+        return this.worldManager;
+    }
+    
+    public GameManager getGameManager() {
+        return this.gameManager;
     }
     
     private void preloadResources() {//What happens on resource reload?

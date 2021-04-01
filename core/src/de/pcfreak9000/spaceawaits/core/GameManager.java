@@ -2,15 +2,10 @@ package de.pcfreak9000.spaceawaits.core;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
-import de.omnikryptec.math.MathUtil;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.ISaveManager;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
 
 /**
  * Basiacally the backend to a level selector. Creates new gamesaves, and loads
@@ -33,17 +28,8 @@ public class GameManager {
     }
     
     public void createAndLoadGame(String name, long seed) {
-        ISave save = this.saveManager.createSave(name);
-        Game game = new Game(save, new Player());
-        game.createAndJoinWorld(
-                pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)), "Gurke",
-                0);
-        this.gameCurrent = game;
-    }
-    
-    //TMP
-    private WorldGenerator pickGenerator(List<WorldGenerator> list) {
-        return MathUtil.getWeightedRandom(new Random(), list);
+        ISave save = this.saveManager.createSave(name, seed);
+        loadGame(save.getSaveMeta().getNameOnDisk());
     }
     
     public void loadGame(String uniqueSaveDesc) {
@@ -52,10 +38,8 @@ public class GameManager {
         }
         try {
             ISave save = this.saveManager.getSave(uniqueSaveDesc);
-            Player player = new Player();
-            player.readNBT(save.readPlayerNBT());//Maybe move this into Game?
-            Game game = new Game(save, player);
-            game.joinWorld(player.getCurrentWorld());//TMP
+            Game game = new Game(save);
+            game.joinGame();
             this.gameCurrent = game;
         } catch (IOException e) {
             e.printStackTrace();

@@ -12,7 +12,7 @@ public class TestWorldSaveMgr implements ISaveManager {
     }
     
     @Override
-    public ISave createSave(String name) {
+    public ISave createSave(String name, long seed) {
         return new ISave() {
             
             @Override
@@ -55,7 +55,7 @@ public class TestWorldSaveMgr implements ISaveManager {
                     public WorldMeta getWorldMeta() {
                         return null;
                     }
-
+                    
                     @Override
                     public boolean hasGlobal() {
                         return false;
@@ -72,12 +72,12 @@ public class TestWorldSaveMgr implements ISaveManager {
             public String createWorld(String name, WorldMeta m) {
                 return "";
             }
-
+            
             @Override
             public boolean hasPlayer() {
                 return false;
             }
-
+            
             @Override
             public boolean hasWorld(String uuid) {
                 return false;
@@ -133,7 +133,7 @@ public class TestWorldSaveMgr implements ISaveManager {
                     public WorldMeta getWorldMeta() {
                         return null;
                     }
-
+                    
                     @Override
                     public boolean hasGlobal() {
                         return false;
@@ -150,12 +150,12 @@ public class TestWorldSaveMgr implements ISaveManager {
             public String createWorld(String name, WorldMeta m) {
                 return "";
             }
-
+            
             @Override
             public boolean hasPlayer() {
                 return false;
             }
-
+            
             @Override
             public boolean hasWorld(String uuid) {
                 return false;

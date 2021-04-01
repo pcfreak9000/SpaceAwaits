@@ -29,21 +29,21 @@ public class SaveManager implements ISaveManager {
     }
     
     @Override
-    public ISave createSave(String name) {
+    public ISave createSave(String name, long seed) {
         File file = new File(savesDir, name);
         while (file.exists()) {
             name = name + "_";
             file = new File(savesDir, name);
         }
         file.mkdir();
-        SaveMeta meta = new SaveMeta(name, file.getName(), System.currentTimeMillis());
+        SaveMeta meta = new SaveMeta(name, file.getName(), System.currentTimeMillis(), seed);
         writeSaveMetaFor(file, meta);
         return new Save(meta, file);
     }
     
     @Override
     public void deleteSave(String foldername) {
-        //There might needs to be some checking done on those foldernames so they dont contain .. etc?
+        //Some checking needs to be done on those foldernames so they dont contain .. etc?
         File saveFolder = new File(savesDir, foldername);
         if (saveFolder.isDirectory() && saveFolder.exists()) {
             try {
@@ -61,7 +61,7 @@ public class SaveManager implements ISaveManager {
             throw new IOException("Specified save isn't a directory or doesn't exist");
         }
         SaveMeta meta = getSaveMetaFor(saveFolder);
-        writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc)
+        writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc) -> TODO avoid this in the future (also see Save for worl metas)
         return new Save(meta, saveFolder);
     }
     

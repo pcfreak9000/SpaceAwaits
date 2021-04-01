@@ -1,7 +1,10 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 
+import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
@@ -14,6 +17,7 @@ import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
 
 public class Game {
     
@@ -25,11 +29,37 @@ public class Game {
     
     private WorldManager worldMgr = SpaceAwaits.getSpaceAwaits().getWorldManager(); //This will change when WorldManager becomes more modular
     
-    public Game(ISave save, Player player) {
+    public Game(ISave save) {
         this.mySave = save;
-        this.player = player;
+        this.player = new Player();
+        this.readPlayer();
+    }
+    
+    private void readPlayer() {
+        if (this.mySave.hasPlayer()) {
+            this.player.readNBT(this.mySave.readPlayerNBT());
+        }
         this.worldMgr.getWorldAccess().addLoadingBounds(
                 new WorldLoadingBounds(this.player.getPlayerEntity().getComponent(TransformComponent.class).position));//Oh boi
+    }
+    
+    public void joinGame() {
+        String w = this.player.getCurrentWorld();
+        if (this.mySave.hasWorld(w)) {
+            this.joinWorld(w);
+        } else {
+            //Check if this save has a spawn place, otherwise generate a new one
+            //When generating a new world, place the player at spawn
+            String id = createWorld("Gurke",
+                    pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)),
+                    this.mySave.getSaveMeta().getSeed());//Derive world seed from that master seed instead of using it directly
+            joinWorld(id);
+        }
+    }
+    
+    //TMP
+    private WorldGenerator pickGenerator(List<WorldGenerator> list) {
+        return MathUtil.getWeightedRandom(new Random(), list);
     }
     
     public void joinWorld(String uuid) {
@@ -50,7 +80,7 @@ public class Game {
         }
     }
     
-    public String createAndJoinWorld(WorldGenerator generator, String name, long seed) {
+    public String createWorld(String name, WorldGenerator generator, long seed) {
         WorldGenerationBundle worldGenBundle = generator.generateWorld(seed);
         WorldMeta wMeta = new WorldMeta();
         wMeta.setDisplayName(name);
@@ -60,21 +90,17 @@ public class Game {
         wMeta.setWidth(worldGenBundle.getBounds().getWidth());
         wMeta.setHeight(worldGenBundle.getBounds().getHeight());
         wMeta.setWrapsAround(worldGenBundle.getBounds().isWrappingAround());
+        //The meta can probably be cached (useful for create-and-join)
         try {
             String uuid = this.mySave.createWorld(name, wMeta);
-            IWorldSave worldSave = this.mySave.getWorld(uuid);
-            SaveWorldProvider provider = new SaveWorldProvider(worldGenBundle.getChunkGenerator(),
-                    worldGenBundle.getGlobalGenerator(), worldSave, worldGenBundle.getBounds());
-            worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
-            this.player.setCurrentWorld(uuid);
-            worldMgr.getWorldAccess().setWorldProvider(provider);
             return uuid;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
     
     public void saveAndLeaveCurrentWorld() {
+        worldMgr.getECSManager().removeEntity(player.getPlayerEntity());
         worldMgr.getWorldAccess().setWorldProvider(null);
         mySave.writePlayerNBT((NBTCompound) this.player.writeNBT());
     }
