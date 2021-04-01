@@ -19,29 +19,23 @@ public class SaveWorldProvider implements WorldProvider {
     private IWorldSave myWorldSave;
     
     private Global global;
-    private final Chunk[][] chunks;
     
     public SaveWorldProvider(ChunkGenerator chunkGen, GlobalGenerator globaGen, IWorldSave save, WorldBounds bounds) {
         this.myWorldSave = save;
         this.chunkGen = chunkGen;
         this.globalGen = globaGen;
         this.bounds = bounds;
-        this.chunks = new Chunk[bounds.getWidthChunks()][bounds.getHeightChunks()];
     }
     
     private Chunk requestChunk(int cx, int cy) {
         if (bounds.inChunkBounds(cx, cy)) {
-            Chunk r = this.chunks[cx][cy];
-            if (r == null) {
-                r = new Chunk(cx, cy, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess()); //TODO get worldaccess stuff through different means
-                this.chunks[cx][cy] = r;
-                if (this.myWorldSave.hasChunk(cx, cy)) {
-                    NBTCompound nbtc = this.myWorldSave.readChunk(cx, cy);
-                    r.readNBT(nbtc);
-                    this.chunkGen.regenerateChunk(r, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
-                } else {
-                    this.chunkGen.generateChunk(r, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
-                }
+            Chunk r = new Chunk(cx, cy, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess()); //TODO get worldaccess stuff through different means
+            if (this.myWorldSave.hasChunk(cx, cy)) {
+                NBTCompound nbtc = this.myWorldSave.readChunk(cx, cy);
+                r.readNBT(nbtc);
+                this.chunkGen.regenerateChunk(r, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
+            } else {
+                this.chunkGen.generateChunk(r, SpaceAwaits.getSpaceAwaits().getWorldManager().getWorldAccess());
             }
             return r;
         }

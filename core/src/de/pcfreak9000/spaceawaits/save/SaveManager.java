@@ -30,13 +30,14 @@ public class SaveManager implements ISaveManager {
     
     @Override
     public ISave createSave(String name, long seed) {
+        String display = name;
         File file = new File(savesDir, name);
         while (file.exists()) {
             name = name + "_";
             file = new File(savesDir, name);
         }
         file.mkdir();
-        SaveMeta meta = new SaveMeta(name, file.getName(), System.currentTimeMillis(), seed);
+        SaveMeta meta = new SaveMeta(display, file.getName(), System.currentTimeMillis(), seed);
         writeSaveMetaFor(file, meta);
         return new Save(meta, file);
     }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -31,7 +32,7 @@ public class GuiScreenManager implements Disposable {
     public GuiScreenManager(ScreenStateManager ssmgr) {
         SpaceAwaits.BUS.register(this);
         this.ssmgr = ssmgr;
-        this.viewport = new ExtendViewport(200, 200);
+        this.viewport = new ExtendViewport(500, 500);
         this.backgroundVp = new FillViewport(200 * 16 / 9f, 200);
         this.guiSpriteBatch = new SpriteBatch();
     }
@@ -87,6 +88,13 @@ public class GuiScreenManager implements Disposable {
         viewport.apply();
         stage.act(delta);
         stage.draw();
+    }
+    
+    public void showDialog(String title, String text, Stage stage) {
+        Dialog d = new Dialog(title, getSkin());
+        d.text(text);
+        d.button("Ok");
+        d.show(stage);
     }
     
     public void resize(int width, int height) {

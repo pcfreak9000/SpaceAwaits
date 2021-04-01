@@ -1,14 +1,18 @@
 package de.pcfreak9000.spaceawaits.menu;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
-import java.util.UUID;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -30,6 +34,10 @@ public class SelectSaveScreen extends MenuScreen {
         @Override
         public String toString() {
             return meta.getDisplayName();
+//            StringBuilder b = new StringBuilder();
+//            b.append(meta.getDisplayName()).append('\n');
+//            b.append("Created: ").append(new Date(meta.getCreationTime()));
+//            return b.toString();
         }
     }
     
@@ -39,13 +47,36 @@ public class SelectSaveScreen extends MenuScreen {
     public SelectSaveScreen(ScreenStateManager screenstatemgr, GuiScreenManager g) {
         super(g);
         savesList = new List<>(g.getSkin());
-        TextButton newButton = new TextButton("New", g.getSkin());
+        TextButton newButton = new TextButton("New Save", g.getSkin());
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(UUID.randomUUID().toString(),
-                        new Random().nextLong());//TODO Use some other random instead
-                screenstatemgr.setWorldScreen();
+                TextField nameField = new TextField("", g.getSkin());
+                nameField.setMessageText("Name");
+                TextField seedField = new TextField("", g.getSkin());
+                seedField.setMessageText("Seed");
+                Dialog d = new Dialog("Create new world", g.getSkin()) {
+                    @Override
+                    protected void result(Object object) {
+                        if (object != null) {
+                            String name = nameField.getText();
+                            String seeds = seedField.getText();
+                            try {
+                                SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(name,
+                                        getSeedFromInput(seeds));
+                                screenstatemgr.setWorldScreen();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                            }
+                        }
+                    }
+                };
+                d.button("Create", new Object());
+                d.button("Cancel");
+                d.getContentTable().add(nameField);
+                d.getContentTable().add(seedField);
+                d.show(stage);
             }
         });
         
@@ -67,13 +98,25 @@ public class SelectSaveScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 SaveMetaUi selected = savesList.getSelected();
                 if (selected != null) {
-                    try {
-                        SpaceAwaits.getSpaceAwaits().getGameManager().getSaveManager()
-                                .deleteSave(selected.meta.getNameOnDisk());
-                        updateSavesListEntries();
-                    } catch (IOException e) {
-                        e.printStackTrace();//Dialog instead
-                    }
+                    Dialog del = new Dialog("Delete save", g.getSkin()) {
+                        @Override
+                        protected void result(Object object) {
+                            if (object != null) {
+                                try {
+                                    SpaceAwaits.getSpaceAwaits().getGameManager().getSaveManager()
+                                            .deleteSave(selected.meta.getNameOnDisk());
+                                    updateSavesListEntries();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    g.showDialog("Error", "An error occured while deleting the save:\n" + e.toString(),
+                                            stage);
+                                }
+                            }
+                        };
+                    };
+                    del.button("Yes", new Object());
+                    del.button("No");
+                    del.show(stage);
                 }
             }
         });
@@ -110,7 +153,6 @@ public class SelectSaveScreen extends MenuScreen {
         table.setWidth(stage.getWidth());
         table.setHeight(stage.getHeight());
         table.align(Align.left);
-        
         Table buttontable = new Table();
         buttontable.add(newButton).width(100).pad(5);
         buttontable.row();
@@ -122,6 +164,27 @@ public class SelectSaveScreen extends MenuScreen {
         table.add(buttontable);
         table.add(pane);
         stage.addActor(table);
+    }
+    
+    private long getSeedFromInput(String in) {
+        if (in.isEmpty()) {
+            return new Random().nextLong();
+        }
+        try {
+            long l = Long.parseLong(in);
+            return l;
+        } catch (NumberFormatException ex) {
+        }
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new InternalError("MD5 not supported", nsae);
+        }
+        byte[] md5Bytes = md.digest(in.getBytes());
+        ByteBuffer b = ByteBuffer.wrap(md5Bytes);
+        b.asLongBuffer();
+        return b.asLongBuffer().get(0);
     }
     
     private void updateSavesListEntries() {

@@ -30,7 +30,7 @@ public class MainMenuScreen extends MenuScreen {
             }
         });
         Label label = new Label(SpaceAwaits.NAME, g.getSkin());
-        label.setFontScale(2);
+        label.setFontScale(4);
         table.setWidth(this.stage.getWidth());
         table.setHeight(this.stage.getHeight());
         table.align(Align.center);

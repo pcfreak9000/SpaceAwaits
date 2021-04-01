@@ -19,6 +19,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.save.regionfile.RegionFileCache;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -195,8 +196,12 @@ public class WorldAccessor {
                     worldProvider.unloadChunk(c);
                 }
                 for (Chunk c : chunksUpdated.values()) {
+                    removeChunkFromSystem(c);
                     worldProvider.unloadChunk(c);
                 }
+                chunksLoaded.clear();
+                chunksUpdated.clear();
+                RegionFileCache.clear();
             }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent(this.wmgr, this.worldProvider, wp));
             this.worldProvider = wp;
