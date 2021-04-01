@@ -29,8 +29,8 @@ public class RenderEntitySystem extends IteratingSystem {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.b = SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch();
-        this.cam = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
+        this.b = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch();
+        this.cam = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
     }
     
     @Override

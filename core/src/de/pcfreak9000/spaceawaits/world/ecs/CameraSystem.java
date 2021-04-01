@@ -35,7 +35,7 @@ public class CameraSystem extends IteratingSystem {
         TransformComponent tc = this.transformMapper.get(entity);
         float x = tc.position.x;
         float y = tc.position.y;
-        Camera camera = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
+        Camera camera = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
         if (!DEBUG) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
@@ -43,6 +43,6 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(world.getWorldBounds().getHeight() * Tile.TILE_SIZE - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        SpaceAwaits.getSpaceAwaits().worldRenderer.applyViewport();
+        SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().applyViewport();
     }
 }

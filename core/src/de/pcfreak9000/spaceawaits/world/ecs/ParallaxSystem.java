@@ -28,14 +28,14 @@ public class ParallaxSystem extends IteratingSystem {
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.tileWorld = svwe.worldMgr.getWorldAccess();
-        this.render = SpaceAwaits.getSpaceAwaits().worldRenderer;
+        this.render = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer();
     }
     
     @Override
     public void update(float deltaTime) {
-        SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch().begin();
+        SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().begin();
         super.update(deltaTime);
-        SpaceAwaits.getSpaceAwaits().worldRenderer.getSpriteBatch().end();
+        SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().end();
     }
     
     @Override

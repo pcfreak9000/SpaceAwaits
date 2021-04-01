@@ -1,30 +1,24 @@
 package de.pcfreak9000.spaceawaits.menu;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.UUID;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 
-import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
 
-public class SelectSaveScreen extends ScreenAdapter {
+public class SelectSaveScreen extends MenuScreen {
+    
+    private static final long DOUBLECLICK_DURATION_MS = 300;
     
     private static final class SaveMetaUi {
         private final SaveMeta meta;
@@ -39,61 +33,92 @@ public class SelectSaveScreen extends ScreenAdapter {
         }
     }
     
-    private ExtendViewport viewport;
-    private FillViewport backgroundVp;
-    
-    private SpriteBatch batch;//TODO global batch? also see ChunkRenderer with SpriteCache
-    
-    private Stage stage;
-    private Skin skin;
     private Table table = new Table();
     private List<SaveMetaUi> savesList;
     
-    public SelectSaveScreen() {
-        this.skin = new Skin(Gdx.files.internal("ui/skin.json"));//TODO license stuff, resource loading stuff
-        viewport = new ExtendViewport(200, 200);
-        this.stage = new Stage(viewport);
-        savesList = new List<>(skin);
-        backgroundVp = new FillViewport(200 * 16 / 9f, 200);
-        TextButton newButton = new TextButton("New", skin);
+    public SelectSaveScreen(ScreenStateManager screenstatemgr, GuiScreenManager g) {
+        super(g);
+        savesList = new List<>(g.getSkin());
+        TextButton newButton = new TextButton("New", g.getSkin());
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(UUID.randomUUID().toString(),
                         new Random().nextLong());//TODO Use some other random instead
-                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
+                screenstatemgr.setWorldScreen();
             }
         });
         
-        TextButton playSelectedButton = new TextButton("Play selected", skin);
+        TextButton playSelectedButton = new TextButton("Play selected", g.getSkin());
         playSelectedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 SaveMetaUi selected = savesList.getSelected();
-                SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
+                if (selected != null) {
+                    SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                    screenstatemgr.setWorldScreen();
+                }
+            }
+        });
+        
+        TextButton deleteSelectedButton = new TextButton("Delete selected", g.getSkin());//TODO confirmation dialog
+        deleteSelectedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                SaveMetaUi selected = savesList.getSelected();
+                if (selected != null) {
+                    try {
+                        SpaceAwaits.getSpaceAwaits().getGameManager().getSaveManager()
+                                .deleteSave(selected.meta.getNameOnDisk());
+                        updateSavesListEntries();
+                    } catch (IOException e) {
+                        e.printStackTrace();//Dialog instead
+                    }
+                }
+            }
+        });
+        
+        TextButton backButton = new TextButton("Back", g.getSkin());
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                screenstatemgr.setMainMenuScreen();
             }
         });
         
         ClickListener listListener = new ClickListener() {
+            private long last = 0;
+            private SaveMetaUi lastS = null;
+            
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                long current = System.currentTimeMillis();
+                long dif = current - last;
                 SaveMetaUi selected = savesList.getSelected();
-                SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                SpaceAwaits.getSpaceAwaits().setScreen(SpaceAwaits.getSpaceAwaits().worldRenderer);
+                if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
+                    SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                    screenstatemgr.setWorldScreen();
+                    last = 0;
+                } else {
+                    last = current;
+                    lastS = selected;
+                }
             };
         };
         savesList.addListener(listListener);
         ScrollPane pane = new ScrollPane(savesList);
-        this.batch = new SpriteBatch();
-        table.setWidth(this.stage.getWidth());
-        table.setHeight(this.stage.getHeight());
+        table.setWidth(stage.getWidth());
+        table.setHeight(stage.getHeight());
         table.align(Align.left);
         
         Table buttontable = new Table();
-        buttontable.add(newButton).width(100).padBottom(5);
+        buttontable.add(newButton).width(100).pad(5);
         buttontable.row();
-        buttontable.add(playSelectedButton).width(100);
+        buttontable.add(playSelectedButton).width(100).pad(5);
+        buttontable.row();
+        buttontable.add(deleteSelectedButton).width(100).pad(5);
+        buttontable.row();
+        buttontable.add(backButton).width(100).pad(5);
         table.add(buttontable);
         table.add(pane);
         stage.addActor(table);
@@ -106,43 +131,8 @@ public class SelectSaveScreen extends ScreenAdapter {
     }
     
     @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        viewport.update(width, height);
-        backgroundVp.update(width, height);
-    }
-    
-    @Override
     public void show() {
         updateSavesListEntries();
-        Gdx.input.setInputProcessor(stage);
-    }
-    
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-    }
-    
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        backgroundVp.apply(true);
-        batch.setProjectionMatrix(backgroundVp.getCamera().combined);
-        batch.begin();
-        float w = backgroundVp.getWorldWidth();
-        float h = backgroundVp.getWorldHeight();
-        batch.draw(CoreResources.SPACE_BACKGROUND.getRegion(), 0, 0, w, h);
-        batch.end();
-        viewport.apply();
-        stage.act(delta);
-        stage.draw();
-    }
-    
-    @Override
-    public void dispose() {
-        this.stage.dispose();
-        this.skin.dispose();
-        this.batch.dispose();
+        super.show();
     }
 }

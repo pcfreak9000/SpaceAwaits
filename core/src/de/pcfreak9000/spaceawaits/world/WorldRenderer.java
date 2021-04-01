@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -11,8 +12,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.menu.ScreenStateManager;
 
 public class WorldRenderer extends ScreenAdapter {
+    
+    private ScreenStateManager ssmgr;
     
     private WorldManager worldManager;
     private FPSLogger fps;
@@ -22,12 +26,16 @@ public class WorldRenderer extends ScreenAdapter {
     
     private SpriteBatch spriteBatch;
     
-    public WorldRenderer(WorldManager mgr) {
-        this.worldManager = mgr;
+    public WorldRenderer(ScreenStateManager screenstatemgr) {
+        this.ssmgr = screenstatemgr;
         this.fps = new FPSLogger();
         this.camera = new OrthographicCamera(1920, 1080);
         this.viewport = new FitViewport(1920, 1080, camera);
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
+    }
+    
+    public void setWorldManager(WorldManager mgr) {
+        this.worldManager = mgr;
     }
     
     public Camera getCamera() {
@@ -71,6 +79,10 @@ public class WorldRenderer extends ScreenAdapter {
         this.worldManager.updateAndRender(delta);
         //Render Game HUD here?
         fps.log();
+        if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+            SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
+            ssmgr.setMainMenuScreen();
+        }
     }
     
     @Override

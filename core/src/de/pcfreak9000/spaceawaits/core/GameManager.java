@@ -61,4 +61,8 @@ public class GameManager {
     public Game getGameCurrent() {
         return this.gameCurrent;
     }
+    
+    public ISaveManager getSaveManager() {
+        return this.saveManager;
+    }
 }

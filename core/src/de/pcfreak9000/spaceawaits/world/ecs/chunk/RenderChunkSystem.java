@@ -42,7 +42,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
-        camera = SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera();
+        camera = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
     }
     
     @EventSubscription
@@ -94,7 +94,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     @Override
     public void update(float deltaTime) {
         //this.regionCache.clear();
-        regionCache.setProjectionMatrix(SpaceAwaits.getSpaceAwaits().worldRenderer.getCamera().combined);
+        regionCache.setProjectionMatrix(SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera().combined);
         for (int i = 0; i < getEntities().size(); i++) {
             processEntity(getEntities().get(i), deltaTime);
         }
