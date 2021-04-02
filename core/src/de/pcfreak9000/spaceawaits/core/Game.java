@@ -76,7 +76,7 @@ public class Game {
             this.player.setCurrentWorld(uuid);
             worldMgr.getWorldAccess().setWorldProvider(provider);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
     

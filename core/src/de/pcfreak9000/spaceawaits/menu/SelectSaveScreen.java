@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -34,15 +35,23 @@ public class SelectSaveScreen extends MenuScreen {
         @Override
         public String toString() {
             return meta.getDisplayName();
-//            StringBuilder b = new StringBuilder();
-//            b.append(meta.getDisplayName()).append('\n');
-//            b.append("Created: ").append(new Date(meta.getCreationTime()));
-//            return b.toString();
+            //            StringBuilder b = new StringBuilder();
+            //            b.append(meta.getDisplayName()).append('\n');
+            //            b.append("Created: ").append(new Date(meta.getCreationTime()));
+            //            return b.toString();
         }
     }
     
     private Table table = new Table();
     private List<SaveMetaUi> savesList;
+    
+    private static final TextFieldFilter NAME_FILTER = new TextFieldFilter() {
+        
+        @Override
+        public boolean acceptChar(TextField textField, char c) {
+            return Character.isAlphabetic(c) || Character.isDigit(c) || c == '-' || c == '_';
+        }
+    };
     
     public SelectSaveScreen(ScreenStateManager screenstatemgr, GuiScreenManager g) {
         super(g);
@@ -52,6 +61,7 @@ public class SelectSaveScreen extends MenuScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 TextField nameField = new TextField("", g.getSkin());
+                nameField.setTextFieldFilter(NAME_FILTER);
                 nameField.setMessageText("Name");
                 TextField seedField = new TextField("", g.getSkin());
                 seedField.setMessageText("Seed");
@@ -86,8 +96,13 @@ public class SelectSaveScreen extends MenuScreen {
             public void clicked(InputEvent event, float x, float y) {
                 SaveMetaUi selected = savesList.getSelected();
                 if (selected != null) {
-                    SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                    screenstatemgr.setWorldScreen();
+                    try {
+                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                        screenstatemgr.setWorldScreen();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                    }
                 }
             }
         });
@@ -114,8 +129,8 @@ public class SelectSaveScreen extends MenuScreen {
                             }
                         };
                     };
-                    del.button("Yes", new Object());
-                    del.button("No");
+                    del.button("Delete", new Object());
+                    del.button("Cancel");
                     del.show(stage);
                 }
             }
@@ -129,6 +144,39 @@ public class SelectSaveScreen extends MenuScreen {
             }
         });
         
+        TextButton renameButton = new TextButton("Rename", g.getSkin());
+        renameButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                SaveMetaUi selected = savesList.getSelected();
+                if (selected != null) {
+                    TextField newName = new TextField(selected.meta.getDisplayName(), g.getSkin());
+                    newName.setTextFieldFilter(NAME_FILTER);
+                    newName.setMessageText("New Name");
+                    Dialog d = new Dialog("Rename", g.getSkin()) {
+                        @Override
+                        protected void result(Object object) {
+                            if (object != null) {
+                                String s = newName.getText();
+                                try {
+                                    SpaceAwaits.getSpaceAwaits().getGameManager().getSaveManager()
+                                            .rename(selected.meta.getNameOnDisk(), s);
+                                    updateSavesListEntries();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    g.showDialog("Error", "An error occured while renaming the save:\n" + e.toString(),
+                                            stage);
+                                }
+                            }
+                        };
+                    };
+                    d.getContentTable().add(newName);
+                    d.button("Rename", new Object());
+                    d.button("Cancel");
+                    d.show(stage);
+                }
+            }
+        });
         ClickListener listListener = new ClickListener() {
             private long last = 0;
             private SaveMetaUi lastS = null;
@@ -139,9 +187,14 @@ public class SelectSaveScreen extends MenuScreen {
                 long dif = current - last;
                 SaveMetaUi selected = savesList.getSelected();
                 if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
-                    SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                    screenstatemgr.setWorldScreen();
-                    last = 0;
+                    try {
+                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                        screenstatemgr.setWorldScreen();
+                        last = 0;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                    }
                 } else {
                     last = current;
                     lastS = selected;
@@ -157,6 +210,8 @@ public class SelectSaveScreen extends MenuScreen {
         buttontable.add(newButton).width(100).pad(5);
         buttontable.row();
         buttontable.add(playSelectedButton).width(100).pad(5);
+        buttontable.row();
+        buttontable.add(renameButton).width(100).pad(5);
         buttontable.row();
         buttontable.add(deleteSelectedButton).width(100).pad(5);
         buttontable.row();

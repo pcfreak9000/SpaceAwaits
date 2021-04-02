@@ -22,6 +22,8 @@ public class SaveManager implements ISaveManager {
         }
     }
     
+    //TODO check incoming strings
+    
     @Override
     public boolean exists(String foldername) {
         File file = new File(savesDir, foldername);
@@ -53,6 +55,17 @@ public class SaveManager implements ISaveManager {
                 e.printStackTrace();
             }
         }
+    }
+    
+    @Override
+    public void rename(String foldername, String newDisplayName) throws IOException {
+        File saveFolder = new File(savesDir, foldername);
+        if (!saveFolder.isDirectory() || !saveFolder.exists()) {
+            throw new IOException("Specified save isn't a directory or doesn't exist");
+        }
+        SaveMeta sm = getSaveMetaFor(saveFolder);
+        sm.setDisplayName(newDisplayName);
+        writeSaveMetaFor(saveFolder, sm);
     }
     
     @Override

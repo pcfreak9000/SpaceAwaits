@@ -27,23 +27,19 @@ public class GameManager {
         this.saveManager = saveMgr;
     }
     
-    public void createAndLoadGame(String name, long seed) {
+    public void createAndLoadGame(String name, long seed) throws IOException {
         ISave save = this.saveManager.createSave(name, seed);
         loadGame(save.getSaveMeta().getNameOnDisk());
     }
     
-    public void loadGame(String uniqueSaveDesc) {
+    public void loadGame(String uniqueSaveDesc) throws IOException {
         if (!saveManager.exists(uniqueSaveDesc)) {
             throw new IllegalStateException(uniqueSaveDesc);
         }
-        try {
-            ISave save = this.saveManager.getSave(uniqueSaveDesc);
-            Game game = new Game(save);
-            game.joinGame();
-            this.gameCurrent = game;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ISave save = this.saveManager.getSave(uniqueSaveDesc);
+        Game game = new Game(save);
+        game.joinGame();
+        this.gameCurrent = game;
     }
     
     public void unloadGame() {

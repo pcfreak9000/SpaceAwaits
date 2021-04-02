@@ -29,6 +29,10 @@ public class SaveMeta {
         return this.displayName;
     }
     
+    public void setDisplayName(String display) {
+        this.displayName = display;
+    }
+    
     public long getCreationTime() {
         return created;
     }
