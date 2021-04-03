@@ -82,7 +82,7 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background(CoreResources.SPACE_BACKGROUND, 1920 * 16f / 9, 1920);
+        Background back = new Background(CoreResources.SPACE_BACKGROUND, 1920/16 * 16f / 9, 1920/16);
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         
         GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());

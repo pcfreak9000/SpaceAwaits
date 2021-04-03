@@ -18,8 +18,8 @@ public class PlayerEntityFactory implements WorldEntityFactory {
     public Entity createEntity() {
         Entity e = new Entity();
         PlayerInputComponent pic = new PlayerInputComponent();
-        pic.maxXv = 100;
-        pic.maxYv = 100;
+        pic.maxXv = 100/16;
+        pic.maxYv = 100/16;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
         Sprite sprite = new Sprite();

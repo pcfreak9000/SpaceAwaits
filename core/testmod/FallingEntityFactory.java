@@ -17,14 +17,14 @@ public class FallingEntityFactory implements WorldEntityFactory {
         entity.add(new ChunkMarkerComponent());
         RenderEntityComponent rec = new RenderEntityComponent();
         Sprite s = new Sprite();
-        s.setSize(200, 100);
+        s.setSize(200/16, 100/16);
         rec.sprite = s;
         rec.action = new TextureSpriteAction(DMod.instance.texture);
         entity.add(rec);
         TransformComponent tc = new TransformComponent();
         entity.add(tc);
         PhysicsComponent pc = new PhysicsComponent();
-        pc.factory = AABBBodyFactory.builder().dimensions(200, 100).create();//new AABBBodyFactory(200, 100);
+        pc.factory = AABBBodyFactory.builder().dimensions(200/16, 100/16).create();//new AABBBodyFactory(200, 100);
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
         return entity;
