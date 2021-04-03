@@ -99,7 +99,7 @@ public class DMod {
             
             @Override
             public WorldGenerationBundle generateWorld(long seed) {
-                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT, true), new TestChunkGenerator(),
+                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT), new TestChunkGenerator(),
                         new GlobalGenerator() {
                             
                             @Override

@@ -112,14 +112,16 @@ public class Save implements ISave {
         File metafile = new File(world, "meta.dat");
         try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
-            return WorldMeta.ofNBT(compound);
+            WorldMeta m = new WorldMeta();
+            m.readNBT(compound);
+            return m;
         }
     }
     
     private void writeWorldMetaFor(File world, WorldMeta meta) {
         File metaFile = new File(world, "meta.dat");
         try {
-            TagReader.toCompressedBinaryNBTFile(metaFile, meta.toNBTCompound());
+            TagReader.toCompressedBinaryNBTFile(metaFile, meta.writeNBT());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,15 +1,10 @@
 package de.pcfreak9000.spaceawaits.save;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
-public class SaveMeta {
-    
-    public static SaveMeta ofNBT(NBTCompound compound, String diskname) {
-        String displayName = compound.getStringOrDefault("displayName", "Error reading name");
-        long created = compound.getLongOrDefault("created", System.currentTimeMillis());
-        long masterSeed = compound.getLongOrDefault("mseed", 0);//TODO random seed?
-        return new SaveMeta(displayName, diskname, created, masterSeed);
-    }
+public class SaveMeta implements NBTSerializable {
     
     private String displayName;
     private long created;
@@ -17,6 +12,10 @@ public class SaveMeta {
     private long masterSeed;
     
     private String nameOnDisk;
+    
+    public SaveMeta(String nameOnDisk) {
+        this.nameOnDisk = nameOnDisk;
+    }
     
     public SaveMeta(String displayname, String nameOnDisk, long created, long masterSeed) {
         this.displayName = displayname;
@@ -29,6 +28,7 @@ public class SaveMeta {
         return this.displayName;
     }
     
+    //TODO proper file saving for this
     public void setDisplayName(String display) {
         this.displayName = display;
     }
@@ -45,7 +45,20 @@ public class SaveMeta {
         return this.nameOnDisk;
     }
     
-    public NBTCompound toNBTCompound() {
+    @Override
+    public void readNBT(NBTTag tag) {
+        //No defaults because this is crucial information and can't really be defaulted
+        NBTCompound compound = (NBTCompound) tag;
+        String displayName = compound.getString("displayName");
+        long created = compound.getLong("created");
+        long masterSeed = compound.getLong("mseed");
+        this.displayName = displayName;
+        this.created = created;
+        this.masterSeed = masterSeed;
+    }
+    
+    @Override
+    public NBTTag writeNBT() {
         NBTCompound comp = new NBTCompound();
         comp.putString("displayName", displayName);
         comp.putLong("created", created);

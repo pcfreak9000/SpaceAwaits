@@ -5,16 +5,14 @@ import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class WorldBounds {
     
-    private boolean wrapsAround;
     private int tWidth;
     private int tHeight;
     private final int arrayWidth;
     private final int arrayHeight;
     
-    public WorldBounds(int twidth, int theight, boolean wraparound) {
+    public WorldBounds(int twidth, int theight) {
         this.tWidth = twidth;
         this.tHeight = theight;
-        this.wrapsAround = wraparound;
         this.arrayWidth = Mathf.ceili(twidth / (float) Chunk.CHUNK_TILE_SIZE);
         this.arrayHeight = Mathf.ceili(theight / (float) Chunk.CHUNK_TILE_SIZE);
     }
@@ -41,9 +39,5 @@ public class WorldBounds {
     
     public int getHeightChunks() {
         return arrayHeight;
-    }
-    
-    public boolean isWrappingAround() {
-        return this.wrapsAround;
     }
 }

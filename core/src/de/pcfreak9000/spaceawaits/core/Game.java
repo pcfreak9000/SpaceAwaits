@@ -68,10 +68,11 @@ public class Game {
             WorldMeta meta = save.getWorldMeta();
             String genId = meta.getWorldGeneratorUsed();
             long worldSeed = meta.getWorldSeed();
-            WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId); //TODO default WorldGenerator
+            //No default because this is crucial information and can't really be defaulted
+            WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
             WorldGenerationBundle bundle = gen.generateWorld(worldSeed);
             SaveWorldProvider provider = new SaveWorldProvider(bundle.getChunkGenerator(), bundle.getGlobalGenerator(),
-                    save, new WorldBounds(meta.getWidth(), meta.getHeight(), meta.isWrapsAround()));//Hmmm - do this a better way
+                    save, new WorldBounds(meta.getWidth(), meta.getHeight()));//Hmmm - do this a better way
             worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
             this.player.setCurrentWorld(uuid);
             worldMgr.getWorldAccess().setWorldProvider(provider);
@@ -82,14 +83,9 @@ public class Game {
     
     public String createWorld(String name, WorldGenerator generator, long seed) {
         WorldGenerationBundle worldGenBundle = generator.generateWorld(seed);
-        WorldMeta wMeta = new WorldMeta();
-        wMeta.setDisplayName(name);
-        wMeta.setWorldSeed(seed);
-        wMeta.setCreated(System.currentTimeMillis());
-        wMeta.setWorldGeneratorUsed(GameRegistry.GENERATOR_REGISTRY.getId(generator));
-        wMeta.setWidth(worldGenBundle.getBounds().getWidth());
-        wMeta.setHeight(worldGenBundle.getBounds().getHeight());
-        wMeta.setWrapsAround(worldGenBundle.getBounds().isWrappingAround());
+        WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
+                .worldGenerator(GameRegistry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldGenBundle.getBounds())
+                .create();
         //The meta can probably be cached (useful for create-and-join)
         try {
             String uuid = this.mySave.createWorld(name, wMeta);

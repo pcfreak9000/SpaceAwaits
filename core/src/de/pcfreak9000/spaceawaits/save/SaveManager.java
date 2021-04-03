@@ -75,7 +75,7 @@ public class SaveManager implements ISaveManager {
             throw new IOException("Specified save isn't a directory or doesn't exist");
         }
         SaveMeta meta = getSaveMetaFor(saveFolder);
-        writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc) -> TODO avoid this in the future (also see Save for worl metas)
+        writeSaveMetaFor(saveFolder, meta);//Update meta if new stuff was added (time etc) -> TODO avoid this in the future (also see Save for world metas), maybe move this into the meta class itself?
         return new Save(meta, saveFolder);
     }
     
@@ -101,14 +101,16 @@ public class SaveManager implements ISaveManager {
         File metafile = new File(save, "meta.dat");
         try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
             NBTCompound compound = nbtreader.toCompoundTag();
-            return SaveMeta.ofNBT(compound, save.getName());
+            SaveMeta m = new SaveMeta(save.getName());
+            m.readNBT(compound);
+            return m;
         }
     }
     
     private void writeSaveMetaFor(File save, SaveMeta meta) {
         File metaFile = new File(save, "meta.dat");
         try {
-            TagReader.toCompressedBinaryNBTFile(metaFile, meta.toNBTCompound());
+            TagReader.toCompressedBinaryNBTFile(metaFile, meta.writeNBT());
         } catch (IOException e) {
             e.printStackTrace();
         }

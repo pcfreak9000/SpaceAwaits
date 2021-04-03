@@ -107,7 +107,7 @@ public class SelectSaveScreen extends MenuScreen {
             }
         });
         
-        TextButton deleteSelectedButton = new TextButton("Delete selected", g.getSkin());//TODO confirmation dialog
+        TextButton deleteSelectedButton = new TextButton("Delete selected", g.getSkin());
         deleteSelectedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

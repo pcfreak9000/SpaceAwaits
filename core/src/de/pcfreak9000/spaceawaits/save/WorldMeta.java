@@ -1,19 +1,14 @@
 package de.pcfreak9000.spaceawaits.save;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 
-public class WorldMeta {
+public class WorldMeta implements NBTSerializable {
     
-    public static WorldMeta ofNBT(NBTCompound comp) {
-        WorldMeta meta = new WorldMeta();
-        meta.setDisplayName(comp.getString("displayName"));
-        meta.setWorldSeed(comp.getLong("worldSeed"));
-        meta.setWorldGeneratorUsed(comp.getString("worldGeneratorUsed"));
-        meta.setWidth(comp.getInt("width"));
-        meta.setHeight(comp.getInt("height"));
-        meta.setWrapsAround(comp.getByte("wrapsAround") != 0);
-        meta.setCreated(comp.getLong("created"));
-        return meta;
+    public static Builder builder() {
+        return new Builder();
     }
     
     private String displayName;
@@ -25,74 +20,105 @@ public class WorldMeta {
     
     private int width;
     private int height;
-    private boolean wrapsAround;
     
     public String getDisplayName() {
         return displayName;
-    }
-    
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
     
     public long getWorldSeed() {
         return worldSeed;
     }
     
-    public void setWorldSeed(long worldSeed) {
-        this.worldSeed = worldSeed;
-    }
-    
     public String getWorldGeneratorUsed() {
         return worldGeneratorUsed;
-    }
-    
-    public void setWorldGeneratorUsed(String worldGeneratorUsed) {
-        this.worldGeneratorUsed = worldGeneratorUsed;
     }
     
     public int getWidth() {
         return width;
     }
     
-    public void setWidth(int width) {
-        this.width = width;
-    }
-    
     public int getHeight() {
         return height;
-    }
-    
-    public void setHeight(int height) {
-        this.height = height;
-    }
-    
-    public boolean isWrapsAround() {
-        return wrapsAround;
-    }
-    
-    public void setWrapsAround(boolean wrapsAround) {
-        this.wrapsAround = wrapsAround;
     }
     
     public long getCreated() {
         return created;
     }
     
-    public void setCreated(long created) {
-        this.created = created;
+    @Override
+    public void readNBT(NBTTag tag) {
+        //No defaults because this is crucial information and can't really be defaulted
+        NBTCompound comp = (NBTCompound) tag;
+        displayName = (comp.getString("displayName"));
+        worldSeed = (comp.getLong("worldSeed"));
+        worldGeneratorUsed = (comp.getString("worldGeneratorUsed"));
+        width = (comp.getInt("width"));
+        height = (comp.getInt("height"));
+        created = (comp.getLong("created"));
     }
     
-    public NBTCompound toNBTCompound() {
+    @Override
+    public NBTTag writeNBT() {
         NBTCompound comp = new NBTCompound();
         comp.putString("displayName", displayName);
         comp.putLong("worldSeed", worldSeed);
         comp.putString("worldGeneratorUsed", worldGeneratorUsed);
         comp.putInt("width", width);
         comp.putInt("height", height);
-        comp.putByte("wrapsAround", wrapsAround ? (byte) 1 : (byte) 0);
         comp.putLong("created", created);
         return comp;
+    }
+    
+    public static final class Builder {
+        
+        private WorldMeta meta = null;
+        
+        public Builder() {
+            this.meta = new WorldMeta();
+        }
+        
+        public Builder displayName(String dn) {
+            this.meta.displayName = dn;
+            return this;
+        }
+        
+        public Builder worldSeed(long seed) {
+            this.meta.worldSeed = seed;
+            return this;
+        }
+        
+        public Builder worldGenerator(String genId) {
+            this.meta.worldGeneratorUsed = genId;
+            return this;
+        }
+        
+        public Builder dimensions(int w, int h) {
+            this.meta.width = w;
+            this.meta.height = h;
+            return this;
+        }
+        
+        public Builder dimensions(WorldBounds bounds) {
+            this.meta.width = bounds.getWidth();
+            this.meta.height = bounds.getHeight();
+            return this;
+        }
+        
+        public Builder created(long timestamp) {
+            this.meta.created = timestamp;
+            return this;
+        }
+        
+        public Builder createdNow() {
+            this.meta.created = System.currentTimeMillis();
+            return this;
+        }
+        
+        public WorldMeta create() {
+            WorldMeta value = this.meta;
+            this.meta = null;//a builder is only usable once
+            return value;
+        }
     }
     
 }
