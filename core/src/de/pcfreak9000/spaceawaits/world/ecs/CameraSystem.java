@@ -19,6 +19,8 @@ public class CameraSystem extends IteratingSystem {
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
+    private final ComponentMapper<PlayerInputComponent> playerMapper = ComponentMapper
+            .getFor(PlayerInputComponent.class);
     
     public CameraSystem() {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
@@ -33,8 +35,9 @@ public class CameraSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         TransformComponent tc = this.transformMapper.get(entity);
-        float x = tc.position.x;
-        float y = tc.position.y;
+        PlayerInputComponent pc = this.playerMapper.get(entity);
+        float x = tc.position.x + pc.offx;
+        float y = tc.position.y + pc.offy;
         Camera camera = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
         if (!DEBUG) {
             x = Mathf.max(camera.viewportWidth / 2, x);

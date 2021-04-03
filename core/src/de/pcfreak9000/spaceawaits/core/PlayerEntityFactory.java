@@ -24,6 +24,8 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         PhysicsComponent pc = new PhysicsComponent();
         Sprite sprite = new Sprite();
         sprite.setSize(Tile.TILE_SIZE * 2, Tile.TILE_SIZE * 3);
+        pic.offx = sprite.getWidth() / 2f;
+        pic.offy = sprite.getHeight() / 2f;
         RenderEntityComponent rc = new RenderEntityComponent();
         rc.sprite = sprite;
         rc.action = new TextureSpriteAction(CoreResources.HUMAN);
