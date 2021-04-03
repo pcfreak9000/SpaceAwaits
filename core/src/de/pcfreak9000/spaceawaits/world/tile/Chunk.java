@@ -147,7 +147,7 @@ public class Chunk implements NBTSerializable {
     public Tile setTile(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
         GameRegistry.TILE_REGISTRY.checkRegistered(t);
-        TileState newTileState = new TileState(t, tx, ty);
+        TileState newTileState = TileState.get(t, tx, ty);
         TileState old = this.tiles.set(newTileState, tx, ty);
         if (old.getTileEntity() != null) {
             this.tileEntities.remove(old.getTileEntity());
@@ -170,7 +170,7 @@ public class Chunk implements NBTSerializable {
             }
         }
         notifyListeners(newTileState, old);
-        //-> neighbour change notifications
+        //-> neighbour change notifications, but dont notify if the chunk is just being loaded
         //        if (tileWorld.inBounds(tx + 1, ty)) {
         //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
         //        }
@@ -183,7 +183,9 @@ public class Chunk implements NBTSerializable {
         //        if (tileWorld.inBounds(tx, ty - 1)) {
         //            getTileStateGlobal(tx, ty - 1).getTile().neighbourChanged(tileWorld, newTileState);
         //        }
-        return old.getTile();
+        Tile oldTile = old.getTile();
+        TileState.free(old);
+        return oldTile;
     }
     
     public Tile getBackground(int tx, int ty) {
@@ -191,7 +193,8 @@ public class Chunk implements NBTSerializable {
     }
     
     public void setTileBackground(Tile t, int tx, int ty) {
-        this.tilesBackground.set(new TileState(t, tx, ty), tx, ty);
+        TileState old = this.tilesBackground.set(TileState.get(t, tx, ty), tx, ty);
+        TileState.free(old);
     }
     
     public boolean inBounds(int gtx, int gty) {
