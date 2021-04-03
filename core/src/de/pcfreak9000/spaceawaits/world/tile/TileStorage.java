@@ -18,7 +18,8 @@ public class TileStorage {
         this.tileArray = new TileState[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                this.tileArray[i][j] = TileState.get(Tile.EMPTY, this.tx + i, this.ty + j);
+                this.tileArray[i][j] = new TileState();
+                this.tileArray[i][j].setTile(Tile.EMPTY);
             }
         }
     }
@@ -40,9 +41,9 @@ public class TileStorage {
         return tileArray[tileX - this.tx][tileY - this.ty];
     }
     
-    public TileState set(TileState tileState, int tileX, int tileY) {
+    public TileState set(Tile t, int tileX, int tileY) {
         TileState old = get(tileX, tileY);
-        tileArray[tileX - this.tx][tileY - this.ty] = tileState;
+        tileArray[tileX - this.tx][tileY - this.ty].setTile(t);
         return old;
     }
     

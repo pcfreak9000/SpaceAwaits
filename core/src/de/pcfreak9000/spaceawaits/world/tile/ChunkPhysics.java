@@ -82,18 +82,18 @@ public class ChunkPhysics implements BodyFactory {
     
     private final class ListenerClass implements ChunkChangeListener {
         @Override
-        public void onTileStateChange(Chunk chunk, TileState newstate, TileState oldstate) {
+        public void onTileStateChange(Chunk chunk, TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
             if (body == null) {
                 //The chunk hasn't been added to the simulation yet
                 return;
             }
-            if (oldstate.getTile().isSolid() != newstate.getTile().isSolid()) {
-                if (!newstate.getTile().isSolid() && body != null) { //oldstate was solid, newstate isn't
-                    if (oldstate.getFixture() != null) { //the fixture is null if oldstate was surrounded by solid tiles
-                        destroyFixture(oldstate);
+            if (oldTile.isSolid() != newTile.isSolid()) {
+                if (!newTile.isSolid() && body != null) { //oldstate was solid, newstate isn't
+                    if (state.getFixture() != null) { //the fixture is null if oldstate was surrounded by solid tiles
+                        destroyFixture(state);
                     }
-                    int x = newstate.getGlobalTileX();
-                    int y = newstate.getGlobalTileY();
+                    int x = gtx;
+                    int y = gty;
                     int topy = y + 1;
                     int boty = y - 1;
                     int rightx = x + 1;
@@ -115,8 +115,8 @@ public class ChunkPhysics implements BodyFactory {
                         createFixture(left.getTile(), leftx, y);
                     }
                 } else { //newstate is solid, oldstate wasn't
-                    int x = newstate.getGlobalTileX();
-                    int y = newstate.getGlobalTileY();
+                    int x = gtx;
+                    int y = gty;
                     int topy = y + 1;
                     int boty = y - 1;
                     int rightx = x + 1;
@@ -128,7 +128,7 @@ public class ChunkPhysics implements BodyFactory {
                     if ((top == null || !top.getTile().isSolid()) || (bot == null || !bot.getTile().isSolid())
                             || (right == null || !right.getTile().isSolid())
                             || (left == null || !left.getTile().isSolid())) {
-                        createFixture(newstate.getTile(), x, y);
+                        createFixture(newTile, x, y);
                     }
                     //check if the neighbouring fixtures can be removed, this depends on the neighbours neighbours
                     checkDestroy(top, x, topy);
@@ -137,12 +137,12 @@ public class ChunkPhysics implements BodyFactory {
                     checkDestroy(left, leftx, y);
                 }
             } else {
-                //newstate and oldstate are both solid or both not solid. A possibly existing fixture needs to be transferred to it's new owner.
+                //new and old are both solid or both not solid. The fixture is retained if any.
                 //The restitution might have to change
-                if (oldstate.getTile().isSolid() && oldstate.getFixture() != null) {
-                    newstate.setFixture(oldstate.getFixture());
-                    oldstate.setFixture(null);//Doesn't seem necessary but whatever
-                    newstate.getFixture().setRestitution(newstate.getTile().getBouncyness());
+                if (oldTile.isSolid() && state.getFixture() != null) {
+                    //                    newstate.setFixture(state.getFixture());
+                    //                    oldstate.setFixture(null);//Doesn't seem necessary but whatever
+                    state.getFixture().setRestitution(newTile.getBouncyness());
                 }
             }
         }

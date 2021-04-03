@@ -8,7 +8,6 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.TestWorldProvider;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 
 public class Tile {
@@ -116,17 +115,15 @@ public class Tile {
         return false;
     }
     
-    public TileEntity createTileEntity(WorldAccessor world, TileState myState) {
+    public TileEntity createTileEntity(WorldAccessor world, int gtx, int gty) {
         return null;
-    }
-    
-    public void neighbourChanged(TestWorldProvider world, TileState neighbour) {
-        //?!?!?!?
     }
     
     @Override
     public String toString() {
-        return String.format("Tile[texture=%s]", Objects.toString(this.textureProvider));
+        return "Tile [textureProvider=" + textureProvider + ", canBreak=" + canBreak + ", opaque=" + opaque + ", solid="
+                + solid + ", color=" + color + ", lightColor=" + lightColor + ", lighttransmission=" + lighttransmission
+                + ", bouncyness=" + bouncyness + "]";
     }
     
     public ITextureProvider getTextureProvider() {

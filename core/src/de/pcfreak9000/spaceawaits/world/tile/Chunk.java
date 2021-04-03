@@ -85,9 +85,9 @@ public class Chunk implements NBTSerializable {
         this.worldAccessor = worldAccessor;
     }
     
-    private void notifyListeners(TileState newstate, TileState oldstate) {
+    private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
         for (ChunkChangeListener l : listeners) {
-            l.onTileStateChange(this, newstate, oldstate);
+            l.onTileStateChange(this, state, newTile, oldTile, gtx, gty);
         }
     }
     
@@ -147,29 +147,30 @@ public class Chunk implements NBTSerializable {
     public Tile setTile(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
         GameRegistry.TILE_REGISTRY.checkRegistered(t);
-        TileState newTileState = TileState.get(t, tx, ty);
-        TileState old = this.tiles.set(newTileState, tx, ty);
-        if (old.getTileEntity() != null) {
-            this.tileEntities.remove(old.getTileEntity());
-            if (old.getTileEntity() instanceof Tickable) {
-                Tickable oldTickable = (Tickable) old.getTileEntity();
+        TileState state = this.tiles.get(tx, ty);
+        Tile oldTile = state.getTile();
+        if (state.getTileEntity() != null) {
+            this.tileEntities.remove(state.getTileEntity());
+            if (state.getTileEntity() instanceof Tickable) {
+                Tickable oldTickable = (Tickable) state.getTileEntity();
                 if (ticking) {
                     tickablesForRemoval.add(oldTickable);
                 } else {
                     tickables.remove(oldTickable);
                 }
             }
-            old.setTileEntity(null);
+            state.setTileEntity(null);
         }
+        this.tiles.set(t, tx, ty);//state.reset instead?
         if (t.hasTileEntity()) {
-            TileEntity te = t.createTileEntity(worldAccessor, newTileState);
+            TileEntity te = t.createTileEntity(worldAccessor, tx, ty);
             this.tileEntities.add(te);
-            newTileState.setTileEntity(te);
+            state.setTileEntity(te);
             if (te instanceof Tickable) {
                 tickables.add((Tickable) te);
             }
         }
-        notifyListeners(newTileState, old);
+        notifyListeners(state, t, oldTile, tx, ty);
         //-> neighbour change notifications, but dont notify if the chunk is just being loaded
         //        if (tileWorld.inBounds(tx + 1, ty)) {
         //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
@@ -183,8 +184,6 @@ public class Chunk implements NBTSerializable {
         //        if (tileWorld.inBounds(tx, ty - 1)) {
         //            getTileStateGlobal(tx, ty - 1).getTile().neighbourChanged(tileWorld, newTileState);
         //        }
-        Tile oldTile = old.getTile();
-        TileState.free(old);
         return oldTile;
     }
     
@@ -193,8 +192,7 @@ public class Chunk implements NBTSerializable {
     }
     
     public void setTileBackground(Tile t, int tx, int ty) {
-        TileState old = this.tilesBackground.set(TileState.get(t, tx, ty), tx, ty);
-        TileState.free(old);
+        this.tilesBackground.set(t, tx, ty);
     }
     
     public boolean inBounds(int gtx, int gty) {
@@ -246,22 +244,19 @@ public class Chunk implements NBTSerializable {
     public void readNBT(NBTTag tag) {
         NBTCompound nbtc = (NBTCompound) tag;
         NBTList entities = nbtc.getList("entities");
-        NBTList tileList = nbtc.getList("vgr");
-        NBTList tileBkgrList = nbtc.getList("bkr");
+        NBTList tileList = nbtc.getList("tiles");
         NBTList tileEntities = nbtc.getList("tileEntities");
-        for (int i = 0; i < tileList.size(); i++) {
+        for (int i = 0; i < tileList.size(); i += 2) {
+            int x = (i / 2) / CHUNK_TILE_SIZE;
+            int y = (i / 2) % CHUNK_TILE_SIZE;
+            //Foreground tiles
             String id = tileList.getString(i);
             Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
-            int x = i / CHUNK_TILE_SIZE;
-            int y = i % CHUNK_TILE_SIZE;
             setTile(t, getGlobalTileX() + x, getGlobalTileY() + y);
-        }
-        for (int i = 0; i < tileBkgrList.size(); i++) {
-            String id = tileBkgrList.getString(i);
-            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
-            int x = i / CHUNK_TILE_SIZE;
-            int y = i % CHUNK_TILE_SIZE;
-            setTileBackground(t, getGlobalTileX() + x, getGlobalTileY() + y);
+            //Background tiles
+            String idB = tileList.getString(i + 1);
+            Tile tB = GameRegistry.TILE_REGISTRY.getOrDefault(idB, Tile.EMPTY);
+            setTileBackground(tB, getGlobalTileX() + x, getGlobalTileY() + y);
         }
         for (NBTTag tet : tileEntities.getContent()) {
             NBTCompound comp = (NBTCompound) tet;
@@ -291,7 +286,6 @@ public class Chunk implements NBTSerializable {
     public NBTTag writeNBT() {
         NBTCompound chunkMaster = new NBTCompound();
         NBTList tileList = new NBTList(NBTType.String);
-        NBTList tileBkgrList = new NBTList(NBTType.String);//TileLists can probably be converted into one
         NBTList entities = new NBTList(NBTType.Compound);
         NBTList tileEntities = new NBTList(NBTType.Compound);
         for (int i = 0; i < CHUNK_TILE_SIZE; i++) {
@@ -306,8 +300,8 @@ public class Chunk implements NBTSerializable {
                         NBTSerializable seri = (NBTSerializable) e;
                         NBTTag tag = seri.writeNBT();
                         NBTCompound einfo = new NBTCompound();
-                        einfo.putInt("x", st.getGlobalTileX());
-                        einfo.putInt("y", st.getGlobalTileY());//Could become bytes in the future?
+                        einfo.putInt("x", getGlobalTileX() + i);
+                        einfo.putInt("y", getGlobalTileY() + j);//Could become bytes in the future?
                         einfo.put("data", tag);
                         tileEntities.add(einfo);
                     }
@@ -315,11 +309,10 @@ public class Chunk implements NBTSerializable {
                 
                 TileState bst = this.tilesBackground.get(this.getGlobalTileX() + i, this.getGlobalTileY() + j);
                 String bid = GameRegistry.TILE_REGISTRY.getId(bst.getTile());
-                tileBkgrList.addString(bid);
+                tileList.addString(bid);
             }
         }
-        chunkMaster.putList("vgr", tileList);
-        chunkMaster.putList("bkr", tileBkgrList);
+        chunkMaster.putList("tiles", tileList);
         chunkMaster.putList("tileEntities", tileEntities);
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {

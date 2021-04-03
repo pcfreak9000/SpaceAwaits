@@ -21,7 +21,6 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
-import de.pcfreak9000.spaceawaits.world.tile.TileState;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
@@ -38,9 +37,9 @@ public class DMod {
         }
         
         @Override
-        public TileEntity createTileEntity(WorldAccessor world, TileState myState) {
-            return new LaserTileEntity(world, myState);
-        }
+        public TileEntity createTileEntity(WorldAccessor world, int gtx, int gty) {
+            return new LaserTileEntity(world, gtx, gty);
+        };
     };
     Tile torch = new Tile();
     
