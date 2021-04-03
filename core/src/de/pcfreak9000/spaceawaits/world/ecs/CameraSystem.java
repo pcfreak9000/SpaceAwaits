@@ -32,6 +32,8 @@ public class CameraSystem extends IteratingSystem {
         this.world = svwe.worldMgr.getWorldAccess();
     }
     
+    //Dedicated camera component at some time?
+    
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         TransformComponent tc = this.transformMapper.get(entity);
