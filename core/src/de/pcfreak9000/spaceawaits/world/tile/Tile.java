@@ -16,7 +16,7 @@ public class Tile {
     
     public static final Tile EMPTY = new Tile();//The last bastion against the void
     
-    public static final float TILE_SIZE = 16;
+    public static final float TILE_SIZE = 1;//Ideally this is one and everything else is done via some magic projectionviewmatrix stuff?
     
     public static int toGlobalTile(float x) {
         return Mathf.floori(x / TILE_SIZE);//well i hope this floor function works properly
