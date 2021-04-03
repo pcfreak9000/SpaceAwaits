@@ -4,8 +4,6 @@ import de.pcfreak9000.nbt.NBTCompound;
 
 public interface IWorldSave {
     
-    //UUID, name, other meta stuff?
-    
     WorldMeta getWorldMeta();
     
     boolean hasGlobal();

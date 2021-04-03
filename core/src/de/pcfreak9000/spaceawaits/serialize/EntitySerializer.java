@@ -19,7 +19,7 @@ public class EntitySerializer {
     
     private static final EntityComponentHolderWrapper ENTITY_WRAPPER = new EntityComponentHolderWrapper();
     
-    //TODO Check for illegal characters!!
+    //TODO Check for illegal characters!! also in the registries...
     
     public static boolean isSerializable(Entity e) {
         return seMapper.has(e);
@@ -48,7 +48,7 @@ public class EntitySerializer {
         if (!isSerializable(ent)) {
             throw new IllegalArgumentException("Entity is not serializable but was serialized");//Hmm, throw or not throw?
         }
-        //This could also happen in a deserialize function in the factory
+        //This could also happen in a deserialize function in the factory?
         deserializeEntityComponents(ent, compound.getCompound("components"));
         return ent;
     }
