@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -38,7 +37,7 @@ public class WorldRenderer extends ScreenAdapter {
         this.worldManager = mgr;
     }
     
-    public Camera getCamera() {
+    public OrthographicCamera getCamera() {
         return camera;
     }
     
