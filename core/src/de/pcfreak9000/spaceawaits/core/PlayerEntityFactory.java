@@ -31,7 +31,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         rc.action = new TextureSpriteAction(CoreResources.HUMAN);
         e.add(rc);
         TransformComponent tc = new TransformComponent();
-        tc.position.set(500, 2900);
+        tc.position.set(500/16, 2900/16);
         e.add(tc);
         e.add(pc);
         pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
