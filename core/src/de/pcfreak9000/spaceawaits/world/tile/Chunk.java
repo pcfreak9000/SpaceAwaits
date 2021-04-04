@@ -27,50 +27,50 @@ import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
 public class Chunk implements NBTSerializable {
-    
+
     private static final ComponentMapper<ChunkMarkerComponent> ChunkMarkerCompMapper = ComponentMapper
             .getFor(ChunkMarkerComponent.class); //Having ECS code in this class isn't entirely fancy either
-    
-    public static final int CHUNK_TILE_SIZE = 64;
-    
+
+    public static final int CHUNK_SIZE = 64;
+
     public static int toGlobalChunk(int globalTile) {
-        return globalTile / CHUNK_TILE_SIZE; //<- This brings problems with negative numbers, but we dont use negative tile coordinates anyways
+        return globalTile / CHUNK_SIZE; //<- This brings problems with negative numbers, but we dont use negative tile coordinates anyways
     }
-    
+
     public static int toGlobalChunkf(float x) {
-        return Mathf.floori(x / (CHUNK_TILE_SIZE * Tile.TILE_SIZE)); //well i hope this floor function works properly
+        return Mathf.floori(x / CHUNK_SIZE); //well i hope this floor function works properly
     }
-    
+
     private final int rx;
     private final int ry;
-    
+
     private final int tx;
     private final int ty;
-    
-    private WorldAccessor worldAccessor;
-    
+
+    private final WorldAccessor worldAccessor;
+
     private final TileStorage tiles;
     private final TileStorage tilesBackground;
     private final List<TileEntity> tileEntities;
     private final List<Tickable> tickables;
     private final List<Entity> entities;
     private final List<Entity> immutableEntities;
-    
+
     private final List<ChunkChangeListener> listeners;
-    
+
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
-    
+
     private final Entity regionEntity;
-    
+
     public Chunk(int rx, int ry, WorldAccessor worldAccessor) {
         this.rx = rx;
         this.ry = ry;
-        this.tx = rx * CHUNK_TILE_SIZE;
-        this.ty = ry * CHUNK_TILE_SIZE;
+        this.tx = rx * CHUNK_SIZE;
+        this.ty = ry * CHUNK_SIZE;
         this.listeners = new ArrayList<>();
-        this.tiles = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
-        this.tilesBackground = new TileStorage(CHUNK_TILE_SIZE, this.tx, this.ty);
+        this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
+        this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
         this.entities = new ArrayList<>();
@@ -84,66 +84,70 @@ public class Chunk implements NBTSerializable {
         this.regionEntity.add(pc);
         this.worldAccessor = worldAccessor;
     }
-    
+
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
-        for (ChunkChangeListener l : listeners) {
+        for (ChunkChangeListener l : this.listeners) {
             l.onTileStateChange(this, state, newTile, oldTile, gtx, gty);
         }
     }
-    
+
     public void addListener(ChunkChangeListener listener) {
-        listeners.add(listener);
+        this.listeners.add(listener);
     }
-    
+
     public int getGlobalChunkX() {
         return this.rx;
     }
-    
+
     public int getGlobalChunkY() {
         return this.ry;
     }
-    
+
     public int getGlobalTileX() {
         return this.tx;
     }
-    
+
     public int getGlobalTileY() {
         return this.ty;
     }
-    
+
     public Entity getECSEntity() {
-        return regionEntity;
+        return this.regionEntity;
     }
-    
+
+    @Deprecated
     public void tileIntersections(Collection<TileState> output, int x, int y, int w, int h,
             Predicate<TileState> predicate) {
         this.tiles.getAABB(output, x, y, w, h, predicate);
     }
-    
+
+    @Deprecated
     public void tileIntersectionsBackground(Collection<TileState> output, int x, int y, int w, int h,
             Predicate<TileState> predicate) {
         this.tilesBackground.getAABB(output, x, y, w, h, predicate);
     }
-    
+
+    @Deprecated
     public void tileAll(Collection<TileState> output, Predicate<TileState> predicate) {
-        tiles.getAll(output, predicate);
+        this.tiles.getAll(output, predicate);
     }
-    
+
+    @Deprecated
     public void tileBackgroundAll(Collection<TileState> output, Predicate<TileState> predicate) {
-        tilesBackground.getAll(output, predicate);
+        this.tilesBackground.getAll(output, predicate);
     }
-    
+
     public Tile getTile(int tx, int ty) {
         return this.tiles.get(tx, ty).getTile();
     }
-    
+
     //Not the best solution, but TileState visibility is a problem anyways
     TileState getTileState(int tx, int ty) {
         return this.tiles.get(tx, ty);
     }
-    
-    //Maybe save the set for later somehow? 
-    
+
+    //Maybe save the set for later somehow?
+
     public Tile setTile(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
         GameRegistry.TILE_REGISTRY.checkRegistered(t);
@@ -153,21 +157,21 @@ public class Chunk implements NBTSerializable {
             this.tileEntities.remove(state.getTileEntity());
             if (state.getTileEntity() instanceof Tickable) {
                 Tickable oldTickable = (Tickable) state.getTileEntity();
-                if (ticking) {
-                    tickablesForRemoval.add(oldTickable);
+                if (this.ticking) {
+                    this.tickablesForRemoval.add(oldTickable);
                 } else {
-                    tickables.remove(oldTickable);
+                    this.tickables.remove(oldTickable);
                 }
             }
             state.setTileEntity(null);
         }
-        this.tiles.set(t, tx, ty);//state.set instead?
+        state.setTile(t);
         if (t.hasTileEntity()) {
-            TileEntity te = t.createTileEntity(worldAccessor, tx, ty);
+            TileEntity te = t.createTileEntity(this.worldAccessor, tx, ty);
             this.tileEntities.add(te);
             state.setTileEntity(te);
             if (te instanceof Tickable) {
-                tickables.add((Tickable) te);
+                this.tickables.add((Tickable) te);
             }
         }
         notifyListeners(state, t, oldTile, tx, ty);
@@ -186,29 +190,29 @@ public class Chunk implements NBTSerializable {
         //        }
         return oldTile;
     }
-    
+
     public Tile getBackground(int tx, int ty) {
         return this.tilesBackground.get(tx, ty).getTile();
     }
-    
+
     public void setTileBackground(Tile t, int tx, int ty) {
         this.tilesBackground.set(t, tx, ty);
     }
-    
+
     public boolean inBounds(int gtx, int gty) {
-        return gtx >= this.tx && gtx < this.tx + CHUNK_TILE_SIZE && gty >= this.ty && gty < this.ty + CHUNK_TILE_SIZE
-                && worldAccessor.getWorldBounds().inBounds(gtx, gty);
+        return gtx >= this.tx && gtx < this.tx + CHUNK_SIZE && gty >= this.ty && gty < this.ty + CHUNK_SIZE
+                && this.worldAccessor.getWorldBounds().inBounds(gtx, gty);
     }
-    
+
     public void tick(float time) {
         this.ticking = true;
         this.tickables.forEach((t) -> t.tick(time));
         this.ticking = false;
-        while (!tickablesForRemoval.isEmpty()) {
-            tickables.remove(tickablesForRemoval.poll());
+        while (!this.tickablesForRemoval.isEmpty()) {
+            this.tickables.remove(this.tickablesForRemoval.poll());
         }
     }
-    
+
     public void addEntity(Entity e) {
         if (ChunkMarkerCompMapper.has(e)) {
             ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
@@ -219,7 +223,7 @@ public class Chunk implements NBTSerializable {
         }
         this.entities.add(e);
     }
-    
+
     public void removeEntity(Entity e) {
         if (ChunkMarkerCompMapper.has(e)) {
             ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
@@ -230,16 +234,16 @@ public class Chunk implements NBTSerializable {
         }
         this.entities.remove(e);
     }
-    
+
     public List<Entity> getEntities() {
         return this.immutableEntities;
     }
-    
+
     @Override
     public String toString() {
         return String.format("Chunk[x=%d, y=%d]", this.tx, this.ty);
     }
-    
+
     @Override
     public void readNBT(NBTTag tag) {
         NBTCompound nbtc = (NBTCompound) tag;
@@ -249,8 +253,8 @@ public class Chunk implements NBTSerializable {
         int cx = getGlobalTileX();
         int cy = getGlobalTileY();
         for (int i = 0; i < tileList.size(); i += 2) {
-            int x = (i / 2) / CHUNK_TILE_SIZE;
-            int y = (i / 2) % CHUNK_TILE_SIZE;
+            int x = (i / 2) / CHUNK_SIZE;
+            int y = (i / 2) % CHUNK_SIZE;
             //Foreground tiles
             String id = tileList.getString(i);
             Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
@@ -283,7 +287,7 @@ public class Chunk implements NBTSerializable {
             }
         }
     }
-    
+
     @Override
     public NBTTag writeNBT() {
         NBTCompound chunkMaster = new NBTCompound();
@@ -292,8 +296,8 @@ public class Chunk implements NBTSerializable {
         NBTList tileEntities = new NBTList(NBTType.Compound);
         int cx = getGlobalTileX();
         int cy = getGlobalTileY();
-        for (int i = 0; i < CHUNK_TILE_SIZE; i++) {
-            for (int j = 0; j < CHUNK_TILE_SIZE; j++) {
+        for (int i = 0; i < CHUNK_SIZE; i++) {
+            for (int j = 0; j < CHUNK_SIZE; j++) {
                 TileState st = this.tiles.get(cx + i, cy + j);
                 String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
                 tileList.addString(id);
@@ -310,7 +314,7 @@ public class Chunk implements NBTSerializable {
                         tileEntities.add(einfo);
                     }
                 }
-                
+
                 TileState bst = this.tilesBackground.get(cx + i, cy + j);
                 String bid = GameRegistry.TILE_REGISTRY.getId(bst.getTile());
                 tileList.addString(bid);
@@ -327,5 +331,5 @@ public class Chunk implements NBTSerializable {
         chunkMaster.putList("entities", entities);
         return chunkMaster;
     }
-    
+
 }

@@ -63,7 +63,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     
     private int createCache() {
         regionCache.beginCache();
-        float[] empty = new float[5 * 6 * Chunk.CHUNK_TILE_SIZE * Chunk.CHUNK_TILE_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE^2 images per layer, 2 layers 
+        float[] empty = new float[5 * 6 * Chunk.CHUNK_SIZE * Chunk.CHUNK_SIZE * 2];//5 floats per vertex, 6 vertices per image, REGION_TILE_SIZE^2 images per layer, 2 layers 
         regionCache.add(null, empty, 0, empty.length);
         return regionCache.endCache();
         //Dont allocate too many caches -> use some pooling or something (only regions that are loaded need a cache)
@@ -103,10 +103,9 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         ChunkComponent c = tMapper.get(entity);
-        float mx = (c.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE;
-        float my = (c.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE;
-        if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE,
-                0.5f * Chunk.CHUNK_TILE_SIZE * Tile.TILE_SIZE, 0)) {
+        float mx = (c.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
+        float my = (c.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
+        if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0)) {
             return;
         }
         SpriteCache ca = this.regionCache;
@@ -141,8 +140,8 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
         Color backgroundColor = new Color();
         crc.len = 0;
         crc.blen = 0;
-        for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
+        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
+            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int gtx = i + c.getGlobalTileX();
                 int gty = j + c.getGlobalTileY();
                 Tile tile = c.getBackground(gtx, gty);
@@ -157,8 +156,8 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
                 crc.len++;
             }
         }
-        for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
+        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
+            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int gtx = i + c.getGlobalTileX();
                 int gty = j + c.getGlobalTileY();
                 Tile tile = c.getTile(gtx, gty);
@@ -177,7 +176,6 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     }
     
     private void addTile(Tile t, int gtx, int gty, SpriteCache c) {
-        c.add(t.getTextureProvider().getRegion(), gtx * Tile.TILE_SIZE, gty * Tile.TILE_SIZE, Tile.TILE_SIZE,
-                Tile.TILE_SIZE);
+        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, 1);
     }
 }

@@ -13,7 +13,7 @@ import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 
 public class ChunkPhysics implements BodyFactory {
     
-    private static final Vector2 BODY_OFFSET = new Vector2(0.5f * Tile.TILE_SIZE, 0.5f * Tile.TILE_SIZE);
+    private static final Vector2 BODY_OFFSET = new Vector2(0.5f, 0.5f);
     
     private final Chunk chunk;
     private Body body;
@@ -26,19 +26,18 @@ public class ChunkPhysics implements BodyFactory {
     @Override
     public Body createBody(World world) {
         BodyDef bd = new BodyDef();
-        bd.position.set(METER_CONV.in(chunk.getGlobalTileX() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE),
-                METER_CONV.in(chunk.getGlobalTileY() * Tile.TILE_SIZE + 0.5f * Tile.TILE_SIZE));
+        bd.position.set(METER_CONV.in(chunk.getGlobalTileX() + 0.5f), METER_CONV.in(chunk.getGlobalTileY() + 0.5f));
         bd.type = BodyType.StaticBody;
         Body b = world.createBody(bd);
         this.body = b;
-        for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
+        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
+            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
                 int y = chunk.getGlobalTileY() + j;
                 Tile t = chunk.getTile(x, y);
-                Tile top = j + 1 >= Chunk.CHUNK_TILE_SIZE ? null : chunk.getTile(x, y + 1);
+                Tile top = j + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x, y + 1);
                 Tile bot = j - 1 < 0 ? null : chunk.getTile(x, y - 1);
-                Tile right = i + 1 >= Chunk.CHUNK_TILE_SIZE ? null : chunk.getTile(x + 1, y);
+                Tile right = i + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x + 1, y);
                 Tile left = i - 1 < 0 ? null : chunk.getTile(x - 1, y);
                 if ((top == null || !top.isSolid()) || (bot == null || !bot.isSolid())
                         || (right == null || !right.isSolid()) || (left == null || !left.isSolid())) {
@@ -53,8 +52,8 @@ public class ChunkPhysics implements BodyFactory {
     
     @Override
     public void destroyBody(Body body, World world) {
-        for (int i = 0; i < Chunk.CHUNK_TILE_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_TILE_SIZE; j++) {
+        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
+            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
                 int y = chunk.getGlobalTileY() + j;
                 TileState state = chunk.getTileState(x, y);
@@ -70,10 +69,8 @@ public class ChunkPhysics implements BodyFactory {
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
         fd.restitution = tile.getBouncyness();
-        shape.setAsBox(METER_CONV.in(Tile.TILE_SIZE / 2), METER_CONV.in(Tile.TILE_SIZE / 2),
-                new Vector2(METER_CONV.in((gtx - chunk.getGlobalTileX()) * Tile.TILE_SIZE),
-                        METER_CONV.in((gty - chunk.getGlobalTileY()) * Tile.TILE_SIZE)),
-                0);
+        shape.setAsBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), new Vector2(
+                METER_CONV.in((gtx - chunk.getGlobalTileX())), METER_CONV.in((gty - chunk.getGlobalTileY()))), 0);
         Fixture fix = body.createFixture(fd);
         chunk.getTileState(gtx, gty).setFixture(fix);
         shape.dispose();

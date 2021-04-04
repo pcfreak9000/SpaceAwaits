@@ -13,8 +13,8 @@ public class WorldBounds {
     public WorldBounds(int twidth, int theight) {
         this.tWidth = twidth;
         this.tHeight = theight;
-        this.arrayWidth = Mathf.ceili(twidth / (float) Chunk.CHUNK_TILE_SIZE);
-        this.arrayHeight = Mathf.ceili(theight / (float) Chunk.CHUNK_TILE_SIZE);
+        this.arrayWidth = Mathf.ceili(twidth / (float) Chunk.CHUNK_SIZE);
+        this.arrayHeight = Mathf.ceili(theight / (float) Chunk.CHUNK_SIZE);
     }
     
     public boolean inBounds(int tx, int ty) {

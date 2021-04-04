@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class PhysicsSystemBox2D extends IteratingSystem implements EntityListener {
     
@@ -20,7 +19,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private static final float STEPSIZE_SECONDS = 1 / 60f;
-    private static final float PIXELS_PER_METER = Tile.TILE_SIZE * 1.5f;
+    private static final float PIXELS_PER_METER = 1.5f;
     
     //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);

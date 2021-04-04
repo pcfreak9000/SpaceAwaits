@@ -77,8 +77,8 @@ public class LightCalculator extends IteratingSystem {
         Camera cam = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
-        int wi = Mathf.ceili(cam.viewportWidth / Tile.TILE_SIZE);
-        int hi = Mathf.ceili(cam.viewportHeight / Tile.TILE_SIZE);
+        int wi = Mathf.ceili(cam.viewportWidth);
+        int hi = Mathf.ceili(cam.viewportHeight);
         try {
             new PixelPointLightTask2(wmgr.getWorldAccess(), (pix) -> {
                 if (texture != null) {
@@ -102,8 +102,7 @@ public class LightCalculator extends IteratingSystem {
             SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().setAdditiveBlending();
             batch.begin();
             if (texture != null) {
-                batch.draw(texture, Tile.TILE_SIZE * xi, Tile.TILE_SIZE * yi, gwi * Tile.TILE_SIZE,
-                        ghi * Tile.TILE_SIZE);
+                batch.draw(texture, xi, yi, gwi, ghi);
             }
             batch.end();
         }

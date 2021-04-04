@@ -4,13 +4,12 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class WorldUtil {
     
     public static void createWorldBorders(Global global, int width, int height) {
-        float wf = width * Tile.TILE_SIZE;
-        float hf = height * Tile.TILE_SIZE;
+        float wf = width;
+        float hf = height;
         global.addEntity(createBorderEntity(-50, -50, 50, hf + 100));
         global.addEntity(createBorderEntity(0, -50, wf, 50));
         global.addEntity(createBorderEntity(0, hf, wf, 50));

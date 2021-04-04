@@ -11,7 +11,6 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class CameraSystem extends IteratingSystem {
     private static final boolean DEBUG = false;
@@ -44,8 +43,8 @@ public class CameraSystem extends IteratingSystem {
         if (!DEBUG) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
-            x = Mathf.min(world.getWorldBounds().getWidth() * Tile.TILE_SIZE - camera.viewportWidth / 2, x);
-            y = Mathf.min(world.getWorldBounds().getHeight() * Tile.TILE_SIZE - camera.viewportHeight / 2, y);
+            x = Mathf.min(world.getWorldBounds().getWidth() - camera.viewportWidth / 2, x);
+            y = Mathf.min(world.getWorldBounds().getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
         SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().applyViewport();

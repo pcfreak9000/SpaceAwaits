@@ -146,6 +146,7 @@ public class WorldAccessor {
         }
     }
     
+    @Deprecated
     public void collectTileIntersections(Collection<TileState> output, int x, int y, int w, int h,
             Predicate<TileState> predicate) {
         boolean xy = worldProvider.getBounds().inBounds(x, y);

@@ -11,7 +11,6 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldRenderer;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class ParallaxSystem extends IteratingSystem {
     
@@ -42,8 +41,8 @@ public class ParallaxSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         ParallaxComponent pc = this.parallaxMapper.get(entity);
         Vector3 positionState = this.render.getCamera().position;
-        float xratio = positionState.x / (this.tileWorld.getWorldBounds().getWidth() * Tile.TILE_SIZE);
-        float yratio = positionState.y / (this.tileWorld.getWorldBounds().getHeight() * Tile.TILE_SIZE);
+        float xratio = positionState.x / (this.tileWorld.getWorldBounds().getWidth());
+        float yratio = positionState.y / (this.tileWorld.getWorldBounds().getHeight());
         float possibleW = pc.sprite.getWidth() - this.render.getCamera().viewportWidth;
         float possibleH = pc.sprite.getHeight() - this.render.getCamera().viewportHeight;
         pc.sprite.setPosition(positionState.x - this.render.getCamera().viewportWidth / 2 - xratio * possibleW,
