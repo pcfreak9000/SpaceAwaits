@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.async.AsyncTask;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
+@Deprecated
 public class PixelPointLightTask implements AsyncTask<Void> {
     private static class LightState {
         private float value;

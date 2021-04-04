@@ -30,7 +30,7 @@ public class WorldRenderer extends ScreenAdapter {
         this.ssmgr = screenstatemgr;
         this.fps = new FPSLogger();
         this.camera = new OrthographicCamera();
-        this.viewport = new FitViewport(1920/16, 1080/16, camera);
+        this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
     }
     
