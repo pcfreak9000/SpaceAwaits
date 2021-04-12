@@ -10,9 +10,9 @@ import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
-import de.pcfreak9000.spaceawaits.world.render.RenderParallaxDecorator;
 import de.pcfreak9000.spaceawaits.world.render.RenderChunkDecorator;
 import de.pcfreak9000.spaceawaits.world.render.RenderEntityDecorator;
+import de.pcfreak9000.spaceawaits.world.render.RenderParallaxDecorator;
 import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
 
 public class WorldManager {

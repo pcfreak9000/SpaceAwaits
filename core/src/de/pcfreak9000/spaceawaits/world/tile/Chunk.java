@@ -311,7 +311,7 @@ public class Chunk implements NBTSerializable {
                         NBTTag tag = seri.writeNBT();
                         NBTCompound einfo = new NBTCompound();
                         einfo.putByte("x", (byte) i);
-                        einfo.putByte("y", (byte) j);//Could become bytes in the future?
+                        einfo.putByte("y", (byte) j);
                         einfo.put("data", tag);
                         tileEntities.add(einfo);
                     }
