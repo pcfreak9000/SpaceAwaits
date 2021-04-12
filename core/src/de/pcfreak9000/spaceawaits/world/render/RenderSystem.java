@@ -19,7 +19,16 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     
     private static final ComponentMapper<RenderComponent> rMapper = ComponentMapper.getFor(RenderComponent.class);
     
-    private static final Comparator<Entity> COMPARATOR = (e1, e2) -> rMapper.get(e1).layer - rMapper.get(e2).layer;
+    private static final Comparator<Entity> COMPARATOR = (e1, e2) -> {
+        RenderComponent r1 = rMapper.get(e1);
+        RenderComponent r2 = rMapper.get(e2);
+        int maj = r1.layer - r2.layer;
+        if (maj == 0) {
+            int min = r1.renderDecoratorId.hashCode() - r2.renderDecoratorId.hashCode();
+            return min;
+        }
+        return maj;
+    };
     
     private ObjectMap<String, IRenderDecorator> renderDecorators = new ObjectMap<>();
     
