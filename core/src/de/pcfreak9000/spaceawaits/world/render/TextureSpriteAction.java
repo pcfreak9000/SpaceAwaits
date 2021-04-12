@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs.entity;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 

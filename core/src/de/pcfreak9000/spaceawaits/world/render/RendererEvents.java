@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import de.omnikryptec.event.Event;
 

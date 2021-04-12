@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.menu.ScreenStateManager;
+import de.pcfreak9000.spaceawaits.world.WorldManager;
 
 public class WorldRenderer extends ScreenAdapter {
     

@@ -18,9 +18,9 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class LightCalculator extends IteratingSystem {

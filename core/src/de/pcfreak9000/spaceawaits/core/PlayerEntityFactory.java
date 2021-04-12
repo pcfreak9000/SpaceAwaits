@@ -8,9 +8,10 @@ import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.TextureSpriteAction;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 
 public class PlayerEntityFactory implements WorldEntityFactory {
     @Override
@@ -36,6 +37,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
                 .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));
+        e.add(new RenderComponent(1, "entity"));
         return e;
     }
 }

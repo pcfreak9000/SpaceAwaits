@@ -25,6 +25,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
 
 public class Chunk implements NBTSerializable {
 
@@ -79,6 +80,7 @@ public class Chunk implements NBTSerializable {
         this.regionEntity = new Entity();
         this.regionEntity.add(new ChunkComponent(this));
         this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
+        this.regionEntity.add(new RenderComponent(0, "chunk"));
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.regionEntity.add(pc);

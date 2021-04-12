@@ -1,9 +1,8 @@
-package de.pcfreak9000.spaceawaits.world.ecs.entity;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,14 +11,15 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
 
-public class RenderEntitySystem extends IteratingSystem {
+public class RenderEntityDecorator extends AbstractRenderDecorator {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
     private final ComponentMapper<RenderEntityComponent> renderMapper = ComponentMapper
             .getFor(RenderEntityComponent.class);
     
-    public RenderEntitySystem() {
+    public RenderEntityDecorator() {
         super(Family.all(RenderEntityComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
@@ -34,14 +34,17 @@ public class RenderEntitySystem extends IteratingSystem {
     }
     
     @Override
-    public void update(float deltaTime) {
+    public void begin() {
         this.b.begin();
-        super.update(deltaTime);
+    }
+    
+    @Override
+    public void end() {
         this.b.end();
     }
     
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    public void render(Entity entity, float deltaTime) {
         RenderEntityComponent rec = renderMapper.get(entity);
         if (transformMapper.has(entity)) {
             Vector2 p = transformMapper.get(entity).position;

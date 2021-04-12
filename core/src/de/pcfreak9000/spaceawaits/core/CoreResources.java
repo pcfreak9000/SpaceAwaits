@@ -10,8 +10,8 @@ public class CoreResources {
         Logger.getLogger(CoreResources.class).info("Creating core resource hooks");
     }
     
-    public static final TextureProvider SPACE_BACKGROUND = new TextureProvider("Space.png");
-    public static final TextureProvider HUMAN = new TextureProvider("mensch.png");
+    public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
+    public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");
     
     public static final WorldEntityFactory PLAYER_FACTORY = GameRegistry.WORLD_ENTITY_REGISTRY
             .register("player", new PlayerEntityFactory()).get("player");//Meh...

@@ -1,12 +1,9 @@
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.AnimatedTextureProvider;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.CoreResources;
-import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
@@ -28,7 +25,7 @@ public class DMod {
     @Instance
     public static DMod instance;
     
-    TextureProvider texture = new TextureProvider("sdfsdf");
+    TextureProvider texture = TextureProvider.get("sdfsdf");
     Tile tstoneTile = new Tile();
     Tile laser = new Tile() {
         @Override
@@ -45,10 +42,10 @@ public class DMod {
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-        Animation<ITextureProvider> stoneanim = new Animation<>(5, new TextureProvider("stone.png"),
-                new TextureProvider("sand.png"));
+//        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
+//                TextureProvider.get("sand.png"));
         
-        tstoneTile.setTextureProvider(new AnimatedTextureProvider(stoneanim));
+        tstoneTile.setTexture("stone.png");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
         tstoneTile.setLightTransmission(0.55f);
         

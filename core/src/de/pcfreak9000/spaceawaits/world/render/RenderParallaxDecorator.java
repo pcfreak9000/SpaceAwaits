@@ -1,20 +1,19 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector3;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.WorldRenderer;
+import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
 
-public class ParallaxSystem extends IteratingSystem {
+public class RenderParallaxDecorator extends AbstractRenderDecorator {
     
-    public ParallaxSystem() {
+    public RenderParallaxDecorator() {
         super(Family.all(ParallaxComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
@@ -31,14 +30,17 @@ public class ParallaxSystem extends IteratingSystem {
     }
     
     @Override
-    public void update(float deltaTime) {
+    public void begin() {
         SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().begin();
-        super.update(deltaTime);
+    }
+    
+    @Override
+    public void end() {
         SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().end();
     }
     
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    public void render(Entity entity, float deltaTime) {
         ParallaxComponent pc = this.parallaxMapper.get(entity);
         Vector3 positionState = this.render.getCamera().position;
         float xratio = positionState.x / (this.tileWorld.getWorldBounds().getWidth());

@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.menu;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldRenderer;
+import de.pcfreak9000.spaceawaits.world.render.WorldRenderer;
 
 public class ScreenStateManager implements Disposable {
     

@@ -1,11 +1,9 @@
-package de.pcfreak9000.spaceawaits.world.ecs.chunk;
+package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.ashley.core.ComponentMapper;
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -17,10 +15,12 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
-public class RenderChunkSystem extends IteratingSystem implements EntityListener {
+public class RenderChunkDecorator extends AbstractRenderDecorator implements EntityListener {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
@@ -30,7 +30,7 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     private IntSet freeCacheIds;
     private Camera camera;
     
-    public RenderChunkSystem() {
+    public RenderChunkDecorator() {
         super(Family.all(ChunkComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
@@ -77,31 +77,16 @@ public class RenderChunkSystem extends IteratingSystem implements EntityListener
     }
     
     @Override
-    public void addedToEngine(Engine engine) {
-        super.addedToEngine(engine);
-        engine.addEntityListener(getFamily(), this);
-    }
-    
-    @Override
-    public void removedFromEngine(Engine engine) {
-        super.removedFromEngine(engine);
-        engine.removeEntityListener(this);
-    }
-    
-    @Override
-    public void update(float deltaTime) {
+    public void begin() {
         //this.regionCache.clear();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(
                 SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera().combined);
-        for (int i = 0; i < getEntities().size(); i++) {
-            processEntity(getEntities().get(i), deltaTime);
-        }
     }
     
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    public void render(Entity entity, float deltaTime) {
         ChunkComponent c = tMapper.get(entity);
         float mx = (c.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
         float my = (c.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;

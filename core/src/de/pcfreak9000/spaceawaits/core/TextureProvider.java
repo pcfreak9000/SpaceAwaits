@@ -1,5 +1,8 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +12,17 @@ import de.pcfreak9000.spaceawaits.core.CoreEvents.QueueResourcesEvent;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.UpdateResourcesEvent;
 
 public class TextureProvider implements ITextureProvider {
+    
+    private static Map<String, TextureProvider> existingProvider = new HashMap<>();
+    
+    public static TextureProvider get(String name) {
+        TextureProvider p = existingProvider.get(name);
+        if (p == null) {
+            p = new TextureProvider(name);
+            existingProvider.put(name, p);
+        }
+        return p;
+    }
     
     public static final ITextureProvider EMPTY = new ITextureProvider() {
         private final TextureProvider em = new TextureProvider();
@@ -23,11 +37,11 @@ public class TextureProvider implements ITextureProvider {
     private TextureRegion region;
     private boolean registered;
     
-    public TextureProvider() {
+    private TextureProvider() {
         SpaceAwaits.BUS.register(this);
     }
     
-    public TextureProvider(String name) {
+    private TextureProvider(String name) {
         this();
         setTexture(name);
     }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.world.RendererEvents;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
 public class AnimatedTextureProvider implements ITextureProvider {
     

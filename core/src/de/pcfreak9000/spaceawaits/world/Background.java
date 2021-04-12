@@ -5,7 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.TextureSpriteAction;
+import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 
 public class Background implements WorldEntityFactory {
     
@@ -28,6 +29,7 @@ public class Background implements WorldEntityFactory {
         pc.sprite.setSize(width, height);
         pc.action = new TextureSpriteAction(texture);
         e.add(pc);
+        e.add(new RenderComponent(-1, "para"));
         return e;
     }
 }

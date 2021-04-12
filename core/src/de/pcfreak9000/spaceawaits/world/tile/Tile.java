@@ -45,7 +45,7 @@ public class Tile {
     private float bouncyness = 0;
     
     public void setTexture(String name) {
-        setTextureProvider(new TextureProvider(name));
+        setTextureProvider(TextureProvider.get(name));
     }
     
     public void setTextureProvider(ITextureProvider prov) {

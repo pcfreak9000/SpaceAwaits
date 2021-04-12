@@ -4,15 +4,16 @@ import com.badlogic.ashley.core.Engine;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkReloadingSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.chunk.RenderChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
+import de.pcfreak9000.spaceawaits.world.render.RenderParallaxDecorator;
+import de.pcfreak9000.spaceawaits.world.render.RenderChunkDecorator;
+import de.pcfreak9000.spaceawaits.world.render.RenderEntityDecorator;
+import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
 
 public class WorldManager {
     
@@ -39,9 +40,11 @@ public class WorldManager {
         this.ecsManager.addSystem(new MovingWorldEntitySystem());
         this.ecsManager.addSystem(new CameraSystem());
         this.ecsManager.addSystem(new ChunkReloadingSystem(worldAccessor));
-        this.ecsManager.addSystem(new ParallaxSystem());
-        this.ecsManager.addSystem(new RenderChunkSystem());
-        this.ecsManager.addSystem(new RenderEntitySystem());
+        RenderSystem rsys = new RenderSystem();
+        rsys.registerRenderDecorator("entity", new RenderEntityDecorator());
+        rsys.registerRenderDecorator("chunk", new RenderChunkDecorator());
+        rsys.registerRenderDecorator("para", new RenderParallaxDecorator());
+        this.ecsManager.addSystem(rsys);
         this.ecsManager.addSystem(new LightCalculator());
         //lightCalc.setProcessing(false);
         //this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
