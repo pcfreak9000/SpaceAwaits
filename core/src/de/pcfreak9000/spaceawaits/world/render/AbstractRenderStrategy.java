@@ -4,11 +4,11 @@ import java.util.Objects;
 
 import com.badlogic.ashley.core.Family;
 
-public abstract class AbstractRenderDecorator implements IRenderDecorator {
+public abstract class AbstractRenderStrategy implements IRenderDecorator {
     
     private final Family family;
     
-    public AbstractRenderDecorator(Family family) {
+    public AbstractRenderStrategy(Family family) {
         this.family = Objects.requireNonNull(family);
     }
     

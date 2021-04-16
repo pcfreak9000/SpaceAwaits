@@ -65,7 +65,7 @@ public class PlayerInputSystem extends IteratingSystem {
         }
         this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
@@ -86,7 +86,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         if (destroy) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
@@ -98,7 +98,7 @@ public class PlayerInputSystem extends IteratingSystem {
             
         }
         if (build) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getViewport()
+            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
                     .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);

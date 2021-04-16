@@ -11,9 +11,9 @@ import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
 
-public class RenderParallaxDecorator extends AbstractRenderDecorator {
+public class RenderParallaxStrategy extends AbstractRenderStrategy {
     
-    public RenderParallaxDecorator() {
+    public RenderParallaxStrategy() {
         super(Family.all(ParallaxComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
@@ -26,17 +26,17 @@ public class RenderParallaxDecorator extends AbstractRenderDecorator {
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
         this.tileWorld = svwe.worldMgr.getWorldAccess();
-        this.render = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer();
+        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();
     }
     
     @Override
     public void begin() {
-        SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().begin();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch().begin();
     }
     
     @Override
     public void end() {
-        SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch().end();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch().end();
     }
     
     @Override

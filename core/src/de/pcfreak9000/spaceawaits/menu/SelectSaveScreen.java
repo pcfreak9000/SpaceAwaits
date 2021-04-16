@@ -53,7 +53,7 @@ public class SelectSaveScreen extends MenuScreen {
         }
     };
     
-    public SelectSaveScreen(ScreenStateManager screenstatemgr, GuiScreenManager g) {
+    public SelectSaveScreen(ScreenManager g) {
         super(g);
         savesList = new List<>(g.getSkin());
         TextButton newButton = new TextButton("New Save", g.getSkin());
@@ -74,7 +74,7 @@ public class SelectSaveScreen extends MenuScreen {
                             try {
                                 SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(name,
                                         getSeedFromInput(seeds));
-                                screenstatemgr.setWorldScreen();
+                                g.setWorldScreen();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 g.showDialog("Error", "An error occured: " + e.toString(), stage);
@@ -98,7 +98,7 @@ public class SelectSaveScreen extends MenuScreen {
                 if (selected != null) {
                     try {
                         SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                        screenstatemgr.setWorldScreen();
+                        g.setWorldScreen();
                     } catch (IOException e) {
                         e.printStackTrace();
                         g.showDialog("Error", "An error occured: " + e.toString(), stage);
@@ -140,7 +140,7 @@ public class SelectSaveScreen extends MenuScreen {
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                screenstatemgr.setMainMenuScreen();
+                g.setMainMenuScreen();
             }
         });
         
@@ -189,7 +189,7 @@ public class SelectSaveScreen extends MenuScreen {
                 if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     try {
                         SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                        screenstatemgr.setWorldScreen();
+                        g.setWorldScreen();
                         last = 0;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -238,7 +238,6 @@ public class SelectSaveScreen extends MenuScreen {
         }
         byte[] md5Bytes = md.digest(in.getBytes());
         ByteBuffer b = ByteBuffer.wrap(md5Bytes);
-        b.asLongBuffer();
         return b.asLongBuffer().get(0);
     }
     

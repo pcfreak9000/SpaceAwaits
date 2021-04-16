@@ -20,7 +20,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
-public class RenderChunkDecorator extends AbstractRenderDecorator implements EntityListener {
+public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
@@ -30,7 +30,7 @@ public class RenderChunkDecorator extends AbstractRenderDecorator implements Ent
     private IntSet freeCacheIds;
     private Camera camera;
     
-    public RenderChunkDecorator() {
+    public RenderChunkStrategy() {
         super(Family.all(ChunkComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
@@ -39,7 +39,7 @@ public class RenderChunkDecorator extends AbstractRenderDecorator implements Ent
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
-        camera = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
+        camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
     }
     
     @EventSubscription
@@ -82,7 +82,7 @@ public class RenderChunkDecorator extends AbstractRenderDecorator implements Ent
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(
-                SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera().combined);
+                SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera().combined);
     }
     
     @Override

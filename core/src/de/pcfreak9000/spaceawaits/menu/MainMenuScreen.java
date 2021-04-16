@@ -13,13 +13,13 @@ public class MainMenuScreen extends MenuScreen {
     
     private Table table = new Table();
     
-    public MainMenuScreen(ScreenStateManager screenstatemgr, GuiScreenManager g) {
+    public MainMenuScreen(ScreenManager g) {
         super(g);
         TextButton playButton = new TextButton("Play", g.getSkin());
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                screenstatemgr.setSelectSaveScreen();
+                g.setSelectSaveScreen();
             }
         });
         TextButton exitButton = new TextButton("Quit", g.getSkin());

@@ -14,7 +14,7 @@ import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
-import de.pcfreak9000.spaceawaits.menu.ScreenStateManager;
+import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
@@ -47,7 +47,7 @@ public class SpaceAwaits extends Game {
     
     private WorldManager worldManager;
     
-    private ScreenStateManager screenStateManager;
+    private ScreenManager screenManager;
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
@@ -68,9 +68,9 @@ public class SpaceAwaits extends Game {
         this.worldManager = new WorldManager();
         AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
-        this.screenStateManager = new ScreenStateManager(this);
+        this.screenManager = new ScreenManager(this);
         
-        this.screenStateManager.getWorldRenderer().setWorldManager(worldManager);
+        this.screenManager.getWorldRenderer().setWorldManager(worldManager);
         
         //Load mods and resources
         preloadResources();
@@ -88,7 +88,7 @@ public class SpaceAwaits extends Game {
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
         
-        this.screenStateManager.setMainMenuScreen();
+        this.screenManager.setMainMenuScreen();
     }
     
     @Deprecated
@@ -100,8 +100,8 @@ public class SpaceAwaits extends Game {
         return this.gameManager;
     }
     
-    public ScreenStateManager getScreenStateManager() {
-        return this.screenStateManager;
+    public ScreenManager getScreenManager() {
+        return this.screenManager;
     }
     
     private void preloadResources() {//What happens on resource reload?
@@ -125,7 +125,7 @@ public class SpaceAwaits extends Game {
         LOGGER.info("Exit...");
         BUS.post(new CoreEvents.ExitEvent());
         super.dispose();
-        this.screenStateManager.dispose();
+        this.screenManager.dispose();
         this.assetManager.dispose();
         LOGGER.info("Exit.");
     }

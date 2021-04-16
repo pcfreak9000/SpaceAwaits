@@ -13,13 +13,13 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
 
-public class RenderEntityDecorator extends AbstractRenderDecorator {
+public class RenderEntityStrategy extends AbstractRenderStrategy {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
     private final ComponentMapper<RenderEntityComponent> renderMapper = ComponentMapper
             .getFor(RenderEntityComponent.class);
     
-    public RenderEntityDecorator() {
+    public RenderEntityStrategy() {
         super(Family.all(RenderEntityComponent.class).get());
         SpaceAwaits.BUS.register(this);
     }
@@ -29,8 +29,8 @@ public class RenderEntityDecorator extends AbstractRenderDecorator {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.b = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getSpriteBatch();
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenStateManager().getWorldRenderer().getCamera();
+        this.b = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch();
+        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
     }
     
     @Override

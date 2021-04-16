@@ -11,12 +11,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.menu.ScreenStateManager;
+import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 
 public class WorldRenderer extends ScreenAdapter {
     
-    private ScreenStateManager ssmgr;
+    private ScreenManager gsm;
     
     private WorldManager worldManager;
     private FPSLogger fps;
@@ -26,8 +26,8 @@ public class WorldRenderer extends ScreenAdapter {
     
     private SpriteBatch spriteBatch;
     
-    public WorldRenderer(ScreenStateManager screenstatemgr) {
-        this.ssmgr = screenstatemgr;
+    public WorldRenderer(ScreenManager gsm) {
+        this.gsm = gsm;
         this.fps = new FPSLogger();
         this.camera = new OrthographicCamera();
         this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);
@@ -77,17 +77,18 @@ public class WorldRenderer extends ScreenAdapter {
         applyViewport();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         this.worldManager.updateAndRender(delta);
-        //Render Game HUD here?
+        this.gsm.getHud().actAndDraw(delta);
         fps.log();
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
-            ssmgr.setMainMenuScreen();
+            gsm.setMainMenuScreen();
         }
     }
     
     @Override
     public void resize(int width, int height) {
         this.viewport.update(width, height);
+        this.gsm.resize(width, height);
         SpaceAwaits.BUS.post(new RendererEvents.ResizeWorldRendererEvent(this, width, height));
     }
     
