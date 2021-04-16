@@ -5,6 +5,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -42,8 +43,12 @@ public class DMod {
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-//        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
-//                TextureProvider.get("sand.png"));
+        //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
+        //                TextureProvider.get("sand.png"));
+        
+        Item gun = new Item();
+        gun.setTexture("gun_0.png");
+        GameRegistry.ITEM_REGISTRY.register("gun", gun);
         
         tstoneTile.setTexture("stone.png");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
@@ -79,7 +84,7 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background(CoreResources.SPACE_BACKGROUND, 1920/16 * 16f / 9, 1920/16);
+        Background back = new Background(CoreResources.SPACE_BACKGROUND, 1920 / 16 * 16f / 9, 1920 / 16);
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         
         GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());

@@ -4,8 +4,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import de.pcfreak9000.spaceawaits.menu.ScreenManager;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.menu.HotbarSlot;
+import de.pcfreak9000.spaceawaits.menu.ScreenManager;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
 public class Hud {
     private static final int HOTBAR_SLOTS = 9;
@@ -15,6 +17,7 @@ public class Hud {
     private ScreenManager gsm;
     
     private HotbarSlot[] slots;
+    private int selectedSlot;
     
     public Hud(ScreenManager gsm) {
         this.gsm = gsm;
@@ -26,6 +29,8 @@ public class Hud {
         table.setWidth(stage.getWidth());
         table.setHeight(stage.getHeight());
         this.stage.addActor(table);
+        selectSlot(0);
+        slots[4].setItemStack(new ItemStack(GameRegistry.ITEM_REGISTRY.get("gun"), HOTBAR_SLOTS));
     }
     
     private void initHotbarSlots() {
@@ -41,6 +46,14 @@ public class Hud {
             table.add(hs).pad(5);
         }
         return table;
+    }
+    
+    private void selectSlot(int newselection) {
+        if (newselection != selectedSlot) {
+            slots[selectedSlot].setSelected(false);
+            slots[newselection].setSelected(true);
+            selectedSlot = newselection;
+        }
     }
     
     public void actAndDraw(float dt) {

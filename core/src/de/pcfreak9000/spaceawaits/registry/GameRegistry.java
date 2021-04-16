@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
@@ -22,7 +23,7 @@ public class GameRegistry<T> {
     
     public static final GeneratorRegistry GENERATOR_REGISTRY = new GeneratorRegistry();
     
-    public static final ItemRegistry ITEM_REGISTRY = new ItemRegistry();
+    public static final GameRegistry<Item> ITEM_REGISTRY = new GameRegistry<>();
     
     public static final WorldComponentRegistry WORLD_COMPONENT_REGISTRY = new WorldComponentRegistry();
     

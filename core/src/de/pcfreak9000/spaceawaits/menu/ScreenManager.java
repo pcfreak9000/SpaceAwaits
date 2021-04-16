@@ -50,7 +50,8 @@ public class ScreenManager implements Disposable {
         this.skin = ev.assetMgr.get("ui/skin.json", Skin.class);
         reload();
     }
-    
+    //FIXME this class mixes screen and stage/gui stuff
+    //FIXME whats with the current screen?
     private void reload() {
         if (mainMenu != null) {
             mainMenu.dispose();

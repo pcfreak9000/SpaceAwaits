@@ -1,5 +1,10 @@
 package de.pcfreak9000.spaceawaits.item;
 
+import java.util.Objects;
+
+import de.pcfreak9000.spaceawaits.core.ITextureProvider;
+import de.pcfreak9000.spaceawaits.core.TextureProvider;
+
 /**
  * represents an Item
  *
@@ -8,11 +13,21 @@ package de.pcfreak9000.spaceawaits.item;
  */
 public class Item {
     
-    private String textureName;
+    private ITextureProvider textureProvider;
     
     private String displayName;
     private String description;
+    
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
+    
+    public void setTexture(String name) {
+        setTextureProvider(TextureProvider.get(name));
+    }
+    
+    public void setTextureProvider(ITextureProvider prov) {
+        Objects.requireNonNull(prov);
+        this.textureProvider = prov;
+    }
     
     public String getDisplayName() {
         return this.displayName;
@@ -38,7 +53,7 @@ public class Item {
         this.maxstacksize = i;
     }
     
-    public String getTextureName() {
-        return textureName;
+    public ITextureProvider getTextureProvider() {
+        return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
 }
