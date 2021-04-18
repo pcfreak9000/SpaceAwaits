@@ -77,7 +77,7 @@ public class EntitySerializer {
     }
     
     public static void deserializeComponents(ComponentHolder ent, NBTCompound comp) {
-        for (Map.Entry<String, NBTTag> entry : comp) {
+        for (Map.Entry<String, NBTTag> entry : comp.entrySet()) {
             if (!GameRegistry.WORLD_COMPONENT_REGISTRY.isRegistered(entry.getKey())) {
                 continue;//Ignore this case, maybe a mod has been removed, etc...
             }
