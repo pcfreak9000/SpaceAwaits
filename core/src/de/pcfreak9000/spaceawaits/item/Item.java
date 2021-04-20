@@ -2,6 +2,8 @@ package de.pcfreak9000.spaceawaits.item;
 
 import java.util.Objects;
 
+import com.badlogic.gdx.graphics.Color;
+
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 
@@ -15,10 +17,9 @@ public class Item {
     
     private ITextureProvider textureProvider;
     
-    private String displayName;
-    private String description;
-    
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
+    
+    private Color color = new Color(1, 1, 1, 1);
     
     public void setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
@@ -29,28 +30,16 @@ public class Item {
         this.textureProvider = prov;
     }
     
-    public String getDisplayName() {
-        return this.displayName;
-    }
-    
-    public void setDisplayName(String name) {
-        this.displayName = name;
-    }
-    
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription(String desc) {
-        this.description = desc;
-    }
-    
     public int getMaxStackSize() {
         return this.maxstacksize;
     }
     
     public void setMaxStackSize(int i) {
         this.maxstacksize = i;
+    }
+    
+    public Color color() {
+        return this.color;
     }
     
     public ITextureProvider getTextureProvider() {

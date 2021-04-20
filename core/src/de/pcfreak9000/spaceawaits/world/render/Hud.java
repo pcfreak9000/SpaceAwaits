@@ -4,17 +4,17 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.menu.HotbarSlot;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
 public class Hud {
-    private static final int HOTBAR_SLOTS = 9;
     
     private Stage stage;
     
     private ScreenManager gsm;
+    private Player player;
     
     private HotbarSlot[] slots;
     private int selectedSlot;
@@ -22,22 +22,27 @@ public class Hud {
     public Hud(ScreenManager gsm) {
         this.gsm = gsm;
         this.stage = gsm.createStage();
-        initHotbarSlots();
+
+    }
+    
+    public void setPlayer(Player player) {
+        this.player = player;
+        this.initHotbarSlots();
+        this.selectSlot(0);
+    }
+    //FIXME this sucks ^ V
+    private void initHotbarSlots() {
+        InventoryPlayer inv = this.player.getInventory();
+        slots = new HotbarSlot[inv.slots()];
+        for (int i = 0; i < slots.length; i++) {
+            slots[i] = new HotbarSlot(inv, i);
+        }
         Table table = new Table(gsm.getSkin());
         table.align(Align.top);
         table.add(createHotbarSlotsTable()).pad(10);
         table.setWidth(stage.getWidth());
         table.setHeight(stage.getHeight());
         this.stage.addActor(table);
-        selectSlot(0);
-        slots[4].setItemStack(new ItemStack(GameRegistry.ITEM_REGISTRY.get("gun"), HOTBAR_SLOTS));
-    }
-    
-    private void initHotbarSlots() {
-        slots = new HotbarSlot[HOTBAR_SLOTS];
-        for (int i = 0; i < slots.length; i++) {
-            slots[i] = new HotbarSlot();
-        }
     }
     
     private Table createHotbarSlotsTable() {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
@@ -17,7 +18,16 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
  */
 public class GameRegistry<T> {
     
-    public static final GameRegistry<Tile> TILE_REGISTRY = new GameRegistry<>();
+    public static final GameRegistry<Tile> TILE_REGISTRY = new GameRegistry<Tile>() {
+        @Override
+        public GameRegistry<Tile> register(String name, Tile data) {
+            super.register(name, data);
+            if(data.isUseDefaultItem()) {
+                ITEM_REGISTRY.register(name, new ItemTile(data));
+            }
+            return this;
+        };
+    };
     
     public static final GameRegistry<WorldEntityFactory> WORLD_ENTITY_REGISTRY = new GameRegistry<>();
     

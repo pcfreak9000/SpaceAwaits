@@ -37,6 +37,8 @@ public class Tile {
     private boolean opaque = true;
     private boolean solid = true;
     
+    private boolean useDefaultItem = true;
+    
     private final Color color = new Color(1, 1, 1, 1);
     
     private Color lightColor;
@@ -107,6 +109,14 @@ public class Tile {
     
     public void setLightTransmission(float f) {
         this.lighttransmission = f;
+    }
+    
+    public void setUseDefaultItem(boolean useDefaultItem) {
+        this.useDefaultItem = useDefaultItem;
+    }
+    
+    public boolean isUseDefaultItem() {
+        return useDefaultItem;
     }
     
     public boolean hasTileEntity() {
