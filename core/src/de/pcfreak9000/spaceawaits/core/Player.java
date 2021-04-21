@@ -9,6 +9,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 
 /**
  * Information about the player: level, ships, inventory, etc. Also the player
@@ -27,6 +28,7 @@ public class Player implements NBTSerializable {
     
     public Player() {
         this.playerEntity = CoreResources.PLAYER_FACTORY.createEntity();
+        this.playerEntity.getComponent(PlayerInputComponent.class).player = this;
         this.inventory = new InventoryPlayer();
         this.inventory.setSlotContent(0, new ItemStack(GameRegistry.ITEM_REGISTRY.get("grass"), 20));
         this.inventory.setSlotContent(1, new ItemStack(GameRegistry.ITEM_REGISTRY.get("stone"), 35));

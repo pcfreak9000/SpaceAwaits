@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
+import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 
@@ -125,6 +127,10 @@ public class Tile {
     
     public TileEntity createTileEntity(WorldAccessor world, int gtx, int gty) {
         return null;
+    }
+    
+    public boolean onTileUse(Player player, WorldAccessor world, ItemStack stackUsed, int gtx, int gty) {
+        return false;
     }
     
     @Override

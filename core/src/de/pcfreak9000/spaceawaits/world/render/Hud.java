@@ -11,25 +11,24 @@ import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 
 public class Hud {
     
-    private Stage stage;
+    public Stage stage;
     
     private ScreenManager gsm;
     private Player player;
     
     private HotbarSlot[] slots;
-    private int selectedSlot;
     
     public Hud(ScreenManager gsm) {
         this.gsm = gsm;
         this.stage = gsm.createStage();
-
+        
     }
     
     public void setPlayer(Player player) {
         this.player = player;
         this.initHotbarSlots();
-        this.selectSlot(0);
     }
+    
     //FIXME this sucks ^ V
     private void initHotbarSlots() {
         InventoryPlayer inv = this.player.getInventory();
@@ -51,14 +50,6 @@ public class Hud {
             table.add(hs).pad(5);
         }
         return table;
-    }
-    
-    private void selectSlot(int newselection) {
-        if (newselection != selectedSlot) {
-            slots[selectedSlot].setSelected(false);
-            slots[newselection].setSelected(true);
-            selectedSlot = newselection;
-        }
     }
     
     public void actAndDraw(float dt) {

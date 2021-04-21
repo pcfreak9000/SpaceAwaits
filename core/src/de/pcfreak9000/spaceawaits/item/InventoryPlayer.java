@@ -3,6 +3,19 @@ package de.pcfreak9000.spaceawaits.item;
 public class InventoryPlayer implements IInventory {
     
     private ItemStack[] hotbar = new ItemStack[9];
+    private int selected;
+    
+    public void setSelectedSlot(int selected) {
+        this.selected = selected;
+    }
+    
+    public int getSelectedSlot() {
+        return selected;
+    }
+    
+    public ItemStack getSelectedStack() {
+        return getStack(getSelectedSlot());
+    }
     
     @Override
     public int slots() {

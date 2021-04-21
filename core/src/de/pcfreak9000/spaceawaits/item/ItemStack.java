@@ -44,6 +44,17 @@ public class ItemStack implements NBTSerializable {
         this.count = count;
     }
     
+    public ItemStack cpy() {
+        if (this == EMPTY) {
+            return EMPTY;
+        }
+        ItemStack newstack = new ItemStack(item, count);
+        if (hasNBT()) {
+            newstack.setNBT(getNBT().cpy());
+        }
+        return newstack;
+    }
+    
     public Item getItem() {
         return this.item;
     }
@@ -59,6 +70,15 @@ public class ItemStack implements NBTSerializable {
     public boolean isFull() {//TODO isFull
         return getCount() >= MAX_STACKSIZE;
     }
+    
+//    public void changeSize(int amount) {
+//        if (this == EMPTY) {
+//            return;
+//        }
+//        int changed = this.count + amount;
+//        changed = Math.max(0, Math.min(changed, MAX_STACKSIZE));
+//        this.count = changed;
+//    }
     
     public ItemStack split(int amount) {
         if (amount <= 0 || this.isEmpty()) {

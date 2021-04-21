@@ -5,16 +5,20 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.CoreResources.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.WorldRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class PlayerInputSystem extends IteratingSystem {
@@ -28,13 +32,13 @@ public class PlayerInputSystem extends IteratingSystem {
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private WorldManager worldManager;
+    private WorldRenderer worldRend;
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
         this.worldManager = ev.worldMgr;
+        this.worldRend = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();//FIXME ffs
     }
-    
-    private Tile ugly = null;
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
@@ -42,13 +46,14 @@ public class PlayerInputSystem extends IteratingSystem {
         float vy = 0;
         float vx = 0;
         //if (physicsMapper.get(entities.get(0)).onGround) {
-        boolean up = Gdx.input.isKeyPressed(Keys.W);
-        boolean left = Gdx.input.isKeyPressed(Keys.A);
-        boolean down = Gdx.input.isKeyPressed(Keys.S);
-        boolean right = Gdx.input.isKeyPressed(Keys.D);
-        boolean explode = Gdx.input.isButtonPressed(Buttons.MIDDLE);
-        boolean destroy = Gdx.input.isButtonPressed(Buttons.LEFT);
-        boolean build = Gdx.input.isButtonPressed(Buttons.RIGHT);
+        boolean up = InptMgr.isPressed(EnumDefInputIds.Up);
+        boolean left = InptMgr.isPressed(EnumDefInputIds.Left);
+        boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
+        boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
+        boolean explode = InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles);
+        boolean destroy = InptMgr.isPressed(EnumDefInputIds.BreakAttack);
+        int hotbarChecked = checkSelectHotbarSlot(play.player.getInventory().getSelectedSlot());
+        play.player.getInventory().setSelectedSlot(hotbarChecked);
         if (up) {
             vy += play.maxYv * 5;
         }
@@ -65,8 +70,7 @@ public class PlayerInputSystem extends IteratingSystem {
         }
         this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
-                    .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            Vector2 mouse = worldRend.getMouseWorldPos();
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
             final int rad = 3;
@@ -77,7 +81,6 @@ public class PlayerInputSystem extends IteratingSystem {
                         int ty = tym + j;
                         Tile t = worldManager.getWorldAccess().getTile(tx, ty);
                         if (t != null && t.canBreak()) {
-                            this.ugly = t;
                             worldManager.getWorldAccess().setTile(Tile.EMPTY, tx, ty);
                         }
                         
@@ -86,31 +89,51 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         if (destroy) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
-                    .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            Vector2 mouse = worldRend.getMouseWorldPos();
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             Tile t = worldManager.getWorldAccess().getTile(tx, ty);
             if (t != null && t.canBreak()) {
-                this.ugly = t;
                 worldManager.getWorldAccess().setTile(Tile.EMPTY, tx, ty);
             }
             
         }
-        if (build) {
-            Vector2 mouse = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getViewport()
-                    .unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        if (InptMgr.isPressed(EnumDefInputIds.Use)) {
+            //Current mouse stuff
+            Vector2 mouse = worldRend.getMouseWorldPos();
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
-            if (this.ugly != null) {
-                if (worldManager.getWorldAccess().getTile(tx, ty) == null
-                        || worldManager.getWorldAccess().getTile(tx, ty) == Tile.EMPTY) {
-                    worldManager.getWorldAccess().setTile(this.ugly, tx, ty);
-                }
+            //get current item
+            Player player = play.player;
+            ItemStack stack = player.getInventory().getSelectedStack().cpy();
+            //onItemUse
+            boolean used = false;
+            if (stack != null && stack.getItem() != null) {
+                used = stack.getItem().onItemUse(player, stack, worldManager.getWorldAccess(), tx, ty);
+                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+            }
+            if (!used) {
+                Tile clicked = worldManager.getWorldAccess().getTile(tx, ty);
+                //onTileUse...
+                used = clicked.onTileUse(player, worldManager.getWorldAccess(), stack, tx, ty);
             }
         }
         PhysicsComponent pc = physicsMapper.get(entity);
         pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
     }
     
+    private int checkSelectHotbarSlot(int current) {
+        for (int i = Keys.NUM_1; i <= Keys.NUM_9; i++) {
+            if (Gdx.input.isKeyJustPressed(i)) {
+                return i - Keys.NUM_1;
+            }
+        }
+        float scroll = InptMgr.getScrollY();
+        int v = Math.round(scroll);
+        int select = current + v;
+        if (select < 0) {
+            return select + 9;
+        }
+        return select % 9;
+    }
 }

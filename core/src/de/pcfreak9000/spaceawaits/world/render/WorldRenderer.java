@@ -1,16 +1,19 @@
 package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import de.pcfreak9000.spaceawaits.core.CoreResources.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.menu.GuiContainer;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.world.WorldManager;
 
@@ -26,6 +29,10 @@ public class WorldRenderer extends ScreenAdapter {
     
     private SpriteBatch spriteBatch;
     
+    private GuiContainer guiContainerCurrent;
+    private Vector2 mousePosVec = new Vector2();
+    //private int mousePosTileX, mousePosTileY;
+    
     public WorldRenderer(ScreenManager gsm) {
         this.gsm = gsm;
         this.fps = new FPSLogger();
@@ -38,6 +45,18 @@ public class WorldRenderer extends ScreenAdapter {
         this.worldManager = mgr;
     }
     
+    public void setGuiCurrent(GuiContainer guicont) {//?????????
+        if (guicont == null && this.guiContainerCurrent != null) {
+            //Possibly closing logic first
+            this.guiContainerCurrent = null;
+            InptMgr.setLocked(false, null);
+        } else if (this.guiContainerCurrent == null) {
+            this.guiContainerCurrent = guicont;
+            //Possibly opening logic
+            InptMgr.setLocked(true, null);
+        }
+    }
+    
     public OrthographicCamera getCamera() {
         return camera;
     }
@@ -48,6 +67,10 @@ public class WorldRenderer extends ScreenAdapter {
     
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+    
+    public Vector2 getMouseWorldPos() {
+        return mousePosVec;
     }
     
     public void setAdditiveBlending() {
@@ -72,6 +95,7 @@ public class WorldRenderer extends ScreenAdapter {
     
     @Override
     public void show() {
+        InptMgr.init();
         super.show();
         this.gsm.getHud().setPlayer(SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer());//Thats ugly
     }
@@ -81,14 +105,21 @@ public class WorldRenderer extends ScreenAdapter {
         Gdx.gl.glClearColor(0.05f, 0.05f, 0.05f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         applyViewport();
+        updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         this.worldManager.updateAndRender(delta);
         this.gsm.getHud().actAndDraw(delta);
         fps.log();
-        if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+        if (InptMgr.isJustPressed(EnumDefInputIds.Esc)) {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();
         }
+        InptMgr.clear();
+    }
+    
+    private void updateMouseWorldPosCache() {
+        mousePosVec.set(Gdx.input.getX(), Gdx.input.getY());
+        mousePosVec = this.viewport.unproject(mousePosVec);
     }
     
     @Override
