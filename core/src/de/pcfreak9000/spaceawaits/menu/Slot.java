@@ -26,7 +26,7 @@ public class Slot extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         Color old = batch.getColor();
         batch.setColor(getColor());
-        batch.draw(CoreResources.SPACE_BACKGROUND.getRegion(), getX(), getY(), getWidth(), getHeight());
+        batch.draw(CoreResources.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
         if (itemstack != null) {
             Item i = itemstack.getItem();

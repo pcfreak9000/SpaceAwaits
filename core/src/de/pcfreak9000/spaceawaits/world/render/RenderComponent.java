@@ -7,7 +7,7 @@ public class RenderComponent implements Component {
     public final int layer;
     public final String renderDecoratorId;
     //Cache the render decorator:
-    IRenderDecorator renderDecorator;
+    IRenderStrategy renderStrategy;
     
     public RenderComponent(int layer, String rDecId) {
         this.layer = layer;

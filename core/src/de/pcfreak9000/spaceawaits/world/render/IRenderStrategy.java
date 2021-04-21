@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.world.render;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 
-public interface IRenderDecorator {
+public interface IRenderStrategy {
     default void begin() {
     }
     

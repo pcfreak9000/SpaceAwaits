@@ -2,8 +2,10 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.ChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
@@ -49,6 +51,12 @@ public class TestChunkGenerator implements ChunkGenerator {
                 chunk.setTileBackground(t, i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY());
             }
         }
+        Entity item = GameRegistry.WORLD_ENTITY_REGISTRY.get("item").createEntity();
+        item.getComponent(ItemStackComponent.class).stack = new ItemStack(GameRegistry.ITEM_REGISTRY.get("dirt"), 2);
+        TransformComponent ttc = item.getComponent(TransformComponent.class);//Not good?
+        ttc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
+        chunk.addEntity(item);
+        
         Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
         TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
         tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);

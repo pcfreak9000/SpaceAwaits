@@ -17,6 +17,8 @@ import de.pcfreak9000.spaceawaits.world.WorldAccessor;
  */
 public class Item {
     
+    public static final float WORLD_SIZE = 0.6f;
+    
     private ITextureProvider textureProvider;
     
     private int maxstacksize = ItemStack.MAX_STACKSIZE;

@@ -30,14 +30,14 @@ public class RenderSystem extends EntitySystem implements EntityListener {
         return maj;
     };
     
-    private ObjectMap<String, IRenderDecorator> renderDecorators = new ObjectMap<>();
+    private ObjectMap<String, IRenderStrategy> renderStrategies = new ObjectMap<>();
     
     private Array<Entity> entities = new Array<>();
     
     //TODO use a GameRegistry instead for RenderDecorators?
     
-    public void registerRenderDecorator(String id, IRenderDecorator dec) {
-        renderDecorators.put(id, dec);
+    public void registerRenderDecorator(String id, IRenderStrategy dec) {
+        renderStrategies.put(id, dec);
     }
     
     @Override
@@ -78,25 +78,25 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = rMapper.get(entity);
         Objects.requireNonNull(rc.renderDecoratorId);
-        IRenderDecorator renderDecorator = this.renderDecorators.get(rc.renderDecoratorId);
-        if (renderDecorator == null) {
+        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderDecoratorId);
+        if (renderStrategy == null) {
             throw new IllegalStateException("No such IRenderDecorator: " + rc.renderDecoratorId);
         }
-        boolean matches = renderDecorator.getFamily().matches(entity);
+        boolean matches = renderStrategy.getFamily().matches(entity);
         if (!matches) {
             throw new IllegalStateException("Entity does not have the right components for this render decorator");
         }
-        rc.renderDecorator = renderDecorator;
+        rc.renderStrategy = renderStrategy;
         this.entities.add(entity);
-        if (renderDecorator instanceof EntityListener) {
-            EntityListener el = (EntityListener) renderDecorator;
+        if (renderStrategy instanceof EntityListener) {
+            EntityListener el = (EntityListener) renderStrategy;
             el.entityAdded(entity);
         }
     }
     
     private void removeEntityPrep(Entity entity) {
         RenderComponent rc = rMapper.get(entity);
-        IRenderDecorator dec = rc.renderDecorator;
+        IRenderStrategy dec = rc.renderStrategy;
         if (dec instanceof EntityListener) {
             EntityListener el = (EntityListener) dec;
             el.entityRemoved(entity);
@@ -106,10 +106,10 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        IRenderDecorator last = null;
+        IRenderStrategy last = null;
         for (Entity e : entities) {
             RenderComponent rc = rMapper.get(e);
-            IRenderDecorator dec = rc.renderDecorator;
+            IRenderStrategy dec = rc.renderStrategy;
             if (dec != last) {
                 if (last != null) {
                     last.end();

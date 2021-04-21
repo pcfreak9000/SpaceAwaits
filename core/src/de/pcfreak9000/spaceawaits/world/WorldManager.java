@@ -12,6 +12,7 @@ import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.RenderChunkStrategy;
 import de.pcfreak9000.spaceawaits.world.render.RenderEntityStrategy;
+import de.pcfreak9000.spaceawaits.world.render.RenderItemStrategy;
 import de.pcfreak9000.spaceawaits.world.render.RenderParallaxStrategy;
 import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
 
@@ -44,6 +45,7 @@ public class WorldManager {
         rsys.registerRenderDecorator("entity", new RenderEntityStrategy());
         rsys.registerRenderDecorator("chunk", new RenderChunkStrategy());
         rsys.registerRenderDecorator("para", new RenderParallaxStrategy());
+        rsys.registerRenderDecorator("item", new RenderItemStrategy());
         this.ecsManager.addSystem(rsys);
         this.ecsManager.addSystem(new LightCalculator());
         //lightCalc.setProcessing(false);

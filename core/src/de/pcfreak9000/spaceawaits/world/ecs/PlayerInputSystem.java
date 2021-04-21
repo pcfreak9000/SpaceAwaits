@@ -96,7 +96,6 @@ public class PlayerInputSystem extends IteratingSystem {
             if (t != null && t.canBreak()) {
                 worldManager.getWorldAccess().setTile(Tile.EMPTY, tx, ty);
             }
-            
         }
         if (InptMgr.isPressed(EnumDefInputIds.Use)) {
             //Current mouse stuff
@@ -129,7 +128,7 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         float scroll = InptMgr.getScrollY();
-        int v = Math.round(scroll);
+        int v = (int) Math.signum(scroll);
         int select = current + v;
         if (select < 0) {
             return select + 9;

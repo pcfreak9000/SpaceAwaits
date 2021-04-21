@@ -25,7 +25,7 @@ public class HotbarSlot extends Slot {
         Color c = getColor();
         float bias = bias();
         batch.setColor(c.r * bias, c.g * bias, c.b * bias, c.a);
-        batch.draw(CoreResources.SPACE_BACKGROUND.getRegion(), getX(), getY(), getWidth(), getHeight());
+        batch.draw(CoreResources.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
         if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();

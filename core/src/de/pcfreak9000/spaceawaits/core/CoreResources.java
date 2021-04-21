@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
+import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 
@@ -30,6 +31,10 @@ public class CoreResources {
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");
     
+    public static final TextureProvider ITEM_SLOT = TextureProvider.get("item_slot.png");
+    
     public static final WorldEntityFactory PLAYER_FACTORY = GameRegistry.WORLD_ENTITY_REGISTRY
             .register("player", new PlayerEntityFactory()).get("player");//Meh...
+    public static final WorldEntityFactory ITEM_FACTORY = GameRegistry.WORLD_ENTITY_REGISTRY
+            .register("item", new ItemEntityFactory()).get("item");
 }

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.badlogic.ashley.core.Family;
 
-public abstract class AbstractRenderStrategy implements IRenderDecorator {
+public abstract class AbstractRenderStrategy implements IRenderStrategy {
     
     private final Family family;
     
