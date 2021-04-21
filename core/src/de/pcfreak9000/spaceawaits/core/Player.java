@@ -30,14 +30,14 @@ public class Player implements NBTSerializable {
         this.playerEntity = CoreResources.PLAYER_FACTORY.createEntity();
         this.playerEntity.getComponent(PlayerInputComponent.class).player = this;
         this.inventory = new InventoryPlayer();
-        this.inventory.setSlotContent(0, new ItemStack(GameRegistry.ITEM_REGISTRY.get("grass"), 20));
-        this.inventory.setSlotContent(1, new ItemStack(GameRegistry.ITEM_REGISTRY.get("stone"), 35));
-        this.inventory.setSlotContent(2, new ItemStack(GameRegistry.ITEM_REGISTRY.get("laser"), 35));
-        this.inventory.setSlotContent(3, new ItemStack(GameRegistry.ITEM_REGISTRY.get("dirt"), 35));
+        this.inventory.setSlotContent(0, new ItemStack(GameRegistry.ITEM_REGISTRY.get("grass"), 128));
+        this.inventory.setSlotContent(1, new ItemStack(GameRegistry.ITEM_REGISTRY.get("stone"), 128));
+        this.inventory.setSlotContent(2, new ItemStack(GameRegistry.ITEM_REGISTRY.get("laser"), 32));
+        this.inventory.setSlotContent(3, new ItemStack(GameRegistry.ITEM_REGISTRY.get("dirt"), 128));
         this.inventory.setSlotContent(4, new ItemStack(GameRegistry.ITEM_REGISTRY.get("gun"), 1));
-        this.inventory.setSlotContent(5, new ItemStack(GameRegistry.ITEM_REGISTRY.get("torch"), 10));
-        this.inventory.setSlotContent(6, new ItemStack(GameRegistry.ITEM_REGISTRY.get("ore_iron"), 10));
-        this.inventory.setSlotContent(7, new ItemStack(GameRegistry.ITEM_REGISTRY.get("bottom"), 10));
+        this.inventory.setSlotContent(5, new ItemStack(GameRegistry.ITEM_REGISTRY.get("torch"), 128));
+        this.inventory.setSlotContent(6, new ItemStack(GameRegistry.ITEM_REGISTRY.get("ore_iron"), 64));
+        //this.inventory.setSlotContent(7, new ItemStack(GameRegistry.ITEM_REGISTRY.get("bottom"), 10));
     }
     
     public Entity getPlayerEntity() {
@@ -61,6 +61,7 @@ public class Player implements NBTSerializable {
         NBTCompound pc = (NBTCompound) compound;
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.currentWorld = pc.getString("currentWorld");
+        this.inventory.readNBT(pc.get("inventory"));
     }
     
     @Override
@@ -68,6 +69,7 @@ public class Player implements NBTSerializable {
         NBTCompound pc = new NBTCompound();
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
         pc.putString("currentWorld", currentWorld);
+        pc.put("inventory", this.inventory.writeNBT());
         return pc;
     }
     

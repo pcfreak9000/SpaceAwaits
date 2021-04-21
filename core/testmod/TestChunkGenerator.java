@@ -52,7 +52,7 @@ public class TestChunkGenerator implements ChunkGenerator {
             }
         }
         Entity item = GameRegistry.WORLD_ENTITY_REGISTRY.get("item").createEntity();
-        item.getComponent(ItemStackComponent.class).stack = new ItemStack(GameRegistry.ITEM_REGISTRY.get("dirt"), 2);
+        item.getComponent(ItemStackComponent.class).stack = new ItemStack(DMod.instance.gun, 128);
         TransformComponent ttc = item.getComponent(TransformComponent.class);//Not good?
         ttc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
         chunk.addEntity(item);

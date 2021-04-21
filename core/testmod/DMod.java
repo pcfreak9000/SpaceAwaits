@@ -40,13 +40,13 @@ public class DMod {
         };
     };
     Tile torch = new Tile();
-    
+    Item gun = new Item();
+
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
         
-        Item gun = new Item();
         gun.setTexture("gun_0.png");
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
         

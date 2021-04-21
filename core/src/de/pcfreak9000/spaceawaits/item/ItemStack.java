@@ -8,31 +8,51 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 /**
- * a Stack of {@link Item}s
- *
+ * a Stack of {@link Item}s <br>
+ * Note: this class does not implement {@link NBTSerializable} but is
+ * serializable through static methods.
+ * 
  * @author pcfreak9000
  *
  */
-public class ItemStack implements NBTSerializable {
+public class ItemStack {
     
     public static final int MAX_STACKSIZE = 128;
     
     public static final ItemStack EMPTY = new ItemStack();
     
+    public static NBTTag writeNBT(ItemStack stack) {
+        NBTCompound c = new NBTCompound();
+        if (stack != EMPTY) {
+            c.putByte("c", (byte) stack.getCount());
+            String id = GameRegistry.ITEM_REGISTRY.getId(stack.getItem());
+            c.putString("id", id);
+            if (stack.nbt != null && !stack.nbt.entrySet().isEmpty()) {//TODO direct isEmpty in NBTCompound, also in the top of this class
+                c.putCompound("nbt", stack.nbt);
+            }
+        }
+        return c;
+    }
+    
+    public static ItemStack readNBT(NBTTag tag) {
+        if (((NBTCompound) tag).entrySet().isEmpty()) {
+            return EMPTY;
+        }
+        ItemStack stack = new ItemStack();
+        NBTCompound c = (NBTCompound) tag;
+        String id = c.getString("id");
+        stack.count = c.getByte("c");//Hopefully works with conversion...
+        stack.item = GameRegistry.ITEM_REGISTRY.get(id);
+        if (c.hasKey("nbt")) {
+            stack.nbt = c.getCompound("nbt");
+        }
+        return stack;
+    }
+    
     private Item item;
     private int count;
     
     private NBTCompound nbt;
-    
-    //    public static NBTTag writeNBT(ItemStack stack) {
-    //        return stack.writeNBT();
-    //    }
-    //    
-    //    public static ItemStack readNBT_s(NBTTag tag) {
-    //        ItemStack stack = new ItemStack(null, 0);
-    //        stack.readNBT(tag);
-    //        return stack;
-    //    }
     
     private ItemStack() {
         this.count = 0;
@@ -67,18 +87,18 @@ public class ItemStack implements NBTSerializable {
         return this == EMPTY || getCount() <= 0;
     }
     
-    public boolean isFull() {//TODO isFull
-        return getCount() >= MAX_STACKSIZE;
+    public boolean isFull() {
+        return getCount() >= MAX_STACKSIZE || getCount() >= getItem().getMaxStackSize();
     }
     
-//    public void changeSize(int amount) {
-//        if (this == EMPTY) {
-//            return;
-//        }
-//        int changed = this.count + amount;
-//        changed = Math.max(0, Math.min(changed, MAX_STACKSIZE));
-//        this.count = changed;
-//    }
+    //    public void changeSize(int amount) {
+    //        if (this == EMPTY) {
+    //            return;
+    //        }
+    //        int changed = this.count + amount;
+    //        changed = Math.max(0, Math.min(changed, MAX_STACKSIZE));
+    //        this.count = changed;
+    //    }
     
     public ItemStack split(int amount) {
         if (amount <= 0 || this.isEmpty()) {
@@ -110,31 +130,6 @@ public class ItemStack implements NBTSerializable {
     
     public void setNBT(NBTCompound nbt) {
         this.nbt = nbt;
-    }
-    
-    @Override
-    public void readNBT(NBTTag tag) {
-        //Empty ItemStack, also what if this == EMPTY?
-        NBTCompound c = (NBTCompound) tag;
-        String id = c.getString("id");
-        this.count = c.getByte("c");//Hopefully works with conversion...
-        this.item = GameRegistry.ITEM_REGISTRY.get(id);
-        if (c.hasKey("nbt")) {
-            this.nbt = c.getCompound("nbt");
-        }
-    }
-    
-    @Override
-    public NBTTag writeNBT() {
-        //TODO what if this itemstack is just empty?
-        NBTCompound c = new NBTCompound();
-        String id = GameRegistry.ITEM_REGISTRY.getId(getItem());
-        c.putString("id", id);
-        c.putByte("c", (byte) getCount());
-        if (this.nbt != null && !this.nbt.entrySet().isEmpty()) {//TODO direct isEmpty in NBTCompound
-            c.putCompound("nbt", this.nbt);
-        }
-        return c;
     }
     
 }
