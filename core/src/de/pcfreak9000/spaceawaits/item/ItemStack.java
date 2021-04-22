@@ -21,6 +21,14 @@ public class ItemStack {
     
     public static final ItemStack EMPTY = new ItemStack();
     
+    public static boolean isItemEqual(ItemStack s1, ItemStack s2) {
+        return s1.getItem() == s2.getItem();
+    }
+    
+    public static boolean isStackTagEqual(ItemStack s1, ItemStack s2) {
+        return Objects.equals(s1.nbt, s2.nbt);
+    }
+    
     public static NBTTag writeNBT(ItemStack stack) {
         NBTCompound c = new NBTCompound();
         if (stack != EMPTY) {
@@ -91,26 +99,20 @@ public class ItemStack {
         return getCount() >= MAX_STACKSIZE || getCount() >= getItem().getMaxStackSize();
     }
     
-    //    public void changeSize(int amount) {
-    //        if (this == EMPTY) {
-    //            return;
-    //        }
-    //        int changed = this.count + amount;
-    //        changed = Math.max(0, Math.min(changed, MAX_STACKSIZE));
-    //        this.count = changed;
-    //    }
+    public int changeNumber(int change) {
+        int countold = this.count;
+        int dest = change + countold;
+        int max = this.getMax();
+        int actual = Math.min(Math.max(dest, 0), max);
+        this.count = actual;
+        return countold + actual;
+    }
     
-    public ItemStack split(int amount) {
-        if (amount <= 0 || this.isEmpty()) {
-            return EMPTY;
+    public int getMax() {
+        if (this == EMPTY) {
+            return 0;
         }
-        int a = Math.min(amount, this.count);
-        ItemStack s = new ItemStack(item, a);
-        this.count -= a;
-        if (hasNBT()) {
-            s.setNBT(this.nbt.cpy());
-        }
-        return s;
+        return Math.min(getItem().getMaxStackSize(), MAX_STACKSIZE);
     }
     
     public boolean hasNBT() {

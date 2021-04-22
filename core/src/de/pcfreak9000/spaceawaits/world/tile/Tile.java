@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 
 public class Tile {
     
@@ -131,6 +132,10 @@ public class Tile {
     
     public boolean onTileUse(Player player, WorldAccessor world, ItemStack stackUsed, int gtx, int gty) {
         return false;
+    }
+    
+    public IContactListener getContactListener() {
+        return null;
     }
     
     @Override

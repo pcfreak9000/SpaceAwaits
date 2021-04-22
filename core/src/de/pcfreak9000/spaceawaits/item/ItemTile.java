@@ -29,7 +29,7 @@ public class ItemTile extends Item {
         if (world.getTile(tilex, tiley) == null || world.getTile(tilex, tiley) == Tile.EMPTY) {
             if (!used.isEmpty()) {
                 world.setTile(this.tile, tilex, tiley);
-                used.split(1);
+                used.changeNumber(-1);
                 return true;
             }
         }
