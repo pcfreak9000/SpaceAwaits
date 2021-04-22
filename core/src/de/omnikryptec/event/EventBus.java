@@ -40,6 +40,22 @@ public class EventBus implements IEventListener {
     
     private static final Comparator<IEventListener> LISTENER_COMP = (o1, o2) -> o2.priority() - o1.priority();
     
+    private static final ArrayListMultimap<Class<? extends Event>, Class<? extends Event>> EVENT_CLASS_HIERACHY_CACHE = ArrayListMultimap
+            .create();
+    
+    private static Iterable<Class<? extends Event>> getHierachy(Class<? extends Event> extendSuperClasses) {
+        List<Class<? extends Event>> list = EVENT_CLASS_HIERACHY_CACHE.get(extendSuperClasses);
+        if (list.isEmpty()) {
+            list.add(extendSuperClasses);
+            Class<?> sclazz = extendSuperClasses.getSuperclass();
+            while (sclazz != null && Event.class.isAssignableFrom(sclazz)) {
+                list.add((Class<? extends Event>) sclazz);
+                sclazz = sclazz.getSuperclass();
+            }
+        }
+        return list;
+    }
+    
     private static class ObjMapping {
         private final Class<? extends Event> eventType;
         private final IEventListener handler;
@@ -252,26 +268,32 @@ public class EventBus implements IEventListener {
         return this.processing.get();
     }
     
-    private void processEvent(final Event event) {
-        if (this.verbose) {
-            LOGGER.debugf("Processing event: %s", event.toString());
-        }
-        Class<?> someclazz = event.getClass();
+    private Iterable<IEventListener> getInterestedListenersSorted(Event event) {
         List<IEventListener> filteredListeners = new ArrayList<>();
-        do {
-            Class<? extends Event> casted = (Class<? extends Event>) someclazz;
-            filteredListeners.addAll(this.listeners.get(casted));
-            someclazz = someclazz.getSuperclass();
-        } while (someclazz != Object.class && someclazz != null);
+        Iterable<Class<? extends Event>> possibleTypes = getHierachy(event.getClass());
+        for (Class<? extends Event> c : possibleTypes) {
+            filteredListeners.addAll(this.listeners.get(c));
+        }
         filteredListeners.sort(LISTENER_COMP);
         if (this.verbose) {
             LOGGER.debugf("Found %d listeners listening for an event of this type", filteredListeners.size());
         }
+        return filteredListeners;
+    }
+    
+    private void processEvent(final Event event) {
+        long lo = System.nanoTime();
+        if (this.verbose) {
+            LOGGER.debugf("Processing event: %s", event.toString());
+        }
+        Iterable<IEventListener> filteredListeners = getInterestedListenersSorted(event);
         for (final IEventListener l : filteredListeners) {
             if (!event.isConsumeable() || !event.isConsumed() || l.receiveConsumed()) {
                 l.invoke(event);
             }
         }
+        long l2 = System.nanoTime()-lo;
+        System.out.println(l2);
     }
     
     public void setAcceptEvents(boolean b) {

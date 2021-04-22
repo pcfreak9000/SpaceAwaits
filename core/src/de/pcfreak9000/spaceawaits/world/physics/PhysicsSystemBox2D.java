@@ -7,6 +7,10 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.omnikryptec.util.Logger;
@@ -32,6 +36,27 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         super(Family.all(PhysicsComponent.class).get());
         this.bworld = new World(new Vector2(0, -9.81f), true);
         this.bworld.setAutoClearForces(false);
+        //TODO Userdata: info for raycasting and ContactListener
+        this.bworld.setContactListener(new ContactListener() {
+            
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+            
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
+            
+            @Override
+            public void endContact(Contact contact) {
+                //find interested listeners
+                //notify listeners
+            }
+            
+            @Override
+            public void beginContact(Contact contact) {
+            }
+        });
     }
     
     public World getWorld() {
