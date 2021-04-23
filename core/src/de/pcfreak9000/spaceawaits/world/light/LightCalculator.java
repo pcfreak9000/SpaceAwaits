@@ -6,12 +6,12 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
@@ -97,8 +97,7 @@ public class LightCalculator extends IteratingSystem {
         SpriteBatch batch = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch();
         this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
-            Gdx.gl.glClearColor(0, 0, 0, 0);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            ScreenUtils.clear(0, 0, 0, 0);
             SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setAdditiveBlending();
             batch.begin();
             if (texture != null) {

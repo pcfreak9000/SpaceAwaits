@@ -42,7 +42,7 @@ public class PlayerContactListener implements IContactListener {
                 if (iscomp.stack != null) {
                     iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
                     if (iscomp.stack == null) {
-                        //despawn item entity
+                        //TODO despawn item entity
                     }
                 }
             }
