@@ -5,30 +5,21 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class MovingWorldEntitySystem extends IteratingSystem {
     
-    private final ComponentMapper<ChunkMarkerComponent> mwecMapper = ComponentMapper
-            .getFor(ChunkMarkerComponent.class);
+    private final ComponentMapper<ChunkMarkerComponent> mwecMapper = ComponentMapper.getFor(ChunkMarkerComponent.class);
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
     
-    private WorldAccessor world;
+    private World world;
     
-    public MovingWorldEntitySystem() {
+    public MovingWorldEntitySystem(World world) {
         super(Family.all(ChunkMarkerComponent.class, TransformComponent.class).get());
-        SpaceAwaits.BUS.register(this);
-    }
-    
-    @EventSubscription
-    public void onevent(WorldEvents.SetWorldEvent world) {
-        this.world = world.worldMgr.getWorldAccess();
+        this.world = world;
     }
     
     @Override

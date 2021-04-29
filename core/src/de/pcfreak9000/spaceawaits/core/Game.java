@@ -10,14 +10,13 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
-import de.pcfreak9000.spaceawaits.world.SaveWorldProvider;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
-import de.pcfreak9000.spaceawaits.world.WorldLoadingBounds;
-import de.pcfreak9000.spaceawaits.world.WorldManager;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
+import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
+import de.pcfreak9000.spaceawaits.world2.World;
+import de.pcfreak9000.spaceawaits.world2.WorldCombined;
+import de.pcfreak9000.spaceawaits.world2.WorldPrimer;
 
 public class Game {
     
@@ -26,8 +25,7 @@ public class Game {
     private ISave mySave;
     
     private Player player;
-    
-    private WorldManager worldMgr = SpaceAwaits.getSpaceAwaits().getWorldManager(); //This will change when WorldManager becomes more modular
+    private World world;
     
     public Game(ISave save) {
         this.mySave = save;
@@ -39,8 +37,6 @@ public class Game {
         if (this.mySave.hasPlayer()) {
             this.player.readNBT(this.mySave.readPlayerNBT());
         }
-        this.worldMgr.getWorldAccess().addLoadingBounds(
-                new WorldLoadingBounds(this.player.getPlayerEntity().getComponent(TransformComponent.class).position));//Oh boi
     }
     
     public void joinGame() {
@@ -70,22 +66,24 @@ public class Game {
             long worldSeed = meta.getWorldSeed();
             //No default because this is crucial information and can't really be defaulted
             WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
-            WorldGenerationBundle bundle = gen.generateWorld(worldSeed);
-            SaveWorldProvider provider = new SaveWorldProvider(bundle.getChunkGenerator(), bundle.getGlobalGenerator(),
-                    save, new WorldBounds(meta.getWidth(), meta.getHeight()));//Hmmm - do this a better way
-            worldMgr.getECSManager().addEntity(player.getPlayerEntity());//Oof, find a better place to add the player
+            WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
+            worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
+            World world = new WorldCombined(worldPrimer, save);
             this.player.setCurrentWorld(uuid);
-            worldMgr.getWorldAccess().setWorldProvider(provider);
+            world.joinWorld(player);
+            this.world = world;
+            SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
+            SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(world);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
     
     public String createWorld(String name, WorldGenerator generator, long seed) {
-        WorldGenerationBundle worldGenBundle = generator.generateWorld(seed);
+        WorldPrimer worldPrimer = generator.generateWorld(seed);
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
-                .worldGenerator(GameRegistry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldGenBundle.getBounds())
-                .create();
+                .worldGenerator(GameRegistry.GENERATOR_REGISTRY.getId(generator))
+                .dimensions(worldPrimer.getWorldBounds()).create();
         //The meta can probably be cached (useful for create-and-join)
         try {
             String uuid = this.mySave.createWorld(name, wMeta);
@@ -96,8 +94,8 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        worldMgr.getECSManager().removeEntity(player.getPlayerEntity());
-        worldMgr.getWorldAccess().setWorldProvider(null);
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(null);
+        this.world.unloadAll();
         mySave.writePlayerNBT((NBTCompound) this.player.writeNBT());
     }
     

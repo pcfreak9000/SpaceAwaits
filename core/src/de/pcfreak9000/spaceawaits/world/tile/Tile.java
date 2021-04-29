@@ -10,10 +10,14 @@ import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class Tile {
+    
+    public static enum TileLayer {
+        Front, Back;
+    }
     
     public static final float MAX_LIGHT_VALUE = 16;
     
@@ -126,11 +130,11 @@ public class Tile {
         return false;
     }
     
-    public TileEntity createTileEntity(WorldAccessor world, int gtx, int gty) {
+    public TileEntity createTileEntity(World world, int gtx, int gty) {
         return null;
     }
     
-    public boolean onTileUse(Player player, WorldAccessor world, ItemStack stackUsed, int gtx, int gty) {
+    public boolean onTileUse(Player player, World world, ItemStack stackUsed, int gtx, int gty) {
         return false;
     }
     

@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class ChunkPhysics implements BodyFactory {
     
@@ -34,11 +35,11 @@ public class ChunkPhysics implements BodyFactory {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
                 int y = chunk.getGlobalTileY() + j;
-                Tile t = chunk.getTile(x, y);
-                Tile top = j + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x, y + 1);
-                Tile bot = j - 1 < 0 ? null : chunk.getTile(x, y - 1);
-                Tile right = i + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x + 1, y);
-                Tile left = i - 1 < 0 ? null : chunk.getTile(x - 1, y);
+                Tile t = chunk.getTile(x, y, TileLayer.Front);
+                Tile top = j + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x, y + 1, TileLayer.Front);
+                Tile bot = j - 1 < 0 ? null : chunk.getTile(x, y - 1, TileLayer.Front);
+                Tile right = i + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x + 1, y, TileLayer.Front);
+                Tile left = i - 1 < 0 ? null : chunk.getTile(x - 1, y, TileLayer.Front);
                 if ((top == null || !top.isSolid()) || (bot == null || !bot.isSolid())
                         || (right == null || !right.isSolid()) || (left == null || !left.isSolid())) {
                     if (t.isSolid()) {
@@ -150,10 +151,10 @@ public class ChunkPhysics implements BodyFactory {
                 int botty = ty - 1;
                 int righttx = tx + 1;
                 int lefttx = tx - 1;
-                Tile bot = chunk.inBounds(tx, botty) ? chunk.getTile(tx, botty) : null;
-                Tile top = chunk.inBounds(tx, topty) ? chunk.getTile(tx, topty) : null;
-                Tile right = chunk.inBounds(righttx, ty) ? chunk.getTile(righttx, ty) : null;
-                Tile left = chunk.inBounds(lefttx, ty) ? chunk.getTile(lefttx, ty) : null;
+                Tile bot = chunk.inBounds(tx, botty) ? chunk.getTile(tx, botty, TileLayer.Front) : null;
+                Tile top = chunk.inBounds(tx, topty) ? chunk.getTile(tx, topty, TileLayer.Front) : null;
+                Tile right = chunk.inBounds(righttx, ty) ? chunk.getTile(righttx, ty, TileLayer.Front) : null;
+                Tile left = chunk.inBounds(lefttx, ty) ? chunk.getTile(lefttx, ty, TileLayer.Front) : null;
                 if ((top != null && top.isSolid()) && (right != null && right.isSolid())
                         && (left != null && left.isSolid()) && (bot != null && bot.isSolid())) {
                     destroyFixture(state);

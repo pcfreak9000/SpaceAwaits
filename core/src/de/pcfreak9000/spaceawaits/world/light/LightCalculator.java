@@ -19,21 +19,22 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.WorldManager;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class LightCalculator extends IteratingSystem {
     
     private static final ComponentMapper<LightComponent> lMapper = ComponentMapper.getFor(LightComponent.class);
     
-    private WorldManager wmgr;
+    private World world;
     
     private FrameBuffer lightsBuffer;
     
-    public LightCalculator() {
+    public LightCalculator(World world) {
         super(Family.all(LightComponent.class).get());
         SpaceAwaits.BUS.register(this);
+        this.world = world;
     }
     
     @EventSubscription
@@ -43,7 +44,6 @@ public class LightCalculator extends IteratingSystem {
     
     @EventSubscription
     public void event(WorldEvents.SetWorldEvent ev) {
-        this.wmgr = ev.worldMgr;
         Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
         resize(cam.viewportWidth, cam.viewportHeight);
     }
@@ -80,7 +80,7 @@ public class LightCalculator extends IteratingSystem {
         int wi = Mathf.ceili(cam.viewportWidth);
         int hi = Mathf.ceili(cam.viewportHeight);
         try {
-            new PixelPointLightTask2(wmgr.getWorldAccess(), (pix) -> {
+            new PixelPointLightTask2(world, (pix) -> {
                 if (texture != null) {
                     texture.dispose();
                 }

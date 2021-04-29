@@ -70,8 +70,6 @@ public class SpaceAwaits extends Game {
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
         this.screenManager = new ScreenManager(this);
         
-        this.screenManager.getWorldRenderer().setWorldManager(worldManager);
-        
         //Load mods and resources
         preloadResources();
         //setScreen(new LoadingScreen());

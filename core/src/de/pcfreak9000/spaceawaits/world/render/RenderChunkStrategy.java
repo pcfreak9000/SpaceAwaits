@@ -19,6 +19,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener {
     
@@ -129,7 +130,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int gtx = i + c.getGlobalTileX();
                 int gty = j + c.getGlobalTileY();
-                Tile tile = c.getBackground(gtx, gty);
+                Tile tile = c.getTile(gtx, gty, TileLayer.Back);
                 if (!isVisible(tile)) {
                     continue;
                 }
@@ -145,12 +146,12 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int gtx = i + c.getGlobalTileX();
                 int gty = j + c.getGlobalTileY();
-                Tile tile = c.getTile(gtx, gty);
+                Tile tile = c.getTile(gtx, gty, TileLayer.Front);
                 if (!isVisible(tile)) {
                     continue;
                 }
                 cache.setColor(tile.color());
-                addTile(c.getTile(gtx, gty), gtx, gty, cache);
+                addTile(tile, gtx, gty, cache);
                 crc.len++;
             }
         }

@@ -16,13 +16,13 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.menu.GuiContainer;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
-import de.pcfreak9000.spaceawaits.world.WorldManager;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class WorldRenderer extends ScreenAdapter {
     
     private ScreenManager gsm;
     
-    private WorldManager worldManager;
+    private World world;
     private FPSLogger fps;
     
     private OrthographicCamera camera;
@@ -42,8 +42,8 @@ public class WorldRenderer extends ScreenAdapter {
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
     }
     
-    public void setWorldManager(WorldManager mgr) {
-        this.worldManager = mgr;
+    public void setWorld(World world) {
+        this.world = world;
     }
     
     public void setGuiCurrent(GuiContainer guicont) {//?????????
@@ -107,7 +107,7 @@ public class WorldRenderer extends ScreenAdapter {
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
-        this.worldManager.updateAndRender(delta);
+        this.world.update(delta);
         this.gsm.getHud().actAndDraw(delta);
         fps.log();
         if (InptMgr.isJustPressed(EnumDefInputIds.Esc)) {

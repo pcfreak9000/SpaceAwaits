@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 /**
  * represents an Item
@@ -50,7 +50,7 @@ public class Item {
         return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
     
-    public boolean onItemUse(Player player, ItemStack stackUsed, WorldAccessor world, int tilex, int tiley) {
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley) {
         return false;
     }
 }

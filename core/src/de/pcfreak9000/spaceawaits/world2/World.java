@@ -3,9 +3,15 @@ package de.pcfreak9000.spaceawaits.world2;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 
+import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.world.Global;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
+import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public abstract class World {
     
@@ -16,6 +22,8 @@ public abstract class World {
     private AmbientLightProvider ambientLightProvider;
     
     private Engine ecsEngine;
+    
+    private Global unchunk;
     
     public World(WorldPrimer primer) {
         this.ecsEngine = new Engine();
@@ -43,12 +51,32 @@ public abstract class World {
         return ambientLightProvider;
     }
     
-    public void setTile(int tx, int ty, Tile tile) {
-        
+    protected void addChunk(Chunk c) {
+        c.addToECS(ecsEngine);
     }
     
-    public Tile getTile(int tx, int ty) {
-        return null;
+    protected void removeChunk(Chunk c) {
+        c.removeFromECS(ecsEngine);
+    }
+    
+    public Tile setTile(int tx, int ty, TileLayer layer, Tile tile) {
+        if (!getBounds().inBounds(tx, ty)) {
+            return null;
+        }
+        Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
+        return c.setTile(tx, ty, layer, tile);
+    }
+    
+    public Tile getTile(int tx, int ty, TileLayer layer) {
+        if (!getBounds().inBounds(tx, ty)) {
+            return null;
+        }
+        Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
+        return c.getTile(tx, ty, layer);
+    }
+    
+    public void joinWorld(Player player) {
+        ecsEngine.addEntity(player.getPlayerEntity());
     }
     
     public void spawnEntity(Entity entity) {
@@ -57,5 +85,32 @@ public abstract class World {
     
     public void despawnEntity(Entity entity) {
         
+    }
+    
+    //This hopefully works properly... it seems like it doesn't
+    public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
+        int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
+        int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
+        //TODO c.currentChunk == null -> in global???
+        if (c.currentChunk == null) {
+            throw new NullPointerException();
+        } else if (supposedChunkX != c.currentChunk.getGlobalChunkX()
+                || supposedChunkY != c.currentChunk.getGlobalChunkY()) {
+            Chunk newchunk = chunkProvider.getChunk(supposedChunkX, supposedChunkY);
+            //If for some reason the new chunk doesn't exist, keep the old link
+            if (newchunk != null) {
+                c.currentChunk.removeEntity(e);
+                newchunk.addEntity(e);
+                if (!newchunk.isActive()) {
+                    //Calling this method means the supplied entity is updating, but after the switch it might not be supposed to be anymore so it will be removed
+                    ecsEngine.removeEntity(e);
+                }
+            }
+        }
+    }
+
+    public void unloadAll() {
+        this.chunkProvider.queueUnloadAll();
+        this.chunkProvider.unloadQueued();
     }
 }

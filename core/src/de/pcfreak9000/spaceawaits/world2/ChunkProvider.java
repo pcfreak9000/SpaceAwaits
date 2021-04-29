@@ -35,13 +35,14 @@ public class ChunkProvider implements IChunkProvider {
         }
         ChunkCoordinateKey key = new ChunkCoordinateKey(x, y);
         Chunk c = chunks.get(key);
+        queueUnload.remove(key);
         if (c == null) {
-            c = new Chunk(x, y, null); //TODO insert world
+            c = new Chunk(x, y, this.world);
             if (save.hasChunk(x, y)) {
                 readChunk(c);
-                chunkGen.regenerateChunk(c, null);
+                chunkGen.regenerateChunk(c, this.world);
             } else {
-                chunkGen.generateChunk(c, null);
+                chunkGen.generateChunk(c, this.world);
             }
             chunks.put(key, c);
         }
