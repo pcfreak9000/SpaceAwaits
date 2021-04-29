@@ -3,6 +3,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
@@ -14,7 +15,8 @@ import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 public class FallingEntityFactory implements WorldEntityFactory {
     @Override
     public Entity createEntity() {
-        Entity entity = new Entity();
+        Entity entity = new EntityImproved();
+        entity.flags = 3;
         entity.add(new ChunkMarkerComponent());
         RenderEntityComponent rec = new RenderEntityComponent();
         Sprite s = new Sprite();

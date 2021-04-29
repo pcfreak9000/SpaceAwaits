@@ -21,11 +21,14 @@ public class ChunkProvider implements IChunkProvider {
     private ChunkGenerator chunkGen;
     private IWorldSave save;
     
-    public ChunkProvider(World world, ChunkGenerator chunkGen, IWorldSave save) {
+    public ChunkProvider(World world, ChunkGenerator chunkGen) {
         this.chunks = new LinkedHashMap<>();
         this.queueUnload = new LinkedHashSet<>();
         this.world = world;
         this.chunkGen = chunkGen;
+    }
+    
+    void setSave(IWorldSave save) {
         this.save = save;
     }
     

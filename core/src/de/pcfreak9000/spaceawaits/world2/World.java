@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.world.Global;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -26,12 +27,17 @@ public abstract class World {
     private Global unchunk;
     
     public World(WorldPrimer primer) {
+        //initialize fields
         this.ecsEngine = new Engine();
-        setupECS(primer, ecsEngine);
+        
+        //do priming stuff
         this.worldBounds = primer.getWorldBounds();
         this.ambientLightProvider = primer.getLightProvider();
         
         this.chunkProvider = createChunkProvider(primer);
+        //setup
+        setupECS(primer, ecsEngine);
+
     }
     
     protected abstract void setupECS(WorldPrimer primer, Engine ecs);
@@ -79,11 +85,11 @@ public abstract class World {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     
-    public void spawnEntity(Entity entity) {
+    public void spawnEntity(EntityImproved entityImproved) {
         
     }
     
-    public void despawnEntity(Entity entity) {
+    public void despawnEntity(EntityImproved entityImproved) {
         
     }
     

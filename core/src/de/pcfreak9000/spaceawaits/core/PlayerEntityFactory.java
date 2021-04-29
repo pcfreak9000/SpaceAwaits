@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
@@ -17,7 +18,8 @@ import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 public class PlayerEntityFactory implements WorldEntityFactory {
     @Override
     public Entity createEntity() {
-        Entity e = new Entity();
+        Entity e = new EntityImproved();
+        e.flags = 2;
         PlayerInputComponent pic = new PlayerInputComponent();
         pic.maxXv = 100 / 16;
         pic.maxYv = 100 / 16;

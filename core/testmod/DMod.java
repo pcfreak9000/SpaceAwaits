@@ -10,15 +10,12 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.Background;
-import de.pcfreak9000.spaceawaits.world.Global;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
-import de.pcfreak9000.spaceawaits.world.WorldUtil;
-import de.pcfreak9000.spaceawaits.world.gen.GlobalGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerationBundle;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world2.World;
+import de.pcfreak9000.spaceawaits.world2.WorldPrimer;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
@@ -35,7 +32,7 @@ public class DMod {
         }
         
         @Override
-        public TileEntity createTileEntity(WorldAccessor world, int gtx, int gty) {
+        public TileEntity createTileEntity(World world, int gtx, int gty) {
             return new LaserTileEntity(world, gtx, gty);
         };
     };
@@ -99,23 +96,27 @@ public class DMod {
             }
             
             @Override
-            public WorldGenerationBundle generateWorld(long seed) {
-                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT), new TestChunkGenerator(),
-                        new GlobalGenerator() {
-                            
-                            @Override
-                            public void populateGlobal(Global g) {
-                                //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
-                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
-                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                            }
-                            
-                            @Override
-                            public void repopulateGlobal(Global g) {
-                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);//TODO Create borders internally and save them?
-                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                            }
-                        });
+            public WorldPrimer generateWorld(long seed) {
+                WorldPrimer p = new WorldPrimer();
+                p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
+                p.setChunkGenerator(new TestChunkGenerator());
+                return p;
+//                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT), new TestChunkGenerator(),
+//                        new GlobalGenerator() {
+//                            
+//                            @Override
+//                            public void populateGlobal(Global g) {
+//                                //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
+//                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
+//                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+//                            }
+//                            
+//                            @Override
+//                            public void repopulateGlobal(Global g) {
+//                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);//TODO Create borders internally and save them?
+//                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+//                            }
+//                        });
             }
         });
     }

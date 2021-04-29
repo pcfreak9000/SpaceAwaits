@@ -1,9 +1,9 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
@@ -22,8 +22,8 @@ public class Background implements WorldEntityFactory {
     }
     
     @Override
-    public Entity createEntity() {
-        Entity e = new Entity();
+    public EntityImproved createEntity() {
+        EntityImproved e = new EntityImproved();
         ParallaxComponent pc = new ParallaxComponent();
         pc.sprite = new Sprite();
         pc.sprite.setSize(width, height);

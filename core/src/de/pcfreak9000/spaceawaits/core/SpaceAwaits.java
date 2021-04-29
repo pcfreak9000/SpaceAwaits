@@ -18,7 +18,6 @@ import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
-import de.pcfreak9000.spaceawaits.world.WorldManager;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -44,9 +43,7 @@ public class SpaceAwaits extends Game {
     private AssetManager assetManager;
     
     private GameManager gameManager; //Is this the correct place for that?
-    
-    private WorldManager worldManager;
-    
+        
     private ScreenManager screenManager;
     
     public SpaceAwaits() {
@@ -65,7 +62,6 @@ public class SpaceAwaits extends Game {
         //Instantiate stuff
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
-        this.worldManager = new WorldManager();
         AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
         this.screenManager = new ScreenManager(this);
@@ -87,11 +83,6 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.PostInitEvent());
         
         this.screenManager.setMainMenuScreen();
-    }
-    
-    @Deprecated
-    public WorldManager getWorldManager() {
-        return this.worldManager;
     }
     
     public GameManager getGameManager() {

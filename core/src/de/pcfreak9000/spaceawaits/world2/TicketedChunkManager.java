@@ -66,9 +66,13 @@ public class TicketedChunkManager extends EntitySystem {
         for (ChunkCoordinateKey k : chunksPrev) {
             if (!chunksToUpdate.contains(k)) {
                 Chunk c = this.chunkProvider.getChunk(k.getX(), k.getY());
-                world.removeChunk(c);
-                if (!chunksToLoad.contains(k)) {
-                    this.chunkProvider.queueUnloadChunk(k.getX(), k.getY());
+                if (c != null) {//Hmmmm
+                    if (c.isActive()) {
+                        world.removeChunk(c);
+                    }
+                    if (!chunksToLoad.contains(k)) {
+                        this.chunkProvider.queueUnloadChunk(k.getX(), k.getY());
+                    }
                 }
             }
         }
@@ -77,7 +81,7 @@ public class TicketedChunkManager extends EntitySystem {
         }
         for (ChunkCoordinateKey k : chunksToUpdate) {
             Chunk c = this.chunkProvider.loadChunk(k.getX(), k.getY());
-            if (c != null) { //is null if out of bounds, maybe just check beforehand for that?
+            if (c != null && !c.isActive()) { //is null if out of bounds, maybe just check beforehand for that?
                 world.addChunk(c);
             }
         }
@@ -85,5 +89,5 @@ public class TicketedChunkManager extends EntitySystem {
         chunksPrev.addAll(chunksToLoad);
         chunksPrev.addAll(chunksToUpdate);
     }
-
+    
 }

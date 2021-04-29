@@ -4,20 +4,21 @@ import com.badlogic.gdx.math.MathUtils;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.ChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class TestChunkGenerator implements ChunkGenerator {
     
     @Override
-    public void generateChunk(Chunk chunk, WorldAccessor worldAccess) {
+    public void generateChunk(Chunk chunk, World world) {
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
-                if (!worldAccess.getWorldBounds().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
+                if (!world.getBounds().inBounds(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY())) {
                     continue;
                 }
                 int value = 75 + Mathf.round(6 * Mathf.abs(MathUtils.sin(0.2f * (i + chunk.getGlobalTileX())))
@@ -47,8 +48,8 @@ public class TestChunkGenerator implements ChunkGenerator {
                         t = DMod.instance.torch;
                     }
                 }
-                chunk.setTile(t, i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY());
-                chunk.setTileBackground(t, i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY());
+                chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Front, t);
+                chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Back, t);
             }
         }
         Entity item = GameRegistry.WORLD_ENTITY_REGISTRY.get("item").createEntity();

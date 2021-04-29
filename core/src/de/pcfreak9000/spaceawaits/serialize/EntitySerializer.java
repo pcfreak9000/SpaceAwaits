@@ -25,15 +25,15 @@ public class EntitySerializer {
         return seMapper.has(e);
     }
     
-    public static NBTCompound serializeEntity(Entity entity) {
-        if (isSerializable(entity)) {
+    public static NBTCompound serializeEntity(Entity entityImproved) {
+        if (isSerializable(entityImproved)) {
             NBTCompound nbt = new NBTCompound();
-            WorldEntityFactory fac = seMapper.get(entity).factory;
+            WorldEntityFactory fac = seMapper.get(entityImproved).factory;
             GameRegistry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
-            String facId = GameRegistry.WORLD_ENTITY_REGISTRY.getId(seMapper.get(entity).factory);
+            String facId = GameRegistry.WORLD_ENTITY_REGISTRY.getId(seMapper.get(entityImproved).factory);
             nbt.putString("entityFactoryId", facId);
             //This could also happen in a serialize function in the factory
-            nbt.putCompound("components", serializeEntityComponents(entity));
+            nbt.putCompound("components", serializeEntityComponents(entityImproved));
             return nbt;
         }
         throw new RuntimeException("Entity is not serializable");
@@ -53,9 +53,9 @@ public class EntitySerializer {
         return ent;
     }
     
-    public static NBTCompound serializeEntityComponents(Entity entity) {
+    public static NBTCompound serializeEntityComponents(Entity entityImproved) {
         NBTCompound comp = new NBTCompound();
-        serializeComponents(entity.getComponents(), comp);
+        serializeComponents(entityImproved.getComponents(), comp);
         return comp;
     }
     

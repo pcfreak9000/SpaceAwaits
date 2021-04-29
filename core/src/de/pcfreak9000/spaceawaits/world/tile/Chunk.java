@@ -21,6 +21,7 @@ import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
@@ -56,7 +57,7 @@ public class Chunk implements NBTSerializable {
     private final TileStorage tilesBackground;
     private final List<TileEntity> tileEntities;
     private final List<Tickable> tickables;
-    private final List<Entity> entities;
+    private final List<Entity> entityImproveds;
     private final List<Entity> immutableEntities;
     
     private final List<ChunkChangeListener> listeners;
@@ -64,9 +65,9 @@ public class Chunk implements NBTSerializable {
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
-    private boolean willUpdate;
+    private boolean addedToEngine;
     
-    private final Entity regionEntity;
+    private final EntityImproved regionEntity;
     
     public Chunk(int rx, int ry, World world) {
         this.rx = rx;
@@ -79,10 +80,11 @@ public class Chunk implements NBTSerializable {
         this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
-        this.entities = new ArrayList<>();
-        this.immutableEntities = Collections.unmodifiableList(this.entities);
+        this.entityImproveds = new ArrayList<>();
+        this.immutableEntities = Collections.unmodifiableList(this.entityImproveds);
         this.tickablesForRemoval = new ArrayDeque<>();
-        this.regionEntity = new Entity();
+        this.regionEntity = new EntityImproved();
+        this.regionEntity.flags = 1;
         this.regionEntity.add(new ChunkComponent(this));
         this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
         this.regionEntity.add(new RenderComponent(0, "chunk"));
@@ -117,26 +119,32 @@ public class Chunk implements NBTSerializable {
         return this.ty;
     }
     
-    public Entity getECSEntity() {
+    public EntityImproved getECSEntity() {
         return this.regionEntity;
     }
     
     public boolean isActive() {
-        return willUpdate;
+        return addedToEngine;
     }
     
     public void addToECS(Engine ecs) {
-        willUpdate = true;
+        if(addedToEngine) {
+            throw new IllegalStateException();
+        }
+        addedToEngine = true;
         ecs.addEntity(getECSEntity());
-        for (Entity e : entities) {
+        for (Entity e : entityImproveds) {
             ecs.addEntity(e);
         }
     }
     
     public void removeFromECS(Engine ecs) {
-        willUpdate = false;
+        if(!addedToEngine) {
+            throw new IllegalStateException();
+        }
+        addedToEngine = false;
         ecs.removeEntity(getECSEntity());
-        for (Entity e : entities) {
+        for (Entity e : entityImproveds) {
             ecs.removeEntity(e);
         }
     }
@@ -270,7 +278,7 @@ public class Chunk implements NBTSerializable {
             }
             mw.currentChunk = this;
         }
-        this.entities.add(e);
+        this.entityImproveds.add(e);
     }
     
     public void removeEntity(Entity e) {
@@ -281,7 +289,7 @@ public class Chunk implements NBTSerializable {
             }
             mw.currentChunk = null;
         }
-        this.entities.remove(e);
+        this.entityImproveds.remove(e);
     }
     
     public List<Entity> getEntities() {
@@ -371,7 +379,7 @@ public class Chunk implements NBTSerializable {
         }
         chunkMaster.putList("tiles", tileList);
         chunkMaster.putList("tileEntities", tileEntities);
-        for (Entity e : this.entities) {
+        for (Entity e : this.entityImproveds) {
             if (EntitySerializer.isSerializable(e)) {
                 NBTCompound nbt = EntitySerializer.serializeEntity(e);
                 entities.add(nbt);

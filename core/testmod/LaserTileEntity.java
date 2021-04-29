@@ -1,21 +1,21 @@
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world2.World;
 
 public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializable {
     
     private float progress = 0;
     
-    private WorldAccessor world;
+    private World world;
     
     private int gtx, gty;
     
-    public LaserTileEntity(WorldAccessor w, int gtx, int gty) {
+    public LaserTileEntity(World w, int gtx, int gty) {
         this.world = w;
         this.gtx = gtx;
         this.gty = gty;
@@ -25,9 +25,8 @@ public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializ
     public void tick(float time) {
         progress += time;
         if (gty - progress >= 0 && progress >= 1) {
-            Chunk tw = world.getChunk(Chunk.toGlobalChunk(gtx), Chunk.toGlobalChunk(gty - Mathf.floori(progress)));
-            if (tw != null && tw.getTile(gtx, gty - Mathf.floori(progress)).canBreak()) {
-                tw.setTile(Tile.EMPTY, gtx, gty - Mathf.floori(progress));
+            if (world.getTile(gtx, gty - Mathf.floori(progress), TileLayer.Front).canBreak()) {
+                world.setTile(gtx, gty - Mathf.floori(progress), TileLayer.Front, Tile.EMPTY);
             }
         } else if (gty - progress < 0) {
             progress = 0;

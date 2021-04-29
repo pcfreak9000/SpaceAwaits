@@ -26,11 +26,12 @@ public class WorldCombined extends World {
     public WorldCombined(WorldPrimer primer, IWorldSave save) {
         super(primer);
         this.worldSave = save;
+        ((ChunkProvider)chunkProvider).setSave(save);
     }
     
     @Override
     protected IChunkProvider createChunkProvider(WorldPrimer primer) {
-        return new ChunkProvider(this, primer.getChunkGenerator(), worldSave);
+        return new ChunkProvider(this, primer.getChunkGenerator());
     }
     
     @Override
@@ -39,16 +40,16 @@ public class WorldCombined extends World {
         ecs.addSystem(new TickChunkSystem());
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D();
         ecs.addSystem(phsys);
-        ecs.addSystem(new MovingWorldEntitySystem());
-        ecs.addSystem(new CameraSystem());
+        ecs.addSystem(new MovingWorldEntitySystem(this));
+        ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         RenderSystem rsys = new RenderSystem();
         rsys.registerRenderDecorator("entity", new RenderEntityStrategy());
         rsys.registerRenderDecorator("chunk", new RenderChunkStrategy());
-        rsys.registerRenderDecorator("para", new RenderParallaxStrategy());
+        rsys.registerRenderDecorator("para", new RenderParallaxStrategy(this));
         rsys.registerRenderDecorator("item", new RenderItemStrategy());
         ecs.addSystem(rsys);
-        ecs.addSystem(new LightCalculator());
+        ecs.addSystem(new LightCalculator(this));
         //lightCalc.setProcessing(false);
         //this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
     }
