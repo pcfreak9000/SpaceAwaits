@@ -1,14 +1,15 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.gdx.graphics.Color;
 
-import de.pcfreak9000.spaceawaits.world.WorldBounds;
-import de.pcfreak9000.spaceawaits.world.gen.ChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
 public class WorldPrimer {
     
-    private ChunkGenerator chunkGenerator;
+    private IChunkGenerator iChunkGenerator;
+    private IUnchunkGenerator unchunkGenerator;
     private AmbientLightProvider lightProvider;
     private WorldBounds worldBounds;
     
@@ -16,12 +17,12 @@ public class WorldPrimer {
         this.lightProvider = AmbientLightProvider.constant(Color.WHITE);
     }
     
-    public ChunkGenerator getChunkGenerator() {
-        return chunkGenerator;
+    public IChunkGenerator getChunkGenerator() {
+        return iChunkGenerator;
     }
     
-    public void setChunkGenerator(ChunkGenerator chunkGenerator) {
-        this.chunkGenerator = chunkGenerator;
+    public void setChunkGenerator(IChunkGenerator iChunkGenerator) {
+        this.iChunkGenerator = iChunkGenerator;
     }
     
     public AmbientLightProvider getLightProvider() {
@@ -38,6 +39,14 @@ public class WorldPrimer {
     
     public void setWorldBounds(WorldBounds worldBounds) {
         this.worldBounds = worldBounds;
+    }
+    
+    public IUnchunkGenerator getUnchunkGenerator() {
+        return unchunkGenerator;
+    }
+    
+    public void setUnchunkGenerator(IUnchunkGenerator unchunkGenerator) {
+        this.unchunkGenerator = unchunkGenerator;
     }
     
 }

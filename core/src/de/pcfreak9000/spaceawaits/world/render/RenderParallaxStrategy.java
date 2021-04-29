@@ -7,9 +7,9 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.world2.World;
 
 public class RenderParallaxStrategy extends AbstractRenderStrategy {
     private static final ComponentMapper<ParallaxComponent> parallaxMapper = ComponentMapper

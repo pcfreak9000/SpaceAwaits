@@ -1,6 +1,4 @@
-package de.pcfreak9000.spaceawaits.world2;
-
-import de.pcfreak9000.spaceawaits.world.ChunkCoordinateKey;
+package de.pcfreak9000.spaceawaits.world;
 
 public class ChunkCoordinates {
     

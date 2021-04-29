@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.gdx.math.Vector2;
 

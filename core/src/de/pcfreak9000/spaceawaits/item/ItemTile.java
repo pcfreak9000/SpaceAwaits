@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world2.World;
 
 public class ItemTile extends Item {
     private final Tile tile;

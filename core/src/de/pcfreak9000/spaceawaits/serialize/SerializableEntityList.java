@@ -1,41 +1,23 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.serialize;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
-import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
-import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
-public class Global implements NBTSerializable {
-    
-    private AmbientLightProvider lightProvider;
+public class SerializableEntityList implements NBTSerializable {
     
     private Array<Entity> entities;
-    private ImmutableArray<Entity> entitiesImmutable;
     
-    public Global() {
+    public SerializableEntityList() {
         this.entities = new Array<>();
-        this.entitiesImmutable = new ImmutableArray<>(this.entities);
-        this.lightProvider = AmbientLightProvider.constant(Color.WHITE);
     }
     
-    public ImmutableArray<Entity> getEntities() {
-        return entitiesImmutable;
-    }
-    
-    public AmbientLightProvider getLightProvider() {
-        return lightProvider;
-    }
-    
-    public void setLightProvider(AmbientLightProvider provider) {
-        this.lightProvider = provider;
+    public Array<Entity> getEntities() {
+        return entities;
     }
     
     public void addEntity(Entity e) {
@@ -47,9 +29,8 @@ public class Global implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag compound) {
-        NBTCompound nbtc = (NBTCompound) compound;
-        NBTList entities = nbtc.getList("entities");
+    public void readNBT(NBTTag tag) {
+        NBTList entities = (NBTList) tag;
         if (entities.getEntryType() != NBTType.Compound) {
             throw new IllegalArgumentException("Entity list is not a compound list");
         }
@@ -63,7 +44,6 @@ public class Global implements NBTSerializable {
     
     @Override
     public NBTTag writeNBT() {
-        NBTCompound nbtc = new NBTCompound();
         NBTList entities = new NBTList(NBTType.Compound);
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {
@@ -71,7 +51,6 @@ public class Global implements NBTSerializable {
                 entities.addCompound(nbt);
             }
         }
-        nbtc.putList("entities", entities);
-        return nbtc;
+        return entities;
     }
 }

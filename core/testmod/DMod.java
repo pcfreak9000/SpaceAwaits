@@ -9,13 +9,16 @@ import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.world.Background;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.WorldUtil;
+import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
-import de.pcfreak9000.spaceawaits.world2.World;
-import de.pcfreak9000.spaceawaits.world2.WorldPrimer;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
@@ -38,7 +41,7 @@ public class DMod {
     };
     Tile torch = new Tile();
     Item gun = new Item();
-
+    
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
@@ -100,23 +103,21 @@ public class DMod {
                 WorldPrimer p = new WorldPrimer();
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setChunkGenerator(new TestChunkGenerator());
+                p.setUnchunkGenerator(new IUnchunkGenerator() {
+                    
+                    @Override
+                    public void generateUnchunk(SerializableEntityList entities, World world) {
+                        entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                        WorldUtil.createWorldBorders(entities.getEntities(), WIDTH, HEIGHT);
+                    }
+                    
+                    @Override
+                    public void regenerateUnchunk(SerializableEntityList entities, World world) {
+                        entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                        WorldUtil.createWorldBorders(entities.getEntities(), WIDTH, HEIGHT);
+                    }
+                });
                 return p;
-//                return new WorldGenerationBundle(seed, new WorldBounds(WIDTH, HEIGHT), new TestChunkGenerator(),
-//                        new GlobalGenerator() {
-//                            
-//                            @Override
-//                            public void populateGlobal(Global g) {
-//                                //g.setLightProvider(AmbientLightProvider.constant(Color.WHITE)); //<- is the default anyways
-//                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);
-//                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-//                            }
-//                            
-//                            @Override
-//                            public void repopulateGlobal(Global g) {
-//                                WorldUtil.createWorldBorders(g, WIDTH, HEIGHT);//TODO Create borders internally and save them?
-//                                g.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-//                            }
-//                        });
             }
         });
     }

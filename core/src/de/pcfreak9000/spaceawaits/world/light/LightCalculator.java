@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.light;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -18,21 +17,19 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world2.World;
 
 public class LightCalculator extends IteratingSystem {
-    
-    private static final ComponentMapper<LightComponent> lMapper = ComponentMapper.getFor(LightComponent.class);
     
     private World world;
     
     private FrameBuffer lightsBuffer;
     
     public LightCalculator(World world) {
-        super(Family.all(LightComponent.class).get());
+        super(Family.all().get());
         SpaceAwaits.BUS.register(this);
         this.world = world;
     }

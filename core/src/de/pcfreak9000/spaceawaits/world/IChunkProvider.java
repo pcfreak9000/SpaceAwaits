@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 

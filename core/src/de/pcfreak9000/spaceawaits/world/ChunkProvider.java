@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -7,8 +7,7 @@ import java.util.Set;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
-import de.pcfreak9000.spaceawaits.world.ChunkCoordinateKey;
-import de.pcfreak9000.spaceawaits.world.gen.ChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class ChunkProvider implements IChunkProvider {
@@ -18,10 +17,10 @@ public class ChunkProvider implements IChunkProvider {
     private Set<ChunkCoordinateKey> queueUnload;
     
     private World world;
-    private ChunkGenerator chunkGen;
+    private IChunkGenerator chunkGen;
     private IWorldSave save;
     
-    public ChunkProvider(World world, ChunkGenerator chunkGen) {
+    public ChunkProvider(World world, IChunkGenerator chunkGen) {
         this.chunks = new LinkedHashMap<>();
         this.queueUnload = new LinkedHashSet<>();
         this.world = world;

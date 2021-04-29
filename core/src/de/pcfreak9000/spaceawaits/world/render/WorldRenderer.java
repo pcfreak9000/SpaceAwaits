@@ -16,7 +16,7 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.menu.GuiContainer;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
-import de.pcfreak9000.spaceawaits.world2.World;
+import de.pcfreak9000.spaceawaits.world.World;
 
 public class WorldRenderer extends ScreenAdapter {
     

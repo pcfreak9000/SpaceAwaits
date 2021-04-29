@@ -4,15 +4,15 @@ import com.badlogic.gdx.math.MathUtils;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.gen.ChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world2.World;
 
-public class TestChunkGenerator implements ChunkGenerator {
+public class TestChunkGenerator implements IChunkGenerator {
     
     @Override
     public void generateChunk(Chunk chunk, World world) {

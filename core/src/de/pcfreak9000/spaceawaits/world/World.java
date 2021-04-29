@@ -1,11 +1,9 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.Player;
-import de.pcfreak9000.spaceawaits.world.Global;
-import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
@@ -19,12 +17,11 @@ public abstract class World {
     private WorldBounds worldBounds;
     
     protected final IChunkProvider chunkProvider;
+    protected final IUnchunkProvider unchunkProvider;
     
     private AmbientLightProvider ambientLightProvider;
     
-    private Engine ecsEngine;
-    
-    private Global unchunk;
+    protected final Engine ecsEngine;
     
     public World(WorldPrimer primer) {
         //initialize fields
@@ -34,15 +31,17 @@ public abstract class World {
         this.worldBounds = primer.getWorldBounds();
         this.ambientLightProvider = primer.getLightProvider();
         
+        this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
         //setup
-        setupECS(primer, ecsEngine);
-
+        finishSetup(primer, ecsEngine);
     }
     
-    protected abstract void setupECS(WorldPrimer primer, Engine ecs);
+    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
     
     protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
+    
+    protected abstract IUnchunkProvider createUnchunkProvider(WorldPrimer primer);
     
     public void update(float dt) {
         this.ecsEngine.update(dt);
@@ -114,9 +113,10 @@ public abstract class World {
             }
         }
     }
-
+    
     public void unloadAll() {
         this.chunkProvider.queueUnloadAll();
         this.chunkProvider.unloadQueued();
+        this.unchunkProvider.unload();
     }
 }

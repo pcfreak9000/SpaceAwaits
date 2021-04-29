@@ -11,8 +11,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
-import de.pcfreak9000.spaceawaits.world.WorldAccessor;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 @Deprecated
 public class PixelPointLightTask implements AsyncTask<Void> {
@@ -25,7 +26,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
     
     private float threshold = 0.1f;
     private int lightConstant = 50;
-    private WorldAccessor world;
+    private World world;
     private Consumer<Pixmap> consumer;
     private int atx;
     private int aty;
@@ -33,7 +34,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
     private int areaheight;
     private Color color;
     
-    public PixelPointLightTask(WorldAccessor world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight, Color color) {
+    public PixelPointLightTask(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight, Color color) {
         this.world = world;
         this.consumer = consumer;
         this.atx = tx;
@@ -58,7 +59,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
             for (int j = 0; j < areaheight; j++) {
                 int gtx = i + atx;
                 int gty = j + aty;
-                if (world.getTile(gtx, gty) == Tile.EMPTY
+                if (world.getTile(gtx, gty, TileLayer.Front) == Tile.EMPTY
                 /* && head.r.getBackground(gtx, gty) == Tile.EMPTY */) {
                     LightState state = new LightState();
                     state.i = i + lightConstant;
@@ -102,8 +103,8 @@ public class PixelPointLightTask implements AsyncTask<Void> {
         int tx = atx + i - lightConstant;
         int ty = aty + j - lightConstant;
         Tile tile = Tile.EMPTY;//Hmmm...
-        if (world.getWorldBounds().inBounds(tx, ty)) {
-            tile = world.getTile(tx, ty);
+        if (world.getBounds().inBounds(tx, ty)) {
+            tile = world.getTile(tx, ty, TileLayer.Front);
         }
         
         float newIntens = Math.max(tile.getLightTransmission(), 0) * front.value;

@@ -1,19 +1,20 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
 public class WorldUtil {
     
-    public static void createWorldBorders(Global global, int width, int height) {
+    public static void createWorldBorders(Array<Entity> entities, int width, int height) {
         float wf = width;
         float hf = height;
-        global.addEntity(createBorderEntity(-50, -50, 50, hf + 100));
-        global.addEntity(createBorderEntity(0, -50, wf, 50));
-        global.addEntity(createBorderEntity(0, hf, wf, 50));
-        global.addEntity(createBorderEntity(wf, -50, 50, hf + 100));
+        entities.add(createBorderEntity(-50, -50, 50, hf + 100));
+        entities.add(createBorderEntity(0, -50, wf, 50));
+        entities.add(createBorderEntity(0, hf, wf, 50));
+        entities.add(createBorderEntity(wf, -50, 50, hf + 100));
     }
     
     private static Entity createBorderEntity(float x, float y, float w, float h) {

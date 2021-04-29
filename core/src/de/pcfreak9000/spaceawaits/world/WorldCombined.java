@@ -1,6 +1,7 @@
-package de.pcfreak9000.spaceawaits.world2;
+package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.core.Player;
@@ -20,13 +21,16 @@ import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
 
 public class WorldCombined extends World {
     
-    private IWorldSave worldSave;
     private TicketedChunkManager ticketHandler;
     
     public WorldCombined(WorldPrimer primer, IWorldSave save) {
         super(primer);
-        this.worldSave = save;
-        ((ChunkProvider)chunkProvider).setSave(save);
+        ((ChunkProvider) chunkProvider).setSave(save);
+        ((UnchunkProvider) unchunkProvider).setSave(save);
+        ((UnchunkProvider) unchunkProvider).load();
+        for (Entity e : unchunkProvider.get().getEntities()) {
+            ecsEngine.addEntity(e);
+        }
     }
     
     @Override
@@ -35,7 +39,12 @@ public class WorldCombined extends World {
     }
     
     @Override
-    protected void setupECS(WorldPrimer primer, Engine ecs) {
+    protected IUnchunkProvider createUnchunkProvider(WorldPrimer primer) {
+        return new UnchunkProvider(this, primer.getUnchunkGenerator());
+    }
+    
+    @Override
+    protected void finishSetup(WorldPrimer primer, Engine ecs) {
         ecs.addSystem(new PlayerInputSystem(this));
         ecs.addSystem(new TickChunkSystem());
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D();
@@ -52,6 +61,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new LightCalculator(this));
         //lightCalc.setProcessing(false);
         //this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
+        
     }
     
     @Override

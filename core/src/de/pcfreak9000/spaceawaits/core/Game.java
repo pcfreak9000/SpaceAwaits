@@ -10,13 +10,13 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.WorldCombined;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
-import de.pcfreak9000.spaceawaits.world2.World;
-import de.pcfreak9000.spaceawaits.world2.WorldCombined;
-import de.pcfreak9000.spaceawaits.world2.WorldPrimer;
 
 public class Game {
     
