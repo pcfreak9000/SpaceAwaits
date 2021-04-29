@@ -33,6 +33,11 @@ public class WorldCombined extends World {
         }
     }
     
+    public void saveAll() {
+        ((ChunkProvider) chunkProvider).saveAll();
+        ((UnchunkProvider) unchunkProvider).save();
+    }
+    
     @Override
     protected IChunkProvider createChunkProvider(WorldPrimer primer) {
         return new ChunkProvider(this, primer.getChunkGenerator());

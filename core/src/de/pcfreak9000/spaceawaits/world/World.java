@@ -96,7 +96,6 @@ public abstract class World {
     public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
         int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
         int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-        //TODO c.currentChunk == null -> in global???
         if (c.currentChunk == null) {
             throw new NullPointerException();
         } else if (supposedChunkX != c.currentChunk.getGlobalChunkX()
