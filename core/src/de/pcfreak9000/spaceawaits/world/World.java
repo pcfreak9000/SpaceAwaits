@@ -92,7 +92,6 @@ public abstract class World {
         
     }
     
-    //This hopefully works properly... it seems like it doesn't
     public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
         int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
         int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);

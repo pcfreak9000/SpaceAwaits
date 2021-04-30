@@ -22,9 +22,9 @@
  */
 
 /*
- * 2021 March 14
+ * 2021 April 30
  * 
- * See the above notices. The code has been slightly modified (file endings ".mcr" -> ".sawr" (Space Awaits World Region), auto-formatted) by pcfreak9000 to better suit his needs.
+ * See the above notices. The code has been slightly modified (file endings ".mcr" -> ".sawr" (Space Awaits World Region), auto-formatted, hasChunk method) by pcfreak9000 to better suit his needs.
  * 
  */
 
@@ -89,6 +89,15 @@ public class RegionFileCache {
         RegionFile r = getRegionFile(basePath, chunkX, chunkZ);
         return r.getSizeDelta();
     }
+    
+    //******************* Added 30 Apr 2021 by pcfreak9000
+    
+    public static boolean hasChunk(File basePath, int chunkX, int chunkZ) {
+        RegionFile f = getRegionFile(basePath, chunkX, chunkZ);
+        return f.hasChunk(chunkX & 31, chunkZ & 31);
+    }
+    
+    //*******************    
     
     public static DataInputStream getChunkDataInputStream(File basePath, int chunkX, int chunkZ) {
         RegionFile r = getRegionFile(basePath, chunkX, chunkZ);

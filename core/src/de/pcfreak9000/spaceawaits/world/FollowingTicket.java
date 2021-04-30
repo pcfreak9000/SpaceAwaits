@@ -27,7 +27,7 @@ public class FollowingTicket implements ITicket {
     }
     
     @Override
-    public void update(float dt) {
+    public void update(World world, float dt) {
         int gcx = Chunk.toGlobalChunkf(pos.x);
         int gcy = Chunk.toGlobalChunkf(pos.y);
         int count = 0;

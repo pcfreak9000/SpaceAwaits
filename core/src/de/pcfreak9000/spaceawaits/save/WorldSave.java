@@ -11,7 +11,6 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NbtReader;
 import de.pcfreak9000.nbt.NbtWriter;
 import de.pcfreak9000.nbt.TagReader;
-import de.pcfreak9000.spaceawaits.save.regionfile.RegionFile;
 import de.pcfreak9000.spaceawaits.save.regionfile.RegionFileCache;
 
 public class WorldSave implements IWorldSave {
@@ -57,8 +56,7 @@ public class WorldSave implements IWorldSave {
     
     @Override
     public boolean hasChunk(int cx, int cy) {
-        RegionFile f = RegionFileCache.getRegionFile(myDir, cx, cy);
-        return f.hasChunk(cx, cy);
+        return RegionFileCache.hasChunk(myDir, cx, cy);
     }
     
     @Override

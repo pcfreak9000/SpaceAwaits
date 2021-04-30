@@ -90,8 +90,8 @@ public class DMod {
         GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
-            private static final int WIDTH = 500;
-            private static final int HEIGHT = 250;
+            private static final int WIDTH = 5000;
+            private static final int HEIGHT = 2500;
             
             @Override
             protected void initCaps() {

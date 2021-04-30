@@ -175,7 +175,7 @@ public class RegionFile {
     
     // various small debug printing helpers
     private void debug(String in) {
-        //        System.out.print(in);
+        //System.out.print(in);
     }
     
     private void debugln(String in) {
@@ -207,7 +207,7 @@ public class RegionFile {
         try {
             int offset = getOffset(x, z);
             if (offset == 0) {
-                // debugln("READ", x, z, "miss");
+                debugln("READ", x, z, "miss");
                 return null;
             }
             
@@ -286,7 +286,7 @@ public class RegionFile {
             
             // maximum chunk size is 1MB
             if (sectorsNeeded >= 256) {
-                debugln("Exceeding max chunks size at " + x + "|" + z +", sectors needed: "+sectorsNeeded);
+                debugln("Exceeding max chunks size at " + x + "|" + z + ", sectors needed: " + sectorsNeeded);
                 return;
             }
             

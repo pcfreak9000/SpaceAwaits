@@ -42,45 +42,52 @@ public class TicketedChunkManager extends EntitySystem {
         while (it.hasNext()) {
             ITicket t = it.next();
             if (t.isValid()) {
-                t.update(dt);
+                t.update(world, dt);
             }
             if (!t.isValid()) {
                 it.remove();
             }
             ChunkCoordinates[] chunks = t.getLoadChunks();
             for (ChunkCoordinates cc : chunks) {
-                chunksToUpdate.add(cc.createKey());
+                if (world.getBounds().inChunkBounds(cc.getChunkX(), cc.getChunkY())) {
+                    chunksToUpdate.add(cc.createKey());
+                }
             }
         }
+        //find bordering chunks. load them, but dont update them.
+        final int borderingChunkRad = 1;
         for (ChunkCoordinateKey up : chunksToUpdate) {
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    ChunkCoordinateKey load = new ChunkCoordinateKey(up.getX() + i, up.getY() + j);
-                    if (!chunksToUpdate.contains(load)) {
-                        chunksToLoad.add(load);
+            for (int i = -borderingChunkRad; i <= borderingChunkRad; i++) {
+                for (int j = -borderingChunkRad; j <= borderingChunkRad; j++) {
+                    if (world.getBounds().inChunkBounds(up.getX() + i, up.getY() + j) && (i != 0 || j != 0)) {
+                        ChunkCoordinateKey load = new ChunkCoordinateKey(up.getX() + i, up.getY() + j);
+                        if (!chunksToUpdate.contains(load)) {
+                            chunksToLoad.add(load);
+                        }
                     }
                 }
             }
         }
+        //Find chunks which aren't needed anymore and unload them
         for (ChunkCoordinateKey k : chunksPrev) {
             if (!chunksToUpdate.contains(k)) {
                 Chunk c = this.chunkProvider.getChunk(k.getX(), k.getY());
-                if (c != null) {//Hmmmm
-                    if (c.isActive()) {
-                        world.removeChunk(c);
-                    }
-                    if (!chunksToLoad.contains(k)) {
-                        this.chunkProvider.queueUnloadChunk(k.getX(), k.getY());
-                    }
+                if (c.isActive()) {
+                    world.removeChunk(c);
+                }
+                if (!chunksToLoad.contains(k)) {
+                    this.chunkProvider.queueUnloadChunk(k.getX(), k.getY());
                 }
             }
         }
+        //load bordering chunks
         for (ChunkCoordinateKey k : chunksToLoad) {
             this.chunkProvider.loadChunk(k.getX(), k.getY());
         }
+        //load and activate chunks to update
         for (ChunkCoordinateKey k : chunksToUpdate) {
             Chunk c = this.chunkProvider.loadChunk(k.getX(), k.getY());
-            if (c != null && !c.isActive()) { //is null if out of bounds, maybe just check beforehand for that?
+            if (!c.isActive()) {
                 world.addChunk(c);
             }
         }
