@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.omnikryptec.util.Logger;
@@ -27,21 +28,21 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     private float deltaAcc = 0;
     
-    private World bworld;
+    private World box2dWorld;
     
     private ContactListenerImpl contactEventDispatcher;
     
-    public PhysicsSystemBox2D() {
+    public PhysicsSystemBox2D(de.pcfreak9000.spaceawaits.world.World world) {
         super(Family.all(PhysicsComponent.class).get());
-        this.bworld = new World(new Vector2(0, -9.81f), true);
-        this.bworld.setAutoClearForces(false);
+        this.box2dWorld = new World(new Vector2(0, -9.81f), true);
+        this.box2dWorld.setAutoClearForces(false);
         //TODO Userdata: info for raycasting and ContactListener
-        this.contactEventDispatcher = new ContactListenerImpl();
-        this.bworld.setContactListener(contactEventDispatcher);
+        this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
+        this.box2dWorld.setContactListener(contactEventDispatcher);
     }
     
-    public World getWorld() {
-        return bworld;
+    public World getB2DWorld() {
+        return box2dWorld;
     }
     
     @Override
@@ -68,12 +69,24 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         }
         while (deltaAcc >= STEPSIZE_SECONDS) {
             deltaAcc -= STEPSIZE_SECONDS;
-            this.bworld.step(STEPSIZE_SECONDS, 5, 2);
+            this.box2dWorld.step(STEPSIZE_SECONDS, 5, 2);
         }
-        this.bworld.clearForces();
+        this.box2dWorld.clearForces();
         for (Entity e : getEntities()) {
             post(e);
         }
+    }
+    
+    private final RaycastCallbackImpl raycastImpl = new RaycastCallbackImpl();
+    
+    public void raycast(IRaycastCallback callback, float x1, float y1, float x2, float y2) {
+        x1 = METER_CONV.in(x1);
+        y1 = METER_CONV.in(y1);
+        x2 = METER_CONV.in(x2);
+        y2 = METER_CONV.in(y2);
+        raycastImpl.callback = callback;
+        this.box2dWorld.rayCast(raycastImpl, x1, y1, x2, y2);
+        raycastImpl.callback = null;
     }
     
     @Override
@@ -102,18 +115,33 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
-        pc.body = new BodyWrapper(pc.factory.createBody(bworld));
+        pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
         pc.body.getBody().setAngularVelocity(pc.rotVel);
-        for (Fixture f : pc.body.getBody().getFixtureList()) {
-            f.setUserData(entity);
+        if (entity.flags != 1) {//TODO this needs a better solution. Chunk fixtures are tiles and they need custom user data, not the entity.
+            for (Fixture f : pc.body.getBody().getFixtureList()) {
+                f.setUserData(entity);
+            }
         }
     }
     
     @Override
     public void entityRemoved(Entity entity) {
         PhysicsComponent pc = this.physicsMapper.get(entity);
-        pc.factory.destroyBody(pc.body.getBody(), bworld);
+        pc.factory.destroyBody(pc.body.getBody(), box2dWorld);
         pc.body = null;
     }
+    
+    private static final class RaycastCallbackImpl implements RayCastCallback {
+        
+        private IRaycastCallback callback;
+        
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            return callback.reportRayFixture(fixture, METER_CONV.out(point.x), METER_CONV.out(point.y), normal.x,
+                    normal.y, fraction, METER_CONV);
+        }
+        
+    }
+    
 }

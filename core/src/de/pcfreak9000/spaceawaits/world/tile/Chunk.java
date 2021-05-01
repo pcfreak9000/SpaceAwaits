@@ -57,7 +57,7 @@ public class Chunk implements NBTSerializable {
     private final TileStorage tilesBackground;
     private final List<TileEntity> tileEntities;
     private final List<Tickable> tickables;
-    private final List<Entity> entityImproveds;
+    private final List<Entity> entities;
     private final List<Entity> immutableEntities;
     
     private final List<ChunkChangeListener> listeners;
@@ -80,8 +80,8 @@ public class Chunk implements NBTSerializable {
         this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
-        this.entityImproveds = new ArrayList<>();
-        this.immutableEntities = Collections.unmodifiableList(this.entityImproveds);
+        this.entities = new ArrayList<>();
+        this.immutableEntities = Collections.unmodifiableList(this.entities);
         this.tickablesForRemoval = new ArrayDeque<>();
         this.regionEntity = new EntityImproved();
         this.regionEntity.flags = 1;
@@ -128,23 +128,23 @@ public class Chunk implements NBTSerializable {
     }
     
     public void addToECS(Engine ecs) {
-        if(addedToEngine) {
+        if (addedToEngine) {
             throw new IllegalStateException();
         }
         addedToEngine = true;
         ecs.addEntity(getECSEntity());
-        for (Entity e : entityImproveds) {
+        for (Entity e : entities) {
             ecs.addEntity(e);
         }
     }
     
     public void removeFromECS(Engine ecs) {
-        if(!addedToEngine) {
+        if (!addedToEngine) {
             throw new IllegalStateException();
         }
         addedToEngine = false;
         ecs.removeEntity(getECSEntity());
-        for (Entity e : entityImproveds) {
+        for (Entity e : entities) {
             ecs.removeEntity(e);
         }
     }
@@ -180,6 +180,10 @@ public class Chunk implements NBTSerializable {
         default:
             throw new IllegalArgumentException(Objects.toString(layer));
         }
+    }
+    
+    public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
+        return this.getStorageForLayer(layer).get(tx, ty).getTileEntity();
     }
     
     public Tile getTile(int tx, int ty, TileLayer layer) {
@@ -278,7 +282,7 @@ public class Chunk implements NBTSerializable {
             }
             mw.currentChunk = this;
         }
-        this.entityImproveds.add(e);
+        this.entities.add(e);
     }
     
     public void removeEntity(Entity e) {
@@ -289,7 +293,7 @@ public class Chunk implements NBTSerializable {
             }
             mw.currentChunk = null;
         }
-        this.entityImproveds.remove(e);
+        this.entities.remove(e);
     }
     
     public List<Entity> getEntities() {
@@ -379,7 +383,7 @@ public class Chunk implements NBTSerializable {
         }
         chunkMaster.putList("tiles", tileList);
         chunkMaster.putList("tileEntities", tileEntities);
-        for (Entity e : this.entityImproveds) {
+        for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {
                 NBTCompound nbt = EntitySerializer.serializeEntity(e);
                 entities.add(nbt);

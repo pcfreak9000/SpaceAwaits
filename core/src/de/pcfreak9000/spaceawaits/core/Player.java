@@ -24,8 +24,6 @@ public class Player implements NBTSerializable {
     
     private InventoryPlayer inventory;
     
-    private String currentWorld;//Probably temporary until Space comes
-    
     public Player() {
         this.playerEntity = CoreResources.PLAYER_FACTORY.createEntity();
         this.playerEntity.getComponent(PlayerInputComponent.class).player = this;
@@ -48,19 +46,10 @@ public class Player implements NBTSerializable {
         return this.inventory;
     }
     
-    public void setCurrentWorld(String currentWorld) {
-        this.currentWorld = currentWorld;
-    }
-    
-    public String getCurrentWorld() {
-        return currentWorld;
-    }
-    
     @Override
     public void readNBT(NBTTag compound) {
         NBTCompound pc = (NBTCompound) compound;
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
-        this.currentWorld = pc.getString("currentWorld");
         this.inventory.readNBT(pc.get("inventory"));
     }
     
@@ -68,7 +57,6 @@ public class Player implements NBTSerializable {
     public NBTTag writeNBT() {
         NBTCompound pc = new NBTCompound();
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
-        pc.putString("currentWorld", currentWorld);
         pc.put("inventory", this.inventory.writeNBT());
         return pc;
     }

@@ -10,7 +10,7 @@ public class UserData {
     private Entity entity;
     private Object userDataRaw;
     
-    UserData() {
+    public UserData() {
     }
     
     private void clear() {
@@ -19,7 +19,7 @@ public class UserData {
         this.userDataRaw = null;
     }
     
-    UserData set(Object userdata) {
+    public UserData set(Object userdata) {
         clear();
         this.userDataRaw = userdata;
         if (userdata instanceof Tile) {

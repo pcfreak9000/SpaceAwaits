@@ -27,13 +27,17 @@ public class PlayerInputSystem extends IteratingSystem {
     private final World world;
     
     public PlayerInputSystem(World world) {
-        super(Family.all(PlayerInputComponent.class).get());
+        super(Family.all(PlayerInputComponent.class, TransformComponent.class, PhysicsComponent.class).get());
         this.world = world;
         SpaceAwaits.BUS.register(this);
     }
     
-    private final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper.getFor(PlayerInputComponent.class);
-    private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
+    private static final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper
+            .getFor(PlayerInputComponent.class);
+    private static final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper
+            .getFor(PhysicsComponent.class);
+    private static final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
+            .getFor(TransformComponent.class);
     
     private WorldRenderer worldRend;
     
@@ -44,9 +48,11 @@ public class PlayerInputSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        PlayerInputComponent play = this.mapper.get(entity);
+        PlayerInputComponent play = mapper.get(entity);
         float vy = 0;
         float vx = 0;
+        //Vector2 transform = transformMapper.get(entity).position;
+        Vector2 mouse = worldRend.getMouseWorldPos();
         //if (physicsMapper.get(entities.get(0)).onGround) {
         boolean up = InptMgr.isPressed(EnumDefInputIds.Up);
         boolean left = InptMgr.isPressed(EnumDefInputIds.Left);
@@ -70,9 +76,8 @@ public class PlayerInputSystem extends IteratingSystem {
         if (right) {
             vx += play.maxXv * 5;
         }
-        this.physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
+        physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
         if (explode) {
-            Vector2 mouse = worldRend.getMouseWorldPos();
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
             final int rad = 3;
@@ -91,7 +96,6 @@ public class PlayerInputSystem extends IteratingSystem {
             }
         }
         if (destroy) {
-            Vector2 mouse = worldRend.getMouseWorldPos();
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             Tile t = world.getTile(tx, ty, TileLayer.Front);
@@ -101,7 +105,6 @@ public class PlayerInputSystem extends IteratingSystem {
         }
         if (InptMgr.isPressed(EnumDefInputIds.Use)) {
             //Current mouse stuff
-            Vector2 mouse = worldRend.getMouseWorldPos();
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             //get current item

@@ -23,8 +23,8 @@ public class WorldCombined extends World {
     
     private TicketedChunkManager ticketHandler;
     
-    public WorldCombined(WorldPrimer primer, IWorldSave save) {
-        super(primer);
+    public WorldCombined(WorldPrimer primer, IWorldSave save, long seed) {
+        super(primer, seed);
         ((ChunkProvider) chunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).load();
@@ -52,7 +52,7 @@ public class WorldCombined extends World {
     protected void finishSetup(WorldPrimer primer, Engine ecs) {
         ecs.addSystem(new PlayerInputSystem(this));
         ecs.addSystem(new TickChunkSystem());
-        PhysicsSystemBox2D phsys = new PhysicsSystemBox2D();
+        PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
         ecs.addSystem(phsys);
         ecs.addSystem(new MovingWorldEntitySystem(this));
         ecs.addSystem(new CameraSystem(this));

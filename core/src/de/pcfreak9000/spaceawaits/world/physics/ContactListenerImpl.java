@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import de.pcfreak9000.spaceawaits.world.World;
+
 class ContactListenerImpl implements ContactListener {
     
     private static final ComponentMapper<ContactListenerComponent> CONTACT_LISTENER_COMP_MAPPER = ComponentMapper
@@ -14,6 +16,13 @@ class ContactListenerImpl implements ContactListener {
     
     private UserData userdata1 = new UserData();
     private UserData userdata2 = new UserData();
+    private final World world;
+    private final UnitConversion conv;
+    
+    public ContactListenerImpl(World world, UnitConversion conv) {
+        this.world = world;
+        this.conv = conv;
+    }
     
     private IContactListener getListener(UserData in) {
         if (in.isTile()) {
@@ -36,10 +45,10 @@ class ContactListenerImpl implements ContactListener {
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         if (l1 != null) {
-            l1.preSolve(userdata1, userdata2, contact, oldManifold);
+            l1.preSolve(userdata1, userdata2, contact, oldManifold, conv, world);
         }
         if (l2 != null) {
-            l2.preSolve(userdata2, userdata1, contact, oldManifold);
+            l2.preSolve(userdata2, userdata1, contact, oldManifold, conv, world);
         }
     }
     
@@ -52,10 +61,10 @@ class ContactListenerImpl implements ContactListener {
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         if (l1 != null) {
-            l1.postSolve(userdata1, userdata2, contact, impulse);
+            l1.postSolve(userdata1, userdata2, contact, impulse, conv, world);
         }
         if (l2 != null) {
-            l2.postSolve(userdata2, userdata1, contact, impulse);
+            l2.postSolve(userdata2, userdata1, contact, impulse, conv, world);
         }
     }
     
@@ -68,10 +77,10 @@ class ContactListenerImpl implements ContactListener {
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         if (l1 != null) {
-            l1.beginContact(userdata1, userdata2, contact);
+            l1.beginContact(userdata1, userdata2, contact, conv, world);
         }
         if (l2 != null) {
-            l2.beginContact(userdata2, userdata1, contact);
+            l2.beginContact(userdata2, userdata1, contact, conv, world);
         }
     }
     
@@ -84,10 +93,10 @@ class ContactListenerImpl implements ContactListener {
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         if (l1 != null) {
-            l1.endContact(userdata1, userdata2, contact);
+            l1.endContact(userdata1, userdata2, contact, conv, world);
         }
         if (l2 != null) {
-            l2.endContact(userdata2, userdata1, contact);
+            l2.endContact(userdata2, userdata1, contact, conv, world);
         }
     }
     

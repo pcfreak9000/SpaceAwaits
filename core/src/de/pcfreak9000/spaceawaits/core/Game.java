@@ -25,6 +25,7 @@ public class Game {
     private ISave mySave;
     
     private Player player;
+    private String uuidPlayerLocation;
     private World world;
     
     public Game(ISave save) {
@@ -33,16 +34,10 @@ public class Game {
         this.readPlayer();
     }
     
-    private void readPlayer() {
-        if (this.mySave.hasPlayer()) {
-            this.player.readNBT(this.mySave.readPlayerNBT());
-        }
-    }
-    
+    //probably also TMP
     public void joinGame() {
-        String w = this.player.getCurrentWorld();
-        if (this.mySave.hasWorld(w)) {
-            this.joinWorld(w);
+        if (this.mySave.hasWorld(uuidPlayerLocation)) {
+            this.joinWorld(uuidPlayerLocation);
         } else {
             //Check if this save has a spawn place, otherwise generate a new one
             //When generating a new world, place the player at spawn
@@ -68,10 +63,10 @@ public class Game {
             WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
             WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            World world = new WorldCombined(worldPrimer, save);
-            this.player.setCurrentWorld(uuid);
-            world.joinWorld(player);
+            World world = new WorldCombined(worldPrimer, save, worldSeed);
+            this.uuidPlayerLocation = uuid;
             this.world = world;
+            world.joinWorld(player);
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
             SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(world);
         } catch (IOException e) {
@@ -96,7 +91,32 @@ public class Game {
     public void saveAndLeaveCurrentWorld() {
         SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(null);
         this.world.unloadAll();
-        mySave.writePlayerNBT((NBTCompound) this.player.writeNBT());
+        this.writePlayer();
+    }
+    
+    public void saveAll() {
+        WorldCombined w = (WorldCombined) world;
+        w.saveAll();
+        this.writePlayer();
+    }
+    
+    private void readPlayer() {
+        if (this.mySave.hasPlayer()) {
+            NBTCompound savestate = mySave.readPlayerNBT();
+            this.player.readNBT(savestate.get("player"));
+            this.uuidPlayerLocation = savestate.getString("currentLocation");
+        }
+    }
+    
+    private void writePlayer() {
+        NBTCompound comp = new NBTCompound();
+        comp.put("player", this.player.writeNBT());
+        comp.putString("currentLocation", uuidPlayerLocation);
+        mySave.writePlayerNBT(comp);
+    }
+    
+    public World getWorldCurrent() {
+        return this.world;
     }
     
     public Player getPlayer() {

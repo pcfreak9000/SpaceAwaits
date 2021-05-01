@@ -6,10 +6,13 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserData;
 
 public class PlayerContactListener implements IContactListener {
@@ -21,19 +24,19 @@ public class PlayerContactListener implements IContactListener {
             .getFor(ItemStackComponent.class);
     
     @Override
-    public void beginContact(UserData owner, UserData other, Contact contact) {
+    public void beginContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
     }
     
     @Override
-    public void endContact(UserData owner, UserData other, Contact contact) {
+    public void endContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
     }
     
     @Override
-    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold) {
+    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold, UnitConversion conv, World world) {
     }
     
     @Override
-    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse) {
+    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv, World world) {
         Player player = PLAYER_COMP_MAPPER.get(owner.getEntity()).player;
         if (other.isEntity()) {
             Entity ent = other.getEntity();
@@ -42,7 +45,8 @@ public class PlayerContactListener implements IContactListener {
                 if (iscomp.stack != null) {
                     iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
                     if (iscomp.stack == null) {
-                        //TODO despawn item entity
+                        Logger.getLogger(getClass()).info("Despawning item entity");
+                        world.despawnEntity(ent);
                     }
                 }
             }

@@ -6,6 +6,8 @@ public interface IChunkProvider {
     
     int loadedChunkCount();
     
+    //When should the below return null? Should we create some sort of empty chunk instead?
+    
     Chunk getChunk(int x, int y);
     
     //Chunk loadChunk(int x, int y); //- server only???

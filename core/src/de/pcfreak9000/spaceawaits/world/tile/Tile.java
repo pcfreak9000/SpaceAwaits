@@ -142,6 +142,9 @@ public class Tile {
         return null;
     }
     
+    public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx, int ngty) {
+    }
+    
     @Override
     public String toString() {
         return "Tile [textureProvider=" + textureProvider + ", canBreak=" + canBreak + ", opaque=" + opaque + ", solid="

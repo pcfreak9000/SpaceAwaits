@@ -21,7 +21,7 @@ public class ItemEntityFactory implements WorldEntityFactory {
         e.add(new RenderComponent(1, "item"));
         e.add(new TransformComponent());
         PhysicsComponent pc = new PhysicsComponent();
-        pc.factory = AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();//new AABBBodyFactory(200, 100);
+        pc.factory = AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();
         e.add(pc);
         return e;
     }

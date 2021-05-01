@@ -44,6 +44,6 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
         cam.position.set(PhysicsSystemBox2D.METER_CONV.in(this.cam.position.x),
                 PhysicsSystemBox2D.METER_CONV.in(this.cam.position.y), 0);
         cam.update();
-        debugRend.render(phsystem.getWorld(), cam.combined);
+        debugRend.render(phsystem.getB2DWorld(), cam.combined);
     }
 }
