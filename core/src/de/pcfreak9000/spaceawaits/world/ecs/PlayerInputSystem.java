@@ -51,7 +51,7 @@ public class PlayerInputSystem extends IteratingSystem {
         PlayerInputComponent play = mapper.get(entity);
         float vy = 0;
         float vx = 0;
-        //Vector2 transform = transformMapper.get(entity).position;
+        //        Vector2 transform = transformMapper.get(entity).position;
         Vector2 mouse = worldRend.getMouseWorldPos();
         //if (physicsMapper.get(entities.get(0)).onGround) {
         boolean up = InptMgr.isPressed(EnumDefInputIds.Up);
@@ -60,6 +60,16 @@ public class PlayerInputSystem extends IteratingSystem {
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
         boolean explode = InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles);
         boolean destroy = InptMgr.isPressed(EnumDefInputIds.BreakAttack);
+        //        world.raycastTiles(new IRaycastTileCallback() {
+        //            
+        //            @Override
+        //            public boolean reportRayTile(Tile tile, int tx, int ty) {
+        //                if (tile != Tile.EMPTY) {
+        //                    System.out.println(tile);
+        //                }
+        //                return tile == Tile.EMPTY;
+        //            }
+        //        }, transform.x + 1, transform.y + 2, mouse.x, mouse.y, TileLayer.Front);
         int hotbarChecked = checkSelectHotbarSlot(play.player.getInventory().getSelectedSlot());
         play.player.getInventory().setSelectedSlot(hotbarChecked);
         if (up) {

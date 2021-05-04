@@ -6,7 +6,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class FollowingTicket implements ITicket {
     
-    private ChunkCoordinates[] coords;
+    private IntCoords[] coords;
     
     private Vector2 pos;
     
@@ -20,9 +20,9 @@ public class FollowingTicket implements ITicket {
     public void updateRange(int radius) {
         this.radius = radius;
         int dia = radius * 2 + 1;
-        coords = new ChunkCoordinates[dia * dia];
+        coords = new IntCoords[dia * dia];
         for (int i = 0; i < coords.length; i++) {
-            coords[i] = new ChunkCoordinates(0, 0);
+            coords[i] = new IntCoords(0, 0);
         }
     }
     
@@ -33,7 +33,7 @@ public class FollowingTicket implements ITicket {
         int count = 0;
         for (int i = -radius; i <= radius; i++) {
             for (int j = -radius; j <= radius; j++) {
-                coords[count].setChunkCoords(gcx + i, gcy + j);
+                coords[count].setCoords(gcx + i, gcy + j);
                 count++;
             }
         }
@@ -45,7 +45,7 @@ public class FollowingTicket implements ITicket {
     }
     
     @Override
-    public ChunkCoordinates[] getLoadChunks() {
+    public IntCoords[] getLoadChunks() {
         return coords;
     }
     

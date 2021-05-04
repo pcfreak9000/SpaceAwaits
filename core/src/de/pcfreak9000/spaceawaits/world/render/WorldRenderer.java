@@ -29,7 +29,6 @@ public class WorldRenderer extends ScreenAdapter {
     private FitViewport viewport;
     
     private SpriteBatch spriteBatch;
-    
     private GuiContainer guiContainerCurrent;
     private Vector2 mousePosVec = new Vector2();
     //private int mousePosTileX, mousePosTileY;
@@ -38,7 +37,7 @@ public class WorldRenderer extends ScreenAdapter {
         this.gsm = gsm;
         this.fps = new FPSLogger();
         this.camera = new OrthographicCamera();
-        this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);
+        this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);//Problematic because of mouse stuff
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
     }
     

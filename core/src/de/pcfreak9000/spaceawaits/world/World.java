@@ -3,13 +3,19 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.physics.box2d.Fixture;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
-import de.pcfreak9000.spaceawaits.world.physics.IRaycastCallback;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastEntityCallback;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastFixtureCallback;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+import de.pcfreak9000.spaceawaits.world.physics.UserData;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -179,11 +185,63 @@ public abstract class World {
         }
     }
     
-    //Doesn't work for back layer tiles or non-solid tiles.
-    public void raycast(IRaycastCallback callback, float x1, float y1, float x2, float y2) {
+    private final RaycastCallbackImpl raycastCallbackWr = new RaycastCallbackImpl();
+    
+    public void raycastEntities(IRaycastEntityCallback callback, float x1, float y1, float x2, float y2) {
         PhysicsSystemBox2D physics = ecsEngine.getSystem(PhysicsSystemBox2D.class);//This is kinda spicy as the systems are handled in a World subclass...
         if (physics != null) {
-            physics.raycast(callback, x1, y1, x2, y2);
+            raycastCallbackWr.callb = callback;
+            physics.raycast(raycastCallbackWr, x1, y1, x2, y2);
+            raycastCallbackWr.callb = null;
+        }
+    }
+    
+    public void raycastTiles(IRaycastTileCallback tileCallback, float x1, float y1, float x2, float y2,
+            TileLayer layer) {
+        /*
+         * Based on the video Super Fast Ray Casting in Tiled Worlds using DDA by
+         * javidx9 (2021, https://www.youtube.com/watch?v=NbSee-XM7WA).
+         */
+        //constants
+        final int txStart = Tile.toGlobalTile(x1);
+        final int tyStart = Tile.toGlobalTile(y1);
+        final int txTarget = Tile.toGlobalTile(x2);
+        final int tyTarget = Tile.toGlobalTile(y2);
+        final float dx = x2 - x1;
+        final float dy = y2 - y1;
+        final float rayUnitStepSizeX = (float) Math.sqrt(1 + Mathf.square(dy / dx));
+        final float rayUnitStepSizeY = (float) Math.sqrt(1 + Mathf.square(dx / dy));
+        final int stepX = (int) Math.signum(dx);
+        final int stepY = (int) Math.signum(dy);
+        //prep loop vars
+        float lenx, leny;
+        if (dx < 0) {
+            lenx = x1 - txStart;
+        } else {
+            lenx = txStart + 1 - x1;
+        }
+        if (dy < 0) {
+            leny = y1 - tyStart;
+        } else {
+            leny = tyStart + 1 - y1;
+        }
+        lenx *= rayUnitStepSizeX;
+        leny *= rayUnitStepSizeY;
+        int tx = txStart;
+        int ty = tyStart;
+        for (int i = 0; i < Chunk.CHUNK_SIZE * 10; i++) {//while(true) is not so nice
+            Tile t = getTile(tx, ty, layer);
+            boolean continu = tileCallback.reportRayTile(t, tx, ty);
+            if (!continu || (tx == txTarget && ty == tyTarget)) {
+                break;
+            }
+            if (lenx < leny) {
+                tx += stepX;
+                lenx += rayUnitStepSizeX;
+            } else {
+                ty += stepY;
+                leny += rayUnitStepSizeY;
+            }
         }
     }
     
@@ -195,5 +253,21 @@ public abstract class World {
         this.chunkProvider.queueUnloadAll();
         this.chunkProvider.unloadQueued();
         this.unchunkProvider.unload();
+    }
+    
+    private static class RaycastCallbackImpl implements IRaycastFixtureCallback {
+        private IRaycastEntityCallback callb;
+        private UserData ud = new UserData();
+        
+        @Override
+        public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,
+                float fraction, UnitConversion conv) {
+            //ignore everything which is not an Entity
+            ud.set(fixture.getUserData());
+            if (!ud.isEntity()) {
+                return -1;
+            }
+            return callb.reportRayEntity(ud.getEntity(), pointx, pointy, normalx, normaly, fraction, conv);
+        }
     }
 }

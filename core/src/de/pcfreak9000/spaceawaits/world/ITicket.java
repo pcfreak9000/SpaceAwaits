@@ -6,6 +6,6 @@ public interface ITicket {
     
     boolean isValid();
     
-    ChunkCoordinates[] getLoadChunks();
+    IntCoords[] getLoadChunks();
     
 }

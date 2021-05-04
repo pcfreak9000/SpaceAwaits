@@ -12,9 +12,9 @@ import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class ChunkProvider implements IChunkProvider {
     
-    private Map<ChunkCoordinateKey, Chunk> chunks;
+    private Map<IntCoordKey, Chunk> chunks;
     
-    private Set<ChunkCoordinateKey> queueUnload;
+    private Set<IntCoordKey> queueUnload;
     
     private World world;
     private IChunkGenerator chunkGen;
@@ -35,7 +35,7 @@ public class ChunkProvider implements IChunkProvider {
         if (!world.getBounds().inChunkBounds(x, y)) {
             return null;
         }
-        ChunkCoordinateKey key = new ChunkCoordinateKey(x, y);
+        IntCoordKey key = new IntCoordKey(x, y);
         Chunk c = chunks.get(key);
         queueUnload.remove(key);
         if (c == null) {
@@ -56,13 +56,13 @@ public class ChunkProvider implements IChunkProvider {
         if (!world.getBounds().inChunkBounds(x, y)) {
             return null;
         }
-        return chunks.get(new ChunkCoordinateKey(x, y));
+        return chunks.get(new IntCoordKey(x, y));
     }
     
     @Override
     public void queueUnloadChunk(int x, int y) {
         if (world.getBounds().inChunkBounds(x, y)) {
-            ChunkCoordinateKey key = new ChunkCoordinateKey(x, y);
+            IntCoordKey key = new IntCoordKey(x, y);
             queueUnload.add(key);
         }
     }
@@ -80,14 +80,14 @@ public class ChunkProvider implements IChunkProvider {
     
     @Override
     public void queueUnloadAll() {
-        for (ChunkCoordinateKey k : chunks.keySet()) {
+        for (IntCoordKey k : chunks.keySet()) {
             queueUnload.add(k);
         }
     }
     
     @Override
     public void unloadQueued() {
-        for (ChunkCoordinateKey key : queueUnload) {
+        for (IntCoordKey key : queueUnload) {
             Chunk c = chunks.remove(key);
             if (c != null) {
                 saveChunk(c);

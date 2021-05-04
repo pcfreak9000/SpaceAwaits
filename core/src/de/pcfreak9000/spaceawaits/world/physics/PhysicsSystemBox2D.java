@@ -79,7 +79,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     private final RaycastCallbackImpl raycastImpl = new RaycastCallbackImpl();
     
-    public void raycast(IRaycastCallback callback, float x1, float y1, float x2, float y2) {
+    public void raycast(IRaycastFixtureCallback callback, float x1, float y1, float x2, float y2) {
         x1 = METER_CONV.in(x1);
         y1 = METER_CONV.in(y1);
         x2 = METER_CONV.in(x2);
@@ -134,7 +134,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     private static final class RaycastCallbackImpl implements RayCastCallback {
         
-        private IRaycastCallback callback;
+        private IRaycastFixtureCallback callback;
         
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {

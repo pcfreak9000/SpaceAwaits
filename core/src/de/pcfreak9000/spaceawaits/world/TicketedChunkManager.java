@@ -15,9 +15,9 @@ public class TicketedChunkManager extends EntitySystem {
     
     private Set<ITicket> tickets;
     
-    private Set<ChunkCoordinateKey> chunksPrev;
-    private Set<ChunkCoordinateKey> chunksToUpdate = new LinkedHashSet<>();
-    private Set<ChunkCoordinateKey> chunksToLoad = new LinkedHashSet<>();
+    private Set<IntCoordKey> chunksPrev;
+    private Set<IntCoordKey> chunksToUpdate = new LinkedHashSet<>();
+    private Set<IntCoordKey> chunksToLoad = new LinkedHashSet<>();
     
     public TicketedChunkManager(World world, ChunkProvider chunkprovider) {
         this.tickets = new LinkedHashSet<>();
@@ -47,20 +47,20 @@ public class TicketedChunkManager extends EntitySystem {
             if (!t.isValid()) {
                 it.remove();
             }
-            ChunkCoordinates[] chunks = t.getLoadChunks();
-            for (ChunkCoordinates cc : chunks) {
-                if (world.getBounds().inChunkBounds(cc.getChunkX(), cc.getChunkY())) {
+            IntCoords[] chunks = t.getLoadChunks();
+            for (IntCoords cc : chunks) {
+                if (world.getBounds().inChunkBounds(cc.getX(), cc.getY())) {
                     chunksToUpdate.add(cc.createKey());
                 }
             }
         }
         //find bordering chunks. load them, but dont update them.
         final int borderingChunkRad = 1;
-        for (ChunkCoordinateKey up : chunksToUpdate) {
+        for (IntCoordKey up : chunksToUpdate) {
             for (int i = -borderingChunkRad; i <= borderingChunkRad; i++) {
                 for (int j = -borderingChunkRad; j <= borderingChunkRad; j++) {
                     if (world.getBounds().inChunkBounds(up.getX() + i, up.getY() + j) && (i != 0 || j != 0)) {
-                        ChunkCoordinateKey load = new ChunkCoordinateKey(up.getX() + i, up.getY() + j);
+                        IntCoordKey load = new IntCoordKey(up.getX() + i, up.getY() + j);
                         if (!chunksToUpdate.contains(load)) {
                             chunksToLoad.add(load);
                         }
@@ -69,7 +69,7 @@ public class TicketedChunkManager extends EntitySystem {
             }
         }
         //Find chunks which aren't needed anymore and unload them
-        for (ChunkCoordinateKey k : chunksPrev) {
+        for (IntCoordKey k : chunksPrev) {
             if (!chunksToUpdate.contains(k)) {
                 Chunk c = this.chunkProvider.getChunk(k.getX(), k.getY());
                 if (c.isActive()) {
@@ -81,11 +81,11 @@ public class TicketedChunkManager extends EntitySystem {
             }
         }
         //load bordering chunks
-        for (ChunkCoordinateKey k : chunksToLoad) {
+        for (IntCoordKey k : chunksToLoad) {
             this.chunkProvider.loadChunk(k.getX(), k.getY());
         }
         //load and activate chunks to update
-        for (ChunkCoordinateKey k : chunksToUpdate) {
+        for (IntCoordKey k : chunksToUpdate) {
             Chunk c = this.chunkProvider.loadChunk(k.getX(), k.getY());
             if (!c.isActive()) {
                 world.addChunk(c);

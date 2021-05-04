@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.world.physics;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
 
-public interface IRaycastCallback {
+public interface IRaycastFixtureCallback {
     /**
      * Called for each fixture found in the query. You control how the ray cast
      * proceeds by returning a float: return -1: ignore this fixture and continue
@@ -15,7 +15,6 @@ public interface IRaycastCallback {
      * @return -1 to filter, 0 to terminate, fraction to clip the ray for closest
      *         hit, 1 to continue
      **/
-    float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly, float fraction,
+    float reportRayFixture(Fixture fix, float pointx, float pointy, float normalx, float normaly, float fraction,
             UnitConversion conv);
-    
 }

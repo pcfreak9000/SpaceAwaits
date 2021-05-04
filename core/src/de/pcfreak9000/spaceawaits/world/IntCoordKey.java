@@ -1,11 +1,11 @@
 package de.pcfreak9000.spaceawaits.world;
 
-public class ChunkCoordinateKey {
+public class IntCoordKey {
     
     private final int x, y;
     private final int hash;
     
-    public ChunkCoordinateKey(int x, int y) {
+    public IntCoordKey(int x, int y) {
         this.x = x;
         this.y = y;
         final int prime = 31;
@@ -25,8 +25,8 @@ public class ChunkCoordinateKey {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ChunkCoordinateKey) {
-            ChunkCoordinateKey other = (ChunkCoordinateKey) obj;
+        if (obj instanceof IntCoordKey) {
+            IntCoordKey other = (IntCoordKey) obj;
             return this.x == other.x && this.y == other.y;
         }
         return false;
