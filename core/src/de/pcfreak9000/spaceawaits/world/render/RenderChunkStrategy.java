@@ -103,23 +103,6 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         ca.begin();
         ca.draw(id, 0, crc.len);
         ca.end();
-        //        
-        //                if (c.region.recacheTiles()) {
-        //                    regionCache.beginCache(c.region.cacheId);
-        //                    c.region.recacheTiles(regionCache);
-        //                    regionCache.endCache();
-        //                }
-        //                regionCache.setProjectionMatrix(
-        //                        SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getCamera().combined);
-        //                regionCache.begin();
-        //                if (c.region.len() > 0) {
-        //                    regionCache.draw(c.region.cacheId, 0, c.region.len());
-        //                }
-        //                regionCache.end();
-        //        SpriteBatch b = SpaceAwaits.getSpaceAwaits().getWorldManager().getRenderInfo().getSpriteBatch();
-        //        b.begin();
-        //        c.region.recacheTiles(b);
-        //        b.end();
     }
     
     private void recacheTiles(SpriteCache cache, Chunk c, ChunkRenderComponent crc) {

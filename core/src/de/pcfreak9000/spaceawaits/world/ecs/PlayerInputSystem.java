@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
@@ -45,6 +46,23 @@ public class PlayerInputSystem extends IteratingSystem {
     public void settwevent(WorldEvents.SetWorldEvent ev) {
         this.worldRend = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();//FIXME ffs
     }
+    
+    private final ITileBreaker br = new ITileBreaker() {
+        
+        @Override
+        public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+        }
+        
+        @Override
+        public float getSpeed() {
+            return 1;
+        }
+        
+        @Override
+        public float getMaterialLevel() {
+            return 0;
+        }
+    };
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
@@ -108,10 +126,7 @@ public class PlayerInputSystem extends IteratingSystem {
         if (destroy) {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
-            Tile t = world.getTile(tx, ty, TileLayer.Front);
-            if (t != null && t.canBreak()) {
-                world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
-            }
+            float f = world.breakTile(tx, ty, TileLayer.Front, br);
         }
         if (InptMgr.isPressed(EnumDefInputIds.Use)) {
             //Current mouse stuff

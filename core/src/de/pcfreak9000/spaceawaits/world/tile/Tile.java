@@ -51,7 +51,10 @@ public class Tile {
     private Color lightColor;
     private float lighttransmission = 0.8f;
     
-    private float bouncyness = 0;
+    private float bouncyness = 0f;
+    
+    private float materialLevel = 0f;
+    private float hardness = 1f;
     
     public void setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
@@ -118,6 +121,22 @@ public class Tile {
         this.lighttransmission = f;
     }
     
+    public float getMaterialLevel() {
+        return materialLevel;
+    }
+    
+    public void setMaterialLevel(float materialLevel) {
+        this.materialLevel = materialLevel;
+    }
+    
+    public float getHardness() {
+        return hardness;
+    }
+    
+    public void setHardness(float hardness) {
+        this.hardness = hardness;
+    }
+    
     public void setUseDefaultItem(boolean useDefaultItem) {
         this.useDefaultItem = useDefaultItem;
     }
@@ -142,7 +161,8 @@ public class Tile {
         return null;
     }
     
-    public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx, int ngty) {
+    public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
+            int ngty) {
     }
     
     @Override

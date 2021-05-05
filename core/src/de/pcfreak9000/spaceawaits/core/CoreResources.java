@@ -25,13 +25,15 @@ public class CoreResources {
         InptMgr.register(EnumDefInputIds.Use, Buttons.RIGHT, true);
         InptMgr.register(EnumDefInputIds.BreakAttack, Buttons.LEFT, true);
         InptMgr.register(EnumDefInputIds.TestExplodeTiles, Buttons.MIDDLE, true);
-        
     }
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");
     
     public static final TextureProvider ITEM_SLOT = TextureProvider.get("item_slot.png");
+    
+    public static final TextureProvider[] BREAK_OVERLAY = new TextureProvider[] { TextureProvider.get("brst1.png"),
+            TextureProvider.get("brst2.png"), TextureProvider.get("brst3.png"), TextureProvider.get("brst4.png") };
     
     public static final WorldEntityFactory PLAYER_FACTORY = GameRegistry.WORLD_ENTITY_REGISTRY
             .register("player", new PlayerEntityFactory()).get("player");//Meh...

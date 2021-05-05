@@ -3,7 +3,9 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.Player;
@@ -32,6 +34,7 @@ public abstract class World {
     private AmbientLightProvider ambientLightProvider;
     
     protected final Engine ecsEngine;
+    protected final LongMap<BreakTile> breakingTiles = new LongMap<>();
     
     public World(WorldPrimer primer, long seed) {
         //initialize fields
@@ -89,6 +92,7 @@ public abstract class World {
             Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
             if (c != null) {
                 Tile old = c.setTile(tx, ty, layer, tile);
+                breakingTiles.remove(IntCoords.toLong(tx, ty));
                 notifyNeighbours(tile, old, tx, ty, layer);
                 return old;
             }
@@ -125,6 +129,32 @@ public abstract class World {
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
         return setTile(tx, ty, layer, tile);
+    }
+    
+    public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
+        //First check if this is allowed
+        Tile tile = getTile(tx, ty, layer);
+        if (!tile.canBreak() && !breaker.ignoreCanBreak()) {
+            return -1f;
+        }
+        if (tile.getMaterialLevel() > breaker.getMaterialLevel()
+                && breaker.getMaterialLevel() != Float.POSITIVE_INFINITY) {
+            return -1f;
+        }
+        long l = IntCoords.toLong(tx, ty);
+        BreakTile t = breakingTiles.get(l);
+        if (t == null || t.getLayer() != layer) {
+            t = new BreakTile(tx, ty, layer);
+            breakingTiles.put(l, t);
+        }
+        float speedActual = breaker.getSpeed() / tile.getHardness();
+        t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
+        if (t.getProgress() >= 1f) {
+            breaker.onBreak(tx, ty, layer, tile, this);
+            setTile(tx, ty, layer, Tile.EMPTY);
+            return 1f;
+        }
+        return Mathf.clamp(t.getProgress(), 0, 1f);
     }
     
     public void joinWorld(Player player) {
