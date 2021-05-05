@@ -40,6 +40,9 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
     
     @Override
     public void setSlotContent(int index, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            stack = null;
+        }
         hotbar[index] = stack;
     }
     

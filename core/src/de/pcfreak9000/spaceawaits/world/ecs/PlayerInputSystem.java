@@ -77,7 +77,6 @@ public class PlayerInputSystem extends IteratingSystem {
         boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
         boolean explode = InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles);
-        boolean destroy = InptMgr.isPressed(EnumDefInputIds.BreakAttack);
         //        world.raycastTiles(new IRaycastTileCallback() {
         //            
         //            @Override
@@ -123,10 +122,19 @@ public class PlayerInputSystem extends IteratingSystem {
                 }
             }
         }
-        if (destroy) {
+        if (InptMgr.isPressed(EnumDefInputIds.BreakAttack)) {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
-            float f = world.breakTile(tx, ty, TileLayer.Front, br);
+            Player player = play.player;
+            ItemStack stack = player.getInventory().getSelectedStack().cpy();
+            boolean used = false;
+            if (stack != null && stack.getItem() != null) {
+                used = stack.getItem().onItemAttack(player, stack, world, tx, ty, mouse.x, mouse.y);
+                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+            }
+            if (!used) {
+                world.breakTile(tx, ty, TileLayer.Front, br);
+            }
         }
         if (InptMgr.isPressed(EnumDefInputIds.Use)) {
             //Current mouse stuff
@@ -138,12 +146,12 @@ public class PlayerInputSystem extends IteratingSystem {
             //onItemUse
             boolean used = false;
             if (stack != null && stack.getItem() != null) {
-                used = stack.getItem().onItemUse(player, stack, world, tx, ty);
+                used = stack.getItem().onItemUse(player, stack, world, tx, ty, mouse.x, mouse.y);
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
             }
             if (!used) {
                 Tile clicked = world.getTile(tx, ty, TileLayer.Front);
-                //onTileUse...
+                //onTileUse
                 used = clicked.onTileUse(player, world, stack, tx, ty);
             }
         }

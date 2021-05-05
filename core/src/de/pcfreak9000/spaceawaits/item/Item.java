@@ -50,7 +50,20 @@ public class Item {
         return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
     
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley) {
+    /**
+     * 
+     * @param player
+     * @param stackUsed
+     * @param world
+     * @param tilex
+     * @param tiley
+     * @return whether this item has actually been used
+     */
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y) {
+        return false;
+    }
+    
+    public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
         return false;
     }
 }

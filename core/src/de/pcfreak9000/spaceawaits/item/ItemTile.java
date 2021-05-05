@@ -26,7 +26,7 @@ public class ItemTile extends Item {
     }
     //TODO TileLayer.Front...
     @Override
-    public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley) {
+    public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley, float x, float y) {
         if (world.getTile(tilex, tiley, TileLayer.Front) == null
                 || world.getTile(tilex, tiley, TileLayer.Front) == Tile.EMPTY) {
             if (!used.isEmpty()) {

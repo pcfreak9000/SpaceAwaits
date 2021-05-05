@@ -40,7 +40,7 @@ public class DMod {
         };
     };
     Tile torch = new Tile();
-    Item gun = new Item();
+    Item gun = new ItemGun();
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
