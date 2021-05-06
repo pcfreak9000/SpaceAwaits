@@ -8,10 +8,12 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.world.IQueryCallback;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class PhysicsSystemBox2D extends IteratingSystem implements EntityListener {
@@ -39,6 +41,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         //TODO Userdata: info for raycasting and ContactListener
         this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);
+        this.box2dWorld.QueryAABB(null, PIXELS_PER_METER, deltaAcc, STEPSIZE_SECONDS, PIXELS_PER_METER);
     }
     
     public World getB2DWorld() {
@@ -78,6 +81,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     }
     
     private final RaycastCallbackImpl raycastImpl = new RaycastCallbackImpl();
+    private final QueryCallbackImpl queryImpl = new QueryCallbackImpl();
     
     public void raycast(IRaycastFixtureCallback callback, float x1, float y1, float x2, float y2) {
         x1 = METER_CONV.in(x1);
@@ -87,6 +91,16 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         raycastImpl.callback = callback;
         this.box2dWorld.rayCast(raycastImpl, x1, y1, x2, y2);
         raycastImpl.callback = null;
+    }
+    
+    public void queryAABB(IQueryCallback callback, float x1, float y1, float x2, float y2) {
+        x1 = METER_CONV.in(x1);
+        y1 = METER_CONV.in(y1);
+        x2 = METER_CONV.in(x2);
+        y2 = METER_CONV.in(y2);
+        queryImpl.callback = callback;
+        this.box2dWorld.QueryAABB(queryImpl, x1, y1, x2, y2);
+        queryImpl.callback = null;
     }
     
     @Override
@@ -130,6 +144,17 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         PhysicsComponent pc = this.physicsMapper.get(entity);
         pc.factory.destroyBody(pc.body.getBody(), box2dWorld);
         pc.body = null;
+    }
+    
+    private static final class QueryCallbackImpl implements QueryCallback {
+        
+        private IQueryCallback callback;
+        
+        @Override
+        public boolean reportFixture(Fixture fixture) {
+            return callback.reportFixture(fixture, METER_CONV);
+        }
+        
     }
     
     private static final class RaycastCallbackImpl implements RayCastCallback {

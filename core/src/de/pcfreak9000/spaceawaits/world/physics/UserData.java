@@ -13,7 +13,7 @@ public class UserData {
     public UserData() {
     }
     
-    private void clear() {
+    public void clear() {
         this.tile = null;
         this.entity = null;
         this.userDataRaw = null;

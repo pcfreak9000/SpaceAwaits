@@ -142,12 +142,16 @@ public class PlayerInputSystem extends IteratingSystem {
             int ty = Tile.toGlobalTile(mouse.y);
             //get current item
             Player player = play.player;
-            ItemStack stack = player.getInventory().getSelectedStack().cpy();
-            //onItemUse
             boolean used = false;
-            if (stack != null && stack.getItem() != null) {
-                used = stack.getItem().onItemUse(player, stack, world, tx, ty, mouse.x, mouse.y);
-                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+            ItemStack stack = null;
+            if (player.getInventory().getSelectedStack() != null
+                    && !player.getInventory().getSelectedStack().isEmpty()) {
+                stack = player.getInventory().getSelectedStack().cpy();
+                //onItemUse
+                if (stack != null && stack.getItem() != null) {
+                    used = stack.getItem().onItemUse(player, stack, world, tx, ty, mouse.x, mouse.y);
+                    player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+                }
             }
             if (!used) {
                 Tile clicked = world.getTile(tx, ty, TileLayer.Front);

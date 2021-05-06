@@ -78,6 +78,8 @@ public abstract class World {
         c.removeFromECS(ecsEngine);
     }
     
+    private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
+    
     /**
      * Sets a tile.
      * 
@@ -128,10 +130,16 @@ public abstract class World {
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
+        queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
+        if (entCheck.ud.isEntity()) {
+            return null;
+        }
+        entCheck.ud.clear();
         return setTile(tx, ty, layer, tile);
     }
     
     public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
+        //TODO allow null tilebreaker?
         //First check if this is allowed
         Tile tile = getTile(tx, ty, layer);
         if (!tile.canBreak() && !breaker.ignoreCanBreak()) {
@@ -226,6 +234,13 @@ public abstract class World {
         }
     }
     
+    public void queryAABB(IQueryCallback callback, float x1, float y1, float x2, float y2) {
+        PhysicsSystemBox2D physics = ecsEngine.getSystem(PhysicsSystemBox2D.class);//This is kinda spicy as the systems are handled in a World subclass...
+        if (physics != null) {
+            physics.queryAABB(callback, x1, y1, x2, y2);
+        }
+    }
+    
     public void raycastTiles(IRaycastTileCallback tileCallback, float x1, float y1, float x2, float y2,
             TileLayer layer) {
         /*
@@ -285,7 +300,7 @@ public abstract class World {
         this.unchunkProvider.unload();
     }
     
-    private static class RaycastCallbackImpl implements IRaycastFixtureCallback {
+    private static final class RaycastCallbackImpl implements IRaycastFixtureCallback {
         private IRaycastEntityCallback callb;
         private UserData ud = new UserData();
         
@@ -299,5 +314,20 @@ public abstract class World {
             }
             return callb.reportRayEntity(ud.getEntity(), pointx, pointy, normalx, normaly, fraction, conv);
         }
+    }
+    
+    private static final class EntityOccupationChecker implements IQueryCallback {
+        
+        public final UserData ud = new UserData();
+        
+        @Override
+        public boolean reportFixture(Fixture fix, UnitConversion conv) {
+            if (fix.isSensor()) {
+                return true;
+            }
+            ud.set(fix.getUserData());
+            return !ud.isEntity();
+        }
+        
     }
 }

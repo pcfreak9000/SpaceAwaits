@@ -24,15 +24,17 @@ public class ItemTile extends Item {
     public ITextureProvider getTextureProvider() {
         return this.tile.getTextureProvider();
     }
+    
     //TODO TileLayer.Front...
     @Override
     public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley, float x, float y) {
         if (world.getTile(tilex, tiley, TileLayer.Front) == null
                 || world.getTile(tilex, tiley, TileLayer.Front) == Tile.EMPTY) {
             if (!used.isEmpty()) {
-                world.setTile(tilex, tiley, TileLayer.Front, this.tile);
-                used.changeNumber(-1);
-                return true;
+                if (world.placeTile(tilex, tiley, TileLayer.Front, this.tile, null) != null) {
+                    used.changeNumber(-1);
+                    return true;
+                }
             }
         }
         return false;
