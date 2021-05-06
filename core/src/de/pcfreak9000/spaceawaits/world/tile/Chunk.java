@@ -67,7 +67,7 @@ public class Chunk implements NBTSerializable {
     
     private boolean addedToEngine;
     
-    private final EntityImproved regionEntity;
+    private final Entity chunkEntity;
     
     public Chunk(int rx, int ry, World world) {
         this.rx = rx;
@@ -83,14 +83,14 @@ public class Chunk implements NBTSerializable {
         this.entities = new ArrayList<>();
         this.immutableEntities = Collections.unmodifiableList(this.entities);
         this.tickablesForRemoval = new ArrayDeque<>();
-        this.regionEntity = new EntityImproved();
-        this.regionEntity.flags = 1;
-        this.regionEntity.add(new ChunkComponent(this));
-        this.regionEntity.add(new ChunkRenderComponent());//TMP because server side stuff
-        this.regionEntity.add(new RenderComponent(0, "chunk"));
+        this.chunkEntity = new EntityImproved();
+        this.chunkEntity.flags = 1;
+        this.chunkEntity.add(new ChunkComponent(this));
+        this.chunkEntity.add(new ChunkRenderComponent());//TMP because server side stuff
+        this.chunkEntity.add(new RenderComponent(0, "chunk"));
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
-        this.regionEntity.add(pc);
+        this.chunkEntity.add(pc);
     }
     
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
@@ -119,8 +119,8 @@ public class Chunk implements NBTSerializable {
         return this.ty;
     }
     
-    public EntityImproved getECSEntity() {
-        return this.regionEntity;
+    public Entity getECSEntity() {
+        return this.chunkEntity;
     }
     
     public boolean isActive() {
@@ -244,19 +244,6 @@ public class Chunk implements NBTSerializable {
             }
         }
         notifyListeners(state, t, oldTile, tx, ty);
-        //-> neighbour change notifications, but dont notify if the chunk is just being loaded
-        //        if (tileWorld.inBounds(tx + 1, ty)) {
-        //            getTileStateGlobal(tx + 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
-        //        }
-        //        if (tileWorld.inBounds(tx - 1, ty)) {
-        //            getTileStateGlobal(tx - 1, ty).getTile().neighbourChanged(tileWorld, newTileState);
-        //        }
-        //        if (tileWorld.inBounds(tx, ty + 1)) {
-        //            getTileStateGlobal(tx, ty + 1).getTile().neighbourChanged(tileWorld, newTileState);
-        //        }
-        //        if (tileWorld.inBounds(tx, ty - 1)) {
-        //            getTileStateGlobal(tx, ty - 1).getTile().neighbourChanged(tileWorld, newTileState);
-        //        }
         return oldTile;
     }
     

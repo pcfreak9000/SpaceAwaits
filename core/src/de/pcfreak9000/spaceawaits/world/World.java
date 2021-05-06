@@ -102,6 +102,7 @@ public abstract class World {
         return null;
     }
     
+    //Hmmm. What about tiles on the edge to only loaded but not updated? What about resonance cascades?
     private void notifyNeighbours(Tile tile, Tile old, int tx, int ty, TileLayer layer) {
         getTile(tx + 1, ty, layer).onNeighbourChange(this, tx + 1, ty, tile, old, tx, ty);
         getTile(tx, ty + 1, layer).onNeighbourChange(this, tx, ty + 1, tile, old, tx, ty);
@@ -130,11 +131,13 @@ public abstract class World {
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
-        queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
-        if (entCheck.ud.isEntity()) {
-            return null;
+        if (tile.isSolid()) {
+            queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
+            if (entCheck.ud.isEntity()) {
+                return null;
+            }
+            entCheck.ud.clear();
         }
-        entCheck.ud.clear();
         return setTile(tx, ty, layer, tile);
     }
     
@@ -244,7 +247,7 @@ public abstract class World {
     public void raycastTiles(IRaycastTileCallback tileCallback, float x1, float y1, float x2, float y2,
             TileLayer layer) {
         /*
-         * Based on the video Super Fast Ray Casting in Tiled Worlds using DDA by
+         * Based on the video "Super Fast Ray Casting in Tiled Worlds using DDA" by
          * javidx9 (2021, https://www.youtube.com/watch?v=NbSee-XM7WA).
          */
         //constants
@@ -302,7 +305,7 @@ public abstract class World {
     
     private static final class RaycastCallbackImpl implements IRaycastFixtureCallback {
         private IRaycastEntityCallback callb;
-        private UserData ud = new UserData();
+        private final UserData ud = new UserData();
         
         @Override
         public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,

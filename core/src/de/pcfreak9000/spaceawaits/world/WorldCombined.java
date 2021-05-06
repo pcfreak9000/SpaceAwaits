@@ -63,11 +63,11 @@ public class WorldCombined extends World {
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         RenderSystem rsys = new RenderSystem();
-        rsys.registerRenderDecorator("entity", new RenderEntityStrategy());
-        rsys.registerRenderDecorator("chunk", new RenderChunkStrategy());
-        rsys.registerRenderDecorator("para", new RenderParallaxStrategy(this));
-        rsys.registerRenderDecorator("item", new RenderItemStrategy());
-        rsys.registerRenderDecorator("break", new RenderTileBreakingStrategy());
+        rsys.registerRenderStrategy("entity", new RenderEntityStrategy());
+        rsys.registerRenderStrategy("chunk", new RenderChunkStrategy());
+        rsys.registerRenderStrategy("para", new RenderParallaxStrategy(this));
+        rsys.registerRenderStrategy("item", new RenderItemStrategy());
+        rsys.registerRenderStrategy("break", new RenderTileBreakingStrategy());
         ecs.addSystem(rsys);
         ecs.addSystem(new LightCalculator(this));
         ecs.addSystem(new BreakingTileSystem());

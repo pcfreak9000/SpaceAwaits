@@ -20,7 +20,7 @@ public class Tile {
     }
     
     public static final float MAX_LIGHT_VALUE = 16;
-    
+    //TODO option if a tile behaves like Empty? Default "empty" per world?
     public static final Tile EMPTY = new Tile();//The last bastion against the void
     
     public static int toGlobalTile(float x) {

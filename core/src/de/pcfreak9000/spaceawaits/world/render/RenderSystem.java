@@ -34,9 +34,9 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     
     private Array<Entity> entities = new Array<>();
     
-    //TODO use a GameRegistry instead for RenderDecorators?
+    //TODO use a GameRegistry instead for RenderStrategies?
     
-    public void registerRenderDecorator(String id, IRenderStrategy dec) {
+    public void registerRenderStrategy(String id, IRenderStrategy dec) {
         renderStrategies.put(id, dec);
     }
     

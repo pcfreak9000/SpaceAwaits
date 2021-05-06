@@ -126,11 +126,12 @@ public class PlayerInputSystem extends IteratingSystem {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             Player player = play.player;
-            ItemStack stack = player.getInventory().getSelectedStack().cpy();
+            ItemStack stack = player.getInventory().getSelectedStack();
             boolean used = false;
             if (stack != null && stack.getItem() != null) {
-                used = stack.getItem().onItemAttack(player, stack, world, tx, ty, mouse.x, mouse.y);
-                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+                ItemStack cp = stack.cpy();
+                used = stack.getItem().onItemAttack(player, cp, world, tx, ty, mouse.x, mouse.y);
+                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
             if (!used) {
                 world.breakTile(tx, ty, TileLayer.Front, br);
@@ -143,20 +144,22 @@ public class PlayerInputSystem extends IteratingSystem {
             //get current item
             Player player = play.player;
             boolean used = false;
-            ItemStack stack = null;
+            ItemStack stack = player.getInventory().getSelectedStack();
             if (player.getInventory().getSelectedStack() != null
                     && !player.getInventory().getSelectedStack().isEmpty()) {
-                stack = player.getInventory().getSelectedStack().cpy();
                 //onItemUse
                 if (stack != null && stack.getItem() != null) {
-                    used = stack.getItem().onItemUse(player, stack, world, tx, ty, mouse.x, mouse.y);
-                    player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), stack);
+                    ItemStack cp = stack.cpy();
+                    used = stack.getItem().onItemUse(player, cp, world, tx, ty, mouse.x, mouse.y);
+                    player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
                 }
             }
             if (!used) {
                 Tile clicked = world.getTile(tx, ty, TileLayer.Front);
                 //onTileUse
-                used = clicked.onTileUse(player, world, stack, tx, ty);
+                ItemStack cp = stack.cpy();
+                used = clicked.onTileUse(player, world, cp, tx, ty);
+                player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
         }
         PhysicsComponent pc = physicsMapper.get(entity);
