@@ -3,6 +3,8 @@ package de.pcfreak9000.spaceawaits.world.tile;
 import java.util.Objects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.RandomXS128;
+import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
@@ -153,6 +155,10 @@ public class Tile {
     
     public Item getItemTile() {
         return itemTile;
+    }
+    
+    public void addDrops(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, RandomXS128 random) {
+        drops.add(new ItemStack(getItemTile(), 1));
     }
     
     public boolean hasTileEntity() {

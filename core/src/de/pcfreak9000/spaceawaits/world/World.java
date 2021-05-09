@@ -4,12 +4,15 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
@@ -39,10 +42,14 @@ public abstract class World {
     protected final Engine ecsEngine;
     protected final LongMap<BreakTile> breakingTiles = new LongMap<>();
     
+    //Used for random item drops etc, not terrain gen etc
+    protected final RandomXS128 worldRandom;
+    
     public World(WorldPrimer primer, long seed) {
         //initialize fields
         this.seed = seed;
         this.ecsEngine = new Engine();
+        this.worldRandom = new RandomXS128(seed);
         
         //do priming stuff
         this.worldBounds = primer.getWorldBounds();
@@ -164,8 +171,16 @@ public abstract class World {
         float speedActual = breaker.getSpeed() / tile.getHardness();
         t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
         if (t.getProgress() >= 1f) {
-            breaker.onBreak(tx, ty, layer, tile, this);
+            Array<ItemStack> drops = new Array<>();
+            tile.addDrops(tx, ty, layer, drops, this, worldRandom);
+            breaker.onBreak(tx, ty, layer, tile, this, drops, worldRandom);
             setTile(tx, ty, layer, Tile.EMPTY);
+            if (drops.size > 0) {
+                for (ItemStack s : drops) {
+                    dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2, ty + 0.5f - Item.WORLD_SIZE / 2);
+                }
+                drops.clear();
+            }
             return 1f;
         }
         return Mathf.clamp(t.getProgress(), 0, 1f);
@@ -198,8 +213,13 @@ public abstract class World {
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
             c.addEntity(entity);
+            if (c.isActive()) {
+                ecsEngine.addEntity(entity);
+            }
+        } else {
+            //Hmmm...
+            ecsEngine.addEntity(entity);
         }
-        ecsEngine.addEntity(entity);
     }
     
     public void despawnEntity(Entity entity) {

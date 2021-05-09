@@ -1,3 +1,6 @@
+import com.badlogic.gdx.math.RandomXS128;
+import com.badlogic.gdx.utils.Array;
+
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -25,11 +28,7 @@ public class ItemGun extends Item {
     
     private final ITileBreaker tilebreaker = new ITileBreaker() {
         
-        @Override
-        public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
-            ItemStack s = new ItemStack(tile.getItemTile(), 1);
-            world.dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2f, ty + 0.5f - Item.WORLD_SIZE / 2f);
-        }
+       
         
         @Override
         public float getSpeed() {
@@ -39,6 +38,11 @@ public class ItemGun extends Item {
         @Override
         public float getMaterialLevel() {
             return Float.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
+                RandomXS128 random) {
         }
     };
 }

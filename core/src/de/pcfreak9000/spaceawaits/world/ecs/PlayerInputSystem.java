@@ -6,7 +6,9 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
@@ -14,7 +16,6 @@ import de.pcfreak9000.spaceawaits.core.CoreResources.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -51,12 +52,6 @@ public class PlayerInputSystem extends IteratingSystem {
     private final ITileBreaker br = new ITileBreaker() {
         
         @Override
-        public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
-            ItemStack s = new ItemStack(tile.getItemTile(), 1);
-            world.dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2f, ty + 0.5f - Item.WORLD_SIZE / 2f);
-        }
-        
-        @Override
         public float getSpeed() {
             return 1;
         }
@@ -64,6 +59,11 @@ public class PlayerInputSystem extends IteratingSystem {
         @Override
         public float getMaterialLevel() {
             return 0;
+        }
+        
+        @Override
+        public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
+                RandomXS128 random) {
         }
     };
     
