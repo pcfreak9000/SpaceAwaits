@@ -8,7 +8,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -176,6 +179,15 @@ public abstract class World {
             .getFor(ChunkMarkerComponent.class);
     private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
             .getFor(TransformComponent.class);
+    private static final ComponentMapper<ItemStackComponent> ITEMSTACK_COMP_MAPPER = ComponentMapper
+            .getFor(ItemStackComponent.class);
+    
+    public void dropItemStack(ItemStack stack, float x, float y) {
+        Entity e = CoreResources.ITEM_FACTORY.createEntity();
+        ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
+        TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
+        spawnEntity(e);
+    }
     
     public void spawnEntity(Entity entity) {
         //TODO Check whether the entity would be colliding when spawned at this position

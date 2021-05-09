@@ -92,6 +92,7 @@ public class LightCalculator extends IteratingSystem {
         }
         //}
         SpriteBatch batch = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch();
+        batch.setColor(1, 1, 1, 1);//TODO consider some form of batch resetting?
         this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);

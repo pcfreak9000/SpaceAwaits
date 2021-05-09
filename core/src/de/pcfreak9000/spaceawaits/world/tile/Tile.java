@@ -8,7 +8,9 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
@@ -44,8 +46,6 @@ public class Tile {
     private boolean opaque = true;
     private boolean solid = true;
     
-    private boolean useDefaultItem = true;
-    
     private final Color color = new Color(1, 1, 1, 1);
     
     private Color lightColor;
@@ -55,6 +55,8 @@ public class Tile {
     
     private float materialLevel = 0f;
     private float hardness = 1f;
+    
+    private Item itemTile;
     
     public void setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
@@ -137,12 +139,20 @@ public class Tile {
         this.hardness = hardness;
     }
     
-    public void setUseDefaultItem(boolean useDefaultItem) {
-        this.useDefaultItem = useDefaultItem;
+    public final Item getRegisterItem() {
+        if (this.itemTile == null) {
+            this.itemTile = createItem();
+            return this.itemTile;
+        }
+        return null;
     }
     
-    public boolean isUseDefaultItem() {
-        return useDefaultItem;
+    protected Item createItem() {
+        return new ItemTile(this);
+    }
+    
+    public Item getItemTile() {
+        return itemTile;
     }
     
     public boolean hasTileEntity() {

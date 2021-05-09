@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.core.CoreResources.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -51,6 +52,8 @@ public class PlayerInputSystem extends IteratingSystem {
         
         @Override
         public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+            ItemStack s = new ItemStack(tile.getItemTile(), 1);
+            world.dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2f, ty + 0.5f - Item.WORLD_SIZE / 2f);
         }
         
         @Override
@@ -157,7 +160,7 @@ public class PlayerInputSystem extends IteratingSystem {
             if (!used) {
                 Tile clicked = world.getTile(tx, ty, TileLayer.Front);
                 //onTileUse
-                ItemStack cp = stack.cpy();
+                ItemStack cp = stack != null ? stack.cpy() : null;
                 used = clicked.onTileUse(player, world, cp, tx, ty);
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }

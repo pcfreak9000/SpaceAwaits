@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
@@ -32,11 +31,13 @@ public class PlayerContactListener implements IContactListener {
     }
     
     @Override
-    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold, UnitConversion conv, World world) {
+    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold, UnitConversion conv,
+            World world) {
     }
     
     @Override
-    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv, World world) {
+    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv,
+            World world) {
         Player player = PLAYER_COMP_MAPPER.get(owner.getEntity()).player;
         if (other.isEntity()) {
             Entity ent = other.getEntity();
@@ -45,7 +46,6 @@ public class PlayerContactListener implements IContactListener {
                 if (iscomp.stack != null) {
                     iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
                     if (iscomp.stack == null) {
-                        Logger.getLogger(getClass()).info("Despawning item entity");
                         world.despawnEntity(ent);
                     }
                 }

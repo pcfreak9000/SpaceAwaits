@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
@@ -14,7 +15,7 @@ import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
 public class ItemEntityFactory implements WorldEntityFactory {
     @Override
     public Entity createEntity() {
-        Entity e = new Entity();
+        Entity e = new EntityImproved();
         e.add(new ItemStackComponent());
         e.add(new ChunkMarkerComponent());
         e.add(new SerializeEntityComponent(this));

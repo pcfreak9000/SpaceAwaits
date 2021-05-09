@@ -27,6 +27,8 @@ public class ItemGun extends Item {
         
         @Override
         public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+            ItemStack s = new ItemStack(tile.getItemTile(), 1);
+            world.dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2f, ty + 0.5f - Item.WORLD_SIZE / 2f);
         }
         
         @Override

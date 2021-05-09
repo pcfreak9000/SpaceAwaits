@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
@@ -22,8 +21,9 @@ public class GameRegistry<T> {
         @Override
         public GameRegistry<Tile> register(String name, Tile data) {
             super.register(name, data);
-            if(data.isUseDefaultItem()) {
-                ITEM_REGISTRY.register(name, new ItemTile(data));
+            Item item = data.getRegisterItem();
+            if (item != null) {
+                ITEM_REGISTRY.register(name, item);
             }
             return this;
         };
