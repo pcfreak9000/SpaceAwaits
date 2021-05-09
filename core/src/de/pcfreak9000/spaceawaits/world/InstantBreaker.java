@@ -25,7 +25,7 @@ public class InstantBreaker implements ITileBreaker {
     }
     
     @Override
-    public void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
+    public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
             RandomXS128 random) {
         //do nothing
     }

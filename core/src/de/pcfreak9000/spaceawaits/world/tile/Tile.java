@@ -161,6 +161,14 @@ public class Tile {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
+    public void onTileBreak(int tx, int ty, TileLayer layer, World world) {
+        
+    }
+    
+    public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
+        
+    }
+    
     public boolean hasTileEntity() {
         return false;
     }

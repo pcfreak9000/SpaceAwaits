@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-public class BreakTile {
+public class BreakTileProgress {
     
     private float progress;
     private final int tx;
@@ -12,7 +12,7 @@ public class BreakTile {
     private final TileLayer layer;
     private float last;
     
-    public BreakTile(int tx, int ty, TileLayer layer) {
+    public BreakTileProgress(int tx, int ty, TileLayer layer) {
         this.tx = tx;
         this.ty = ty;
         this.layer = layer;
@@ -52,8 +52,8 @@ public class BreakTile {
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BreakTile) {
-            BreakTile other = (BreakTile) obj;
+        if (obj instanceof BreakTileProgress) {
+            BreakTileProgress other = (BreakTileProgress) obj;
             return other.tx == tx && other.ty == ty && other.layer == layer;
         }
         return false;

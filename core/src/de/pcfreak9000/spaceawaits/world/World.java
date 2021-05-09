@@ -40,7 +40,7 @@ public abstract class World {
     private AmbientLightProvider ambientLightProvider;
     
     protected final Engine ecsEngine;
-    protected final LongMap<BreakTile> breakingTiles = new LongMap<>();
+    protected final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     
     //Used for random item drops etc, not terrain gen etc
     protected final RandomXS128 worldRandom;
@@ -105,6 +105,8 @@ public abstract class World {
             if (c != null) {
                 Tile old = c.setTile(tx, ty, layer, tile);
                 breakingTiles.remove(IntCoords.toLong(tx, ty));
+                old.onTileBreak(tx, ty, layer, this);
+                tile.onTilePlaced(tx, ty, layer, this);
                 notifyNeighbours(tile, old, tx, ty, layer);
                 return old;
             }
@@ -141,6 +143,7 @@ public abstract class World {
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
+        //TODO check current occupation
         if (tile.isSolid()) {
             queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
             if (entCheck.ud.isEntity()) {
@@ -163,9 +166,9 @@ public abstract class World {
             return -1f;
         }
         long l = IntCoords.toLong(tx, ty);
-        BreakTile t = breakingTiles.get(l);
+        BreakTileProgress t = breakingTiles.get(l);
         if (t == null || t.getLayer() != layer) {
-            t = new BreakTile(tx, ty, layer);
+            t = new BreakTileProgress(tx, ty, layer);
             breakingTiles.put(l, t);
         }
         float speedActual = breaker.getSpeed() / tile.getHardness();
@@ -173,7 +176,7 @@ public abstract class World {
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
             tile.addDrops(tx, ty, layer, drops, this, worldRandom);
-            breaker.onBreak(tx, ty, layer, tile, this, drops, worldRandom);
+            breaker.onTileBreak(tx, ty, layer, tile, this, drops, worldRandom);
             setTile(tx, ty, layer, Tile.EMPTY);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
@@ -218,6 +221,7 @@ public abstract class World {
             }
         } else {
             //Hmmm...
+            unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
     }
@@ -235,6 +239,7 @@ public abstract class World {
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
             c.removeEntity(entity);
         }
+        unchunkProvider.get().removeEntity(entity);
         ecsEngine.removeEntity(entity);
     }
     

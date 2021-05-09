@@ -10,7 +10,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreResources;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.BreakTile;
+import de.pcfreak9000.spaceawaits.world.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakingTilesComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -47,7 +47,7 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     @Override
     public void render(Entity e, float dt) {
         BreakingTilesComponent c = MAPPER.get(e);
-        for (BreakTile t : c.breaktiles.values()) {
+        for (BreakTileProgress t : c.breaktiles.values()) {
             int tx = t.getX();
             int ty = t.getY();
             if (!cam.frustum.boundsInFrustum(tx + 0.5f, ty + 0.5f, 0, 0.5f, 0.5f, 0)) {

@@ -7,7 +7,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import de.pcfreak9000.spaceawaits.world.BreakTile;
+import de.pcfreak9000.spaceawaits.world.BreakTileProgress;
 
 public class BreakingTileSystem extends IteratingSystem {
     private static final ComponentMapper<BreakingTilesComponent> MAPPER = ComponentMapper
@@ -19,9 +19,9 @@ public class BreakingTileSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        Iterator<BreakTile> it = MAPPER.get(entity).breaktiles.values().iterator();
+        Iterator<BreakTileProgress> it = MAPPER.get(entity).breaktiles.values().iterator();
         while (it.hasNext()) {
-            BreakTile t = it.next();
+            BreakTileProgress t = it.next();
             if (t.getLast() == t.getProgress()) {
                 it.remove();
             } else {

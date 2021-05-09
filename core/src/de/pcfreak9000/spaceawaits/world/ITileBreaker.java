@@ -17,5 +17,5 @@ public interface ITileBreaker {
         return false;
     }
     
-    void onBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops, RandomXS128 random);
+    void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops, RandomXS128 random);
 }
