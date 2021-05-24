@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
@@ -33,6 +34,7 @@ public class CoreRes {
     public static final ComponentMapper<TransformComponent> TRANSFORM_M = ComponentMapper
             .getFor(TransformComponent.class);
     
+    public static final BitmapFont FONT = new BitmapFont();//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");

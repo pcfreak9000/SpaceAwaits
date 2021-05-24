@@ -72,6 +72,16 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
+        if (InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory)) {
+            if (worldRend.isGuiContainerOpen()) {
+                worldRend.setGuiCurrent(null);
+            } else {
+                player.openInventory();
+            }
+        }
+        if (worldRend.isGuiContainerOpen()) {
+            return;
+        }
         Entity entity = this.player.getPlayerEntity();
         PlayerInputComponent play = mapper.get(entity);
         float vy = 0;
@@ -83,19 +93,7 @@ public class PlayerInputSystem extends EntitySystem {
         boolean left = InptMgr.isPressed(EnumDefInputIds.Left);
         boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
-        boolean explode = InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles);
-        //        world.raycastTiles(new IRaycastTileCallback() {
-        //            
-        //            @Override
-        //            public boolean reportRayTile(Tile tile, int tx, int ty) {
-        //                if (tile != Tile.EMPTY) {
-        //                    System.out.println(tile);
-        //                }
-        //                return tile == Tile.EMPTY;
-        //            }
-        //        }, transform.x + 1, transform.y + 2, mouse.x, mouse.y, TileLayer.Front);
-        int hotbarChecked = checkSelectHotbarSlot(play.player.getInventory().getSelectedSlot());
-        play.player.getInventory().setSelectedSlot(hotbarChecked);
+        
         if (up) {
             vy += play.maxYv * 5;
         }
@@ -110,15 +108,13 @@ public class PlayerInputSystem extends EntitySystem {
         if (right) {
             vx += play.maxXv * 5;
         }
-        physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
-        if (InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory)) {
-            if (worldRend.isGuiContainerOpen()) {
-                worldRend.setGuiCurrent(null);
-            } else {
-                player.openInventory();
-            }
-        }
-        if (explode) {
+        PhysicsComponent pc = physicsMapper.get(entity);
+        pc.body.applyAccelerationW(vx * 3, vy * 3);
+        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
+        
+        int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
+        player.getInventory().setSelectedSlot(hotbarChecked);
+        if (InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles)) {
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
             final int rad = 3;
@@ -139,7 +135,6 @@ public class PlayerInputSystem extends EntitySystem {
         if (InptMgr.isPressed(EnumDefInputIds.BreakAttack)) {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
-            Player player = play.player;
             ItemStack stack = player.getInventory().getSelectedStack();
             boolean used = false;
             if (stack != null && stack.getItem() != null) {
@@ -156,7 +151,6 @@ public class PlayerInputSystem extends EntitySystem {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             //get current item
-            Player player = play.player;
             boolean used = false;
             ItemStack stack = player.getInventory().getSelectedStack();
             if (player.getInventory().getSelectedStack() != null
@@ -176,8 +170,6 @@ public class PlayerInputSystem extends EntitySystem {
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
         }
-        PhysicsComponent pc = physicsMapper.get(entity);
-        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
     }
     
     private int checkSelectHotbarSlot(int current) {

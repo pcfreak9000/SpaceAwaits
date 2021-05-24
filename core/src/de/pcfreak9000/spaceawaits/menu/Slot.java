@@ -28,13 +28,14 @@ public class Slot extends Actor {
         batch.setColor(getColor());
         batch.draw(CoreRes.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
-        if (itemstack != null) {
+        if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();
             ITextureProvider t = i.getTextureProvider();
             float wt = getWidth() * 0.1f;
             float ht = getHeight() * 0.1f;
             batch.setColor(i.color());
             batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.8f, getHeight() * 0.8f);
+            CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
             //render item and item count
         }
         batch.setColor(old);

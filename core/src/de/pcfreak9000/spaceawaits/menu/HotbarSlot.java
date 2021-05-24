@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.menu;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
@@ -13,7 +12,6 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 public class HotbarSlot extends Slot {
     
     private static final float UNSELECTED_BIAS = 0.6f;
-    private static final BitmapFont font = new BitmapFont();//TODO retrieve font from coreresources or something
     
     public HotbarSlot(InventoryPlayer inv, int index) {
         super(inv, index);
@@ -35,7 +33,7 @@ public class HotbarSlot extends Slot {
             Color ic = i.color();
             batch.setColor(ic.r * bias, ic.g * bias, ic.b * bias, ic.a);
             batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.8f, getHeight() * 0.8f);
-            font.draw(batch, itemstack.getCount()+"", getX(), getY()+getHeight());
+            CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
             //render item and item count
         }
         batch.setColor(old);

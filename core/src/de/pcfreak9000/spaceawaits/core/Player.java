@@ -57,7 +57,7 @@ public class Player implements NBTSerializable {
     }
     
     public void openInventory() {
-        this.openContainer(new ContainerInventoryPlayer(this.inventory));
+        this.openContainer(new ContainerInventoryPlayer(this.gameRenderer.getGuiHelper(), this.inventory));
     }
     
     public GameRenderer getRenderer() {//Not sure if i want to expose this here

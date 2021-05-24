@@ -41,15 +41,15 @@ public class GameRenderer extends ScreenAdapter {
         setWorldView();
     }
     
-    public void setGuiCurrent(GuiContainer guicont) {//?????????
-        if (guicont == null && this.guiContainerCurrent != null) {
+    //Always takes a new GuiContainer. Is that the way to go?
+    public void setGuiCurrent(GuiContainer guicont) {
+        if (guicont == null && isGuiContainerOpen()) {
             //Possibly closing logic first
+            this.guiContainerCurrent.dispose();
             this.guiContainerCurrent = null;
-            InptMgr.setLocked(false, null);
-        } else if (this.guiContainerCurrent == null) {
+        } else if (!isGuiContainerOpen()) {
             this.guiContainerCurrent = guicont;
             //Possibly opening logic
-            InptMgr.setLocked(true, null);
         }
     }
     
@@ -72,6 +72,10 @@ public class GameRenderer extends ScreenAdapter {
     
     public Vector2 getMouseWorldPos() {
         return mousePosVec;
+    }
+    
+    public GuiHelper getGuiHelper() {
+        return guiHelper;
     }
     
     public void setAdditiveBlending() {
@@ -138,4 +142,5 @@ public class GameRenderer extends ScreenAdapter {
         this.guiHelper.dispose();
         this.spriteBatch.dispose();
     }
+    
 }
