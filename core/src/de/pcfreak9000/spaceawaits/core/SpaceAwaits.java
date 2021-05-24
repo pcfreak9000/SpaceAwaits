@@ -118,6 +118,7 @@ public class SpaceAwaits extends Game {
         super.dispose();
         this.screenManager.dispose();
         this.assetManager.dispose();
+        CoreRes.dispose();
         LOGGER.info("Exit.");
     }
     

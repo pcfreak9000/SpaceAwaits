@@ -46,9 +46,11 @@ public class GameRenderer extends ScreenAdapter {
         if (guicont == null && isGuiContainerOpen()) {
             //Possibly closing logic first
             this.guiContainerCurrent.dispose();
+            InptMgr.multiplex(null);
             this.guiContainerCurrent = null;
         } else if (!isGuiContainerOpen()) {
             this.guiContainerCurrent = guicont;
+            InptMgr.multiplex(guicont.getStage());
             //Possibly opening logic
         }
     }
@@ -108,16 +110,17 @@ public class GameRenderer extends ScreenAdapter {
     
     @Override
     public void render(float delta) {
+        boolean exit = this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumDefInputIds.Esc);
         ScreenUtils.clear(0.05f, 0.05f, 0.05f, 1);
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         viewCurrent.updateAndRenderContent(delta);
         if (this.guiContainerCurrent != null) {
-            guiHelper.actAndDraw(this.guiContainerCurrent.getStage(), delta);
+            this.guiContainerCurrent.actAndDraw(delta);
         }
         fps.log();
-        if (this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumDefInputIds.Esc)) {
+        if (exit) {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();
         }

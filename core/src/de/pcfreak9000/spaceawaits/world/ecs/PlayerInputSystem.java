@@ -73,9 +73,7 @@ public class PlayerInputSystem extends EntitySystem {
             return;
         }
         if (InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory)) {
-            if (worldRend.isGuiContainerOpen()) {
-                worldRend.setGuiCurrent(null);
-            } else {
+            if (!worldRend.isGuiContainerOpen()) {
                 player.openInventory();
             }
         }

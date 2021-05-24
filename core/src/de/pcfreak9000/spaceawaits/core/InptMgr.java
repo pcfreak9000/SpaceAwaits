@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import java.util.Objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.ObjectMap;
 
@@ -79,6 +80,15 @@ public class InptMgr {
         if (locked) {
             Gdx.input.setInputProcessor(other);
             clear();
+        } else {
+            Gdx.input.setInputProcessor(myProc);
+        }
+    }
+    
+    public static void multiplex(InputProcessor other) {
+        if (other != null) {
+            InputMultiplexer m = new InputMultiplexer(other, myProc);
+            Gdx.input.setInputProcessor(m);
         } else {
             Gdx.input.setInputProcessor(myProc);
         }

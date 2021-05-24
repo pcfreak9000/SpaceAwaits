@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.menu;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
@@ -16,9 +17,13 @@ public class Slot extends Actor {
     protected final IInventory inventoryBacking;
     protected final int slotIndex;
     
+    private ClickListener listener;
+    
     public Slot(IInventory invBacking, int index) {
         this.inventoryBacking = invBacking;
         this.slotIndex = index;
+        this.listener = new ClickListener();
+        addListener(listener);
         setSize(SIZE, SIZE);
     }
     
@@ -37,6 +42,10 @@ public class Slot extends Actor {
             batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.8f, getHeight() * 0.8f);
             CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
             //render item and item count
+        }
+        if (listener.isOver()) {
+            batch.setColor(1, 1, 1, 0.2f);
+            batch.draw(CoreRes.WHITE, getX(), getY(), getWidth(), getHeight());
         }
         batch.setColor(old);
     }

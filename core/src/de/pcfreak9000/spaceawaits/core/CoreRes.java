@@ -3,6 +3,10 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import de.omnikryptec.util.Logger;
@@ -31,11 +35,21 @@ public class CoreRes {
         InptMgr.register(EnumDefInputIds.ToggleInventory, Keys.E, false);
     }
     
+    static {
+        Pixmap p = new Pixmap(1, 1, Format.RGB565);
+        p.setColor(Color.WHITE);
+        p.drawPixel(0, 0);
+        WHITE = new Texture(p);
+        p.dispose();
+    }
+    
     public static final ComponentMapper<TransformComponent> TRANSFORM_M = ComponentMapper
             .getFor(TransformComponent.class);
     
     public static final BitmapFont FONT = new BitmapFont();//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();
+    
+    public static final Texture WHITE;
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");
@@ -49,4 +63,9 @@ public class CoreRes {
             .register("player", new PlayerEntityFactory()).get("player");//Meh...
     public static final WorldEntityFactory ITEM_FACTORY = GameRegistry.WORLD_ENTITY_REGISTRY
             .register("item", new ItemEntityFactory()).get("item");
+    
+    public static void dispose() {
+        FONT.dispose();
+        WHITE.dispose();
+    }
 }
