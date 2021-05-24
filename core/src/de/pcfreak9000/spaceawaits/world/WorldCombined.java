@@ -35,6 +35,7 @@ public class WorldCombined extends World {
     public WorldCombined(WorldPrimer primer, IWorldSave save, long seed, GameRenderer renderer) {
         super(primer, seed);
         this.gameRenderer = renderer;
+        setupECS(primer, ecsEngine);
         ((ChunkProvider) chunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).load();
@@ -58,8 +59,7 @@ public class WorldCombined extends World {
         return new UnchunkProvider(this, primer.getUnchunkGenerator());
     }
     
-    @Override
-    protected void finishSetup(WorldPrimer primer, Engine ecs) {
+    private void setupECS(WorldPrimer primer, Engine ecs) {
         this.playerInput = new PlayerInputSystem(this, this.gameRenderer);
         ecs.addSystem(playerInput);
         ecs.addSystem(new TickChunkSystem());

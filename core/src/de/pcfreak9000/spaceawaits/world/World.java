@@ -57,11 +57,11 @@ public abstract class World {
         
         this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
-        //setup
-        finishSetup(primer, ecsEngine);
+        //        //setup
+        //        finishSetup(primer, ecsEngine);
     }
     
-    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
+    //    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
     
     protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
     
