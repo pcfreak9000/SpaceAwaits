@@ -29,5 +29,10 @@ public class InstantBreaker implements ITileBreaker {
             RandomXS128 random) {
         //do nothing
     }
+
+    @Override
+    public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+        return true;
+    }
     
 }

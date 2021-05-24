@@ -36,12 +36,12 @@ public class LightCalculator extends IteratingSystem {
     
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
-        resize(ev.renderer.getCamera().viewportWidth, ev.renderer.getCamera().viewportHeight);
+        resize(ev.renderer.getView().getCamera().viewportWidth, ev.renderer.getView().getCamera().viewportHeight);
     }
     
     @EventSubscription
     public void event(WorldEvents.SetWorldEvent ev) {
-        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
         resize(cam.viewportWidth, cam.viewportHeight);
     }
     
@@ -71,7 +71,7 @@ public class LightCalculator extends IteratingSystem {
     
     @Override
     public void update(float deltaTime) {
-        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
         int wi = Mathf.ceili(cam.viewportWidth);
@@ -91,12 +91,12 @@ public class LightCalculator extends IteratingSystem {
             e.printStackTrace();
         }
         //}
-        SpriteBatch batch = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch();
+        SpriteBatch batch = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch();
         batch.setColor(1, 1, 1, 1);//TODO consider some form of batch resetting?
         this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);
-            SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setAdditiveBlending();
+            SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setAdditiveBlending();
             batch.begin();
             if (texture != null) {
                 batch.draw(texture, xi, yi, gwi, ghi);
@@ -104,14 +104,14 @@ public class LightCalculator extends IteratingSystem {
             batch.end();
         }
         this.lightsBuffer.end();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().applyViewport();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setMultiplicativeBlending();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().applyViewport();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setMultiplicativeBlending();
         batch.begin();
         batch.draw(this.lightsBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.lightsBuffer.getWidth(), this.lightsBuffer.getHeight(), false, true);
         batch.end();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setDefaultBlending();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setDefaultBlending();
     }
     
     @Override

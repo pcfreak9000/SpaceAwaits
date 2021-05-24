@@ -3,7 +3,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
-import de.pcfreak9000.spaceawaits.core.CoreResources;
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.mod.Instance;
@@ -84,7 +84,7 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background(CoreResources.SPACE_BACKGROUND, 1920 / 16 * 16f / 9, 1920 / 16);
+        Background back = new Background(CoreRes.SPACE_BACKGROUND, 1920 / 16 * 16f / 9, 1920 / 16);
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         
         GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());

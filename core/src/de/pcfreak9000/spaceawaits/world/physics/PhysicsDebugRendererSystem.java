@@ -27,7 +27,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     
     @EventSubscription
     private void ev(WorldEvents.SetWorldEvent ev) {
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
     }
     
     @EventSubscription

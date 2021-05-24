@@ -1,17 +1,18 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.menu.GuiContainer;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.render.ContainerInventoryPlayer;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 /**
  * Information about the player: level, ships, inventory, etc. Also the player
@@ -24,14 +25,14 @@ public class Player implements NBTSerializable {
     
     private final Entity playerEntity;
     
+    private GameRenderer gameRenderer;
+    
     private InventoryPlayer inventory;
     
-    private Vector2 position;
-    
-    public Player() {
-        this.playerEntity = CoreResources.PLAYER_FACTORY.createEntity();
+    public Player(GameRenderer rend) {
+        this.gameRenderer = rend;
+        this.playerEntity = CoreRes.PLAYER_FACTORY.createEntity();
         this.playerEntity.getComponent(PlayerInputComponent.class).player = this;
-        this.position = this.playerEntity.getComponent(TransformComponent.class).position;
         this.inventory = new InventoryPlayer();
         this.inventory.setSlotContent(0, new ItemStack(GameRegistry.ITEM_REGISTRY.get("grass"), 128));
         this.inventory.setSlotContent(1, new ItemStack(GameRegistry.ITEM_REGISTRY.get("stone"), 128));
@@ -43,20 +44,24 @@ public class Player implements NBTSerializable {
         //this.inventory.setSlotContent(7, new ItemStack(GameRegistry.ITEM_REGISTRY.get("bottom"), 10));
     }
     
-    public float getX() {
-        return position.x;
-    }
-    
-    public float getY() {
-        return position.y;
-    }
-    
     public Entity getPlayerEntity() {
         return this.playerEntity;
     }
     
     public InventoryPlayer getInventory() {
         return this.inventory;
+    }
+    
+    public void openContainer(GuiContainer container) {
+        this.gameRenderer.setGuiCurrent(container);
+    }
+    
+    public void openInventory() {
+        this.openContainer(new ContainerInventoryPlayer(this.inventory));
+    }
+    
+    public GameRenderer getRenderer() {//Not sure if i want to expose this here
+        return gameRenderer;
     }
     
     @Override

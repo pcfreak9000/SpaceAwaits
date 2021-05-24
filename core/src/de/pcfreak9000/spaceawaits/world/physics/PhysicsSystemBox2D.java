@@ -38,10 +38,8 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         super(Family.all(PhysicsComponent.class).get());
         this.box2dWorld = new World(new Vector2(0, -9.81f), true);
         this.box2dWorld.setAutoClearForces(false);
-        //TODO Userdata: info for raycasting and ContactListener
         this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);
-        this.box2dWorld.QueryAABB(null, PIXELS_PER_METER, deltaAcc, STEPSIZE_SECONDS, PIXELS_PER_METER);
     }
     
     public World getB2DWorld() {

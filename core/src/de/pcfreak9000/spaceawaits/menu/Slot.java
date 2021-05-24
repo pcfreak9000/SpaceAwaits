@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import de.pcfreak9000.spaceawaits.core.CoreResources;
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.Item;
@@ -26,7 +26,7 @@ public class Slot extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         Color old = batch.getColor();
         batch.setColor(getColor());
-        batch.draw(CoreResources.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
+        batch.draw(CoreRes.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
         if (itemstack != null) {
             Item i = itemstack.getItem();

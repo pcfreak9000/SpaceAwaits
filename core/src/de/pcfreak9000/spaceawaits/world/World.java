@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.CoreResources;
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -158,11 +158,20 @@ public abstract class World {
         //TODO allow null tilebreaker?
         //First check if this is allowed
         Tile tile = getTile(tx, ty, layer);
-        if (!tile.canBreak() && !breaker.ignoreCanBreak()) {
+        if (layer == TileLayer.Back) {
+            Tile front = getTile(tx, tx, TileLayer.Front);
+            if (front.isSolid()) {
+                return -1f;
+            }
+        }
+        if (!tile.canBreak() && !breaker.ignoreTileCanBreak()) {
             return -1f;
         }
         if (tile.getMaterialLevel() > breaker.getMaterialLevel()
                 && breaker.getMaterialLevel() != Float.POSITIVE_INFINITY) {
+            return -1f;
+        }
+        if (!breaker.canBreak(tx, ty, layer, tile, this)) {
             return -1f;
         }
         long l = IntCoords.toLong(tx, ty);
@@ -201,7 +210,7 @@ public abstract class World {
             .getFor(ItemStackComponent.class);
     
     public void dropItemStack(ItemStack stack, float x, float y) {
-        Entity e = CoreResources.ITEM_FACTORY.createEntity();
+        Entity e = CoreRes.ITEM_FACTORY.createEntity();
         ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
         TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
         spawnEntity(e);

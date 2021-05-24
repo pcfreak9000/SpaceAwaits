@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 
@@ -8,15 +9,16 @@ import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
-public class CoreResources {
+public class CoreRes {
     
     public static enum EnumDefInputIds {
-        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles;
+        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory;
     }
     
     public static final void init() {
-        Logger.getLogger(CoreResources.class).info("Creating core resource hooks");
+        Logger.getLogger(CoreRes.class).info("Creating core resource hooks");
         InptMgr.register(EnumDefInputIds.Left, Keys.A, false);
         InptMgr.register(EnumDefInputIds.Right, Keys.D, false);
         InptMgr.register(EnumDefInputIds.Up, new ButtonKey(Keys.W, false), new ButtonKey(Keys.SPACE, false));
@@ -25,7 +27,13 @@ public class CoreResources {
         InptMgr.register(EnumDefInputIds.Use, Buttons.RIGHT, true);
         InptMgr.register(EnumDefInputIds.BreakAttack, Buttons.LEFT, true);
         InptMgr.register(EnumDefInputIds.TestExplodeTiles, Buttons.MIDDLE, true);
+        InptMgr.register(EnumDefInputIds.ToggleInventory, Keys.E, false);
     }
+    
+    public static final ComponentMapper<TransformComponent> TRANSFORM_M = ComponentMapper
+            .getFor(TransformComponent.class);
+    
+    public static final SkinProvider SKIN = new SkinProvider();
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");

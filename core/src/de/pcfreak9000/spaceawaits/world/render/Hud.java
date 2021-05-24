@@ -4,24 +4,24 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
+import de.pcfreak9000.spaceawaits.menu.GuiHelper;
 import de.pcfreak9000.spaceawaits.menu.HotbarSlot;
-import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 
 public class Hud {
     
     public Stage stage;
     
-    private ScreenManager gsm;
+    private GuiHelper guiHelper;
     private Player player;
     
     private HotbarSlot[] slots;
     
-    public Hud(ScreenManager gsm) {
-        this.gsm = gsm;
-        this.stage = gsm.createStage();
-        
+    public Hud(GuiHelper guiHelper) {
+        this.guiHelper = guiHelper;
+        this.stage = guiHelper.createStage();
     }
     
     public void setPlayer(Player player) {
@@ -36,11 +36,12 @@ public class Hud {
         for (int i = 0; i < slots.length; i++) {
             slots[i] = new HotbarSlot(inv, i);
         }
-        Table table = new Table(gsm.getSkin());
+        Table table = new Table(CoreRes.SKIN.getSkin());
         table.align(Align.top);
         table.add(createHotbarSlotsTable()).pad(10);
-        table.setWidth(stage.getWidth());
-        table.setHeight(stage.getHeight());
+        table.setWidth(666.6666f);
+        table.setHeight(500f);
+        this.stage.clear();//For now, fixes a bug. also clears listeners
         this.stage.addActor(table);
     }
     
@@ -53,7 +54,7 @@ public class Hud {
     }
     
     public void actAndDraw(float dt) {
-        this.gsm.actAndDraw(stage, dt);
+        this.guiHelper.actAndDraw(stage, dt);
     }
     
     public void dispose() {

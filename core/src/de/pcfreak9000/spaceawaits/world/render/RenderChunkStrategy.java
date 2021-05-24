@@ -40,7 +40,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     
     @EventSubscription
     public void settwevent(WorldEvents.SetWorldEvent ev) {
-        camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
     }
     
     @EventSubscription
@@ -83,7 +83,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(
-                SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera().combined);
+                SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera().combined);
     }
     
     @Override

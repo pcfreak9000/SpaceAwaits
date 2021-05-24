@@ -37,12 +37,12 @@ public class RenderItemStrategy implements IRenderStrategy {
         SpaceAwaits.BUS.register(this);
     }
     
-    private WorldRenderer render;
+    private GameRenderer render;
     private SpriteBatch batch;
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();
+        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer();
         this.batch = render.getSpriteBatch();
     }
     

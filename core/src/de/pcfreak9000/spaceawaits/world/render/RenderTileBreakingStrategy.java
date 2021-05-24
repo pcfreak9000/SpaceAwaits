@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.CoreResources;
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -30,8 +30,8 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.b = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch();
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        this.b = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch();
+        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
     }
     
     @Override
@@ -53,11 +53,11 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
             if (!cam.frustum.boundsInFrustum(tx + 0.5f, ty + 0.5f, 0, 0.5f, 0.5f, 0)) {
                 return;
             }
-            int len = CoreResources.BREAK_OVERLAY.length;
+            int len = CoreRes.BREAK_OVERLAY.length;
             int index = Mathf.floori(Mathf.clamp(t.getProgress(), 0, 0.9999f) * len);
             float f = t.getLayer() == TileLayer.Front ? 1 : 0.8f;
             b.setColor(f, f, f, 1);
-            b.draw(CoreResources.BREAK_OVERLAY[index].getRegion(), tx, ty, 1f, 1f);
+            b.draw(CoreRes.BREAK_OVERLAY[index].getRegion(), tx, ty, 1f, 1f);
         }
     }
     

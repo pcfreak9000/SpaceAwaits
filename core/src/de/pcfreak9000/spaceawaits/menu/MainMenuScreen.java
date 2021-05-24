@@ -7,29 +7,30 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class MainMenuScreen extends MenuScreen {
     
     private Table table = new Table();
     
-    public MainMenuScreen(ScreenManager g) {
-        super(g);
-        TextButton playButton = new TextButton("Play", g.getSkin());
+    public MainMenuScreen(ScreenManager g, GuiHelper guiHelper) {
+        super(guiHelper);
+        TextButton playButton = new TextButton("Play", CoreRes.SKIN.getSkin());
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 g.setSelectSaveScreen();
             }
         });
-        TextButton exitButton = new TextButton("Quit", g.getSkin());
+        TextButton exitButton = new TextButton("Quit", CoreRes.SKIN.getSkin());
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 SpaceAwaits.getSpaceAwaits().exit();
             }
         });
-        Label label = new Label(SpaceAwaits.NAME, g.getSkin());
+        Label label = new Label(SpaceAwaits.NAME, CoreRes.SKIN.getSkin());
         label.setFontScale(4);
         table.setWidth(this.stage.getWidth());
         table.setHeight(this.stage.getHeight());

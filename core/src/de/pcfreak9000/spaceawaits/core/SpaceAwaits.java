@@ -43,7 +43,7 @@ public class SpaceAwaits extends Game {
     private AssetManager assetManager;
     
     private GameManager gameManager; //Is this the correct place for that?
-        
+    
     private ScreenManager screenManager;
     
     public SpaceAwaits() {
@@ -59,19 +59,17 @@ public class SpaceAwaits extends Game {
         Logger.setMinLogType(DEBUG ? LogType.Debug : LogType.Info);
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
         
-        //Instantiate stuff
+        //Instantiate infrastructure
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();
         AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
-        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()));
-        this.screenManager = new ScreenManager(this);
         
         //Load mods and resources
         preloadResources();
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
-        CoreResources.init();
+        CoreRes.init();
         LOGGER.info("Init...");
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
@@ -81,6 +79,10 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
+        //Instantiate game stuff
+        this.screenManager = new ScreenManager(this);
+        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()),
+                this.screenManager.getGameRenderer());
         
         this.screenManager.setMainMenuScreen();
     }

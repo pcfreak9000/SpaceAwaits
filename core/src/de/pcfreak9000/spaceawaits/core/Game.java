@@ -17,20 +17,23 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class Game {
     
     //switch worlds etc
     
     private ISave mySave;
+    private GameRenderer gameRenderer;
     
     private Player player;
     private String uuidPlayerLocation;
     private World world;
     
-    public Game(ISave save) {
+    public Game(ISave save, GameRenderer renderer) {
         this.mySave = save;
-        this.player = new Player();
+        this.gameRenderer = renderer;
+        this.player = new Player(renderer);
         this.readPlayer();
     }
     
@@ -63,12 +66,12 @@ public class Game {
             WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
             WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            World world = new WorldCombined(worldPrimer, save, worldSeed);
+            World world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
             this.uuidPlayerLocation = uuid;
             this.world = world;
             world.joinWorld(player);
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
-            SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(world);
+            SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(world);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,7 +92,7 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().setWorld(null);
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(null);
         this.world.unloadAll();
         this.writePlayer();
     }

@@ -2,51 +2,46 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.CoreResources.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.WorldRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-public class PlayerInputSystem extends IteratingSystem {
-    
-    private final World world;
-    
-    public PlayerInputSystem(World world) {
-        super(Family.all(PlayerInputComponent.class, TransformComponent.class, PhysicsComponent.class).get());
-        this.world = world;
-        SpaceAwaits.BUS.register(this);
-    }
+public class PlayerInputSystem extends EntitySystem {
     
     private static final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper
             .getFor(PlayerInputComponent.class);
     private static final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper
             .getFor(PhysicsComponent.class);
-    private static final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
     
-    private WorldRenderer worldRend;
+    private final World world;
+    private final GameRenderer worldRend;
     
-    @EventSubscription
-    public void settwevent(WorldEvents.SetWorldEvent ev) {
-        this.worldRend = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();//FIXME ffs
+    private Player player;
+    
+    public PlayerInputSystem(World world, GameRenderer renderer) {
+        this.world = world;
+        this.worldRend = renderer;
+        SpaceAwaits.BUS.register(this);
+    }
+    
+    public void setPlayer(Player player) {
+        this.player = player;
     }
     
     private final ITileBreaker br = new ITileBreaker() {
@@ -65,10 +60,19 @@ public class PlayerInputSystem extends IteratingSystem {
         public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
                 RandomXS128 random) {
         }
+        
+        @Override
+        public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+            return true;
+        }
     };
     
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    public void update(float deltaTime) {
+        if (this.player == null) {
+            return;
+        }
+        Entity entity = this.player.getPlayerEntity();
         PlayerInputComponent play = mapper.get(entity);
         float vy = 0;
         float vx = 0;
@@ -107,6 +111,13 @@ public class PlayerInputSystem extends IteratingSystem {
             vx += play.maxXv * 5;
         }
         physicsMapper.get(entity).body.applyAccelerationW(vx * 3, vy * 3);
+        if (InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory)) {
+            if (worldRend.isGuiContainerOpen()) {
+                worldRend.setGuiCurrent(null);
+            } else {
+                player.openInventory();
+            }
+        }
         if (explode) {
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);

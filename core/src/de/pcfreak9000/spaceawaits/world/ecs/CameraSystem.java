@@ -32,7 +32,7 @@ public class CameraSystem extends IteratingSystem {
         PlayerInputComponent pc = playerMapper.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
-        Camera camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getCamera();
+        Camera camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
         if (!DEBUG) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
@@ -40,6 +40,6 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(world.getBounds().getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().applyViewport();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().applyViewport();
     }
 }

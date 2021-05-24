@@ -16,7 +16,7 @@ public class RenderParallaxStrategy extends AbstractRenderStrategy {
             .getFor(ParallaxComponent.class);
     
     private World tileWorld;
-    private WorldRenderer render;
+    private GameRenderer render;
     
     public RenderParallaxStrategy(World world) {
         super(Family.all(ParallaxComponent.class).get());
@@ -26,29 +26,29 @@ public class RenderParallaxStrategy extends AbstractRenderStrategy {
     
     @EventSubscription
     public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer();
+        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer();
     }
     
     @Override
     public void begin() {
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch().begin();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch().begin();
     }
     
     @Override
     public void end() {
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getWorldRenderer().getSpriteBatch().end();
+        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch().end();
     }
     
     @Override
     public void render(Entity entity, float deltaTime) {
         ParallaxComponent pc = parallaxMapper.get(entity);
-        Vector3 positionState = this.render.getCamera().position;
+        Vector3 positionState = this.render.getView().getCamera().position;
         float xratio = positionState.x / (this.tileWorld.getBounds().getWidth());
         float yratio = positionState.y / (this.tileWorld.getBounds().getHeight());
-        float possibleW = pc.sprite.getWidth() - this.render.getCamera().viewportWidth;
-        float possibleH = pc.sprite.getHeight() - this.render.getCamera().viewportHeight;
-        pc.sprite.setPosition(positionState.x - this.render.getCamera().viewportWidth / 2 - xratio * possibleW,
-                positionState.y - this.render.getCamera().viewportHeight / 2 - yratio * possibleH);
+        float possibleW = pc.sprite.getWidth() - this.render.getView().getCamera().viewportWidth;
+        float possibleH = pc.sprite.getHeight() - this.render.getView().getCamera().viewportHeight;
+        pc.sprite.setPosition(positionState.x - this.render.getView().getCamera().viewportWidth / 2 - xratio * possibleW,
+                positionState.y - this.render.getView().getCamera().viewportHeight / 2 - yratio * possibleH);
         pc.action.act(pc.sprite);
         pc.sprite.draw(this.render.getSpriteBatch());
     }

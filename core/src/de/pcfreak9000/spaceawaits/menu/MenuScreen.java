@@ -9,11 +9,11 @@ public class MenuScreen extends ScreenAdapter {
     
     protected Stage stage;
     
-    private final ScreenManager screenManager;
+    private final GuiHelper guiHelper;
     
-    public MenuScreen(ScreenManager guipackage) {
-        this.screenManager = guipackage;
-        this.stage = this.screenManager.createStage();
+    public MenuScreen(GuiHelper guiHelper) {
+        this.guiHelper = guiHelper;
+        this.stage = this.guiHelper.createStage();
     }
     
     @Override
@@ -29,14 +29,14 @@ public class MenuScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 0);
-        this.screenManager.drawBackground();
-        this.screenManager.actAndDraw(stage, delta);
+        this.guiHelper.drawBackground();
+        this.guiHelper.actAndDraw(stage, delta);
     }
     
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        this.screenManager.resize(width, height);
+        this.guiHelper.resize(width, height);
     }
     
     @Override

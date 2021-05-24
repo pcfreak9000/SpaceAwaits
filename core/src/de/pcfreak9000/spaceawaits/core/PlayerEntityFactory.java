@@ -31,7 +31,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         pic.offy = sprite.getHeight() / 2f;
         RenderEntityComponent rc = new RenderEntityComponent();
         rc.sprite = sprite;
-        rc.action = new TextureSpriteAction(CoreResources.HUMAN);
+        rc.action = new TextureSpriteAction(CoreRes.HUMAN);
         e.add(rc);
         TransformComponent tc = new TransformComponent();
         tc.position.set(500 / 16, 2900 / 16);

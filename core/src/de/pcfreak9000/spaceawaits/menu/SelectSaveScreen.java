@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
 
@@ -53,19 +54,19 @@ public class SelectSaveScreen extends MenuScreen {
         }
     };
     
-    public SelectSaveScreen(ScreenManager g) {
-        super(g);
-        savesList = new List<>(g.getSkin());
-        TextButton newButton = new TextButton("New Save", g.getSkin());
+    public SelectSaveScreen(ScreenManager g, GuiHelper guiHelper) {
+        super(guiHelper);
+        savesList = new List<>(CoreRes.SKIN.getSkin());
+        TextButton newButton = new TextButton("New Save", CoreRes.SKIN.getSkin());
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                TextField nameField = new TextField("", g.getSkin());
+                TextField nameField = new TextField("", CoreRes.SKIN.getSkin());
                 nameField.setTextFieldFilter(NAME_FILTER);
                 nameField.setMessageText("Name");
-                TextField seedField = new TextField("", g.getSkin());
+                TextField seedField = new TextField("", CoreRes.SKIN.getSkin());
                 seedField.setMessageText("Seed");
-                Dialog d = new Dialog("Create new world", g.getSkin()) {
+                Dialog d = new Dialog("Create new world", CoreRes.SKIN.getSkin()) {
                     @Override
                     protected void result(Object object) {
                         if (object != null) {
@@ -74,10 +75,10 @@ public class SelectSaveScreen extends MenuScreen {
                             try {
                                 SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(name,
                                         getSeedFromInput(seeds));
-                                g.setWorldScreen();
+                                g.setGameScreen();
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                                guiHelper.showDialog("Error", "An error occured: " + e.toString(), stage);
                             }
                         }
                     }
@@ -90,7 +91,7 @@ public class SelectSaveScreen extends MenuScreen {
             }
         });
         
-        TextButton playSelectedButton = new TextButton("Play selected", g.getSkin());
+        TextButton playSelectedButton = new TextButton("Play selected", CoreRes.SKIN.getSkin());
         playSelectedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -98,22 +99,22 @@ public class SelectSaveScreen extends MenuScreen {
                 if (selected != null) {
                     try {
                         SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                        g.setWorldScreen();
+                        g.setGameScreen();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                        guiHelper.showDialog("Error", "An error occured: " + e.toString(), stage);
                     }
                 }
             }
         });
         
-        TextButton deleteSelectedButton = new TextButton("Delete selected", g.getSkin());
+        TextButton deleteSelectedButton = new TextButton("Delete selected", CoreRes.SKIN.getSkin());
         deleteSelectedButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 SaveMetaUi selected = savesList.getSelected();
                 if (selected != null) {
-                    Dialog del = new Dialog("Delete save", g.getSkin()) {
+                    Dialog del = new Dialog("Delete save", CoreRes.SKIN.getSkin()) {
                         @Override
                         protected void result(Object object) {
                             if (object != null) {
@@ -123,7 +124,7 @@ public class SelectSaveScreen extends MenuScreen {
                                     updateSavesListEntries();
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                    g.showDialog("Error", "An error occured while deleting the save:\n" + e.toString(),
+                                    guiHelper.showDialog("Error", "An error occured while deleting the save:\n" + e.toString(),
                                             stage);
                                 }
                             }
@@ -136,7 +137,7 @@ public class SelectSaveScreen extends MenuScreen {
             }
         });
         
-        TextButton backButton = new TextButton("Back", g.getSkin());
+        TextButton backButton = new TextButton("Back", CoreRes.SKIN.getSkin());
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -144,16 +145,16 @@ public class SelectSaveScreen extends MenuScreen {
             }
         });
         
-        TextButton renameButton = new TextButton("Rename", g.getSkin());
+        TextButton renameButton = new TextButton("Rename", CoreRes.SKIN.getSkin());
         renameButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 SaveMetaUi selected = savesList.getSelected();
                 if (selected != null) {
-                    TextField newName = new TextField(selected.meta.getDisplayName(), g.getSkin());
+                    TextField newName = new TextField(selected.meta.getDisplayName(), CoreRes.SKIN.getSkin());
                     newName.setTextFieldFilter(NAME_FILTER);
                     newName.setMessageText("New Name");
-                    Dialog d = new Dialog("Rename", g.getSkin()) {
+                    Dialog d = new Dialog("Rename", CoreRes.SKIN.getSkin()) {
                         @Override
                         protected void result(Object object) {
                             if (object != null) {
@@ -164,7 +165,7 @@ public class SelectSaveScreen extends MenuScreen {
                                     updateSavesListEntries();
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                    g.showDialog("Error", "An error occured while renaming the save:\n" + e.toString(),
+                                    guiHelper.showDialog("Error", "An error occured while renaming the save:\n" + e.toString(),
                                             stage);
                                 }
                             }
@@ -189,11 +190,11 @@ public class SelectSaveScreen extends MenuScreen {
                 if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     try {
                         SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
-                        g.setWorldScreen();
+                        g.setGameScreen();
                         last = 0;
                     } catch (IOException e) {
                         e.printStackTrace();
-                        g.showDialog("Error", "An error occured: " + e.toString(), stage);
+                        guiHelper.showDialog("Error", "An error occured: " + e.toString(), stage);
                     }
                 } else {
                     last = current;
