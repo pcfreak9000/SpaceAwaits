@@ -32,7 +32,7 @@ public class Hud {
     //FIXME this sucks ^ V
     private void initHotbarSlots() {
         InventoryPlayer inv = this.player.getInventory();
-        slots = new HotbarSlot[inv.slots()];
+        slots = new HotbarSlot[9];
         for (int i = 0; i < slots.length; i++) {
             slots[i] = new HotbarSlot(inv, i);
         }

@@ -6,7 +6,7 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 public class InventoryPlayer implements IInventory, NBTSerializable {
     
-    private ItemStack[] hotbar = new ItemStack[9];
+    private ItemStack[] stacks = new ItemStack[9 * 4];
     private int selected;
     
     public void setSelectedSlot(int selected) {
@@ -23,18 +23,18 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
     
     @Override
     public int slots() {
-        return 9;
+        return stacks.length;
     }
     
     @Override
     public ItemStack getStack(int index) {
-        return hotbar[index];
+        return stacks[index];
     }
     
     @Override
     public ItemStack removeStack(int index) {
-        ItemStack s = hotbar[index];
-        hotbar[index] = null;
+        ItemStack s = stacks[index];
+        stacks[index] = null;
         return s;
     }
     
@@ -43,7 +43,7 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
         if (stack == null || stack.isEmpty()) {
             stack = null;
         }
-        hotbar[index] = stack;
+        stacks[index] = stack;
     }
     
     @Override
@@ -54,9 +54,9 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
     @Override
     public void readNBT(NBTTag tag) {
         NBTCompound c = (NBTCompound) tag;
-        for (int i = 0; i < hotbar.length; i++) {
+        for (int i = 0; i < stacks.length; i++) {
             if (c.hasKey("h" + i)) {
-                hotbar[i] = ItemStack.readNBT(c.get("h" + i));
+                stacks[i] = ItemStack.readNBT(c.get("h" + i));
             }
         }
     }
@@ -64,8 +64,8 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
     @Override
     public NBTTag writeNBT() {
         NBTCompound c = new NBTCompound();
-        for (int i = 0; i < hotbar.length; i++) {
-            ItemStack st = hotbar[i];
+        for (int i = 0; i < stacks.length; i++) {
+            ItemStack st = stacks[i];
             if (st != null && !st.isEmpty()) {
                 c.put("h" + i, ItemStack.writeNBT(st));
             }

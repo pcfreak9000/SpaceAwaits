@@ -6,7 +6,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.menu.GuiContainer;
+import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
@@ -52,7 +52,7 @@ public class Player implements NBTSerializable {
         return this.inventory;
     }
     
-    public void openContainer(GuiContainer container) {
+    public void openContainer(GuiOverlay container) {
         this.gameRenderer.setGuiCurrent(container);
     }
     

@@ -7,7 +7,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
-public class GuiContainer implements Disposable {
+public class GuiOverlay implements Disposable {
     //Table? Actor? Stage!
     
     protected final GameRenderer gameRenderer;
@@ -16,13 +16,21 @@ public class GuiContainer implements Disposable {
     //Crappy workaround
     private boolean justOpened = true;
     
-    public GuiContainer(GameRenderer gameRenderer) {
+    public GuiOverlay(GameRenderer gameRenderer) {
         this.gameRenderer = gameRenderer;
         this.stage = gameRenderer.getGuiHelper().createStage();
     }
     
     protected void closeContainer() {
         this.gameRenderer.setGuiCurrent(null);
+    }
+    
+    public void onOpened() {
+        
+    }
+    
+    public void onClosed() {
+        
     }
     
     public void actAndDraw(float dt) {

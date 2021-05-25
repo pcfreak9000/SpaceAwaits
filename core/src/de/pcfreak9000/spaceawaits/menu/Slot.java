@@ -6,22 +6,24 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.item.IInventory;
-import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class Slot extends Actor {
-    private static final float SIZE = 40;
+    static final float SIZE = 40;
     
     protected final IInventory inventoryBacking;
     protected final int slotIndex;
+    
+    protected final ActorItemStack actorItemStack;
     
     private ClickListener listener;
     
     public Slot(IInventory invBacking, int index) {
         this.inventoryBacking = invBacking;
         this.slotIndex = index;
+        this.actorItemStack = new ActorItemStack();
+        this.actorItemStack.setSize(SIZE, SIZE);
         this.listener = new ClickListener();
         addListener(listener);
         setSize(SIZE, SIZE);
@@ -33,21 +35,34 @@ public class Slot extends Actor {
         batch.setColor(getColor());
         batch.draw(CoreRes.ITEM_SLOT.getRegion(), getX(), getY(), getWidth(), getHeight());
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
-        if (itemstack != null && !itemstack.isEmpty()) {
-            Item i = itemstack.getItem();
-            ITextureProvider t = i.getTextureProvider();
-            float wt = getWidth() * 0.15f;
-            float ht = getHeight() * 0.15f;
-            batch.setColor(i.color());
-            batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.7f, getHeight() * 0.7f);
-            CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
-            //render item and item count
-        }
-        if (listener.isOver()) {
-            batch.setColor(1, 1, 1, 0.2f);
-            batch.draw(CoreRes.WHITE, getX(), getY(), getWidth(), getHeight());
+        layoutActorItemStack();
+        this.actorItemStack.setItemStack(itemstack);
+        this.actorItemStack.draw(batch, parentAlpha);
+        if (highlightSlot()) {
+            drawSlotHighlight(batch);
         }
         batch.setColor(old);
+    }
+    
+    protected void layoutActorItemStack() {
+        final float offset = 0.1f;
+        float wt = getWidth() * offset;
+        float ht = getHeight() * offset;
+        this.actorItemStack.setBounds(getX() + wt, getY() + ht, getWidth() * (1 - offset * 2),
+                getHeight() * (1 - offset * 2));
+    }
+    
+    protected void drawSlotHighlight(Batch batch) {
+        batch.setColor(1, 1, 1, 0.2f);
+        batch.draw(CoreRes.WHITE, getX(), getY(), getWidth(), getHeight());
+    }
+    
+    protected boolean highlightSlot() {
+        return listener.isOver();
+    }
+    
+    public ItemStack getStack() {
+        return inventoryBacking.getStack(slotIndex);
     }
     
 }

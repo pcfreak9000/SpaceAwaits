@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.menu.GuiContainer;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
+import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 
 public class GameRenderer extends ScreenAdapter {
@@ -25,7 +25,7 @@ public class GameRenderer extends ScreenAdapter {
     private FPSLogger fps;
     
     private SpriteBatch spriteBatch;
-    private GuiContainer guiContainerCurrent;
+    private GuiOverlay guiContainerCurrent;
     private Vector2 mousePosVec = new Vector2();
     
     private WorldView worldView;
@@ -42,15 +42,17 @@ public class GameRenderer extends ScreenAdapter {
     }
     
     //Always takes a new GuiContainer. Is that the way to go?
-    public void setGuiCurrent(GuiContainer guicont) {
+    public void setGuiCurrent(GuiOverlay guicont) {
         if (guicont == null && isGuiContainerOpen()) {
             //Possibly closing logic first
+            this.guiContainerCurrent.onClosed();
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
             this.guiContainerCurrent = null;
         } else if (!isGuiContainerOpen()) {
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
+            this.guiContainerCurrent.onOpened();
             //Possibly opening logic
         }
     }
