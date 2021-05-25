@@ -75,10 +75,11 @@ public class WorldCombined extends World {
         rsys.registerRenderStrategy("item", new RenderItemStrategy());
         rsys.registerRenderStrategy("break", new RenderTileBreakingStrategy());
         ecs.addSystem(rsys);
-        ecs.addSystem(new LightCalculator(this));
+        LightCalculator lightCalc = new LightCalculator(this);
+        ecs.addSystem(lightCalc);
         ecs.addSystem(new BreakingTileSystem());
         //lightCalc.setProcessing(false);
-        //this.ecsManager.addSystem(new PhysicsDebugRendererSystem(phsys));
+        //ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
         
         ecs.addEntity(createBreakingAnimationsEntity());
     }

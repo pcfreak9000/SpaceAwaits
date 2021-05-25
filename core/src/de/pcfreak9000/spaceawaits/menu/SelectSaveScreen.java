@@ -204,8 +204,7 @@ public class SelectSaveScreen extends MenuScreen {
         };
         savesList.addListener(listListener);
         ScrollPane pane = new ScrollPane(savesList);
-        table.setWidth(stage.getWidth());
-        table.setHeight(stage.getHeight());
+        table.setFillParent(true);
         table.align(Align.left);
         Table buttontable = new Table();
         buttontable.add(newButton).width(100).pad(5);

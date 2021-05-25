@@ -26,6 +26,7 @@ public class GuiContainer implements Disposable {
     }
     
     public void actAndDraw(float dt) {
+        this.gameRenderer.getGuiHelper().drawDarken(0.7f);
         this.gameRenderer.getGuiHelper().actAndDraw(stage, dt);
         if (!justOpened && (InptMgr.isJustPressed(EnumDefInputIds.Esc)
                 || InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory))) {

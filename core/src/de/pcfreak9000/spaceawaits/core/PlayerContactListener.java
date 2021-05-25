@@ -24,6 +24,19 @@ public class PlayerContactListener implements IContactListener {
     
     @Override
     public void beginContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
+        Player player = PLAYER_COMP_MAPPER.get(owner.getEntity()).player;
+        if (other.isEntity()) {
+            Entity ent = other.getEntity();
+            if (ITEM_STACK_COMP_MAPPER.has(ent)) {
+                ItemStackComponent iscomp = ITEM_STACK_COMP_MAPPER.get(ent);
+                if (iscomp.stack != null) {
+                    iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
+                    if (iscomp.stack == null) {
+                        world.despawnEntity(ent);
+                    }
+                }
+            }
+        }
     }
     
     @Override
@@ -38,19 +51,6 @@ public class PlayerContactListener implements IContactListener {
     @Override
     public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv,
             World world) {
-        Player player = PLAYER_COMP_MAPPER.get(owner.getEntity()).player;
-        if (other.isEntity()) {
-            Entity ent = other.getEntity();
-            if (ITEM_STACK_COMP_MAPPER.has(ent)) {
-                ItemStackComponent iscomp = ITEM_STACK_COMP_MAPPER.get(ent);
-                if (iscomp.stack != null) {
-                    iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
-                    if (iscomp.stack == null) {
-                        world.despawnEntity(ent);
-                    }
-                }
-            }
-        }
     }
     
 }

@@ -12,8 +12,7 @@ public class ContainerInventoryPlayer extends GuiContainer {
     public ContainerInventoryPlayer(GameRenderer renderer, InventoryPlayer inv) {
         super(renderer);
         Table table = new Table();
-        table.setWidth(stage.getWidth());
-        table.setHeight(stage.getHeight());
+        table.setFillParent(true);
         table.align(Align.center);
         for (int i = 0; i < inv.slots(); i++) {
             table.add(new Slot(inv, i));

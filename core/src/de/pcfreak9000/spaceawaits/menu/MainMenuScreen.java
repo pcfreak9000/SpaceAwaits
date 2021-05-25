@@ -32,8 +32,7 @@ public class MainMenuScreen extends MenuScreen {
         });
         Label label = new Label(SpaceAwaits.NAME, CoreRes.SKIN.getSkin());
         label.setFontScale(4);
-        table.setWidth(this.stage.getWidth());
-        table.setHeight(this.stage.getHeight());
+        table.setFillParent(true);
         table.align(Align.center);
         table.add(label);
         table.row();

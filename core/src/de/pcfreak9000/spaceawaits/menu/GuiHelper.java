@@ -38,8 +38,17 @@ public class GuiHelper implements Disposable {
         guiSpriteBatch.end();
     }
     
+    public void drawDarken(float alpha) {
+        viewport.apply(true);
+        guiSpriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        guiSpriteBatch.begin();
+        guiSpriteBatch.setColor(0.1f, 0.1f, 0.1f, alpha);
+        guiSpriteBatch.draw(CoreRes.WHITE, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+        guiSpriteBatch.end();
+    }
+    
     public void actAndDraw(Stage stage, float delta) {
-        viewport.apply();
+        viewport.apply(true);
         stage.act(delta);
         stage.draw();
     }

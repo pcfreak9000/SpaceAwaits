@@ -28,11 +28,11 @@ public class HotbarSlot extends Slot {
         if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();
             ITextureProvider t = i.getTextureProvider();
-            float wt = getWidth() * 0.1f;
-            float ht = getHeight() * 0.1f;
+            float wt = getWidth() * 0.15f;
+            float ht = getHeight() * 0.15f;
             Color ic = i.color();
             batch.setColor(ic.r * bias, ic.g * bias, ic.b * bias, ic.a);
-            batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.8f, getHeight() * 0.8f);
+            batch.draw(t.getRegion(), getX() + wt, getY() + ht, getWidth() * 0.7f, getHeight() * 0.7f);
             CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
             //render item and item count
         }

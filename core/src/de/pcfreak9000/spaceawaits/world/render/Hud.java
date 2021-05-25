@@ -39,8 +39,7 @@ public class Hud {
         Table table = new Table(CoreRes.SKIN.getSkin());
         table.align(Align.top);
         table.add(createHotbarSlotsTable()).pad(10);
-        table.setWidth(666.6666f);
-        table.setHeight(500f);
+        table.setFillParent(true);
         this.stage.clear();//For now, fixes a bug. also clears listeners
         this.stage.addActor(table);
     }
