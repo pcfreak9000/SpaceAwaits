@@ -22,12 +22,32 @@ public class InvUtil {
         return stack;
     }
     
+    public static boolean canInsert(IInventory inv, int slot, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return true;
+        }
+        if (inv.isItemValidForSlot(slot, stack)) {
+            ItemStack cur = inv.getStack(slot);
+            if (cur == null || cur.isEmpty()) {
+                return true;
+            }
+            return ItemStack.isItemEqual(cur, stack) && ItemStack.isStackTagEqual(cur, stack);
+        }
+        return false;
+    }
+    
     public static ItemStack insert(IInventory inv, int slot, ItemStack insert) {
+        if (insert == null || insert.isEmpty()) {
+            return null;
+        }
         ItemStack stack = insert.cpy();
         return insertUnsafe(inv, slot, stack);
     }
     
     public static ItemStack insert(IInventory inv, ItemStack insert) {
+        if (insert == null || insert.isEmpty()) {
+            return null;
+        }
         ItemStack stack = insert.cpy();
         for (int i = 0; i < inv.slots(); i++) {
             stack = insertUnsafe(inv, i, stack);

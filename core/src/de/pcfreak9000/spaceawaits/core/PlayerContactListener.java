@@ -29,11 +29,9 @@ public class PlayerContactListener implements IContactListener {
             Entity ent = other.getEntity();
             if (ITEM_STACK_COMP_MAPPER.has(ent)) {
                 ItemStackComponent iscomp = ITEM_STACK_COMP_MAPPER.get(ent);
-                if (iscomp.stack != null) {
-                    iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
-                    if (iscomp.stack == null) {
-                        world.despawnEntity(ent);
-                    }
+                iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
+                if (iscomp.stack == null) {
+                    world.despawnEntity(ent);
                 }
             }
         }
