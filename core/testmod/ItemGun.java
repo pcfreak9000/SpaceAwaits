@@ -13,6 +13,11 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class ItemGun extends Item {
+    
+    public ItemGun() {
+        this.setMaxStackSize(1);
+    }
+    
     @Override
     public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
         TransformComponent tc = CoreRes.TRANSFORM_M.get(player.getPlayerEntity());

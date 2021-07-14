@@ -20,6 +20,10 @@ public class ActorItemStack extends Actor {
         return itemstack != null;
     }
     
+    public ItemStack getItemStack() {
+        return this.itemstack;
+    }
+    
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (itemstack != null && !itemstack.isEmpty()) {
@@ -27,7 +31,9 @@ public class ActorItemStack extends Actor {
             ITextureProvider t = i.getTextureProvider();
             batch.setColor(i.color());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
-            CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
+            if (itemstack.getCount() > 1) {
+                CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
+            }
         }
     }
 }

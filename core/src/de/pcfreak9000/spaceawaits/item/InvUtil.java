@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.item;
 
 public class InvUtil {
     
+    //Illegal stack sizes are pruned, so items can get lost
     private static ItemStack insertUnsafe(IInventory inv, int slot, ItemStack stack) {
         if (inv.isItemValidForSlot(slot, stack)) {
             ItemStack cur = inv.getStack(slot);
@@ -57,5 +58,13 @@ public class InvUtil {
         }
         return stack;
     }
+    
+    public static ItemStack extract(IInventory inv, int slot) {
+        return inv.removeStack(slot);
+    }
+    
+    //    public static void sort(IInventory inv, int begIncl, int endExcl) {
+    //        //does nothing right now
+    //    }
     
 }
