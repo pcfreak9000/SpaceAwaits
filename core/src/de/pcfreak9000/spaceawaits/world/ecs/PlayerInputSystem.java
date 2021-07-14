@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ITileBreaker;
+import de.pcfreak9000.spaceawaits.world.InstantBreaker;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -121,10 +122,11 @@ public class PlayerInputSystem extends EntitySystem {
                     if (Mathf.square(i) + Mathf.square(j) <= Mathf.square(rad)) {
                         int tx = txm + i;
                         int ty = tym + j;
-                        Tile t = world.getTile(tx, ty, TileLayer.Front);
-                        if (t != null && t.canBreak()) {
-                            world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
-                        }
+                        world.breakTile(tx, ty, TileLayer.Front, InstantBreaker.INSTANCE);
+//                        Tile t = world.getTile(tx, ty, TileLayer.Front);
+//                        if (t != null && t.canBreak()) {
+//                            world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
+//                        }
                         
                     }
                 }

@@ -8,11 +8,14 @@ import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
-import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
 
 public class ItemEntityFactory implements WorldEntityFactory {
+    
+    private ItemContactListener listener = new ItemContactListener();
+    
     @Override
     public Entity createEntity() {
         Entity e = new EntityImproved();
@@ -22,7 +25,8 @@ public class ItemEntityFactory implements WorldEntityFactory {
         e.add(new RenderComponent(1, "item"));
         e.add(new TransformComponent());
         PhysicsComponent pc = new PhysicsComponent();
-        pc.factory = AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();
+        pc.factory = new ItemBodyFactory();//AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();
+        e.add(new ContactListenerComponent(listener));
         e.add(pc);
         return e;
     }

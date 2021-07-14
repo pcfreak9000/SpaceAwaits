@@ -29,6 +29,25 @@ public class ItemStack {
         return Objects.equals(s1.nbt, s2.nbt);
     }
     
+    public static boolean isEmptyOrNull(ItemStack stack) {
+        return stack == null || stack.isEmpty();
+    }
+    
+    public static ItemStack join(ItemStack stack0, ItemStack stack1) {
+        if (ItemStack.isEmptyOrNull(stack1)) {
+            return stack0;
+        }
+        if (ItemStack.isEmptyOrNull(stack0)) {
+            return stack1;
+        }
+        if (ItemStack.isItemEqual(stack0, stack1) && ItemStack.isStackTagEqual(stack0, stack1)) {
+            int amount = Math.min(stack0.getItem().getMaxStackSize() - stack0.getCount(), stack1.getCount());
+            stack0.changeNumber(amount);
+            stack1.changeNumber(-amount);
+        }
+        return stack0;
+    }
+    
     public static NBTTag writeNBT(ItemStack stack) {
         NBTCompound c = new NBTCompound();
         if (stack != EMPTY) {

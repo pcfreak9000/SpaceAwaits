@@ -6,7 +6,7 @@ public class InvUtil {
     private static ItemStack insertUnsafe(IInventory inv, int slot, ItemStack stack) {
         if (inv.isItemValidForSlot(slot, stack)) {
             ItemStack cur = inv.getStack(slot);
-            if (cur == null || cur.isEmpty()) {
+            if (ItemStack.isEmptyOrNull(cur)) {
                 inv.setSlotContent(slot, stack);
                 return null;
             } else {
@@ -62,6 +62,7 @@ public class InvUtil {
     public static ItemStack extract(IInventory inv, int slot) {
         return inv.removeStack(slot);
     }
+    
     
     //    public static void sort(IInventory inv, int begIncl, int endExcl) {
     //        //does nothing right now

@@ -189,7 +189,8 @@ public abstract class World {
             setTile(tx, ty, layer, Tile.EMPTY);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
-                    dropItemStack(s, tx + 0.5f - Item.WORLD_SIZE / 2, ty + 0.5f - Item.WORLD_SIZE / 2);
+                    dropItemStack(s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
+                            ty + worldRandom.nextFloat() / 2F - Item.WORLD_SIZE / 2);
                 }
                 drops.clear();
             }

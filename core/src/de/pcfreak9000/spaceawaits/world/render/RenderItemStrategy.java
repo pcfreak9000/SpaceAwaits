@@ -23,7 +23,7 @@ public class RenderItemStrategy implements IRenderStrategy {
             .getFor(TransformComponent.class);
     private final ComponentMapper<ItemStackComponent> renderMapper = ComponentMapper.getFor(ItemStackComponent.class);
     
-    private static final Vector2[] offsets = new Vector2[5];
+    private static final Vector2[] offsets = new Vector2[8];
     
     static {
         for (int i = 0; i < offsets.length; i++) {
