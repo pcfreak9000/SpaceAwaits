@@ -23,7 +23,7 @@ import de.pcfreak9000.spaceawaits.world.physics.IRaycastFixtureCallback;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
-import de.pcfreak9000.spaceawaits.world.physics.UserData;
+import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -143,7 +143,7 @@ public abstract class World {
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
-        //TODO check current occupation
+        //TODO check current occupation (see ItemTile#onItemUse)
         if (tile.isSolid()) {
             queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
             if (entCheck.ud.isEntity()) {
@@ -352,7 +352,7 @@ public abstract class World {
     
     private static final class RaycastCallbackImpl implements IRaycastFixtureCallback {
         private IRaycastEntityCallback callb;
-        private final UserData ud = new UserData();
+        private final UserDataHelper ud = new UserDataHelper();
         
         @Override
         public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,
@@ -368,7 +368,7 @@ public abstract class World {
     
     private static final class EntityOccupationChecker implements IQueryCallback {
         
-        public final UserData ud = new UserData();
+        public final UserDataHelper ud = new UserDataHelper();
         
         @Override
         public boolean reportFixture(Fixture fix, UnitConversion conv) {

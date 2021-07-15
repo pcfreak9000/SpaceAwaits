@@ -130,7 +130,15 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
         pc.body.getBody().setAngularVelocity(pc.rotVel);
-        if (entity.flags != 1) {//TODO this needs a better solution. Chunk fixtures are tiles and they need custom user data, not the entity.
+        if (pc.body.getBody().getUserData() instanceof UserData) {
+            UserData ud = (UserData) pc.body.getBody().getUserData();
+            pc.body.getBody().setUserData(entity);
+            if (ud.applyToChildren) {
+                for (Fixture f : pc.body.getBody().getFixtureList()) {
+                    f.setUserData(entity);
+                }
+            }
+        } else {
             for (Fixture f : pc.body.getBody().getFixtureList()) {
                 f.setUserData(entity);
             }

@@ -27,6 +27,15 @@ public class Hud {
     public void setPlayer(Player player) {
         this.player = player;
         this.initHotbarSlots();
+//        ProgressBar b = new ProgressBar(0, 1, 0.1f, false, CoreRes.SKIN.getSkin());
+//        Table t = new Table(CoreRes.SKIN.getSkin());
+//        t.setFillParent(true);
+//        t.align(Align.topLeft);
+//        t.add(b).pad(10);
+//        b.setAnimateDuration(3);
+//        b.setAnimateInterpolation(Interpolation.smooth);
+//        b.setValue(1);
+//        stage.addActor(t);
     }
     
     //FIXME this sucks ^ V

@@ -10,22 +10,14 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
-import de.pcfreak9000.spaceawaits.world.physics.UserData;
+import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 
 public class ItemContactListener implements IContactListener {
     private static final ComponentMapper<ItemStackComponent> ITEM_STACK_COMP_MAPPER = ComponentMapper
             .getFor(ItemStackComponent.class);
     
     @Override
-    public void beginContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
-    }
-    
-    @Override
-    public void endContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
-    }
-    
-    @Override
-    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold, UnitConversion conv,
+    public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
         if (other.isEntity()) {
             Entity e = other.getEntity();
@@ -36,13 +28,28 @@ public class ItemContactListener implements IContactListener {
                 if (ItemStack.isEmptyOrNull(you.stack)) {
                     world.despawnEntity(e);
                 }
+                return true;
             }
         }
+        return false;
     }
     
     @Override
-    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv,
+    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
+        return false;
+    }
+    
+    @Override
+    public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
+            UnitConversion conv, World world) {
+        return false;
+    }
+    
+    @Override
+    public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
+            UnitConversion conv, World world) {
+        return false;
     }
     
 }

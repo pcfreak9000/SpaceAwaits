@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.item;
+package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,8 +10,17 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 
-public class ItemBodyFactory implements BodyFactory {
-    private static final Vector2 OFFSET = new Vector2(Item.WORLD_SIZE / 2, Item.WORLD_SIZE / 2);
+public class PlayerBodyFactory implements BodyFactory {
+    
+    private final Vector2 OFFSET;
+    private final float w;
+    private final float h;
+    
+    public PlayerBodyFactory(float w, float h) {
+        this.OFFSET = new Vector2(w / 2, h / 2 * 0.9f);
+        this.w = w;
+        this.h = h;
+    }
     
     @Override
     public Body createBody(World world) {
@@ -21,12 +30,12 @@ public class ItemBodyFactory implements BodyFactory {
         bd.position.set(METER_CONV.in(OFFSET.x), METER_CONV.in(OFFSET.x));
         FixtureDef fd = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(METER_CONV.in(Item.WORLD_SIZE / 1.9f));
+        shape.setRadius(METER_CONV.in(h / 4));
+        shape.setPosition(METER_CONV.in(new Vector2(0, h / 4 * 0.95f)));
         fd.shape = shape;
         Body b = world.createBody(bd);
         b.createFixture(fd);
-        shape.setRadius(METER_CONV.in(Item.WORLD_SIZE / 1.1f));
-        fd.isSensor = true;
+        shape.setPosition(METER_CONV.in(new Vector2(0, -h / 4)));
         b.createFixture(fd);
         shape.dispose();
         return b;

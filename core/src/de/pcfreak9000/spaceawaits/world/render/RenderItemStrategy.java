@@ -65,7 +65,7 @@ public class RenderItemStrategy implements IRenderStrategy {
                 float perc = stack.getCount() / (float) stack.getItem().getMaxStackSize();
                 int amount = Mathf.ceili(offsets.length * perc);
                 amount = Math.min(amount, stack.getCount());
-                for (int i = 0; i < amount; i++) {
+                for (int i = 0; i < amount && i < offsets.length; i++) {
                     float x = offsets[i].x + tc.position.x;
                     float y = offsets[i].y + tc.position.y;
                     batch.draw(stack.getItem().getTextureProvider().getRegion(), x, y, Item.WORLD_SIZE,

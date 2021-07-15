@@ -12,7 +12,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
-import de.pcfreak9000.spaceawaits.world.physics.UserData;
+import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 
 public class PlayerContactListener implements IContactListener {
     
@@ -23,7 +23,8 @@ public class PlayerContactListener implements IContactListener {
             .getFor(ItemStackComponent.class);
     
     @Override
-    public void beginContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
+    public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+            World world) {
         Player player = PLAYER_COMP_MAPPER.get(owner.getEntity()).player;
         if (other.isEntity()) {
             Entity ent = other.getEntity();
@@ -35,20 +36,25 @@ public class PlayerContactListener implements IContactListener {
                 }
             }
         }
+        return false;
     }
     
     @Override
-    public void endContact(UserData owner, UserData other, Contact contact, UnitConversion conv, World world) {
-    }
-    
-    @Override
-    public void preSolve(UserData owner, UserData other, Contact contact, Manifold oldManifold, UnitConversion conv,
+    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
+        return false;
     }
     
     @Override
-    public void postSolve(UserData owner, UserData other, Contact contact, ContactImpulse impulse, UnitConversion conv,
-            World world) {
+    public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
+            UnitConversion conv, World world) {
+        return false;
+    }
+    
+    @Override
+    public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
+            UnitConversion conv, World world) {
+        return false;
     }
     
 }

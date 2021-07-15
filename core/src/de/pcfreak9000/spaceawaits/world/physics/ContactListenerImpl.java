@@ -14,8 +14,8 @@ class ContactListenerImpl implements ContactListener {
     private static final ComponentMapper<ContactListenerComponent> CONTACT_LISTENER_COMP_MAPPER = ComponentMapper
             .getFor(ContactListenerComponent.class);
     
-    private UserData userdata1 = new UserData();
-    private UserData userdata2 = new UserData();
+    private UserDataHelper userdata1 = new UserDataHelper();
+    private UserDataHelper userdata2 = new UserDataHelper();
     private final World world;
     private final UnitConversion conv;
     
@@ -24,7 +24,7 @@ class ContactListenerImpl implements ContactListener {
         this.conv = conv;
     }
     
-    private IContactListener getListener(UserData in) {
+    private IContactListener getListener(UserDataHelper in) {
         if (in.isTile()) {
             return in.getTile().getContactListener();
         } else if (in.isEntity()) {
@@ -44,10 +44,11 @@ class ContactListenerImpl implements ContactListener {
         userdata2.set(f2.getUserData());
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
+        boolean b = false;
         if (l1 != null) {
-            l1.preSolve(userdata1, userdata2, contact, oldManifold, conv, world);
+            b = l1.preSolve(userdata1, userdata2, contact, oldManifold, conv, world);
         }
-        if (l2 != null) {
+        if (!b && l2 != null) {
             l2.preSolve(userdata2, userdata1, contact, oldManifold, conv, world);
         }
     }
@@ -60,10 +61,11 @@ class ContactListenerImpl implements ContactListener {
         userdata2.set(f2.getUserData());
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
+        boolean b = false;
         if (l1 != null) {
-            l1.postSolve(userdata1, userdata2, contact, impulse, conv, world);
+            b = l1.postSolve(userdata1, userdata2, contact, impulse, conv, world);
         }
-        if (l2 != null) {
+        if (!b && l2 != null) {
             l2.postSolve(userdata2, userdata1, contact, impulse, conv, world);
         }
     }
@@ -76,10 +78,11 @@ class ContactListenerImpl implements ContactListener {
         userdata2.set(f2.getUserData());
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
+        boolean b = false;
         if (l1 != null) {
-            l1.beginContact(userdata1, userdata2, contact, conv, world);
+            b = l1.beginContact(userdata1, userdata2, contact, conv, world);
         }
-        if (l2 != null) {
+        if (!b && l2 != null) {
             l2.beginContact(userdata2, userdata1, contact, conv, world);
         }
     }
@@ -92,10 +95,11 @@ class ContactListenerImpl implements ContactListener {
         userdata2.set(f2.getUserData());
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
+        boolean b = false;
         if (l1 != null) {
-            l1.endContact(userdata1, userdata2, contact, conv, world);
+            b = l1.endContact(userdata1, userdata2, contact, conv, world);
         }
-        if (l2 != null) {
+        if (!b && l2 != null) {
             l2.endContact(userdata2, userdata1, contact, conv, world);
         }
     }
