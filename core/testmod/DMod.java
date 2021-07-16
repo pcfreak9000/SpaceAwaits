@@ -1,5 +1,6 @@
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
@@ -101,6 +102,7 @@ public class DMod {
             @Override
             public WorldPrimer generateWorld(long seed) {
                 WorldPrimer p = new WorldPrimer();
+                p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setChunkGenerator(new TestChunkGenerator());
                 p.setUnchunkGenerator(new IUnchunkGenerator() {

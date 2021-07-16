@@ -14,7 +14,12 @@ import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 public class SolidGroundContactListener implements IContactListener {
     
     private int count = 0;
-    private float x, y;//TODO initial values?!?!
+    private float x, y;
+    
+    public void initializePosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
     
     public boolean isOnSolidGround() {
         return count > 0;
@@ -33,6 +38,15 @@ public class SolidGroundContactListener implements IContactListener {
             World world) {
         if (!other.getFixture().isSensor() && contact.isTouching()) {
             count++;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+            World world) {
+        if (!other.getFixture().isSensor()) {
+            count--;
             WorldManifold wm = contact.getWorldManifold();
             int n = wm.getNumberOfContactPoints();
             if (n > 0) {
@@ -45,15 +59,6 @@ public class SolidGroundContactListener implements IContactListener {
                     y = p[0].y * 0.5f + p[1].y * 0.5f;
                 }
             }
-        }
-        return false;
-    }
-    
-    @Override
-    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
-            World world) {
-        if (!other.getFixture().isSensor()) {
-            count--;
         }
         return false;
     }

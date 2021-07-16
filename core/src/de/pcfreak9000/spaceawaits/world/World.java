@@ -17,10 +17,12 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastEntityCallback;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastFixtureCallback;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
@@ -36,6 +38,7 @@ public abstract class World {
     
     protected final IChunkProvider chunkProvider;
     protected final IUnchunkProvider unchunkProvider;
+    protected final IPlayerSpawn playerSpawn;
     
     private AmbientLightProvider ambientLightProvider;
     
@@ -54,6 +57,7 @@ public abstract class World {
         //do priming stuff
         this.worldBounds = primer.getWorldBounds();
         this.ambientLightProvider = primer.getLightProvider();
+        this.playerSpawn = primer.getPlayerSpawn();
         
         this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
@@ -209,6 +213,8 @@ public abstract class World {
             .getFor(TransformComponent.class);
     private static final ComponentMapper<ItemStackComponent> ITEMSTACK_COMP_MAPPER = ComponentMapper
             .getFor(ItemStackComponent.class);
+    private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
+            .getFor(PhysicsComponent.class);
     
     public void dropItemStack(ItemStack stack, float x, float y) {
         Entity e = CoreRes.ITEM_FACTORY.createEntity();
@@ -218,7 +224,7 @@ public abstract class World {
     }
     
     public void spawnEntity(Entity entity) {
-        //TODO Check whether the entity would be colliding when spawned at this position
+        //TODO Check whether the entity would be colliding when spawned at this position?
         //TODO what happens if the chunk is not loaded?
         if (TRANSFORM_COMP_MAPPER.has(entity)) {
             TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
@@ -234,6 +240,27 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
+    }
+    
+    public boolean checkSolidOccupation(float x, float y, float w, float h) {
+        queryAABB(entCheck, x, y, x + w, y + h);
+        if (entCheck.ud.isEntity()) {
+            return true;
+        }
+        entCheck.ud.clear();
+        int ix = Mathf.floori(x);
+        int iy = Mathf.floori(y);
+        int iw = Mathf.ceili(x + w);
+        int ih = Mathf.ceili(y + h);
+        for (int i = ix; i <= iw; i++) {
+            for (int j = iy; j <= ih; j++) {
+                Tile t = getTile(i, j, TileLayer.Front);
+                if (t.isSolid()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     public void despawnEntity(Entity entity) {
@@ -380,4 +407,5 @@ public abstract class World {
         }
         
     }
+    
 }

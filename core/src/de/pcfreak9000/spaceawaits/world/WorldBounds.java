@@ -21,6 +21,10 @@ public class WorldBounds {
         return tx >= 0 && tx < this.tWidth && ty >= 0 && ty < this.tHeight;
     }
     
+    public boolean inBoundsf(float x, float y) {
+        return x >= 0 && x < this.tWidth && y >= 0 && y < this.tHeight;
+    }
+    
     public boolean inChunkBounds(int cx, int cy) {
         return cx >= 0 && cx < this.arrayWidth && cy >= 0 && cy < this.arrayHeight;
     }

@@ -29,7 +29,7 @@ public class RenderItemStrategy implements IRenderStrategy {
         for (int i = 0; i < offsets.length; i++) {
             float rx = (float) (Math.random() - 0.5);
             float ry = (float) (Math.random() - 0.5);
-            offsets[i] = new Vector2(rx * Item.WORLD_SIZE, ry * Item.WORLD_SIZE);
+            offsets[i] = new Vector2(rx * Item.WORLD_SIZE * 0.8f, ry * Item.WORLD_SIZE * 0.8f);
         }
     }
     

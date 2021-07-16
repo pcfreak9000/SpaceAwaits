@@ -175,5 +175,10 @@ public class ChunkPhysics implements BodyFactory {
     public Vector2 bodyOffset() {
         return BODY_OFFSET;
     }
+
+    @Override
+    public Vector2 boundingBoxWidthAndHeight() {
+        return null;
+    }
     
 }

@@ -35,7 +35,6 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         rc.action = new TextureSpriteAction(CoreRes.HUMAN);
         e.add(rc);
         TransformComponent tc = new TransformComponent();
-        tc.position.set(500 / 16, 2900 / 16);
         e.add(tc);
         e.add(pc);
         pc.factory = new PlayerBodyFactory(sprite.getWidth(), sprite.getHeight(), l);

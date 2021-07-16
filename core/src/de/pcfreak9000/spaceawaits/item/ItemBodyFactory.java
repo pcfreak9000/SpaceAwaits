@@ -12,6 +12,7 @@ import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 
 public class ItemBodyFactory implements BodyFactory {
     private static final Vector2 OFFSET = new Vector2(Item.WORLD_SIZE / 2, Item.WORLD_SIZE / 2);
+    private static final Vector2 WH = new Vector2(Item.WORLD_SIZE, Item.WORLD_SIZE);
     
     @Override
     public Body createBody(World world) {
@@ -30,6 +31,11 @@ public class ItemBodyFactory implements BodyFactory {
         b.createFixture(fd);
         shape.dispose();
         return b;
+    }
+    
+    @Override
+    public Vector2 boundingBoxWidthAndHeight() {
+        return WH;
     }
     
     @Override

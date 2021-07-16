@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.base.Objects;
+
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -66,13 +68,20 @@ public class Game {
             WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
             WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            World world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
+            WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
+            boolean newLocation = !Objects.equal(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.uuidPlayerLocation = uuid;
             this.world = world;
-            world.joinWorld(player);
+            if (newLocation) {
+                world.findSpawnpointAndJoin(player);
+            } else {
+                world.joinWorld(player);
+            }
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
             SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(world);
-        } catch (IOException e) {
+        } catch (
+        
+        IOException e) {
             throw new RuntimeException(e);
         }
     }

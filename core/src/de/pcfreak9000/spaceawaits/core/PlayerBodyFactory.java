@@ -16,14 +16,12 @@ import de.pcfreak9000.spaceawaits.world.physics.UserData;
 public class PlayerBodyFactory implements BodyFactory {
     
     private final Vector2 OFFSET;
-    private final float w;
-    private final float h;
+    private final Vector2 WH;
     private final SolidGroundContactListener l;
     
     public PlayerBodyFactory(float w, float h, SolidGroundContactListener l) {
         this.OFFSET = new Vector2(w / 2, h / 2 * 0.9f);
-        this.w = w;
-        this.h = h;
+        this.WH = new Vector2(w, h);
         this.l = l;
     }
     
@@ -35,15 +33,15 @@ public class PlayerBodyFactory implements BodyFactory {
         bd.position.set(METER_CONV.in(OFFSET.x), METER_CONV.in(OFFSET.x));
         FixtureDef fd = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(METER_CONV.in(h / 4));
-        shape.setPosition(METER_CONV.in(new Vector2(0, h / 4 * 0.95f)));
+        shape.setRadius(METER_CONV.in(WH.y / 4));
+        shape.setPosition(METER_CONV.in(new Vector2(0, WH.y / 4 * 0.95f)));
         fd.shape = shape;
         Body b = world.createBody(bd);
         b.createFixture(fd);
-        shape.setPosition(METER_CONV.in(new Vector2(0, -h / 4)));
+        shape.setPosition(METER_CONV.in(new Vector2(0, -WH.y / 4)));
         b.createFixture(fd);
         PolygonShape psh = new PolygonShape();
-        psh.setAsBox(METER_CONV.in(w * 0.3f), METER_CONV.in(h / 16), METER_CONV.in(new Vector2(0, -h / 2)), 0);
+        psh.setAsBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 16), METER_CONV.in(new Vector2(0, -WH.y / 2)), 0);
         fd.shape = psh;
         fd.isSensor = true;
         Fixture f = b.createFixture(fd);
@@ -53,6 +51,11 @@ public class PlayerBodyFactory implements BodyFactory {
         psh.dispose();
         shape.dispose();
         return b;
+    }
+    
+    @Override
+    public Vector2 boundingBoxWidthAndHeight() {
+        return WH;
     }
     
     @Override

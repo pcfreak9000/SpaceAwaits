@@ -12,5 +12,5 @@ public class PlayerInputComponent implements Component {
     
     public Player player;
     
-    public SolidGroundContactListener solidGround;
+    public SolidGroundContactListener solidGround;//Move into dedicated Component with proper "frontend" and saving
 }

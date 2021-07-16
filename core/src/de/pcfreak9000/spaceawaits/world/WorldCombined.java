@@ -2,8 +2,11 @@ package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.RandomXS128;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
@@ -11,10 +14,12 @@ import de.pcfreak9000.spaceawaits.world.ecs.BreakingTileSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakingTilesComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -25,6 +30,7 @@ import de.pcfreak9000.spaceawaits.world.render.RenderItemStrategy;
 import de.pcfreak9000.spaceawaits.world.render.RenderParallaxStrategy;
 import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.render.RenderTileBreakingStrategy;
+import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class WorldCombined extends World {
     //Server side stuff
@@ -91,6 +97,51 @@ public class WorldCombined extends World {
         Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
         addTicket(new FollowingTicket(playerpos));
         this.playerInput.setPlayer(player);
+    }
+    
+    public void findSpawnpointAndJoin(Player player) {
+        Rectangle spawnArea = playerSpawn.getSpawnArea(player);
+        RandomXS128 rand = new RandomXS128();
+        ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
+        Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
+                .boundingBoxWidthAndHeight();
+        for (int i = 0; i < 100; i++) {
+            float x = spawnArea.x + rand.nextFloat() * spawnArea.width;
+            float y = spawnArea.y + rand.nextFloat() * spawnArea.height;
+            if (getBounds().inBoundsf(x, y)) {
+                int cx = Chunk.toGlobalChunkf(x);
+                int cy = Chunk.toGlobalChunkf(y);
+                int cw = Chunk.toGlobalChunkf(x + playerBounds.x);
+                int ch = Chunk.toGlobalChunkf(y + playerBounds.y);
+                for (int j = cx; j <= cw; j++) {
+                    for (int k = cy; k <= ch; k++) {
+                        Chunk c = chunkProvider.loadChunk(j, k);
+                        addChunk(c);
+                    }
+                }
+                
+                if (!checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
+                    //TODO avoid falling down (fall damage...)
+                    //can spawn here, so do that
+                    Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
+                    playerpos.x = x;
+                    playerpos.y = y;
+                    player.getPlayerEntity().getComponent(PlayerInputComponent.class).solidGround.initializePosition(x,
+                            y);
+                    chunkProvider.dropAll();
+                    joinWorld(player);
+                    Logger.getLogger(World.class)
+                            .debug("Found a spawning location for the player on the " + i + ". try");
+                    return;
+                }
+                if (chunkProvider.loadedChunkCount() > 13) {
+                    chunkProvider.dropAll();
+                }
+            }
+        }
+        chunkProvider.dropAll();
+        System.out.println("Hehe no spawn");
+        //no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
     }
     
     public void addTicket(ITicket ticket) {

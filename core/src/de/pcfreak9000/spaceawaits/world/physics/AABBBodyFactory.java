@@ -15,15 +15,14 @@ public class AABBBodyFactory implements BodyFactory {
     }
     
     private final Vector2 offset;
-    private final float width, height;
+    private final Vector2 widthAndHeight;
     private final float initx, inity;
     private final BodyType t;
     
     public AABBBodyFactory(float width, float height, float xoffset, float yoffset, float initx, float inity,
             BodyType type) {
         this.offset = new Vector2(xoffset, yoffset);
-        this.width = width;
-        this.height = height;
+        this.widthAndHeight = new Vector2(width, height);
         this.initx = initx;
         this.inity = inity;
         this.t = type;
@@ -39,12 +38,17 @@ public class AABBBodyFactory implements BodyFactory {
         bd.position.add(METER_CONV.in(offset.x), METER_CONV.in(offset.y));
         FixtureDef fd = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(METER_CONV.in(width / 2), METER_CONV.in(height / 2));
+        shape.setAsBox(METER_CONV.in(widthAndHeight.x / 2), METER_CONV.in(widthAndHeight.y / 2));
         fd.shape = shape;
         Body b = world.createBody(bd);
         b.createFixture(fd);//PhysicsComponent userdata?
         shape.dispose();
         return b;
+    }
+    
+    @Override
+    public Vector2 boundingBoxWidthAndHeight() {
+        return widthAndHeight;
     }
     
     @Override
