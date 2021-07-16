@@ -2,9 +2,8 @@ package de.pcfreak9000.spaceawaits.core;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-
-import com.google.common.base.Objects;
 
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.nbt.NBTCompound;
@@ -69,7 +68,7 @@ public class Game {
             WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
             WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
-            boolean newLocation = !Objects.equal(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
+            boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.uuidPlayerLocation = uuid;
             this.world = world;
             if (newLocation) {

@@ -101,7 +101,7 @@ public class WorldCombined extends World {
     
     public void findSpawnpointAndJoin(Player player) {
         Rectangle spawnArea = playerSpawn.getSpawnArea(player);
-        RandomXS128 rand = new RandomXS128();
+        RandomXS128 rand = new RandomXS128();//Seed based? Leave it like this? dunno
         ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
         Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                 .boundingBoxWidthAndHeight();
@@ -129,9 +129,9 @@ public class WorldCombined extends World {
                     player.getPlayerEntity().getComponent(PlayerInputComponent.class).solidGround.initializePosition(x,
                             y);
                     chunkProvider.dropAll();
-                    joinWorld(player);
+                    joinWorld(player);//TODO Move out of this method so this can also be used for respawning the player in the same world or something?
                     Logger.getLogger(World.class)
-                            .debug("Found a spawning location for the player on the " + i + ". try");
+                            .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
                     return;
                 }
                 if (chunkProvider.loadedChunkCount() > 13) {
