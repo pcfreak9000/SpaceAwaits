@@ -93,8 +93,8 @@ public class PlayerInputSystem extends EntitySystem {
         boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
         
-        if (up) {
-            vy += play.maxYv * 5;
+        if (up && play.solidGround.isOnSolidGround()) {
+            vy += play.maxYv * 10;
         }
         //kinda useless, use for sneaking/ladders instead?
         if (down) {
@@ -102,10 +102,10 @@ public class PlayerInputSystem extends EntitySystem {
         }
         //}
         if (left) {
-            vx -= play.maxXv * 5;
+            vx -= play.maxXv;
         }
         if (right) {
-            vx += play.maxXv * 5;
+            vx += play.maxXv;
         }
         PhysicsComponent pc = physicsMapper.get(entity);
         pc.body.applyAccelerationW(vx * 3, vy * 3);
@@ -123,10 +123,10 @@ public class PlayerInputSystem extends EntitySystem {
                         int tx = txm + i;
                         int ty = tym + j;
                         world.breakTile(tx, ty, TileLayer.Front, InstantBreaker.INSTANCE);
-//                        Tile t = world.getTile(tx, ty, TileLayer.Front);
-//                        if (t != null && t.canBreak()) {
-//                            world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
-//                        }
+                        //                        Tile t = world.getTile(tx, ty, TileLayer.Front);
+                        //                        if (t != null && t.canBreak()) {
+                        //                            world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
+                        //                        }
                         
                     }
                 }

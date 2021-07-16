@@ -1,10 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
 public class UserData {
-    public final boolean applyToChildren;
+    public IContactListener listener;
     public Object userdata;
     
-    public UserData(boolean applyToChildren) {
-        this.applyToChildren = applyToChildren;
-    }
 }

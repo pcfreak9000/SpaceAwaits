@@ -358,7 +358,7 @@ public abstract class World {
         public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,
                 float fraction, UnitConversion conv) {
             //ignore everything which is not an Entity
-            ud.set(fixture.getUserData());
+            ud.set(fixture.getUserData(), fixture);
             if (!ud.isEntity()) {
                 return -1;
             }
@@ -375,7 +375,7 @@ public abstract class World {
             if (fix.isSensor()) {
                 return true;
             }
-            ud.set(fix.getUserData());
+            ud.set(fix.getUserData(), fix);
             return !ud.isEntity();
         }
         

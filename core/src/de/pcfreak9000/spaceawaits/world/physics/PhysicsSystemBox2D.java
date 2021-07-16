@@ -130,19 +130,25 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
         pc.body.getBody().setAngularVelocity(pc.rotVel);
-        if (pc.body.getBody().getUserData() instanceof UserData) {
-            UserData ud = (UserData) pc.body.getBody().getUserData();
+        if (pc.body.getBody().getUserData() == null) {
             pc.body.getBody().setUserData(entity);
-            if (ud.applyToChildren) {
-                for (Fixture f : pc.body.getBody().getFixtureList()) {
+            for (Fixture f : pc.body.getBody().getFixtureList()) {//Hmmm... have this loop in that if or put it outside?
+                if (f.getUserData() == null) {
                     f.setUserData(entity);
                 }
             }
-        } else {
-            for (Fixture f : pc.body.getBody().getFixtureList()) {
-                f.setUserData(entity);
-            }
         }
+        //        if (pc.body.getBody().getUserData() instanceof UserData) {
+        //            UserData ud = (UserData) pc.body.getBody().getUserData();
+        //            pc.body.getBody().setUserData(entity);
+        //            if (ud.applyToChildren) {
+        //                
+        //            }
+        //        } else {
+        //            for (Fixture f : pc.body.getBody().getFixtureList()) {
+        //                f.setUserData(entity);
+        //            }
+        //        }
     }
     
     @Override

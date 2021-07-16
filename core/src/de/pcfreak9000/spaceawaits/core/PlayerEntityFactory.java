@@ -19,7 +19,9 @@ public class PlayerEntityFactory implements WorldEntityFactory {
     public Entity createEntity() {
         Entity e = new EntityImproved();
         e.flags = 2;
+        SolidGroundContactListener l = new SolidGroundContactListener();
         PlayerInputComponent pic = new PlayerInputComponent();
+        pic.solidGround = l;
         pic.maxXv = 100 / 16;
         pic.maxYv = 100 / 16;
         e.add(pic);
@@ -36,9 +38,9 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         tc.position.set(500 / 16, 2900 / 16);
         e.add(tc);
         e.add(pc);
-        pc.factory = new PlayerBodyFactory(sprite.getWidth(), sprite.getHeight());
-//        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
-//                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
+        pc.factory = new PlayerBodyFactory(sprite.getWidth(), sprite.getHeight(), l);
+        //        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
+        //                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));
         e.add(new RenderComponent(1, "entity"));
         e.add(new ContactListenerComponent(new PlayerContactListener()));

@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
-import de.pcfreak9000.spaceawaits.world.physics.UserData;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class ChunkPhysics implements BodyFactory {
@@ -49,7 +48,8 @@ public class ChunkPhysics implements BodyFactory {
                 }
             }
         }
-        b.setUserData(new UserData(false));
+        b.setUserData(this);
+        //b.setUserData(new UserData(false));
         return b;
     }
     

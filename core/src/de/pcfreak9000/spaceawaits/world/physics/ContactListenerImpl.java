@@ -32,6 +32,9 @@ class ContactListenerImpl implements ContactListener {
             if (comp != null) {
                 return CONTACT_LISTENER_COMP_MAPPER.get(in.getEntity()).listener;
             }
+        } else if (in.isUDCustom()) {
+            UserData ud = in.getUDCustom();
+            return ud.listener;
         }
         return null;
     }
@@ -40,8 +43,8 @@ class ContactListenerImpl implements ContactListener {
     public void preSolve(Contact contact, Manifold oldManifold) {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData());
-        userdata2.set(f2.getUserData());
+        userdata1.set(f1.getUserData(), f1);
+        userdata2.set(f2.getUserData(), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;
@@ -57,8 +60,8 @@ class ContactListenerImpl implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData());
-        userdata2.set(f2.getUserData());
+        userdata1.set(f1.getUserData(), f1);
+        userdata2.set(f2.getUserData(), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;
@@ -74,8 +77,8 @@ class ContactListenerImpl implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData());
-        userdata2.set(f2.getUserData());
+        userdata1.set(f1.getUserData(), f1);
+        userdata2.set(f2.getUserData(), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;
@@ -91,8 +94,8 @@ class ContactListenerImpl implements ContactListener {
     public void endContact(Contact contact) {
         Fixture f1 = contact.getFixtureA();
         Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData());
-        userdata2.set(f2.getUserData());
+        userdata1.set(f1.getUserData(), f1);
+        userdata2.set(f2.getUserData(), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;

@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RenderChunkStrategy;
@@ -78,8 +79,8 @@ public class WorldCombined extends World {
         LightCalculator lightCalc = new LightCalculator(this);
         ecs.addSystem(lightCalc);
         ecs.addSystem(new BreakingTileSystem());
-        //lightCalc.setProcessing(false);
-        //ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
+        lightCalc.setProcessing(false);
+        ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
         
         ecs.addEntity(createBreakingAnimationsEntity());
     }
