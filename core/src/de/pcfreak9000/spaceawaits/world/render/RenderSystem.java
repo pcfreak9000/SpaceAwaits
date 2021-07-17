@@ -11,7 +11,8 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
+
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
 public class RenderSystem extends EntitySystem implements EntityListener {
     
@@ -30,15 +31,7 @@ public class RenderSystem extends EntitySystem implements EntityListener {
         return maj;
     };
     
-    private ObjectMap<String, IRenderStrategy> renderStrategies = new ObjectMap<>();
-    
     private Array<Entity> entities = new Array<>();
-    
-    //TODO use a GameRegistry instead for RenderStrategies?
-    
-    public void registerRenderStrategy(String id, IRenderStrategy dec) {
-        renderStrategies.put(id, dec);
-    }
     
     @Override
     public void addedToEngine(Engine engine) {
@@ -78,7 +71,7 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = rMapper.get(entity);
         Objects.requireNonNull(rc.renderDecoratorId);
-        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderDecoratorId);
+        IRenderStrategy renderStrategy = GameRegistry.RENDER_STRATEGY_REGISTRY.get(rc.renderDecoratorId);
         if (renderStrategy == null) {
             throw new IllegalStateException("No such IRenderDecorator: " + rc.renderDecoratorId);
         }

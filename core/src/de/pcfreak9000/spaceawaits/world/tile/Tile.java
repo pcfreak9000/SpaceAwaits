@@ -24,7 +24,6 @@ public class Tile {
     }
     
     public static final float MAX_LIGHT_VALUE = 16;
-    //TODO option if a tile behaves like Empty? Default "empty" per world?
     public static final Tile NOTHING = new Tile();//The last bastion against the void
     
     public static int toGlobalTile(float x) {
@@ -167,7 +166,7 @@ public class Tile {
         return itemTile;
     }
     
-    public void addDrops(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, RandomXS128 random) {
+    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, RandomXS128 random) {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
@@ -176,6 +175,10 @@ public class Tile {
     }
     
     public void onTileSet(int tx, int ty, TileLayer layer, World world) {
+        
+    }
+    
+    public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
         
     }
     

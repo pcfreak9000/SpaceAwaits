@@ -29,7 +29,7 @@ public class ItemTile extends Item {
     public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley, float x, float y,
             TileLayer layer) {
         if (!used.isEmpty()) {
-            if (world.placeTile(tilex, tiley, layer, this.tile, null) != null) {
+            if (world.placeTile(tilex, tiley, layer, this.tile) != null) {
                 used.changeNumber(-1);
                 return true;
             }

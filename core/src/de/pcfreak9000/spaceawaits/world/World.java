@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.RandomXS128;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
@@ -146,27 +147,30 @@ public abstract class World {
         return null;
     }
     
-    public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
-        //TODO if back layer, check for front layer?
-        //TODO onTilePlaced? (!=onTileSet)
+    public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile) {
+        if (layer == TileLayer.Back) {//if back layer, check for front layer? basically a gameplay decision, not sure
+            Tile front = getTile(tx, ty, TileLayer.Front);
+            if (front.isSolid() || front.isOpaque()) {
+                return null;
+            }
+        }
         Tile current = getTile(tx, ty, layer);
         if (current != null && !current.canBeReplaced()) {
             //check current occupation, only place tile if there isnt already one
             return null;
         }
         if (tile.isSolid()) {
-            queryAABB(entCheck, tx, ty, tx + 0.99f, ty + 0.99f);
-            if (entCheck.ud.isEntity()) {
+            if (entCheck(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
-            entCheck.ud.clear();
         }
-        return setTile(tx, ty, layer, tile);
+        Tile ret = setTile(tx, ty, layer, tile);
+        tile.onTilePlaced(tx, ty, layer, this);
+        return ret;
     }
     
     public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
         //TODO allow null tilebreaker?
-        //TODO onTileBreak? (!= onTileRemoved)
         //First check if this is allowed
         if (layer == TileLayer.Back) {
             Tile front = getTile(tx, ty, TileLayer.Front);
@@ -195,9 +199,9 @@ public abstract class World {
         t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
-            tile.addDrops(tx, ty, layer, drops, this, worldRandom);
+            setTile(tx, ty, layer, Tile.NOTHING);//TODO when a tile is broken, place some default tile instead? (like atmosphere, depends on the world, if none specified, used NOTHING)
+            tile.onTileBroken(tx, ty, layer, drops, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, this, drops, worldRandom);
-            setTile(tx, ty, layer, Tile.NOTHING);//TODO when a tile is broken, place some default tile instead?
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
                     dropItemStack(s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
@@ -227,17 +231,28 @@ public abstract class World {
         Entity e = CoreRes.ITEM_FACTORY.createEntity();
         ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
         TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
-        spawnEntity(e);
+        spawnEntity(e, false);
     }
     
-    public void spawnEntity(Entity entity) {
-        //TODO Check whether the entity would be colliding when spawned at this position?
-        //TODO what happens if the chunk is not loaded?
+    public boolean spawnEntity(Entity entity, boolean checkOccupation) {
+        //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
+        //TODO what happens if the coordinates are somewhere out of bounds?
+        //in both cases c is null and false is returned, but...
         if (TRANSFORM_COMP_MAPPER.has(entity)) {
             TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
+            if (PHYSICS_COMP_MAPPER.has(entity) && checkOccupation) {
+                PhysicsComponent pc = PHYSICS_COMP_MAPPER.get(entity);
+                Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
+                if (checkSolidOccupation(t.position.x + wh.x / 4, t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
+                    return false;
+                }
+            }
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
+            if (c == null) {
+                return false;//Not so nice, this way the entity is just forgotten 
+            }
             c.addEntity(entity);
             if (c.isActive()) {
                 ecsEngine.addEntity(entity);
@@ -247,20 +262,19 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
+        return true;
     }
     
     public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        queryAABB(entCheck, x, y, x + w, y + h);
-        if (entCheck.ud.isEntity()) {
+        if (entCheck(x, y, x + w, y + h)) {
             return true;
         }
-        entCheck.ud.clear();
         int ix = Mathf.floori(x);
         int iy = Mathf.floori(y);
         int iw = Mathf.ceili(x + w);
         int ih = Mathf.ceili(y + h);
-        for (int i = ix; i <= iw; i++) {
-            for (int j = iy; j <= ih; j++) {
+        for (int i = ix; i < iw; i++) {
+            for (int j = iy; j < ih; j++) {
                 Tile t = getTile(i, j, TileLayer.Front);
                 if (t.isSolid()) {
                     return true;
@@ -268,6 +282,13 @@ public abstract class World {
             }
         }
         return false;
+    }
+    
+    private boolean entCheck(float x1, float y1, float x2, float y2) {
+        queryAABB(entCheck, x1, y1, x2, y2);
+        boolean b = entCheck.ud.isEntity();
+        entCheck.ud.clear();
+        return b;
     }
     
     public void despawnEntity(Entity entity) {
