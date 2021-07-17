@@ -15,7 +15,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.BreakingTileSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakingTilesComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
@@ -47,6 +46,10 @@ public class WorldCombined extends World {
         ((ChunkProvider) chunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).load();
+        if (worldProperties.autoWorldBorders()) {
+            WorldUtil.createWorldBorders(unchunkProvider.get().getEntities(), getBounds().getWidth(),
+                    getBounds().getHeight());
+        }
         for (Entity e : unchunkProvider.get().getEntities()) {
             ecsEngine.addEntity(e);
         }
@@ -100,9 +103,9 @@ public class WorldCombined extends World {
         this.playerInput.setPlayer(player);
     }
     
-    public void findSpawnpointAndJoin(Player player) {
-        Rectangle spawnArea = playerSpawn.getSpawnArea(player);
-        RandomXS128 rand = new RandomXS128();//Seed based? Leave it like this? dunno
+    public Vector2 findSpawnpoint(Player player) {
+        Rectangle spawnArea = playerSpawn.getSpawnArea(player);//TODO what about a spawnpoint near a bed? or another disjunct rect?
+        RandomXS128 rand = new RandomXS128(this.getSeed());
         ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
         Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                 .boundingBoxWidthAndHeight();
@@ -120,21 +123,28 @@ public class WorldCombined extends World {
                         probeChunkMgr.loadChunk(j, k, true);
                     }
                 }
-                
                 if (!checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
-                    //TODO avoid falling down (fall damage...)
+                    if (worldProperties.autoLowerSpawnpointToSolidGround()) {
+                        while (true) {
+                            y--;
+                            cy = Chunk.toGlobalChunkf(y);
+                            ch = Chunk.toGlobalChunkf(y + playerBounds.y);
+                            for (int j = cx; j <= cw; j++) {
+                                for (int k = cy; k <= ch; k++) {
+                                    probeChunkMgr.loadChunk(j, k, true);
+                                }
+                            }
+                            if (checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
+                                y++;
+                                break;
+                            }
+                        }
+                    }
                     //can spawn here, so do that
-                    Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
-                    playerpos.x = x;
-                    playerpos.y = y;
-                    OnSolidGroundComponent osgc = player.getPlayerEntity().getComponent(OnSolidGroundComponent.class);
-                    osgc.lastContactX = x;
-                    osgc.lastContactY = y;
                     probeChunkMgr.unloadExtraChunks();
-                    joinWorld(player);//TODO Move out of this method so this can also be used for respawning the player in the same world or something?
                     Logger.getLogger(World.class)
                             .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
-                    return;
+                    return new Vector2(x, y);
                 }
                 if (probeChunkMgr.countExtraChunks() > 13) {
                     probeChunkMgr.unloadExtraChunks();
@@ -142,8 +152,9 @@ public class WorldCombined extends World {
             }
         }
         probeChunkMgr.unloadExtraChunks();
-        System.out.println("Hehe no spawn");
-        //no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
+        Logger.getLogger(World.class).debug("Couldn't find a suitable spawning location.");
+        //TODO no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
+        return null;
     }
     
     public void addTicket(ITicket ticket) {

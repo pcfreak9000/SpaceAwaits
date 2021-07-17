@@ -15,7 +15,6 @@ import de.pcfreak9000.spaceawaits.world.Background;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -110,13 +109,11 @@ public class DMod {
                     @Override
                     public void generateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                        WorldUtil.createWorldBorders(entities.getEntities(), WIDTH, HEIGHT);
                     }
                     
                     @Override
                     public void regenerateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                        WorldUtil.createWorldBorders(entities.getEntities(), WIDTH, HEIGHT);
                     }
                 });
                 return p;

@@ -12,8 +12,22 @@ public interface IWorldProperties {
             public Tile getTileOnBreak(int tx, int ty, TileLayer layer) {
                 return Tile.NOTHING;
             }
+            
+            @Override
+            public boolean autoLowerSpawnpointToSolidGround() {
+                return true;
+            }
+            
+            @Override
+            public boolean autoWorldBorders() {
+                return true;
+            }
         };
     }
     
     Tile getTileOnBreak(int tx, int ty, TileLayer layer);
+    
+    boolean autoLowerSpawnpointToSolidGround();
+    
+    boolean autoWorldBorders();//Have this as property or just force world borders?
 }

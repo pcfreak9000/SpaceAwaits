@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Vector2;
+
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -16,6 +18,7 @@ import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -72,10 +75,15 @@ public class Game {
             this.uuidPlayerLocation = uuid;
             this.world = world;
             if (newLocation) {
-                world.findSpawnpointAndJoin(player);
-            } else {
-                world.joinWorld(player);
+                Vector2 spawnpoint = world.findSpawnpoint(player);
+                Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
+                playerpos.x = spawnpoint.x;
+                playerpos.y = spawnpoint.y;
+                OnSolidGroundComponent osgc = player.getPlayerEntity().getComponent(OnSolidGroundComponent.class);
+                osgc.lastContactX = spawnpoint.x;
+                osgc.lastContactY = spawnpoint.y;
             }
+            world.joinWorld(player);
             SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
             SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(world);
         } catch (
