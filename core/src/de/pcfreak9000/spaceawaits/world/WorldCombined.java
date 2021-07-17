@@ -14,7 +14,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.BreakingTileSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakingTilesComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
@@ -105,6 +105,7 @@ public class WorldCombined extends World {
         ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
         Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                 .boundingBoxWidthAndHeight();
+        ProbeChunkManager probeChunkMgr = new ProbeChunkManager(chunkProvider, this);
         for (int i = 0; i < 100; i++) {
             float x = spawnArea.x + rand.nextFloat() * spawnArea.width;
             float y = spawnArea.y + rand.nextFloat() * spawnArea.height;
@@ -115,8 +116,7 @@ public class WorldCombined extends World {
                 int ch = Chunk.toGlobalChunkf(y + playerBounds.y);
                 for (int j = cx; j <= cw; j++) {
                     for (int k = cy; k <= ch; k++) {
-                        Chunk c = chunkProvider.loadChunk(j, k);
-                        addChunk(c);
+                        probeChunkMgr.loadChunk(j, k, true);
                     }
                 }
                 
@@ -126,20 +126,21 @@ public class WorldCombined extends World {
                     Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
                     playerpos.x = x;
                     playerpos.y = y;
-                    player.getPlayerEntity().getComponent(PlayerInputComponent.class).solidGround.initializePosition(x,
-                            y);
-                    chunkProvider.dropAll();
+                    OnSolidGroundComponent osgc = player.getPlayerEntity().getComponent(OnSolidGroundComponent.class);
+                    osgc.lastContactX = x;
+                    osgc.lastContactY = y;
+                    probeChunkMgr.unloadExtraChunks();
                     joinWorld(player);//TODO Move out of this method so this can also be used for respawning the player in the same world or something?
                     Logger.getLogger(World.class)
                             .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
                     return;
                 }
-                if (chunkProvider.loadedChunkCount() > 13) {
-                    chunkProvider.dropAll();
+                if (probeChunkMgr.countExtraChunks() > 13) {
+                    probeChunkMgr.unloadExtraChunks();
                 }
             }
         }
-        chunkProvider.dropAll();
+        probeChunkMgr.unloadExtraChunks();
         System.out.println("Hehe no spawn");
         //no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
     }

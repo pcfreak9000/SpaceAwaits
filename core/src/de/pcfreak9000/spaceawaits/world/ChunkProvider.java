@@ -31,9 +31,8 @@ public class ChunkProvider implements IChunkProvider {
         this.save = save;
     }
     
-    void dropAll() {
-        chunks.clear();
-        queueUnload.clear();
+    boolean isLoaded(int x, int y) {
+        return chunks.get(new IntCoordKey(x, y)) != null;
     }
     
     public Chunk loadChunk(int x, int y) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.entity.RenderEntityComponent;
@@ -19,9 +20,9 @@ public class PlayerEntityFactory implements WorldEntityFactory {
     public Entity createEntity() {
         Entity e = new EntityImproved();
         e.flags = 2;
-        SolidGroundContactListener l = new SolidGroundContactListener();
+        OnSolidGroundComponent osgc = new OnSolidGroundComponent();
+        SolidGroundContactListener l = new SolidGroundContactListener(osgc);
         PlayerInputComponent pic = new PlayerInputComponent();
-        pic.solidGround = l;
         pic.maxXv = 100 / 16;
         pic.maxYv = 100 / 16;
         e.add(pic);
@@ -37,6 +38,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         TransformComponent tc = new TransformComponent();
         e.add(tc);
         e.add(pc);
+        e.add(osgc);
         pc.factory = new PlayerBodyFactory(sprite.getWidth(), sprite.getHeight(), l);
         //        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
         //                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);

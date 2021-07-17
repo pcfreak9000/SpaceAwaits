@@ -7,37 +7,24 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 
 public class SolidGroundContactListener implements IContactListener {
     
-    private int count = 0;
-    private float x, y;
+    private OnSolidGroundComponent backingComp;
     
-    public void initializePosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-    
-    public boolean isOnSolidGround() {
-        return count > 0;
-    }
-    
-    public float getLastContactX() {
-        return x;
-    }
-    
-    public float getLastContactY() {
-        return y;
+    public SolidGroundContactListener(OnSolidGroundComponent comp) {
+        this.backingComp = comp;
     }
     
     @Override
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
         if (!other.getFixture().isSensor() && contact.isTouching()) {
-            count++;
+            backingComp.solidGroundContacts++;
         }
         return false;
     }
@@ -46,17 +33,20 @@ public class SolidGroundContactListener implements IContactListener {
     public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
         if (!other.getFixture().isSensor()) {
-            count--;
+            backingComp.solidGroundContacts--;
+            if (backingComp.solidGroundContacts < 0) {
+                backingComp.solidGroundContacts = 0;
+            }
             WorldManifold wm = contact.getWorldManifold();
             int n = wm.getNumberOfContactPoints();
             if (n > 0) {
                 Vector2[] p = wm.getPoints();
                 if (n == 1) {
-                    x = p[0].x;
-                    y = p[0].y;
+                    backingComp.lastContactX = p[0].x;
+                    backingComp.lastContactY = p[0].y;
                 } else if (n == 2) {
-                    x = p[0].x * 0.5f + p[1].x * 0.5f;
-                    y = p[0].y * 0.5f + p[1].y * 0.5f;
+                    backingComp.lastContactX = p[0].x * 0.5f + p[1].x * 0.5f;
+                    backingComp.lastContactY = p[0].y * 0.5f + p[1].y * 0.5f;
                 }
             }
         }

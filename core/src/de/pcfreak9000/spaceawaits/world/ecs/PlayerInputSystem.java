@@ -29,6 +29,8 @@ public class PlayerInputSystem extends EntitySystem {
             .getFor(PlayerInputComponent.class);
     private static final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper
             .getFor(PhysicsComponent.class);
+    private static final ComponentMapper<OnSolidGroundComponent> solidGroundMapper = ComponentMapper
+            .getFor(OnSolidGroundComponent.class);
     
     private final World world;
     private final GameRenderer worldRend;
@@ -93,7 +95,7 @@ public class PlayerInputSystem extends EntitySystem {
         boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
         
-        if (up && play.solidGround.isOnSolidGround()) {
+        if (up && solidGroundMapper.get(entity).isOnSolidGround()) {
             vy += play.maxYv * 10;
         }
         //kinda useless, use for sneaking/ladders instead?

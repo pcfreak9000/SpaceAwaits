@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Component;
 
 import de.pcfreak9000.spaceawaits.core.Player;
-import de.pcfreak9000.spaceawaits.core.SolidGroundContactListener;
 
 public class PlayerInputComponent implements Component {
     public float maxXv, maxYv;
@@ -12,5 +11,4 @@ public class PlayerInputComponent implements Component {
     
     public Player player;
     
-    public SolidGroundContactListener solidGround;//TODO Move into dedicated Component with proper "frontend" and saving
 }
