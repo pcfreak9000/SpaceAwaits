@@ -19,7 +19,7 @@ public class TileStorage {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 this.tileArray[i][j] = new TileState();
-                this.tileArray[i][j].setTile(Tile.EMPTY);
+                this.tileArray[i][j].setTile(Tile.NOTHING);
             }
         }
     }

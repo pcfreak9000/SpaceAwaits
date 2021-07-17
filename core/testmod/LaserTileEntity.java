@@ -26,7 +26,7 @@ public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializ
         progress += time;
         if (gty - progress >= 0 && progress >= 1) {
             if (world.getTile(gtx, gty - Mathf.floori(progress), TileLayer.Front).canBreak()) {
-                world.setTile(gtx, gty - Mathf.floori(progress), TileLayer.Front, Tile.EMPTY);
+                world.setTile(gtx, gty - Mathf.floori(progress), TileLayer.Front, Tile.NOTHING);
             }
         } else if (gty - progress < 0) {
             progress = 0;

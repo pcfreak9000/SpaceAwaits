@@ -94,7 +94,8 @@ public class PlayerInputSystem extends EntitySystem {
         boolean left = InptMgr.isPressed(EnumDefInputIds.Left);
         boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
-        
+        boolean backlayer = InptMgr.isPressed(EnumDefInputIds.BackLayer);
+        TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         if (up && solidGroundMapper.get(entity).isOnSolidGround()) {
             vy += play.maxYv * 10;
         }
@@ -124,12 +125,7 @@ public class PlayerInputSystem extends EntitySystem {
                     if (Mathf.square(i) + Mathf.square(j) <= Mathf.square(rad)) {
                         int tx = txm + i;
                         int ty = tym + j;
-                        world.breakTile(tx, ty, TileLayer.Front, InstantBreaker.INSTANCE);
-                        //                        Tile t = world.getTile(tx, ty, TileLayer.Front);
-                        //                        if (t != null && t.canBreak()) {
-                        //                            world.setTile(tx, ty, TileLayer.Front, Tile.EMPTY);
-                        //                        }
-                        
+                        world.breakTile(tx, ty, layer, InstantBreaker.INSTANCE);
                     }
                 }
             }
@@ -145,7 +141,7 @@ public class PlayerInputSystem extends EntitySystem {
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
             if (!used) {
-                world.breakTile(tx, ty, TileLayer.Front, br);
+                world.breakTile(tx, ty, layer, br);
             }
         }
         if (InptMgr.isPressed(EnumDefInputIds.Use)) {
@@ -160,12 +156,12 @@ public class PlayerInputSystem extends EntitySystem {
                 //onItemUse
                 if (stack != null && stack.getItem() != null) {
                     ItemStack cp = stack.cpy();
-                    used = stack.getItem().onItemUse(player, cp, world, tx, ty, mouse.x, mouse.y);
+                    used = stack.getItem().onItemUse(player, cp, world, tx, ty, mouse.x, mouse.y, layer);//Hmmm... does the layer fit here?
                     player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
                 }
             }
             if (!used) {
-                Tile clicked = world.getTile(tx, ty, TileLayer.Front);
+                Tile clicked = world.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
                 //onTileUse
                 ItemStack cp = stack != null ? stack.cpy() : null;
                 used = clicked.onTileUse(player, world, cp, tx, ty);

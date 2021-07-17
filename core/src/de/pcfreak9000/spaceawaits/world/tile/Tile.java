@@ -25,21 +25,22 @@ public class Tile {
     
     public static final float MAX_LIGHT_VALUE = 16;
     //TODO option if a tile behaves like Empty? Default "empty" per world?
-    public static final Tile EMPTY = new Tile();//The last bastion against the void
+    public static final Tile NOTHING = new Tile();//The last bastion against the void
     
     public static int toGlobalTile(float x) {
         return Mathf.floori(x);//well i hope this floor function works properly
     }
     
     static {
-        EMPTY.setBouncyness(0);
-        EMPTY.setCanBreak(false);
-        EMPTY.setLightColor(null);
-        EMPTY.setOpaque(false);
-        EMPTY.setTexture(null);
-        EMPTY.setSolid(false);
-        EMPTY.color().set(0, 0, 0, 0);
-        GameRegistry.TILE_REGISTRY.register("empty", EMPTY);
+        NOTHING.setBouncyness(0);
+        NOTHING.setCanBreak(false);
+        NOTHING.setLightColor(null);
+        NOTHING.setOpaque(false);
+        NOTHING.setTexture(null);
+        NOTHING.setSolid(false);
+        NOTHING.setCanBeReplaced(true);
+        NOTHING.color().set(0, 0, 0, 0);
+        GameRegistry.TILE_REGISTRY.register("empty", NOTHING);
     }
     
     private ITextureProvider textureProvider;
@@ -47,6 +48,7 @@ public class Tile {
     private boolean canBreak = true;
     private boolean opaque = true;
     private boolean solid = true;
+    private boolean canBeReplaced = false;
     
     private final Color color = new Color(1, 1, 1, 1);
     
@@ -141,6 +143,14 @@ public class Tile {
         this.hardness = hardness;
     }
     
+    public boolean canBeReplaced() {
+        return canBeReplaced;
+    }
+    
+    public void setCanBeReplaced(boolean canBeReplaced) {
+        this.canBeReplaced = canBeReplaced;
+    }
+    
     public final Item getRegisterItem() {
         if (this.itemTile == null) {
             this.itemTile = createItem();
@@ -161,11 +171,11 @@ public class Tile {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
-    public void onTileBreak(int tx, int ty, TileLayer layer, World world) {
+    public void onTileRemoved(int tx, int ty, TileLayer layer, World world) {
         
     }
     
-    public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
+    public void onTileSet(int tx, int ty, TileLayer layer, World world) {
         
     }
     

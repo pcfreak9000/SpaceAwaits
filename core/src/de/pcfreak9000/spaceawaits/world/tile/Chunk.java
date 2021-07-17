@@ -217,7 +217,7 @@ public class Chunk implements NBTSerializable {
         return old;
     }
     
-    public Tile setTile(Tile t, int tx, int ty) {
+    private Tile setTile(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
         GameRegistry.TILE_REGISTRY.checkRegistered(t);
         TileState state = this.tiles.get(tx, ty);
@@ -305,11 +305,11 @@ public class Chunk implements NBTSerializable {
             int y = (i / 2) % CHUNK_SIZE;
             //Foreground tiles
             String id = tileList.getString(i);
-            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.EMPTY);
+            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
             setTile(t, cx + x, cy + y);
             //Background tiles
             String idB = tileList.getString(i + 1);
-            Tile tB = GameRegistry.TILE_REGISTRY.getOrDefault(idB, Tile.EMPTY);
+            Tile tB = GameRegistry.TILE_REGISTRY.getOrDefault(idB, Tile.NOTHING);
             setTileBack(tB, cx + x, cy + y);
         }
         for (NBTTag tet : tileEntities.getContent()) {

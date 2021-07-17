@@ -13,6 +13,6 @@ public interface AmbientLightProvider {
     Color getAmbientLightNew(int tx, int ty);
     
     default float getEmptyTileTransmission(int tx, int ty) {
-        return Tile.EMPTY.getLightTransmission();
+        return Tile.NOTHING.getLightTransmission();
     }
 }

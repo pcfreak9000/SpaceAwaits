@@ -59,7 +59,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
             for (int j = 0; j < areaheight; j++) {
                 int gtx = i + atx;
                 int gty = j + aty;
-                if (world.getTile(gtx, gty, TileLayer.Front) == Tile.EMPTY
+                if (world.getTile(gtx, gty, TileLayer.Front) == Tile.NOTHING
                 /* && head.r.getBackground(gtx, gty) == Tile.EMPTY */) {
                     LightState state = new LightState();
                     state.i = i + lightConstant;
@@ -102,7 +102,7 @@ public class PixelPointLightTask implements AsyncTask<Void> {
         }
         int tx = atx + i - lightConstant;
         int ty = aty + j - lightConstant;
-        Tile tile = Tile.EMPTY;//Hmmm...
+        Tile tile = Tile.NOTHING;//Hmmm...
         if (world.getBounds().inBounds(tx, ty)) {
             tile = world.getTile(tx, ty, TileLayer.Front);
         }

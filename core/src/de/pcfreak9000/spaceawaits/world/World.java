@@ -109,8 +109,8 @@ public abstract class World {
             if (c != null) {
                 Tile old = c.setTile(tx, ty, layer, tile);
                 breakingTiles.remove(IntCoords.toLong(tx, ty));
-                old.onTileBreak(tx, ty, layer, this);
-                tile.onTilePlaced(tx, ty, layer, this);
+                old.onTileRemoved(tx, ty, layer, this);
+                tile.onTileSet(tx, ty, layer, this);
                 notifyNeighbours(tile, old, tx, ty, layer);
                 return old;
             }
@@ -133,7 +133,7 @@ public abstract class World {
                 return c.getTile(tx, ty, layer);
             }
         }
-        return Tile.EMPTY;
+        return Tile.NOTHING;
     }
     
     public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
@@ -147,9 +147,15 @@ public abstract class World {
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile, Object source) {
-        //TODO check current occupation (see ItemTile#onItemUse)
+        //TODO if back layer, check for front layer?
+        //TODO onTilePlaced? (!=onTileSet)
+        Tile current = getTile(tx, ty, layer);
+        if (current != null && !current.canBeReplaced()) {
+            //check current occupation, only place tile if there isnt already one
+            return null;
+        }
         if (tile.isSolid()) {
-            queryAABB(entCheck, tx, ty, tx + 1, ty + 1);
+            queryAABB(entCheck, tx, ty, tx + 0.99f, ty + 0.99f);
             if (entCheck.ud.isEntity()) {
                 return null;
             }
@@ -160,14 +166,15 @@ public abstract class World {
     
     public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
         //TODO allow null tilebreaker?
+        //TODO onTileBreak? (!= onTileRemoved)
         //First check if this is allowed
-        Tile tile = getTile(tx, ty, layer);
         if (layer == TileLayer.Back) {
-            Tile front = getTile(tx, tx, TileLayer.Front);
+            Tile front = getTile(tx, ty, TileLayer.Front);
             if (front.isSolid()) {
                 return -1f;
             }
         }
+        Tile tile = getTile(tx, ty, layer);
         if (!tile.canBreak() && !breaker.ignoreTileCanBreak()) {
             return -1f;
         }
@@ -190,7 +197,7 @@ public abstract class World {
             Array<ItemStack> drops = new Array<>();
             tile.addDrops(tx, ty, layer, drops, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, this, drops, worldRandom);
-            setTile(tx, ty, layer, Tile.EMPTY);
+            setTile(tx, ty, layer, Tile.NOTHING);//TODO when a tile is broken, place some default tile instead?
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
                     dropItemStack(s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,

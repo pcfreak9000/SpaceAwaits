@@ -8,6 +8,7 @@ import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 /**
  * represents an Item
@@ -59,7 +60,7 @@ public class Item {
      * @param tiley
      * @return whether this item has actually been used
      */
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y) {
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y, TileLayer layer) {
         return false;
     }
     
