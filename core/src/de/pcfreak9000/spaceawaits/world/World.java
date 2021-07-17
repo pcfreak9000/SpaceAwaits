@@ -40,7 +40,7 @@ public abstract class World {
     protected final IChunkProvider chunkProvider;
     protected final IUnchunkProvider unchunkProvider;
     protected final IPlayerSpawn playerSpawn;
-    
+    protected final IWorldProperties worldProperties;
     private AmbientLightProvider ambientLightProvider;
     
     protected final Engine ecsEngine;
@@ -59,6 +59,7 @@ public abstract class World {
         this.worldBounds = primer.getWorldBounds();
         this.ambientLightProvider = primer.getLightProvider();
         this.playerSpawn = primer.getPlayerSpawn();
+        this.worldProperties = primer.getWorldProperties();
         
         this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
@@ -199,7 +200,7 @@ public abstract class World {
         t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
-            setTile(tx, ty, layer, Tile.NOTHING);//TODO when a tile is broken, place some default tile instead? (like atmosphere, depends on the world, if none specified, used NOTHING)
+            setTile(tx, ty, layer, this.worldProperties.getTileOnBreak(tx, ty, layer));
             tile.onTileBroken(tx, ty, layer, drops, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, this, drops, worldRandom);
             if (drops.size > 0) {

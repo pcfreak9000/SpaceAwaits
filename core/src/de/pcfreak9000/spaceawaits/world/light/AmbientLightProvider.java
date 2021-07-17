@@ -12,6 +12,8 @@ public interface AmbientLightProvider {
     
     Color getAmbientLightNew(int tx, int ty);
     
+    //TODO move this into IWorldProperties? Or have the AmbientLightProvider as getter in WorldProperties?
+    
     default float getEmptyTileTransmission(int tx, int ty) {
         return Tile.NOTHING.getLightTransmission();
     }

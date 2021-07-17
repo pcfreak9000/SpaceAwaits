@@ -13,10 +13,12 @@ public class WorldPrimer {
     private IUnchunkGenerator unchunkGenerator;
     private AmbientLightProvider lightProvider;
     private IPlayerSpawn playerSpawn;
+    private IWorldProperties worldProperties;
     private WorldBounds worldBounds;
     
     public WorldPrimer() {
         this.lightProvider = AmbientLightProvider.constant(Color.WHITE);
+        this.worldProperties = IWorldProperties.defaultProperties();
     }
     
     public IChunkGenerator getChunkGenerator() {
@@ -52,11 +54,19 @@ public class WorldPrimer {
     }
     
     public IPlayerSpawn getPlayerSpawn() {
-        return this.playerSpawn;
+        return this.playerSpawn;//TODO somehow generate a default from world bounds?
     }
     
     public void setPlayerSpawn(IPlayerSpawn playerSpawn) {
         this.playerSpawn = playerSpawn;
+    }
+    
+    public IWorldProperties getWorldProperties() {
+        return worldProperties;
+    }
+    
+    public void setWorldProperties(IWorldProperties worldProperties) {
+        this.worldProperties = worldProperties;
     }
     
 }
