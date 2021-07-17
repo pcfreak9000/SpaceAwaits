@@ -54,7 +54,7 @@ public class ItemStack {
             c.putByte("c", (byte) stack.getCount());
             String id = GameRegistry.ITEM_REGISTRY.getId(stack.getItem());
             c.putString("id", id);
-            if (stack.nbt != null && !stack.nbt.entrySet().isEmpty()) {//TODO direct isEmpty in NBTCompound, also in the top of this class
+            if (stack.nbt != null && !stack.nbt.isEmpty()) {
                 c.putCompound("nbt", stack.nbt);
             }
         }
@@ -62,7 +62,7 @@ public class ItemStack {
     }
     
     public static ItemStack readNBT(NBTTag tag) {
-        if (((NBTCompound) tag).entrySet().isEmpty()) {
+        if (((NBTCompound) tag).isEmpty()) {
             return EMPTY;
         }
         ItemStack stack = new ItemStack();
