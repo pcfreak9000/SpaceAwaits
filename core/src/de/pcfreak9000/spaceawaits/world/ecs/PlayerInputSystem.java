@@ -31,6 +31,7 @@ public class PlayerInputSystem extends EntitySystem {
             .getFor(PhysicsComponent.class);
     private static final ComponentMapper<OnSolidGroundComponent> solidGroundMapper = ComponentMapper
             .getFor(OnSolidGroundComponent.class);
+    private static final ComponentMapper<HealthComponent> healthMapper = ComponentMapper.getFor(HealthComponent.class);
     
     private final World world;
     private final GameRenderer worldRend;
@@ -96,7 +97,10 @@ public class PlayerInputSystem extends EntitySystem {
         boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
         boolean backlayer = InptMgr.isPressed(EnumDefInputIds.BackLayer);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
-        if (up ) {//&& solidGroundMapper.get(entity).isOnSolidGround()
+        if (InptMgr.isJustPressed(EnumDefInputIds.TestButton)) {
+            healthMapper.get(entity).currentHealth -= backlayer ? -10 : 10;
+        }
+        if (up) {//&& solidGroundMapper.get(entity).isOnSolidGround()
             vy += play.maxYv * 5;
         }
         //kinda useless, use for sneaking/ladders instead?
@@ -113,7 +117,6 @@ public class PlayerInputSystem extends EntitySystem {
         PhysicsComponent pc = physicsMapper.get(entity);
         pc.body.applyAccelerationW(vx * 3, vy * 3);
         pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
-        
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
         player.getInventory().setSelectedSlot(hotbarChecked);
         if (InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles)) {

@@ -19,7 +19,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 public class CoreRes {
     
     public static enum EnumDefInputIds {
-        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayer;
+        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayer, TestButton;
     }
     
     public static final void init() {
@@ -34,6 +34,7 @@ public class CoreRes {
         InptMgr.register(EnumDefInputIds.TestExplodeTiles, Buttons.MIDDLE, true);
         InptMgr.register(EnumDefInputIds.ToggleInventory, Keys.E, false);
         InptMgr.register(EnumDefInputIds.BackLayer, Keys.ALT_LEFT, false);
+        InptMgr.register(EnumDefInputIds.TestButton, Keys.G, false);
     }
     
     static {

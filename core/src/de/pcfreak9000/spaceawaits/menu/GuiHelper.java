@@ -17,7 +17,7 @@ public class GuiHelper implements Disposable {
     private SpriteBatch guiSpriteBatch;
     
     public GuiHelper() {
-        this.viewport = new ExtendViewport(500, 500);
+        this.viewport = new ExtendViewport(1280/1.9f, 720/1.9f);
         this.backgroundVp = new FillViewport(200 * 16 / 9f, 200);
         this.guiSpriteBatch = new SpriteBatch();
     }

@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class Slot extends Actor {
-    static final float SIZE = 40;
+    static final float SIZE = 30;
     
     protected final IInventory inventoryBacking;
     protected final int slotIndex;

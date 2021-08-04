@@ -21,6 +21,8 @@ import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
+
+//TODO having there global (gameregistrey and stuff) might not be the best idea
 public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
