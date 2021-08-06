@@ -21,7 +21,6 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-
 //TODO having there global (gameregistrey and stuff) might not be the best idea
 public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener {
     
@@ -32,6 +31,8 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     private SpriteCache regionCache;//Maybe use something global instead
     private IntSet freeCacheIds;
     private Camera camera;
+    
+    private int count;
     
     public RenderChunkStrategy(GameRenderer renderer) {
         super(Family.all(ChunkComponent.class).get());
@@ -82,6 +83,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(
                 SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera().combined);
+        this.count = 0;
     }
     
     @Override
@@ -101,6 +103,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         ca.begin();
         ca.draw(id, 0, crc.len);
         ca.end();
+        this.count++;
     }
     
     private void recacheTiles(SpriteCache cache, Chunk c, ChunkRenderComponent crc) {
@@ -144,5 +147,9 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     
     private void addTile(Tile t, int gtx, int gty, SpriteCache c) {
         c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, 1);
+    }
+    
+    public int getRenderedChunkCount() {
+        return count;
     }
 }

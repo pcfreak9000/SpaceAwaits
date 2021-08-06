@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
@@ -34,8 +35,8 @@ import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
 public abstract class World {
     
@@ -409,6 +410,14 @@ public abstract class World {
         this.chunkProvider.queueUnloadAll();
         this.chunkProvider.unloadQueued();
         this.unchunkProvider.unload();
+    }
+    
+    public int getLoadedChunksCount() {
+        return this.chunkProvider.loadedChunkCount();
+    }
+    
+    public int getUpdatingChunksCount() {
+        return this.ecsEngine.getSystem(TickChunkSystem.class).getEntities().size();//Ooof, this is pretty specific...
     }
     
     private static final class RaycastCallbackImpl implements IRaycastFixtureCallback {
