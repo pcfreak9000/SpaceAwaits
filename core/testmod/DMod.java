@@ -100,7 +100,7 @@ public class DMod {
             
             @Override
             public WorldPrimer generateWorld(long seed) {
-                WorldPrimer p = new WorldPrimer();
+                WorldPrimer p = new WorldPrimer(this);
                 p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setChunkGenerator(new TestChunkGenerator());

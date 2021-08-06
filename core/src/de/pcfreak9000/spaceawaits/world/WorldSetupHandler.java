@@ -10,18 +10,18 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrate
 
 public class WorldSetupHandler {
     
-//    @EventSubscription
-//    public void setup0(WorldEvents.SetupEntitySystemsEvent ev) {
-//        
-//    }
+    //    @EventSubscription
+    //    public void setup0(WorldEvents.SetupEntitySystemsEvent ev) {
+    //        
+    //    }
     
     @EventSubscription
     private void setupRenderStrategeies(RenderSystem.RegisterRenderStrategiesEvent ev) {
-        ev.renderStrategies.register("entity", new RenderEntityStrategy());
-        ev.renderStrategies.register("chunk", new RenderChunkStrategy());
+        ev.renderStrategies.register("entity", new RenderEntityStrategy(ev.renderer));
+        ev.renderStrategies.register("chunk", new RenderChunkStrategy(ev.renderer));
         ev.renderStrategies.register("para", new RenderParallaxStrategy(ev.world));
-        ev.renderStrategies.register("item", new RenderItemStrategy());
-        ev.renderStrategies.register("break", new RenderTileBreakingStrategy());
+        ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
+        ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
     }
     
 }

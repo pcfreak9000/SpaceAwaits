@@ -41,8 +41,9 @@ public class LightCalculator extends IteratingSystem {
     
     @EventSubscription
     public void event(WorldEvents.SetWorldEvent ev) {
-        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
-        resize(cam.viewportWidth, cam.viewportHeight);
+        resize(0, 0);
+//        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
+//        resize(cam.viewportWidth, cam.viewportHeight);
     }
     
     @EventSubscription

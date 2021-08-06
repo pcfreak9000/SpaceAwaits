@@ -14,10 +14,10 @@ import com.badlogic.gdx.utils.IntSet;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
@@ -33,16 +33,12 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     private IntSet freeCacheIds;
     private Camera camera;
     
-    public RenderChunkStrategy() {
+    public RenderChunkStrategy(GameRenderer renderer) {
         super(Family.all(ChunkComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
+        this.camera = renderer.getView().getCamera();
         SpaceAwaits.BUS.register(this);
-    }
-    
-    @EventSubscription
-    public void settwevent(WorldEvents.SetWorldEvent ev) {
-        camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
     }
     
     @EventSubscription

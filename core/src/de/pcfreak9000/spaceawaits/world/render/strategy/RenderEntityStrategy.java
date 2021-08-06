@@ -7,10 +7,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderEntityComponent;
 
 public class RenderEntityStrategy extends AbstractRenderStrategy {
@@ -19,19 +17,15 @@ public class RenderEntityStrategy extends AbstractRenderStrategy {
     private final ComponentMapper<RenderEntityComponent> renderMapper = ComponentMapper
             .getFor(RenderEntityComponent.class);
     
-    public RenderEntityStrategy() {
+    
+    public RenderEntityStrategy(GameRenderer renderer) {
         super(Family.all(RenderEntityComponent.class).get());
-        SpaceAwaits.BUS.register(this);
+        this.b = renderer.getSpriteBatch();
+        this.cam = renderer.getView().getCamera();
     }
     
     private SpriteBatch b;
     private Camera cam;
-    
-    @EventSubscription
-    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.b = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch();
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
-    }
     
     @Override
     public void begin() {

@@ -6,11 +6,9 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
@@ -20,19 +18,14 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     private static final ComponentMapper<BreakingTilesComponent> MAPPER = ComponentMapper
             .getFor(BreakingTilesComponent.class);
     
-    public RenderTileBreakingStrategy() {
+    public RenderTileBreakingStrategy(GameRenderer renderer) {
         super(Family.all(BreakingTilesComponent.class).get());
-        SpaceAwaits.BUS.register(this);
+        this.b = renderer.getSpriteBatch();
+        this.cam = renderer.getView().getCamera();
     }
     
     private SpriteBatch b;
     private Camera cam;
-    
-    @EventSubscription
-    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.b = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch();
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
-    }
     
     @Override
     public void begin() {

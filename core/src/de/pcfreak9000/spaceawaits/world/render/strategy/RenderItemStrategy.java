@@ -6,12 +6,9 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -34,18 +31,13 @@ public class RenderItemStrategy implements IRenderStrategy {
         }
     }
     
-    public RenderItemStrategy() {
-        SpaceAwaits.BUS.register(this);
+    public RenderItemStrategy(GameRenderer renderer) {
+        this.render = renderer;
+        this.batch = this.render.getSpriteBatch();
     }
     
     private GameRenderer render;
     private SpriteBatch batch;
-    
-    @EventSubscription
-    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer();
-        this.batch = render.getSpriteBatch();
-    }
     
     @Override
     public void begin() {

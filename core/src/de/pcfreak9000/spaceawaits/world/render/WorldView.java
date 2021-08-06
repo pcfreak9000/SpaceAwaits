@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
+import de.pcfreak9000.spaceawaits.menu.Hud;
 import de.pcfreak9000.spaceawaits.world.World;
 
 public class WorldView implements View {

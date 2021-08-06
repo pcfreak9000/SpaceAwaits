@@ -30,4 +30,5 @@ public interface IWorldProperties {
     boolean autoLowerSpawnpointToSolidGround();
     
     boolean autoWorldBorders();//Have this as property or just force world borders?
+    
 }

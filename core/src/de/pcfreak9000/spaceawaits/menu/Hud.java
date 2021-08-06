@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.render;
+package de.pcfreak9000.spaceawaits.menu;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,8 +9,6 @@ import com.badlogic.gdx.utils.Align;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
-import de.pcfreak9000.spaceawaits.menu.GuiHelper;
-import de.pcfreak9000.spaceawaits.menu.HotbarSlot;
 import de.pcfreak9000.spaceawaits.world.ecs.HealthComponent;
 
 public class Hud {

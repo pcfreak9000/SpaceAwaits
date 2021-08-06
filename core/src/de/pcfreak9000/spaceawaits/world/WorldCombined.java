@@ -79,7 +79,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new BreakingTileSystem());
         //lightCalc.setProcessing(false);
         //ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
-        SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs));
+        SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         engine.addEntity(createBreakingAnimationsEntity());//Hmmmmm...
     }

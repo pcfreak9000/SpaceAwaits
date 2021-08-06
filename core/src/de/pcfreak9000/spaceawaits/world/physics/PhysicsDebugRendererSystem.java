@@ -9,7 +9,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class PhysicsDebugRendererSystem extends EntitySystem {
     
@@ -19,15 +19,11 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     private Camera cam;
     private PhysicsSystemBox2D phsystem;
     
-    public PhysicsDebugRendererSystem(PhysicsSystemBox2D sys) {
+    public PhysicsDebugRendererSystem(PhysicsSystemBox2D sys, GameRenderer renderer) {
         SpaceAwaits.BUS.register(this);
         this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
         this.phsystem = sys;
-    }
-    
-    @EventSubscription
-    private void ev(WorldEvents.SetWorldEvent ev) {
-        this.cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
+        this.cam = renderer.getView().getCamera();
     }
     
     @EventSubscription
