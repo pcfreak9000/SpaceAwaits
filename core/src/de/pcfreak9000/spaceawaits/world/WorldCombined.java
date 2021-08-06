@@ -20,6 +20,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
@@ -69,7 +70,8 @@ public class WorldCombined extends World {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new TickChunkSystem());
-        ecs.addSystem(new PhysicsSystemBox2D(this));
+        PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
+        ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
@@ -78,7 +80,7 @@ public class WorldCombined extends World {
         ecs.addSystem(lightCalc);
         ecs.addSystem(new BreakingTileSystem());
         //lightCalc.setProcessing(false);
-        //ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
+        ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         engine.addEntity(createBreakingAnimationsEntity());//Hmmmmm...

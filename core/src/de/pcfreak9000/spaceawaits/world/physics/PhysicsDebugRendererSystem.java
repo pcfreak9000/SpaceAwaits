@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
@@ -18,6 +20,8 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     private Box2DDebugRenderer debugRend;
     private Camera cam;
     private PhysicsSystemBox2D phsystem;
+    
+    private boolean enabled;
     
     public PhysicsDebugRendererSystem(PhysicsSystemBox2D sys, GameRenderer renderer) {
         SpaceAwaits.BUS.register(this);
@@ -34,12 +38,17 @@ public class PhysicsDebugRendererSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
-        OrthographicCamera cam = new OrthographicCamera();
-        cam.setToOrtho(false, PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportWidth),
-                PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportHeight));
-        cam.position.set(PhysicsSystemBox2D.METER_CONV.in(this.cam.position.x),
-                PhysicsSystemBox2D.METER_CONV.in(this.cam.position.y), 0);
-        cam.update();
-        debugRend.render(phsystem.getB2DWorld(), cam.combined);
+        if (InptMgr.isJustPressed(EnumInputIds.DebugDrawPhysics)) {
+            enabled = !enabled;
+        }
+        if (enabled) {
+            OrthographicCamera cam = new OrthographicCamera();
+            cam.setToOrtho(false, PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportWidth),
+                    PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportHeight));
+            cam.position.set(PhysicsSystemBox2D.METER_CONV.in(this.cam.position.x),
+                    PhysicsSystemBox2D.METER_CONV.in(this.cam.position.y), 0);
+            cam.update();
+            debugRend.render(phsystem.getB2DWorld(), cam.combined);
+        }
     }
 }

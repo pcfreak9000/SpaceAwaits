@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
@@ -32,12 +32,16 @@ public class GameRenderer extends ScreenAdapter {
     
     private View viewCurrent;
     
+    private boolean showDebugScreen;
+    private DebugScreen debugScreen;
+    
     public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
         this.gsm = gsm;
         this.guiHelper = guiHelper;
         this.fps = new FPSLogger();
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
         this.worldView = new WorldView(guiHelper);
+        this.debugScreen = new DebugScreen(this);
         setWorldView();
     }
     
@@ -112,16 +116,22 @@ public class GameRenderer extends ScreenAdapter {
     
     @Override
     public void render(float delta) {
-        boolean exit = this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumDefInputIds.Esc);
+        boolean exit = this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc);
+        if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
+            showDebugScreen = !showDebugScreen;
+        }
         ScreenUtils.clear(0.05f, 0.05f, 0.05f, 1);
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         viewCurrent.updateAndRenderContent(delta);
+        if (showDebugScreen) {
+            this.debugScreen.actAndDraw(delta);
+        }
         if (this.guiContainerCurrent != null) {
             this.guiContainerCurrent.actAndDraw(delta);
         }
-        fps.log();
+        //fps.log();
         if (exit) {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();

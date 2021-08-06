@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.menu;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
-import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
@@ -36,8 +36,8 @@ public class GuiOverlay implements Disposable {
     public void actAndDraw(float dt) {
         this.gameRenderer.getGuiHelper().drawDarken(0.7f);
         this.gameRenderer.getGuiHelper().actAndDraw(stage, dt);
-        if (!justOpened && (InptMgr.isJustPressed(EnumDefInputIds.Esc)
-                || InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory))) {
+        if (!justOpened && (InptMgr.isJustPressed(EnumInputIds.Esc)
+                || InptMgr.isJustPressed(EnumInputIds.ToggleInventory))) {
             closeContainer();
         }
         if (justOpened) {

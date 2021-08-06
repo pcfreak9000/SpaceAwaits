@@ -18,23 +18,26 @@ import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 
 public class CoreRes {
     
-    public static enum EnumDefInputIds {
-        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayer, TestButton;
+    public static enum EnumInputIds {
+        Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
+        DebugScreenButton, DebugDrawPhysics, TestButton;
     }
     
     public static final void init() {
         Logger.getLogger(CoreRes.class).info("Creating core resource hooks");
-        InptMgr.register(EnumDefInputIds.Left, Keys.A, false);
-        InptMgr.register(EnumDefInputIds.Right, Keys.D, false);
-        InptMgr.register(EnumDefInputIds.Up, new ButtonKey(Keys.W, false), new ButtonKey(Keys.SPACE, false));
-        InptMgr.register(EnumDefInputIds.Down, new ButtonKey(Keys.S, false), new ButtonKey(Keys.SHIFT_LEFT, false));
-        InptMgr.register(EnumDefInputIds.Esc, Keys.ESCAPE, false);
-        InptMgr.register(EnumDefInputIds.Use, Buttons.RIGHT, true);
-        InptMgr.register(EnumDefInputIds.BreakAttack, Buttons.LEFT, true);
-        InptMgr.register(EnumDefInputIds.TestExplodeTiles, Buttons.MIDDLE, true);
-        InptMgr.register(EnumDefInputIds.ToggleInventory, Keys.E, false);
-        InptMgr.register(EnumDefInputIds.BackLayer, Keys.ALT_LEFT, false);
-        InptMgr.register(EnumDefInputIds.TestButton, Keys.G, false);
+        InptMgr.register(EnumInputIds.Left, Keys.A, false);
+        InptMgr.register(EnumInputIds.Right, Keys.D, false);
+        InptMgr.register(EnumInputIds.Up, new ButtonKey(Keys.W, false), new ButtonKey(Keys.SPACE, false));
+        InptMgr.register(EnumInputIds.Down, new ButtonKey(Keys.S, false), new ButtonKey(Keys.SHIFT_LEFT, false));
+        InptMgr.register(EnumInputIds.Esc, Keys.ESCAPE, false);
+        InptMgr.register(EnumInputIds.Use, Buttons.RIGHT, true);
+        InptMgr.register(EnumInputIds.BreakAttack, Buttons.LEFT, true);
+        InptMgr.register(EnumInputIds.TestExplodeTiles, Buttons.MIDDLE, true);
+        InptMgr.register(EnumInputIds.ToggleInventory, Keys.E, false);
+        InptMgr.register(EnumInputIds.BackLayerMod, Keys.ALT_LEFT, false);
+        InptMgr.register(EnumInputIds.TestButton, Keys.G, false);
+        InptMgr.register(EnumInputIds.DebugScreenButton, Keys.F3, false);
+        InptMgr.register(EnumInputIds.DebugDrawPhysics, Keys.F4, false);
     }
     
     static {

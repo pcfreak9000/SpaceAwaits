@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
@@ -81,7 +81,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
-        if (InptMgr.isJustPressed(EnumDefInputIds.ToggleInventory)) {
+        if (InptMgr.isJustPressed(EnumInputIds.ToggleInventory)) {
             if (!worldRend.isGuiContainerOpen()) {
                 player.openInventory();
             }
@@ -96,13 +96,13 @@ public class PlayerInputSystem extends EntitySystem {
         //        Vector2 transform = transformMapper.get(entity).position;
         Vector2 mouse = worldRend.getMouseWorldPos();
         //if (physicsMapper.get(entities.get(0)).onGround) {
-        boolean up = InptMgr.isPressed(EnumDefInputIds.Up);
-        boolean left = InptMgr.isPressed(EnumDefInputIds.Left);
-        boolean down = InptMgr.isPressed(EnumDefInputIds.Down);
-        boolean right = InptMgr.isPressed(EnumDefInputIds.Right);
-        boolean backlayer = InptMgr.isPressed(EnumDefInputIds.BackLayer);
+        boolean up = InptMgr.isPressed(EnumInputIds.Up);
+        boolean left = InptMgr.isPressed(EnumInputIds.Left);
+        boolean down = InptMgr.isPressed(EnumInputIds.Down);
+        boolean right = InptMgr.isPressed(EnumInputIds.Right);
+        boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
-        if (InptMgr.isJustPressed(EnumDefInputIds.TestButton)) {
+        if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
             healthMapper.get(entity).currentHealth -= backlayer ? -10 : 10;
         }
         if (up) {//&& solidGroundMapper.get(entity).isOnSolidGround()
@@ -124,7 +124,7 @@ public class PlayerInputSystem extends EntitySystem {
         pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
         player.getInventory().setSelectedSlot(hotbarChecked);
-        if (InptMgr.isPressed(EnumDefInputIds.TestExplodeTiles)) {
+        if (InptMgr.isPressed(EnumInputIds.TestExplodeTiles)) {
             int txm = Tile.toGlobalTile(mouse.x);
             int tym = Tile.toGlobalTile(mouse.y);
             final int rad = 3;
@@ -138,7 +138,7 @@ public class PlayerInputSystem extends EntitySystem {
                 }
             }
         }
-        if (InptMgr.isPressed(EnumDefInputIds.BreakAttack)) {
+        if (InptMgr.isPressed(EnumInputIds.BreakAttack)) {
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
             ItemStack stack = player.getInventory().getSelectedStack();
@@ -152,7 +152,7 @@ public class PlayerInputSystem extends EntitySystem {
                 world.breakTile(tx, ty, layer, br);
             }
         }
-        if (InptMgr.isPressed(EnumDefInputIds.Use)) {
+        if (InptMgr.isPressed(EnumInputIds.Use)) {
             //Current mouse stuff
             int tx = Tile.toGlobalTile(mouse.x);
             int ty = Tile.toGlobalTile(mouse.y);
