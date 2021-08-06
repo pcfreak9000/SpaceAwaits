@@ -9,13 +9,14 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
@@ -24,11 +25,6 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderChunkStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderEntityStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderParallaxStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrategy;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTileSystem;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
@@ -36,7 +32,6 @@ public class WorldCombined extends World {
     //Server side stuff
     private TicketedChunkManager ticketHandler;
     //Client side stuff
-    private PlayerInputSystem playerInput;
     private GameRenderer gameRenderer;
     
     public WorldCombined(WorldPrimer primer, IWorldSave save, long seed, GameRenderer renderer) {
@@ -70,31 +65,23 @@ public class WorldCombined extends World {
         return new UnchunkProvider(this, primer.getUnchunkGenerator());
     }
     
-    private void setupECS(WorldPrimer primer, Engine ecs) {
-        this.playerInput = new PlayerInputSystem(this, this.gameRenderer);
-        ecs.addSystem(playerInput);
+    private void setupECS(WorldPrimer primer, Engine engine) {
+        SystemResolver ecs = new SystemResolver();
+        ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new TickChunkSystem());
-        PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
-        ecs.addSystem(phsys);
+        ecs.addSystem(new PhysicsSystemBox2D(this));
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
-        RenderSystem rsys = new RenderSystem();
-        //this sucks
-        GameRegistry.RENDER_STRATEGY_REGISTRY.register("entity", new RenderEntityStrategy());
-        GameRegistry.RENDER_STRATEGY_REGISTRY.register("chunk", new RenderChunkStrategy());
-        GameRegistry.RENDER_STRATEGY_REGISTRY.register("para", new RenderParallaxStrategy(this));
-        GameRegistry.RENDER_STRATEGY_REGISTRY.register("item", new RenderItemStrategy());
-        GameRegistry.RENDER_STRATEGY_REGISTRY.register("break", new RenderTileBreakingStrategy());
-        //******
-        ecs.addSystem(rsys);
+        ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         LightCalculator lightCalc = new LightCalculator(this);
         ecs.addSystem(lightCalc);
         ecs.addSystem(new BreakingTileSystem());
         //lightCalc.setProcessing(false);
         //ecs.addSystem(new PhysicsDebugRendererSystem(phsys));
-        
-        ecs.addEntity(createBreakingAnimationsEntity());
+        SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs));
+        ecs.setupSystems(engine);
+        engine.addEntity(createBreakingAnimationsEntity());//Hmmmmm...
     }
     
     @Override
@@ -102,7 +89,7 @@ public class WorldCombined extends World {
         super.joinWorld(player);
         Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
         addTicket(new FollowingTicket(playerpos));
-        this.playerInput.setPlayer(player);
+        SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
     }
     
     public Vector2 findSpawnpoint(Player player) {

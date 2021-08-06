@@ -6,7 +6,6 @@ import java.util.HashMap;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
-import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**
@@ -37,8 +36,6 @@ public class GameRegistry<T> {
     public static final GameRegistry<Item> ITEM_REGISTRY = new GameRegistry<>();
     
     public static final WorldComponentRegistry WORLD_COMPONENT_REGISTRY = new WorldComponentRegistry();
-    
-    public static final GameRegistry<IRenderStrategy> RENDER_STRATEGY_REGISTRY = new GameRegistry<>();
     
     protected final Logger LOGGER = Logger.getLogger(getClass());
     

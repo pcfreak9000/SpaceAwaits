@@ -12,7 +12,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 
+import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
 public class RenderSystem extends EntitySystem implements EntityListener {
@@ -32,7 +36,27 @@ public class RenderSystem extends EntitySystem implements EntityListener {
         return maj;
     };
     
-    private Array<Entity> entities = new Array<>();
+    public static final class RegisterRenderStrategiesEvent extends Event {
+        public final GameRegistry<IRenderStrategy> renderStrategies;
+        public final World world;
+        public final GameRenderer renderer;
+        
+        public RegisterRenderStrategiesEvent(GameRegistry<IRenderStrategy> rendstrat, World world,
+                GameRenderer renderer) {
+            this.renderStrategies = rendstrat;
+            this.world = world;
+            this.renderer = renderer;
+        }
+    }
+    
+    private final GameRegistry<IRenderStrategy> renderStrategies;
+    private Array<Entity> entities;
+    
+    public RenderSystem(World world, GameRenderer renderer) {
+        this.entities = new Array<>();
+        this.renderStrategies = new GameRegistry<>();
+        SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
+    }
     
     @Override
     public void addedToEngine(Engine engine) {
@@ -72,9 +96,9 @@ public class RenderSystem extends EntitySystem implements EntityListener {
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = rMapper.get(entity);
         Objects.requireNonNull(rc.renderDecoratorId);
-        IRenderStrategy renderStrategy = GameRegistry.RENDER_STRATEGY_REGISTRY.get(rc.renderDecoratorId);
+        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderDecoratorId);
         if (renderStrategy == null) {
-            throw new IllegalStateException("No such IRenderDecorator: " + rc.renderDecoratorId);
+            throw new IllegalStateException("No such IRenderStrategyr: " + rc.renderDecoratorId);
         }
         boolean matches = renderStrategy.getFamily().matches(entity);
         if (!matches) {

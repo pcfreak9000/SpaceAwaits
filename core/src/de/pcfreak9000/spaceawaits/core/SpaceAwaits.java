@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
+import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -79,6 +80,8 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
+        //Where to put this?
+        BUS.register(new WorldSetupHandler());
         //Instantiate game stuff
         this.screenManager = new ScreenManager(this);
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()),

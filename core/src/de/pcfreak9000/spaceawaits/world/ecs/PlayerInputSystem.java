@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumDefInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
@@ -16,6 +17,7 @@ import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
@@ -44,8 +46,11 @@ public class PlayerInputSystem extends EntitySystem {
         SpaceAwaits.BUS.register(this);
     }
     
-    public void setPlayer(Player player) {
-        this.player = player;
+    @EventSubscription
+    public void joined(WorldEvents.PlayerJoinedEvent ev) {
+        if (ev.world == this.world) {//TODO world specific eventbus?
+            this.player = ev.player;
+        }
     }
     
     private final ITileBreaker br = new ITileBreaker() {
