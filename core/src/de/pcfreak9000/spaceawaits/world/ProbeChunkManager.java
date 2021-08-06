@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.world;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class ProbeChunkManager {
     

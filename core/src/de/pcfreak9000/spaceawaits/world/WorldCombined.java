@@ -11,25 +11,26 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
-import de.pcfreak9000.spaceawaits.world.ecs.BreakingTileSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.BreakingTilesComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.CameraSystem;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.chunk.TickChunkSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.entity.MovingWorldEntitySystem;
+import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
-import de.pcfreak9000.spaceawaits.world.render.RenderChunkStrategy;
-import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.RenderEntityStrategy;
-import de.pcfreak9000.spaceawaits.world.render.RenderItemStrategy;
-import de.pcfreak9000.spaceawaits.world.render.RenderParallaxStrategy;
-import de.pcfreak9000.spaceawaits.world.render.RenderSystem;
-import de.pcfreak9000.spaceawaits.world.render.RenderTileBreakingStrategy;
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderChunkStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderEntityStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderParallaxStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrategy;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTileSystem;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
 public class WorldCombined extends World {
     //Server side stuff
@@ -75,15 +76,17 @@ public class WorldCombined extends World {
         ecs.addSystem(new TickChunkSystem());
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
         ecs.addSystem(phsys);
-        ecs.addSystem(new MovingWorldEntitySystem(this));
+        ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         RenderSystem rsys = new RenderSystem();
+        //this sucks
         GameRegistry.RENDER_STRATEGY_REGISTRY.register("entity", new RenderEntityStrategy());
         GameRegistry.RENDER_STRATEGY_REGISTRY.register("chunk", new RenderChunkStrategy());
         GameRegistry.RENDER_STRATEGY_REGISTRY.register("para", new RenderParallaxStrategy(this));
         GameRegistry.RENDER_STRATEGY_REGISTRY.register("item", new RenderItemStrategy());
         GameRegistry.RENDER_STRATEGY_REGISTRY.register("break", new RenderTileBreakingStrategy());
+        //******
         ecs.addSystem(rsys);
         LightCalculator lightCalc = new LightCalculator(this);
         ecs.addSystem(lightCalc);

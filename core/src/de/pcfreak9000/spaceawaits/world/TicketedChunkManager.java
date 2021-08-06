@@ -6,7 +6,9 @@ import java.util.Set;
 
 import com.badlogic.ashley.core.EntitySystem;
 
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.util.IntCoordKey;
+import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class TicketedChunkManager extends EntitySystem {
     

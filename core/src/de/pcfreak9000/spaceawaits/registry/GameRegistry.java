@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
-import de.pcfreak9000.spaceawaits.world.render.IRenderStrategy;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**

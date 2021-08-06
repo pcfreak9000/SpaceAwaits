@@ -1,6 +1,6 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public interface IChunkProvider {
     

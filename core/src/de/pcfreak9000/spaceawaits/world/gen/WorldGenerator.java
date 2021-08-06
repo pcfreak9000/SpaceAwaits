@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.omnikryptec.math.Weighted;
-import de.pcfreak9000.spaceawaits.world.WorldPrimer;
 
 /**
  * TileWorld generator. Capabilities of that generator.

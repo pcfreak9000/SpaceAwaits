@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.serialize;
 
 import com.badlogic.ashley.core.Component;
 
-import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 
 public class SerializeEntityComponent implements Component {
     

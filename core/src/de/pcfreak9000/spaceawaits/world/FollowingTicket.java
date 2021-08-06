@@ -2,7 +2,8 @@ package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.gdx.math.Vector2;
 
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
+import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class FollowingTicket implements ITicket {
     

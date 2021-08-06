@@ -7,8 +7,9 @@ import java.util.Set;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.util.IntCoordKey;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
-import de.pcfreak9000.spaceawaits.world.tile.Chunk;
 
 public class ChunkProvider implements IChunkProvider {
     

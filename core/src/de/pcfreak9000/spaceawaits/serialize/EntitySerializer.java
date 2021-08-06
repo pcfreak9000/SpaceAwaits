@@ -10,7 +10,7 @@ import com.badlogic.ashley.core.Entity;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 
 public class EntitySerializer {
     

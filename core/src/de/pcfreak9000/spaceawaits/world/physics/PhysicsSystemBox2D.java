@@ -13,7 +13,6 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.world.IQueryCallback;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class PhysicsSystemBox2D extends IteratingSystem implements EntityListener {

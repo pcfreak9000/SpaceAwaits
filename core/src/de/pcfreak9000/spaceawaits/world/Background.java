@@ -4,10 +4,11 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.world.render.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
-
+import de.pcfreak9000.spaceawaits.world.render.ecs.ParallaxComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+@Deprecated
 public class Background implements WorldEntityFactory {
     
     private final TextureProvider texture;

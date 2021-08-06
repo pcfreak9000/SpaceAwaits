@@ -6,12 +6,12 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.menu.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
-import de.pcfreak9000.spaceawaits.world.render.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 /**
