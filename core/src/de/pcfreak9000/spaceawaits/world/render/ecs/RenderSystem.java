@@ -11,6 +11,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.Event;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
@@ -19,7 +20,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
-public class RenderSystem extends EntitySystem implements EntityListener {
+public class RenderSystem extends EntitySystem implements EntityListener, Disposable {
     
     private static final Family FAMILY = Family.all(RenderComponent.class).get();
     
@@ -139,6 +140,16 @@ public class RenderSystem extends EntitySystem implements EntityListener {
         }
         if (last != null) {
             last.end();
+        }
+    }
+    
+    @Override
+    public void dispose() {
+        for (IRenderStrategy irs : this.renderStrategies.getAll()) {
+            if (irs instanceof Disposable) {
+                Disposable d = (Disposable) irs;
+                d.dispose();
+            }
         }
     }
 }

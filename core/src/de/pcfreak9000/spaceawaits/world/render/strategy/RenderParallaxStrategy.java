@@ -5,10 +5,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.math.Vector3;
 
-import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.ParallaxComponent;
 
@@ -19,15 +17,10 @@ public class RenderParallaxStrategy extends AbstractRenderStrategy {
     private World tileWorld;
     private GameRenderer render;
     
-    public RenderParallaxStrategy(World world) {
+    public RenderParallaxStrategy(World world, GameRenderer rend) {
         super(Family.all(ParallaxComponent.class).get());
         this.tileWorld = world;
-        SpaceAwaits.BUS.register(this);
-    }
-    
-    @EventSubscription
-    public void tileworldLoadingEvent(WorldEvents.SetWorldEvent svwe) {
-        this.render = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer();
+        this.render = rend;
     }
     
     @Override

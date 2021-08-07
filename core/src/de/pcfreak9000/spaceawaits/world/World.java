@@ -3,16 +3,20 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongMap;
 
+import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
@@ -50,6 +54,7 @@ public abstract class World {
     private AmbientLightProvider ambientLightProvider;
     
     protected final Engine ecsEngine;
+    protected final EventBus eventBus;
     protected final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     
     //Used for random item drops etc, not terrain gen etc
@@ -59,6 +64,8 @@ public abstract class World {
         //initialize fields
         this.seed = seed;
         this.ecsEngine = new Engine();
+        this.eventBus = new EventBus();
+        SpaceAwaits.BUS.register(eventBus);//Not too sure about this
         this.worldRandom = new RandomXS128(seed);
         
         //do priming stuff
@@ -406,10 +413,25 @@ public abstract class World {
         return seed;
     }
     
+    public EventBus getWorldBus() {
+        return this.eventBus;
+    }
+    
     public void unloadAll() {
         this.chunkProvider.queueUnloadAll();
         this.chunkProvider.unloadQueued();
         this.unchunkProvider.unload();
+        ecsEngine.removeAllEntities();
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            ecsEngine.removeSystem(es);
+            SpaceAwaits.BUS.unregister(es);//Hmmm... the systems should handle this or even better, just use the worlds EventBus
+            if (es instanceof Disposable) {
+                Disposable d = (Disposable) es;
+                d.dispose();
+            }
+        }
+        SpaceAwaits.BUS.unregister(eventBus);
     }
     
     public int getLoadedChunksCount() {

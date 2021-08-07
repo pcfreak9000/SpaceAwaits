@@ -14,7 +14,6 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -43,7 +42,7 @@ public class PlayerInputSystem extends EntitySystem {
     public PlayerInputSystem(World world, GameRenderer renderer) {
         this.world = world;
         this.worldRend = renderer;
-        SpaceAwaits.BUS.register(this);
+        world.getWorldBus().register(this);
     }
     
     @EventSubscription

@@ -9,10 +9,9 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntSet;
 
-import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
@@ -22,7 +21,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 //TODO having there global (gameregistrey and stuff) might not be the best idea
-public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener {
+public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener, Disposable {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
@@ -39,12 +38,6 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
         this.camera = renderer.getView().getCamera();
-        SpaceAwaits.BUS.register(this);
-    }
-    
-    @EventSubscription
-    private void event2(CoreEvents.ExitEvent ex) {
-        this.regionCache.dispose();
     }
     
     @Override
@@ -104,6 +97,11 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         ca.draw(id, 0, crc.len);
         ca.end();
         this.count++;
+    }
+    
+    @Override
+    public void dispose() {
+        this.regionCache.dispose();
     }
     
     private void recacheTiles(SpriteCache cache, Chunk c, ChunkRenderComponent crc) {

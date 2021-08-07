@@ -10,19 +10,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
-public class LightCalculator extends IteratingSystem {
+public class LightCalculator extends IteratingSystem implements Disposable {
     
     private World world;
     
@@ -30,32 +29,14 @@ public class LightCalculator extends IteratingSystem {
     
     public LightCalculator(World world) {
         super(Family.all().get());
-        SpaceAwaits.BUS.register(this);
+        world.getWorldBus().register(this);
         this.world = world;
+        resize(0, 0);//If the world is constructed asynchronously, this will fail
     }
     
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
         resize(ev.renderer.getView().getCamera().viewportWidth, ev.renderer.getView().getCamera().viewportHeight);
-    }
-    
-    @EventSubscription
-    public void event(WorldEvents.SetWorldEvent ev) {
-        resize(0, 0);
-//        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
-//        resize(cam.viewportWidth, cam.viewportHeight);
-    }
-    
-    @EventSubscription
-    private void event3(CoreEvents.ExitEvent ex) {
-        Logger.getLogger(getClass()).debug("Disposing...");
-        if (this.texture != null) {
-            this.texture.dispose();
-            this.texture = null;
-        }
-        if (lightsBuffer != null) {
-            this.lightsBuffer.dispose();
-        }
     }
     
     public void resize(float widthf, float heightf) {
@@ -117,5 +98,17 @@ public class LightCalculator extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+    }
+    
+    @Override
+    public void dispose() {
+        Logger.getLogger(getClass()).debug("Disposing...");
+        if (this.texture != null) {
+            this.texture.dispose();
+            this.texture = null;
+        }
+        if (lightsBuffer != null) {
+            this.lightsBuffer.dispose();
+        }
     }
 }

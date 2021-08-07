@@ -16,11 +16,10 @@ import de.pcfreak9000.spaceawaits.save.WorldMeta;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
+import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class Game {
@@ -84,8 +83,7 @@ public class Game {
                 osgc.lastContactY = spawnpoint.y;
             }
             world.joinWorld(player);
-            SpaceAwaits.BUS.post(new WorldEvents.SetWorldEvent());
-            SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(world);
+            this.gameRenderer.setWorldView().setWorld(world);
         } catch (
         
         IOException e) {
@@ -108,7 +106,7 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setWorldView().setWorld(null);
+        this.gameRenderer.setWorldView().setWorld(null);
         this.world.unloadAll();
         this.writePlayer();
     }

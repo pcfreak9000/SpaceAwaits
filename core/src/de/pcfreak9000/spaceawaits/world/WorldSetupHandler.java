@@ -19,7 +19,7 @@ public class WorldSetupHandler {
     private void setupRenderStrategeies(RenderSystem.RegisterRenderStrategiesEvent ev) {
         ev.renderStrategies.register("entity", new RenderEntityStrategy(ev.renderer));
         ev.renderStrategies.register("chunk", new RenderChunkStrategy(ev.renderer));
-        ev.renderStrategies.register("para", new RenderParallaxStrategy(ev.world));
+        ev.renderStrategies.register("para", new RenderParallaxStrategy(ev.world, ev.renderer));
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
     }
