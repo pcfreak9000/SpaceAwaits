@@ -68,7 +68,7 @@ public class ItemStack {
         ItemStack stack = new ItemStack();
         NBTCompound c = (NBTCompound) tag;
         String id = c.getString("id");
-        stack.count = c.getByte("c");//Hopefully works with conversion...
+        stack.count = Byte.toUnsignedInt(c.getByte("c"));//Hopefully works with conversion... now it does. Dumbass forgot max stacksize is 128 and thats problematic for a signed byte
         stack.item = GameRegistry.ITEM_REGISTRY.get(id);
         if (c.hasKey("nbt")) {
             stack.nbt = c.getCompound("nbt");
@@ -151,6 +151,12 @@ public class ItemStack {
     
     public void setNBT(NBTCompound nbt) {
         this.nbt = nbt;
+    }
+    
+    @Override
+    public String toString() {
+        return "ItemStack [item=" + (item == null ? "null" : GameRegistry.ITEM_REGISTRY.getId(item)) + ", count="
+                + count + ", hasNBT=" + hasNBT() + "]";//TODO move the item stuff into an item#toString?
     }
     
 }

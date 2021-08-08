@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.item;
 
+import java.util.Arrays;
+
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
@@ -71,6 +73,11 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
             }
         }
         return c;
+    }
+    
+    @Override
+    public String toString() {
+        return Arrays.toString(this.stacks);
     }
     
 }
