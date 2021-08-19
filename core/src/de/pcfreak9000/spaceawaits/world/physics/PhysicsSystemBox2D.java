@@ -35,7 +35,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     public PhysicsSystemBox2D(de.pcfreak9000.spaceawaits.world.World world) {
         super(Family.all(PhysicsComponent.class).get());
-        this.box2dWorld = new World(new Vector2(0, -9.81f), true);
+        this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(false);
         this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);

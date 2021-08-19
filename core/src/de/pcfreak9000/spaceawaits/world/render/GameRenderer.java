@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.menu.GuiChat;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
 import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
@@ -21,8 +21,6 @@ public class GameRenderer extends ScreenAdapter {
     private ScreenManager gsm;
     
     private GuiHelper guiHelper;
-    
-    private FPSLogger fps;
     
     private SpriteBatch spriteBatch;
     private GuiOverlay guiContainerCurrent;
@@ -38,7 +36,6 @@ public class GameRenderer extends ScreenAdapter {
     public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
         this.gsm = gsm;
         this.guiHelper = guiHelper;
-        this.fps = new FPSLogger();
         this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
         this.worldView = new WorldView(guiHelper);
         this.debugScreen = new DebugScreen(this);
@@ -65,12 +62,15 @@ public class GameRenderer extends ScreenAdapter {
         return this.guiContainerCurrent != null;
     }
     
-    public WorldView setWorldView() {//Hmm
+    public void setWorldView() {
         this.viewCurrent = worldView;
+    }
+    
+    public WorldView getWorldView() {
         return worldView;
     }
     
-    public View getView() {
+    public View getCurrentView() {
         return viewCurrent;
     }
     
@@ -127,6 +127,9 @@ public class GameRenderer extends ScreenAdapter {
         viewCurrent.updateAndRenderContent(delta);
         if (showDebugScreen) {
             this.debugScreen.actAndDraw(delta);
+        }
+        if (InptMgr.isJustPressed(EnumInputIds.Console)) {
+            this.setGuiCurrent(new GuiChat(this));
         }
         if (this.guiContainerCurrent != null) {
             this.guiContainerCurrent.actAndDraw(delta);

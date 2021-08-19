@@ -13,6 +13,8 @@ public class GuiOverlay implements Disposable {
     protected final GameRenderer gameRenderer;
     protected final Stage stage;
     
+    protected boolean reactsToToggleInventory = true;
+    
     //Crappy workaround
     private boolean justOpened = true;
     
@@ -37,7 +39,7 @@ public class GuiOverlay implements Disposable {
         this.gameRenderer.getGuiHelper().drawDarken(0.7f);
         this.gameRenderer.getGuiHelper().actAndDraw(stage, dt);
         if (!justOpened && (InptMgr.isJustPressed(EnumInputIds.Esc)
-                || InptMgr.isJustPressed(EnumInputIds.ToggleInventory))) {
+                || (InptMgr.isJustPressed(EnumInputIds.ToggleInventory) && reactsToToggleInventory))) {
             closeContainer();
         }
         if (justOpened) {

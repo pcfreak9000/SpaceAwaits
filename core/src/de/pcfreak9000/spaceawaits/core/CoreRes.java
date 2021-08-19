@@ -20,7 +20,7 @@ public class CoreRes {
     
     public static enum EnumInputIds {
         Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
-        DebugScreenButton, DebugDrawPhysics, TestButton;
+        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg;
     }
     
     public static final void init() {
@@ -38,6 +38,10 @@ public class CoreRes {
         InptMgr.register(EnumInputIds.TestButton, Keys.G, false);
         InptMgr.register(EnumInputIds.DebugScreenButton, Keys.F3, false);
         InptMgr.register(EnumInputIds.DebugDrawPhysics, Keys.F4, false);
+        InptMgr.register(EnumInputIds.Console, Keys.F5, false);
+        InptMgr.register(EnumInputIds.SendMsg, Keys.ENTER, false);
+        InptMgr.register(EnumInputIds.LastChatMsg, Keys.UP, false);
+        InptMgr.register(EnumInputIds.NextChatMsg, Keys.DOWN, false);
     }
     
     static {
@@ -59,6 +63,7 @@ public class CoreRes {
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("mensch.png");
     
+    public static final TextureProvider TILEMARKER_DEF = TextureProvider.get("backport.png");
     public static final TextureProvider ITEM_SLOT = TextureProvider.get("item_slot.png");
     
     public static final TextureProvider[] BREAK_OVERLAY = new TextureProvider[] { TextureProvider.get("brst1.png"),

@@ -409,6 +409,18 @@ public abstract class World {
         }
     }
     
+    public void queryAABBTiles(float x, float y, float w, float h, TileLayer layer, Array<Tile> res) {
+        int xi = Mathf.floori(x);
+        int yi = Mathf.floori(y);
+        int xwi = Mathf.ceili(x + w);
+        int yhi = Mathf.ceili(y + h);
+        for (int i = xi; i < xwi; i++) {
+            for (int j = yi; j < yhi; j++) {
+                res.add(getTile(i, j, layer));
+            }
+        }
+    }
+    
     public long getSeed() {
         return seed;
     }

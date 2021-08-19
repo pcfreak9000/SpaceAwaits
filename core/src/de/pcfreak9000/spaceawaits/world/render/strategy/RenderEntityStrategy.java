@@ -21,7 +21,7 @@ public class RenderEntityStrategy extends AbstractRenderStrategy {
     public RenderEntityStrategy(GameRenderer renderer) {
         super(Family.all(RenderEntityComponent.class).get());
         this.b = renderer.getSpriteBatch();
-        this.cam = renderer.getView().getCamera();
+        this.cam = renderer.getCurrentView().getCamera();
     }
     
     private SpriteBatch b;

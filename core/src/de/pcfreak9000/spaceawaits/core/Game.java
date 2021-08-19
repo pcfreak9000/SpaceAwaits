@@ -83,7 +83,8 @@ public class Game {
                 osgc.lastContactY = spawnpoint.y;
             }
             world.joinWorld(player);
-            this.gameRenderer.setWorldView().setWorld(world);
+            this.gameRenderer.setWorldView();
+            this.gameRenderer.getWorldView().setWorld(world);
         } catch (
         
         IOException e) {
@@ -106,7 +107,7 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        this.gameRenderer.setWorldView().setWorld(null);
+        this.gameRenderer.getWorldView().setWorld(null);
         this.world.unloadAll();
         this.writePlayer();
     }

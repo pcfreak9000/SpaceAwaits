@@ -36,7 +36,7 @@ public class LightCalculator extends IteratingSystem implements Disposable {
     
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
-        resize(ev.renderer.getView().getCamera().viewportWidth, ev.renderer.getView().getCamera().viewportHeight);
+        resize(ev.renderer.getCurrentView().getCamera().viewportWidth, ev.renderer.getCurrentView().getCamera().viewportHeight);
     }
     
     public void resize(float widthf, float heightf) {
@@ -53,7 +53,7 @@ public class LightCalculator extends IteratingSystem implements Disposable {
     
     @Override
     public void update(float deltaTime) {
-        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera();
+        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera();
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
         int wi = Mathf.ceili(cam.viewportWidth);

@@ -37,7 +37,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         super(Family.all(ChunkComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
-        this.camera = renderer.getView().getCamera();
+        this.camera = renderer.getCurrentView().getCamera();
     }
     
     @Override
@@ -75,7 +75,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(
-                SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getView().getCamera().combined);
+                SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera().combined);
         this.count = 0;
     }
     

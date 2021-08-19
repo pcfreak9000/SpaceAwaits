@@ -21,6 +21,7 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsForcesSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
@@ -70,6 +71,7 @@ public class WorldCombined extends World {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new TickChunkSystem());
+        ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));

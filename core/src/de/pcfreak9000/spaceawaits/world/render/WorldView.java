@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import de.pcfreak9000.spaceawaits.command.ICommandContext;
+import de.pcfreak9000.spaceawaits.command.WorldCommandContext;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
 import de.pcfreak9000.spaceawaits.menu.Hud;
@@ -18,10 +20,13 @@ public class WorldView implements View {
     private OrthographicCamera camera;
     private FitViewport viewport;
     
+    private WorldCommandContext commands;
+    
     public WorldView(GuiHelper guiHelper) {
         this.camera = new OrthographicCamera();
         this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);//Problematic because of mouse stuff?
         this.hud = new Hud(guiHelper);
+        this.commands = new WorldCommandContext();
     }
     
     public void setPlayer(Player player) {
@@ -46,6 +51,11 @@ public class WorldView implements View {
     public void updateAndRenderContent(float delta) {
         this.world.update(delta);
         this.hud.actAndDraw(delta);
+    }
+
+    @Override
+    public ICommandContext getCommandContext() {
+        return commands;
     }
     
 }
