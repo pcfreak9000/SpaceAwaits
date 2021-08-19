@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.command;
 
 import picocli.CommandLine.Command;
 
-@Command
+@Command(name = "")
 public class BaseCommand {
     
 }

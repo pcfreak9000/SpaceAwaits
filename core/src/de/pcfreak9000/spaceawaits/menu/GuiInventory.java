@@ -25,7 +25,13 @@ public class GuiInventory extends GuiOverlay {
                 InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
             } else {
                 ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, currentAttached);//This could be handled better...
-                followmouse.setItemStack(leftover);
+                if (leftover != null && leftover.getCount() == currentAttached.getCount()) {
+                    followmouse.setItemStack(clicked.getStack());
+                    InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
+                    InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, leftover);
+                } else {
+                    followmouse.setItemStack(leftover);
+                }
             }
         }
     };

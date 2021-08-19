@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.gdx.assets.AssetManager;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.command.WorldCommandContext;
 
 public class CoreEvents {
     
@@ -38,6 +39,14 @@ public class CoreEvents {
             super(mgr);
         }
         
+    }
+    
+    public static class RegisterWorldCommandsEvent extends Event {
+        public final WorldCommandContext cContext;
+        
+        public RegisterWorldCommandsEvent(WorldCommandContext c) {
+            this.cContext = c;
+        }
     }
     
     public static class ExitEvent extends Event {

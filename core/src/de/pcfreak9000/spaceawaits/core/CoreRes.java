@@ -38,7 +38,7 @@ public class CoreRes {
         InptMgr.register(EnumInputIds.TestButton, Keys.G, false);
         InptMgr.register(EnumInputIds.DebugScreenButton, Keys.F3, false);
         InptMgr.register(EnumInputIds.DebugDrawPhysics, Keys.F4, false);
-        InptMgr.register(EnumInputIds.Console, Keys.F5, false);
+        InptMgr.register(EnumInputIds.Console, Keys.ENTER, false);
         InptMgr.register(EnumInputIds.SendMsg, Keys.ENTER, false);
         InptMgr.register(EnumInputIds.LastChatMsg, Keys.UP, false);
         InptMgr.register(EnumInputIds.NextChatMsg, Keys.DOWN, false);

@@ -35,27 +35,29 @@ public class GuiChat extends GuiOverlay {
     
     @Override
     public void actAndDraw(float dt) {
-        super.actAndDraw(dt);
         if (InptMgr.isJustPressed(EnumInputIds.LastChatMsg)) {
             updateHistory(1);
         }
         if (InptMgr.isJustPressed(EnumInputIds.NextChatMsg)) {
             updateHistory(-1);
         }
-        if (InptMgr.isJustPressed(EnumInputIds.SendMsg)) {
+        if (InptMgr.isJustPressed(EnumInputIds.SendMsg) && !justOpened()) {
             String input = text.getText();
-            if (history.size() == 0 || !history.get(history.size() - 1).equals(input)) {
-                if (history.size() >= MAX_HISTORY) {
-                    history.remove(0);
+            if (!input.isBlank()) {
+                if (history.size() == 0 || !history.get(history.size() - 1).equals(input)) {
+                    if (history.size() >= MAX_HISTORY) {
+                        history.remove(0);
+                    }
+                    history.add(input);
                 }
-                history.add(input);
-            }
-            if (input.startsWith("/")) {
-                input = input.substring(1);
-                gameRenderer.getCurrentView().getCommandContext().submitCommand(input);
+                if (input.startsWith("/")) {
+                    input = input.substring(1);
+                    gameRenderer.getCurrentView().getCommandContext().submitCommand(input);
+                }
             }
             closeContainer();
         }
+        super.actAndDraw(dt);
     }
     
     private void updateHistory(int i) {

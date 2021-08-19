@@ -59,10 +59,10 @@ public class TestChunkGenerator implements IChunkGenerator {
         ttc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
         chunk.addEntity(item);
         
-        Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
-        TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
-        tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
-        chunk.addEntity(entity);
+//        Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
+//        TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
+//        tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
+//        chunk.addEntity(entity);
         
     }
 }

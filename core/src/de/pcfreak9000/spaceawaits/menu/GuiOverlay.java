@@ -47,6 +47,10 @@ public class GuiOverlay implements Disposable {
         }
     }
     
+    protected boolean justOpened() {
+        return justOpened;
+    }
+    
     public Stage getStage() {
         return stage;
     }
