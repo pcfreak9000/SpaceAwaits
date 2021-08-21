@@ -6,7 +6,6 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.RenderChunkStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTextureStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileMarkerStrategy;
 
 public class WorldSetupHandler {
     
@@ -21,7 +20,6 @@ public class WorldSetupHandler {
         ev.renderStrategies.register("chunk", new RenderChunkStrategy(ev.renderer));
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
-        ev.renderStrategies.register("tmark", new RenderTileMarkerStrategy(ev.renderer));
     }
     
 }
