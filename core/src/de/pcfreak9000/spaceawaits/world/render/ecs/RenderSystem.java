@@ -103,7 +103,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
         boolean matches = renderStrategy.getFamily().matches(entity);
         if (!matches) {
-            throw new IllegalStateException("Entity does not have the right components for this render decorator");
+            throw new IllegalStateException("Entity does not have the right components for this render decorator: "+entity);
         }
         rc.renderStrategy = renderStrategy;
         this.entities.add(entity);

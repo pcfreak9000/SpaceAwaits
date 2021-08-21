@@ -1,7 +1,6 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
@@ -12,9 +11,8 @@ import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderEntityComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerEntityFactory implements WorldEntityFactory {
     @Override
@@ -28,13 +26,15 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         pic.maxYv = 100 / 16;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
-        Sprite sprite = new Sprite();
-        sprite.setSize(2, 3);
-        pic.offx = sprite.getWidth() / 2f;
-        pic.offy = sprite.getHeight() / 2f;
-        RenderEntityComponent rc = new RenderEntityComponent();
-        rc.sprite = sprite;
-        rc.action = new TextureSpriteAction(CoreRes.HUMAN);
+        RenderTextureComponent rc = new RenderTextureComponent();
+        rc.width = 2;
+        rc.height = 3;
+        pic.offx = rc.width / 2f;
+        pic.offy = rc.height / 2f;
+        
+        //rc.sprite = sprite;
+        //rc.action = new TextureSpriteAction(CoreRes.HUMAN);
+        rc.texture = CoreRes.HUMAN;
         e.add(rc);
         TransformComponent tc = new TransformComponent();
         e.add(tc);
@@ -44,7 +44,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         health.maxHealth = 100;
         health.currentHealth = 100;
         e.add(health);
-        pc.factory = new PlayerBodyFactory(sprite.getWidth(), sprite.getHeight(), l);
+        pc.factory = new PlayerBodyFactory(rc.width, rc.height, l);
         //        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
         //                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));

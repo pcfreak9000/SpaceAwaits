@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -77,6 +78,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
+        ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         LightCalculator lightCalc = new LightCalculator(this);
         ecs.addSystem(lightCalc);

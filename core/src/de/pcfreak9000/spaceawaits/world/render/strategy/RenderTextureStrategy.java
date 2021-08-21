@@ -9,17 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderEntityComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
-public class RenderEntityStrategy extends AbstractRenderStrategy {
+public class RenderTextureStrategy extends AbstractRenderStrategy {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
-    private final ComponentMapper<RenderEntityComponent> renderMapper = ComponentMapper
-            .getFor(RenderEntityComponent.class);
+    private final ComponentMapper<RenderTextureComponent> renderMapper = ComponentMapper
+            .getFor(RenderTextureComponent.class);
     
-    
-    public RenderEntityStrategy(GameRenderer renderer) {
-        super(Family.all(RenderEntityComponent.class).get());
+    public RenderTextureStrategy(GameRenderer renderer) {
+        super(Family.all(RenderTextureComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
         this.cam = renderer.getCurrentView().getCamera();
     }
@@ -39,19 +38,15 @@ public class RenderEntityStrategy extends AbstractRenderStrategy {
     
     @Override
     public void render(Entity entity, float deltaTime) {
-        RenderEntityComponent rec = renderMapper.get(entity);
-        if (transformMapper.has(entity)) {
-            Vector2 p = transformMapper.get(entity).position;
-            rec.sprite.setPosition(p.x, p.y);
-        }
-        float wh = 0.5f * rec.sprite.getWidth() * rec.sprite.getScaleX();
-        float hh = 0.5f * rec.sprite.getHeight() * rec.sprite.getScaleY();
-        float mx = rec.sprite.getX() + wh;
-        float my = rec.sprite.getY() + hh;
+        RenderTextureComponent rec = renderMapper.get(entity);
+        Vector2 p = transformMapper.get(entity).position;
+        float wh = 0.5f * rec.width;
+        float hh = 0.5f * rec.height;
+        float mx = p.x + wh;
+        float my = p.y + hh;
         if (!cam.frustum.boundsInFrustum(mx, my, 0, wh, hh, 0)) {
             return;
         }
-        rec.action.act(rec.sprite);
-        rec.sprite.draw(b);
+        b.draw(rec.texture.getRegion(), p.x, p.y, rec.width, rec.height);
     }
 }

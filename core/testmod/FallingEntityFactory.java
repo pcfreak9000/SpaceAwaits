@@ -8,9 +8,8 @@ import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.TextureSpriteAction;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderEntityComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class FallingEntityFactory implements WorldEntityFactory {
     @Override
@@ -18,11 +17,11 @@ public class FallingEntityFactory implements WorldEntityFactory {
         Entity entity = new EntityImproved();
         entity.flags = 3;
         entity.add(new ChunkMarkerComponent());
-        RenderEntityComponent rec = new RenderEntityComponent();
+        RenderTextureComponent rec = new RenderTextureComponent();
         Sprite s = new Sprite();
         s.setSize(200 / 16, 100 / 16);
-        rec.sprite = s;
-        rec.action = new TextureSpriteAction(DMod.instance.texture);
+        //rec.sprite = s;
+        //rec.action = new TextureSpriteAction(DMod.instance.texture);
         entity.add(rec);
         TransformComponent tc = new TransformComponent();
         entity.add(tc);
