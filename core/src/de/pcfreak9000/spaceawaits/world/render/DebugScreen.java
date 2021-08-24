@@ -25,6 +25,8 @@ public class DebugScreen {
     private Label playerPos;
     private Label chunkUpdates;
     
+    private Label time;
+    
     public DebugScreen(GameRenderer renderer) {
         this.renderer = renderer;
         this.stage = renderer.getGuiHelper().createStage();
@@ -39,6 +41,9 @@ public class DebugScreen {
         this.table.row();
         this.playerPos = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(this.playerPos).align(Align.left);
+        this.table.row();
+        this.time = new Label("", CoreRes.SKIN.getSkin());
+        this.table.add(this.time).align(Align.left);
         this.stage.addActor(table);
     }
     
@@ -50,9 +55,11 @@ public class DebugScreen {
                 .getLoadedChunksCount();
         int updatedChunks = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent()
                 .getUpdatingChunksCount();
+        long time = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent().time;
         this.labelFps.setText("FPS: " + fps);
         this.chunkUpdates.setText(String.format("t: %d l: %d", updatedChunks, loadedChunks));
         this.playerPos.setText(String.format("x: %.3f y: %.3f", playerPos.x, playerPos.y));
+        this.time.setText(String.format("time: %d", time));
         renderer.getGuiHelper().actAndDraw(stage, dt);
     }
 }

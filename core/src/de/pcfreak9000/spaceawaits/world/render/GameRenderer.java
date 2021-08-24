@@ -30,6 +30,8 @@ public class GameRenderer extends ScreenAdapter {
     
     private View viewCurrent;
     
+    private boolean showGui = true;
+    
     private boolean showDebugScreen;
     private DebugScreen debugScreen;
     
@@ -120,19 +122,24 @@ public class GameRenderer extends ScreenAdapter {
         if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
             showDebugScreen = !showDebugScreen;
         }
+        if (InptMgr.isJustPressed(EnumInputIds.HideHud)) {
+            showGui = !showGui;
+        }
         ScreenUtils.clear(0.05f, 0.05f, 0.05f, 1);
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
-        viewCurrent.updateAndRenderContent(delta);
-        if (showDebugScreen) {
-            this.debugScreen.actAndDraw(delta);
-        }
-        if (InptMgr.isJustPressed(EnumInputIds.Console)) {
-            this.setGuiCurrent(new GuiChat(this));
-        }
-        if (this.guiContainerCurrent != null) {
-            this.guiContainerCurrent.actAndDraw(delta);
+        viewCurrent.updateAndRenderContent(delta, showGui);
+        if (showGui) {
+            if (showDebugScreen) {
+                this.debugScreen.actAndDraw(delta);
+            }
+            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
+                this.setGuiCurrent(new GuiChat(this));
+            }
+            if (this.guiContainerCurrent != null) {
+                this.guiContainerCurrent.actAndDraw(delta);
+            }
         }
         //fps.log();
         if (exit) {

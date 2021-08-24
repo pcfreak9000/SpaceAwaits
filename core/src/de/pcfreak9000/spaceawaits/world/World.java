@@ -23,6 +23,7 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
@@ -55,10 +56,14 @@ public abstract class World {
     
     protected final Engine ecsEngine;
     protected final EventBus eventBus;
+    
     protected final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     
     //Used for random item drops etc, not terrain gen etc
     protected final RandomXS128 worldRandom;
+    
+    public long time;//TMP until there is a proper class updating the universe
+    private float timehelper;
     
     public World(WorldPrimer primer, long seed) {
         //initialize fields
@@ -89,6 +94,13 @@ public abstract class World {
     public void update(float dt) {
         this.ecsEngine.update(dt);
         this.chunkProvider.unloadQueued();
+        
+        timehelper += dt * 50;
+        if (timehelper >= 1) {
+            int i = Mathf.floori(timehelper);
+            timehelper -= i;
+            time += i;
+        }
     }
     
     public WorldBounds getBounds() {
@@ -173,7 +185,7 @@ public abstract class World {
             //check current occupation, only place tile if there isnt already one
             return null;
         }
-        if (tile.isSolid()) {
+        if (tile.isSolid() && layer == TileLayer.Front) {
             if (entCheck(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
@@ -276,6 +288,7 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
+        DynamicAssetUtil.checkAndCreateAsset(entity);//TODO Dyn Meh
         return true;
     }
     

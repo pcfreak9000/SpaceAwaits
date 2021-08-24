@@ -20,7 +20,7 @@ public class CoreRes {
     
     public static enum EnumInputIds {
         Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
-        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg;
+        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud;
     }
     
     public static final void init() {
@@ -42,6 +42,7 @@ public class CoreRes {
         InptMgr.register(EnumInputIds.SendMsg, Keys.ENTER, false);
         InptMgr.register(EnumInputIds.LastChatMsg, Keys.UP, false);
         InptMgr.register(EnumInputIds.NextChatMsg, Keys.DOWN, false);
+        InptMgr.register(EnumInputIds.HideHud, Keys.F1, false);
     }
     
     static {

@@ -5,10 +5,13 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.ashley.core.Entity;
+
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkProvider implements IChunkProvider {
@@ -50,6 +53,9 @@ public class ChunkProvider implements IChunkProvider {
                 chunkGen.regenerateChunk(c, this.world);
             } else {
                 chunkGen.generateChunk(c, this.world);
+            }
+            for(Entity e : c.getEntities()) {//TODO Dyn Meh
+                DynamicAssetUtil.checkAndCreateAsset(e);
             }
             chunks.put(key, c);
         }
@@ -95,6 +101,9 @@ public class ChunkProvider implements IChunkProvider {
         for (IntCoordKey key : queueUnload) {
             Chunk c = chunks.remove(key);
             if (c != null) {
+                for (Entity e : c.getEntities()) {//TODO Dyn Meh
+                    DynamicAssetUtil.checkAndDisposeAsset(e);
+                }
                 saveChunk(c);
             }
         }

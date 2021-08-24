@@ -48,11 +48,13 @@ public class WorldView implements View {
     }
     
     @Override
-    public void updateAndRenderContent(float delta) {
+    public void updateAndRenderContent(float delta, boolean gui) {
         this.world.update(delta);
-        this.hud.actAndDraw(delta);
+        if (gui) {
+            this.hud.actAndDraw(delta);
+        }
     }
-
+    
     @Override
     public ICommandContext getCommandContext() {
         return commands;

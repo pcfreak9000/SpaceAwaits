@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
@@ -49,6 +50,7 @@ public class WorldCombined extends World {
                     getBounds().getHeight());
         }
         for (Entity e : unchunkProvider.get().getEntities()) {
+            DynamicAssetUtil.checkAndCreateAsset(e);//TODO Dyn Meh
             ecsEngine.addEntity(e);
         }
     }

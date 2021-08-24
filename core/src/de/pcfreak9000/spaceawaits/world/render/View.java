@@ -12,5 +12,5 @@ public interface View {
     
     ICommandContext getCommandContext();
     
-    void updateAndRenderContent(float delta);
+    void updateAndRenderContent(float delta, boolean gui);
 }

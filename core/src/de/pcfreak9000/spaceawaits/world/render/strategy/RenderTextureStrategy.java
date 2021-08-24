@@ -47,6 +47,9 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
         if (!cam.frustum.boundsInFrustum(mx, my, 0, wh, hh, 0)) {
             return;
         }
+        if (rec.color != null) {
+            b.setColor(rec.color);
+        }
         b.draw(rec.texture.getRegion(), p.x, p.y, rec.width, rec.height);
     }
 }

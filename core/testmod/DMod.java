@@ -1,16 +1,25 @@
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.EventSubscription;
+import de.pcfreak9000.spaceawaits.composer.ComposedTextureProvider;
+import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
-import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
+import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.Background;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
@@ -84,7 +93,13 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background(CoreRes.SPACE_BACKGROUND, 1920 / 32 * 16f / 9, 1920 / 32);
+        Background back = new Background(new ComposedTextureProvider(new Composer(1920, 1080) {
+            @Override
+            protected void render() {
+                super.render();
+                reee();
+            }
+        }), 1920 / 24, 1080 / 24);
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
@@ -116,8 +131,43 @@ public class DMod {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
                     }
                 });
+                //                p.setLightProvider(new AmbientLightProvider() {
+                //                    
+                //                    @Override
+                //                    public Color getAmbientLightNew(int tx, int ty) {
+                //                        return Util.ofTemperature(
+                //                                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent().time);
+                //                    }
+                //                });
                 return p;
             }
         });
+    }
+    
+    private void reee() {
+        SpriteBatch b = new SpriteBatch();
+        Camera cam = new OrthographicCamera(1, 1);
+        b.setProjectionMatrix(cam.combined);
+        //b.begin();
+        ScreenUtils.clear(0, 0, 0, 1);
+        ShapeRenderer s = new ShapeRenderer();
+        s.setProjectionMatrix(cam.combined);
+        s.begin(ShapeType.Filled);
+        RandomXS128 r = new RandomXS128();
+        for (int i = 0; i < 50000; i++) {
+            float x = r.nextFloat();
+            float y = r.nextFloat();
+            Color c = Util.ofTemperature(20000 * r.nextFloat() + 800);
+            c.mul(r.nextFloat());
+            c.a = 1;
+            s.setColor(c);
+            s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()), 20);
+            s.flush();
+            //b.draw(CoreRes.WHITE, x-0.5f, y-0.5f, 0.001f, 0.001f);
+        }
+        s.end();
+        s.dispose();
+        //b.end();
+        b.dispose();
     }
 }

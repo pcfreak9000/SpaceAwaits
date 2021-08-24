@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.command;
 
 import java.io.PrintWriter;
 
+import de.pcfreak9000.spaceawaits.command.world.TimeCommand;
 import de.pcfreak9000.spaceawaits.command.world.TpCommand;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
@@ -20,6 +21,7 @@ public class WorldCommandContext implements ICommandContext {
     private void addDefaultCommands() {
         getCommandline().addSubCommand(new TpCommand());
         getCommandline().addSubCommand(new GiveItemCommand());
+        getCommandline().addSubCommand(new TimeCommand());
     }
     
     @Override
