@@ -6,14 +6,17 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
 public class RenderComponent implements Component {
     
+    public boolean enabled = true;
+    public boolean considerAsGui = false;
+    
     public final int layer;
-    public final String renderDecoratorId;
+    public final String renderStratId;
     //Cache the render strategy:
     IRenderStrategy renderStrategy;
     
     public RenderComponent(int layer, String rDecId) {
         this.layer = layer;
-        this.renderDecoratorId = rDecId;
+        this.renderStratId = rDecId;
     }
     
 }

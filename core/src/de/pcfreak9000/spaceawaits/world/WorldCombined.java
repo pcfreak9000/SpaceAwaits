@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -16,11 +17,13 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.FollowMouseComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.light.LightCalculator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsForcesSystem;
@@ -29,6 +32,7 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTileSystem;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
@@ -73,6 +77,7 @@ public class WorldCombined extends World {
     private void setupECS(WorldPrimer primer, Engine engine) {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
+        ecs.addSystem(new FollowMouseSystem(gameRenderer));
         ecs.addSystem(new TickChunkSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
@@ -82,14 +87,15 @@ public class WorldCombined extends World {
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
-        LightCalculator lightCalc = new LightCalculator(this);
-        ecs.addSystem(lightCalc);
+        //LightCalculator lightCalc = new LightCalculator(this);
+        //ecs.addSystem(lightCalc);
         ecs.addSystem(new BreakingTileSystem());
         //lightCalc.setProcessing(false);
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         engine.addEntity(createBreakingAnimationsEntity());//Hmmmmm...
+        engine.addEntity(createTileSelectorEntity());
     }
     
     @Override
@@ -166,6 +172,24 @@ public class WorldCombined extends World {
         Entity e = new EntityImproved();
         e.add(new BreakingTilesComponent(this.breakingTiles));
         e.add(new RenderComponent(1, "break"));
+        return e;
+    }
+    
+    private Entity createTileSelectorEntity() {
+        Entity e = new EntityImproved();
+        RenderComponent rc = new RenderComponent(200, "entity");
+        rc.considerAsGui = true;
+        e.add(rc);
+        RenderTextureComponent tex = new RenderTextureComponent();
+        tex.texture = CoreRes.TILEMARKER_DEF;
+        tex.width = 1;
+        tex.height = 1;
+        tex.color = Color.GRAY;
+        e.add(tex);
+        e.add(new TransformComponent());
+        FollowMouseComponent fmc = new FollowMouseComponent();
+        fmc.tiled = true;
+        e.add(fmc);
         return e;
     }
     

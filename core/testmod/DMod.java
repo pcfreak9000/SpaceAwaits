@@ -26,6 +26,8 @@ import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
+import de.pcfreak9000.spaceawaits.world.render.WorldView;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
@@ -36,6 +38,7 @@ public class DMod {
     public static DMod instance;
     
     TextureProvider texture = TextureProvider.get("sdfsdf");
+    TextureProvider planet = TextureProvider.get("planet.png");
     Tile tstoneTile = new Tile();
     Tile laser = new Tile() {
         @Override
@@ -93,15 +96,21 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
-        Background back = new Background(new ComposedTextureProvider(new Composer(1920, 1080) {
-            @Override
-            protected void render() {
-                super.render();
-                reee();
-            }
-        }), 1920 / 24, 1080 / 24);
+        Background back = new Background(new ComposedTextureProvider(
+                new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
+                    @Override
+                    protected void render() {
+                        super.render();
+                        reee();
+                    }
+                }), WorldView.VISIBLE_TILES_MAX, WorldView.VISIBLE_TILES_MAX);
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
-        
+        Background b2 = new Background(planet, 5, 5);
+        b2.xoff = -20;
+        b2.yoff = 15;
+        b2.w = 1;
+        b2.h = 1;
+        GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
@@ -118,17 +127,20 @@ public class DMod {
                 WorldPrimer p = new WorldPrimer(this);
                 p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
+                p.setLightProvider(AmbientLightProvider.constant(Color.DARK_GRAY));
                 p.setChunkGenerator(new TestChunkGenerator());
                 p.setUnchunkGenerator(new IUnchunkGenerator() {
                     
                     @Override
                     public void generateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                        entities.addEntity(b2.createEntity());
                     }
                     
                     @Override
                     public void regenerateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                        entities.addEntity(b2.createEntity());
                     }
                 });
                 //                p.setLightProvider(new AmbientLightProvider() {
@@ -149,20 +161,19 @@ public class DMod {
         Camera cam = new OrthographicCamera(1, 1);
         b.setProjectionMatrix(cam.combined);
         //b.begin();
-        ScreenUtils.clear(0, 0, 0, 1);
+        ScreenUtils.clear(0, 0, 0, 0);
         ShapeRenderer s = new ShapeRenderer();
         s.setProjectionMatrix(cam.combined);
         s.begin(ShapeType.Filled);
         RandomXS128 r = new RandomXS128();
-        for (int i = 0; i < 50000; i++) {
+        for (int i = 0; i < 20000; i++) {
             float x = r.nextFloat();
             float y = r.nextFloat();
             Color c = Util.ofTemperature(20000 * r.nextFloat() + 800);
-            c.mul(r.nextFloat());
+            c.mul(r.nextFloat()*0.8f);
             c.a = 1;
             s.setColor(c);
-            s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()), 20);
-            s.flush();
+            s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()) / 4, 20);
             //b.draw(CoreRes.WHITE, x-0.5f, y-0.5f, 0.001f, 0.001f);
         }
         s.end();

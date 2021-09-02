@@ -31,7 +31,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         RenderComponent r2 = rMapper.get(e2);
         int maj = r1.layer - r2.layer;
         if (maj == 0) {
-            int min = r1.renderDecoratorId.hashCode() - r2.renderDecoratorId.hashCode();
+            int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
             return min;
         }
         return maj;
@@ -50,12 +50,19 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
+    private static final int BEGIN_LIGHT_LAYER = 0;
+    private static final int END_LIGHT_LAYER = 100;
+    
     private final GameRegistry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
+    private LightRenderer lightRenderer;
+    private GameRenderer renderer;
     
     public RenderSystem(World world, GameRenderer renderer) {
         this.entities = new Array<>();
         this.renderStrategies = new GameRegistry<>();
+        this.lightRenderer = new LightRenderer(world, renderer);
+        this.renderer = renderer;
         SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
     }
     
@@ -96,14 +103,15 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = rMapper.get(entity);
-        Objects.requireNonNull(rc.renderDecoratorId);
-        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderDecoratorId);
+        Objects.requireNonNull(rc.renderStratId);
+        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderStratId);
         if (renderStrategy == null) {
-            throw new IllegalStateException("No such IRenderStrategyr: " + rc.renderDecoratorId);
+            throw new IllegalStateException("No such IRenderStrategy: " + rc.renderStratId);
         }
         boolean matches = renderStrategy.getFamily().matches(entity);
         if (!matches) {
-            throw new IllegalStateException("Entity does not have the right components for this render decorator: "+entity);
+            throw new IllegalStateException(
+                    "Entity does not have the right components for this render strategy: " + entity);
         }
         rc.renderStrategy = renderStrategy;
         this.entities.add(entity);
@@ -126,25 +134,49 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void update(float deltaTime) {
         super.update(deltaTime);
         IRenderStrategy last = null;
+        int lastLayer = Integer.MIN_VALUE;
+        boolean endedLight = false;
         for (Entity e : entities) {
             RenderComponent rc = rMapper.get(e);
+            if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
+                continue;
+            }
             IRenderStrategy dec = rc.renderStrategy;
-            if (dec != last) {
+            boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.layer >= BEGIN_LIGHT_LAYER;
+            if (dec != last || startLight) {
                 if (last != null) {
                     last.end();
+                }
+                if (startLight) {
+                    lightRenderer.enterLitScene();
                 }
                 dec.begin();
                 last = dec;
             }
+            if (lastLayer < END_LIGHT_LAYER && rc.layer >= END_LIGHT_LAYER) {
+                if (last != null) {
+                    last.end();
+                }
+                lightRenderer.exitAndRenderLitScene();
+                endedLight = true;
+                if (last != null) {
+                   last.begin();
+                }
+            }
             dec.render(e, deltaTime);
+            lastLayer = rc.layer;
         }
         if (last != null) {
             last.end();
+        }
+        if (!endedLight) {
+            lightRenderer.exitAndRenderLitScene();
         }
     }
     
     @Override
     public void dispose() {
+        this.lightRenderer.dispose();
         for (IRenderStrategy irs : this.renderStrategies.getAll()) {
             if (irs instanceof Disposable) {
                 Disposable d = (Disposable) irs;

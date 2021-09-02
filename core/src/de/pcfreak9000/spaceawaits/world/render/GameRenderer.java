@@ -125,7 +125,7 @@ public class GameRenderer extends ScreenAdapter {
         if (InptMgr.isJustPressed(EnumInputIds.HideHud)) {
             showGui = !showGui;
         }
-        ScreenUtils.clear(0.05f, 0.05f, 0.05f, 1);
+        ScreenUtils.clear(0, 0, 0, 1);
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
@@ -166,6 +166,10 @@ public class GameRenderer extends ScreenAdapter {
         super.dispose();
         this.guiHelper.dispose();
         this.spriteBatch.dispose();
+    }
+    
+    public boolean showGui() {
+        return showGui;
     }
     
 }

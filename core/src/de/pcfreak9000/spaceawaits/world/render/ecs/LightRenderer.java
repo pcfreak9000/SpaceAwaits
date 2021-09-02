@@ -1,8 +1,5 @@
-package de.pcfreak9000.spaceawaits.world.light;
+package de.pcfreak9000.spaceawaits.world.render.ecs;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -16,44 +13,58 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
+import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-@Deprecated
-public class LightCalculator extends IteratingSystem implements Disposable {
+
+//Optimize for the case if everything is lit anyways? the scenebuffer wouldnt be required then
+public class LightRenderer implements Disposable {
+    private static final int extraLightRadius = 25;
     
     private World world;
+    private GameRenderer renderer;
     
     private FrameBuffer lightsBuffer;
+    private FrameBuffer sceneBuffer;
+    private Texture texture;
+    private int gwi, ghi;
     
-    public LightCalculator(World world) {
-        super(Family.all().get());
+    public LightRenderer(World world, GameRenderer renderer) {
         world.getWorldBus().register(this);
         this.world = world;
-        resize(0, 0);//If the world is constructed asynchronously, this will fail
+        this.renderer = renderer;
+        resize();
     }
     
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
-        resize(ev.renderer.getCurrentView().getCamera().viewportWidth, ev.renderer.getCurrentView().getCamera().viewportHeight);
+        resize();
     }
     
-    public void resize(float widthf, float heightf) {
+    public void enterLitScene() {
+        sceneBuffer.begin();
+        ScreenUtils.clear(0, 0, 0, 0);
+    }
+    
+    public void resize() {
         if (lightsBuffer != null) {
             this.lightsBuffer.dispose();
         }
         this.lightsBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);//Hmmmm, width and height, ...?!
+        if (sceneBuffer != null) {
+            this.sceneBuffer.dispose();
+        }
+        this.sceneBuffer = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
     
-    private Texture texture;
-    private int gwi, ghi;
-    
-    private static final int extraLightRadius = 25;
-    
-    @Override
-    public void update(float deltaTime) {
-        Camera cam = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera();
+    public void exitAndRenderLitScene() {
+        sceneBuffer.end();
+        Camera cam = renderer.getWorldView().getCamera();
+        SpriteBatch batch = renderer.getSpriteBatch();
+        batch.setColor(1, 1, 1, 1);//TODO consider some form of batch resetting?
+        
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
         int wi = Mathf.ceili(cam.viewportWidth);
@@ -73,31 +84,33 @@ public class LightCalculator extends IteratingSystem implements Disposable {
             e.printStackTrace();
         }
         //}
-        SpriteBatch batch = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getSpriteBatch();
-        batch.setColor(1, 1, 1, 1);//TODO consider some form of batch resetting?
+        
         this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);
-            SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setAdditiveBlending();
-            batch.begin();
             if (texture != null) {
+                renderer.setAdditiveBlending();
+                batch.begin();
                 batch.draw(texture, xi, yi, gwi, ghi);
+                batch.end();
             }
-            batch.end();
         }
         this.lightsBuffer.end();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().applyViewport();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setMultiplicativeBlending();
+        this.sceneBuffer.begin();
+        renderer.applyViewport();
+        renderer.setMultiplicativeBlending();
         batch.begin();
         batch.draw(this.lightsBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.lightsBuffer.getWidth(), this.lightsBuffer.getHeight(), false, true);
         batch.end();
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().setDefaultBlending();
-    }
-    
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+        sceneBuffer.end();
+        renderer.setDefaultBlending();
+        batch.begin();
+        batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
+                cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
+                this.sceneBuffer.getWidth(), this.sceneBuffer.getHeight(), false, true);
+        batch.end();
     }
     
     @Override

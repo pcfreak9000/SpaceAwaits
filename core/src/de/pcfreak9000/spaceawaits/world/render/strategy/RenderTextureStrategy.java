@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -49,6 +50,8 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
         }
         if (rec.color != null) {
             b.setColor(rec.color);
+        } else {
+            b.setColor(Color.WHITE);
         }
         b.draw(rec.texture.getRegion(), p.x, p.y, rec.width, rec.height);
     }

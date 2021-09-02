@@ -6,7 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
-
+@Deprecated //not actually used
 public class EntityContainer implements NBTSerializable {
     private SerializableEntityList entities;
     private Engine engine;

@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
-import de.pcfreak9000.spaceawaits.world.render.ecs.ParallaxComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class ParallaxSystem extends IteratingSystem {
@@ -36,10 +35,10 @@ public class ParallaxSystem extends IteratingSystem {
         float xratio = positionState.x / (this.tileWorld.getBounds().getWidth());
         float yratio = positionState.y / (this.tileWorld.getBounds().getHeight());
         RenderTextureComponent rc = renderMapper.get(entity);
-        float possibleW = rc.width - camera.viewportWidth;
-        float possibleH = rc.height - camera.viewportHeight;
-        transformMapper.get(entity).position.set(positionState.x - camera.viewportWidth / 2 - xratio * possibleW,
-                positionState.y - camera.viewportHeight / 2 - yratio * possibleH);
+        float possibleW = pc.widthScroll;
+        float possibleH = pc.widthScroll;
+        transformMapper.get(entity).position.set(positionState.x - rc.width / 2f - xratio * possibleW + pc.xOffset,
+                positionState.y - rc.height / 2f - yratio * possibleH + pc.yOffset);
     }
     
 }

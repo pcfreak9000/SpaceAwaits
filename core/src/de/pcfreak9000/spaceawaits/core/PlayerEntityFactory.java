@@ -27,7 +27,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
         RenderTextureComponent rc = new RenderTextureComponent();
-        rc.width = 2;
+        rc.width = 1.1f;
         rc.height = 3;
         pic.offx = rc.width / 2f;
         pic.offy = rc.height / 2f;
