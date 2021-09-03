@@ -4,7 +4,7 @@ uniform vec2 vel;
 varying vec2 v_pos;
 
 float rand(vec2 coord){
-	return fract(sin(dot(coord, vec2(56, 78)) * 1000.0) * 1000.0);
+	return fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453);
 }
 
 float noise(vec2 coord){
@@ -34,12 +34,12 @@ float fbm(vec2 coord){
 	return value;
 }
 void main(){
-	vec2 coord = vec2(v_pos.x/60.0, v_pos.y/8.0);
+	vec2 coord = vec2(v_pos.x/60.0, v_pos.y/10.0);
 	vec2 offset = vel*time;
 	vec2 motion = vec2( fbm(coord +offset+ vec2(time * -0.5, time * 0.5)) );
 
-	float final = fbm(coord + motion + offset);
+	float final = fbm(coord+ motion + offset);//
 
 
-    gl_FragColor = vec4(0.3, 0.3, 0.3, final*0.2+0.95);
+    gl_FragColor = vec4(1,1,1, final+0.5);
 }
