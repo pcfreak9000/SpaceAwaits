@@ -18,10 +18,13 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     private final ComponentMapper<RenderTextureComponent> renderMapper = ComponentMapper
             .getFor(RenderTextureComponent.class);
     
+    private GameRenderer renderer;
+    
     public RenderTextureStrategy(GameRenderer renderer) {
         super(Family.all(RenderTextureComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
         this.cam = renderer.getCurrentView().getCamera();
+        this.renderer = renderer;
     }
     
     private SpriteBatch b;
@@ -29,6 +32,7 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     
     @Override
     public void begin() {
+        renderer.applyViewport();//TODO consider a FBO stack
         this.b.begin();
     }
     

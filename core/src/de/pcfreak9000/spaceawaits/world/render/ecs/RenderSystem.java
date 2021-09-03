@@ -160,7 +160,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 lightRenderer.exitAndRenderLitScene();
                 endedLight = true;
                 if (last != null) {
-                   last.begin();
+                    last.begin();
                 }
             }
             dec.render(e, deltaTime);

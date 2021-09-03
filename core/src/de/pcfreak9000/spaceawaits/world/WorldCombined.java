@@ -197,7 +197,7 @@ public class WorldCombined extends World {
     
     private Entity testFogEntity() {
         Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(50, "fog");
+        RenderComponent rc = new RenderComponent(150, "fog");
         RenderFogComponent rfc = new RenderFogComponent();
         e.add(rc);
         e.add(rfc);

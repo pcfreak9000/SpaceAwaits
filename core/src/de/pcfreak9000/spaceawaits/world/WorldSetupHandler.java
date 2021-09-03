@@ -21,7 +21,7 @@ public class WorldSetupHandler {
         ev.renderStrategies.register("chunk", new RenderChunkStrategy(ev.renderer));
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
-        ev.renderStrategies.register("fog", new RenderFogStrategy());
+        ev.renderStrategies.register("fog", new RenderFogStrategy(ev.renderer));
     }
     
 }

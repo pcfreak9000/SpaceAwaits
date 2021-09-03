@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world.render;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -22,7 +21,7 @@ public class GameRenderer extends ScreenAdapter {
     
     private GuiHelper guiHelper;
     
-    private SpriteBatch spriteBatch;
+    private SpriteBatchImpr spriteBatch;
     private GuiOverlay guiContainerCurrent;
     private Vector2 mousePosVec = new Vector2();
     
@@ -38,7 +37,7 @@ public class GameRenderer extends ScreenAdapter {
     public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
         this.gsm = gsm;
         this.guiHelper = guiHelper;
-        this.spriteBatch = new SpriteBatch(8191);//8191 is the max sadly...
+        this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
         this.worldView = new WorldView(guiHelper);
         this.debugScreen = new DebugScreen(this);
         setWorldView();
@@ -76,7 +75,7 @@ public class GameRenderer extends ScreenAdapter {
         return viewCurrent;
     }
     
-    public SpriteBatch getSpriteBatch() {
+    public SpriteBatchImpr getSpriteBatch() {
         return spriteBatch;
     }
     
@@ -88,19 +87,9 @@ public class GameRenderer extends ScreenAdapter {
         return guiHelper;
     }
     
-    public void setAdditiveBlending() {
-        spriteBatch.enableBlending();
-        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-    }
-    
-    public void setDefaultBlending() {
-        spriteBatch.enableBlending();
-        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-    }
-    
-    public void setMultiplicativeBlending() {
-        spriteBatch.enableBlending();
-        spriteBatch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+    public void setDefaultBlending() {//Doesn't work for the batch
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
     
     public void applyViewport() {

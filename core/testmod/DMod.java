@@ -35,7 +35,6 @@ public class DMod {
     
     @Instance
     public static DMod instance;
-    
     TextureProvider texture = TextureProvider.get("sdfsdf");
     TextureProvider planet = TextureProvider.get("planet.png");
     Tile tstoneTile = new Tile();
@@ -126,7 +125,7 @@ public class DMod {
                 WorldPrimer p = new WorldPrimer(this);
                 p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
-                p.setLightProvider(AmbientLightProvider.constant(Color.DARK_GRAY));
+                p.setLightProvider(AmbientLightProvider.constant(Color.GRAY));
                 p.setChunkGenerator(new TestChunkGenerator());
                 p.setUnchunkGenerator(new IUnchunkGenerator() {
                     
@@ -140,6 +139,12 @@ public class DMod {
                     public void regenerateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
                         entities.addEntity(b2.createEntity());
+//                        entities.addEntity(fog());
+//                        entities.addEntity(fog());
+//                        entities.addEntity(fog());
+//                        entities.addEntity(fog());
+//                        entities.addEntity(fog());
+//                        entities.addEntity(fog());
                     }
                 });
                 //                p.setLightProvider(new AmbientLightProvider() {
@@ -155,6 +160,21 @@ public class DMod {
         });
     }
     
+//    private Entity fog() {
+//        Entity e = new EntityImproved();
+//        e.add(new RenderComponent(10, "entity"));
+//        RenderTextureComponent rtc = new RenderTextureComponent();
+//        rtc.color = Color.CYAN;
+//        rtc.texture = fog;
+//        rtc.width = 1000;
+//        rtc.height = 200;
+//        e.add(rtc);
+//        TransformComponent tc = new TransformComponent();
+//        tc.position.set(2000, 500);
+//        e.add(tc);
+//        return e;
+//    }
+    
     private void reee() {
         SpriteBatch b = new SpriteBatch();
         Camera cam = new OrthographicCamera(1, 1);
@@ -169,7 +189,7 @@ public class DMod {
             float x = r.nextFloat();
             float y = r.nextFloat();
             Color c = Util.ofTemperature(20000 * r.nextFloat() + 800);
-            c.mul(r.nextFloat()*0.8f);
+            c.mul(r.nextFloat() * 0.8f);
             c.a = 1;
             s.setColor(c);
             s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()) / 4, 20);
