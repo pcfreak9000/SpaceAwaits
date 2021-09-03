@@ -20,7 +20,6 @@ import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.util.Util;
-import de.pcfreak9000.spaceawaits.world.Background;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;

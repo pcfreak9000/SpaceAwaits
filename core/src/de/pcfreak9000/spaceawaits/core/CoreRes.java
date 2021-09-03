@@ -59,6 +59,8 @@ public class CoreRes {
     public static final BitmapFont FONT = new BitmapFont();//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();
     
+    public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
+    
     public static final Texture WHITE;
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
