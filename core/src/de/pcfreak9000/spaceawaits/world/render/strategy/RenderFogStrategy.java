@@ -32,8 +32,10 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
         ShaderProgram.pedantic = false;
         shader.getShader().bind();
         System.out.println(shader.getShader().getLog());
-        shader.getShader().setUniformf("vel", -1, -1);
+        shader.getShader().setUniformf("vel", 1, 1);
         shader.getShader().setUniformf("color", Color.CYAN);
+        shader.getShader().setUniformf("rectOuter", 2497, 512, 2789, 763);
+        shader.getShader().setUniformf("rectInner", 2607, 624, 2670, 648);
     }
     
     float time = 0;

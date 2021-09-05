@@ -3,6 +3,8 @@ uniform float time;
 uniform vec2 vel;
 uniform vec4 color;
 uniform vec2 scales = vec2(60.0, 10.0);
+uniform vec4 rectOuter;
+uniform vec4 rectInner;
 
 varying vec2 v_pos;
 
@@ -39,11 +41,17 @@ float fbm(vec2 coord){
 
 void main(){
 	vec2 coord = vec2(v_pos.x/scales.x, v_pos.y/scales.y);
-	vec2 offset = vec2(vel.x/scales.x, vel.y/scales.y)*time;
-	vec2 motion = vec2( fbm(coord + offset + vec2(time/scales.x * -10.5, time/scales.y * 10.5)) );
+	vec2 offset = -vec2(vel.x/1, vel.y/1)*time;
+	vec2 motion = vec2( fbm(coord + offset + vec2(time/scales.x * -0.5, time/scales.y * 0.5)) );
 
-	float final = fbm(coord + motion + offset);//
+	float final = fbm(coord + motion + offset);
+	
+	final = final + 0.5;
+	
+	final = final * smoothstep(rectOuter.x, rectInner.x, v_pos.x);
+	final = final * smoothstep(rectOuter.y, rectInner.y, v_pos.y);
+	final = final * (1-smoothstep(rectInner.z, rectOuter.z, v_pos.x));
+	final = final * (1-smoothstep(rectInner.w, rectOuter.w, v_pos.y));	
 
-
-    gl_FragColor = vec4(color.rgb, final+0.5);
+    gl_FragColor = vec4(color.rgb, final);
 }
