@@ -2,8 +2,8 @@ package de.pcfreak9000.spaceawaits.world.render.strategy;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -32,16 +32,17 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
         ShaderProgram.pedantic = false;
         shader.getShader().bind();
         System.out.println(shader.getShader().getLog());
-        shader.getShader().setUniformf("vel", -0.01f, -0.02f);
+        shader.getShader().setUniformf("vel", -1, -1);
+        shader.getShader().setUniformf("color", Color.CYAN);
     }
     
     float time = 0;
     
     @Override
     public void render(Entity e, float dt) {
-        //renderer.setDefaultBlending();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        renderer.setDefaultBlending();
+        //      Gdx.gl.glEnable(GL20.GL_BLEND);
+        //        Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderer.applyViewport();
         Camera cam = renderer.getCurrentView().getCamera();
         shader.getShader().bind();
@@ -49,7 +50,7 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
                 cam.position.y - cam.viewportHeight / 2, cam.position.x + cam.viewportWidth / 2,
                 cam.position.y + cam.viewportHeight / 2);
         time += dt;
-        shader.getShader().setUniformf("time", time / 6);
+        shader.getShader().setUniformf("time", time);
         mesh.render(CoreRes.FOG_SHADER.getShader(), GL20.GL_TRIANGLES);
     }
     
