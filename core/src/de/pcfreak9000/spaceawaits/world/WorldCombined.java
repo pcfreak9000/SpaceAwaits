@@ -31,7 +31,6 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTileSystem;
@@ -97,7 +96,6 @@ public class WorldCombined extends World {
         ecs.setupSystems(engine);
         engine.addEntity(createBreakingAnimationsEntity());//Hmmmmm...
         engine.addEntity(createTileSelectorEntity());
-        engine.addEntity(testFogEntity());
     }
     
     @Override
@@ -195,12 +193,4 @@ public class WorldCombined extends World {
         return e;
     }
     
-    private Entity testFogEntity() {
-        Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(50, "fog");
-        RenderFogComponent rfc = new RenderFogComponent();
-        e.add(rc);
-        e.add(rfc);
-        return e;
-    }
 }

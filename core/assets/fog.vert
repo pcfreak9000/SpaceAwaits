@@ -1,13 +1,12 @@
 attribute vec2 pos;
 
-uniform vec4 corners;
+uniform mat4 u_projView;
 
 varying vec2 v_pos;
 
 void main(){
-	vec2 c = 0.5*pos+0.5;
 	
-	v_pos = vec2(mix(corners.x, corners.z, c.x), mix(corners.y, corners.w, c.y));
+	v_pos = pos;
 	
-    gl_Position = vec4(pos, 0.0, 1.0);
+    gl_Position = u_projView*vec4(pos, 0.0, 1.0);
 }

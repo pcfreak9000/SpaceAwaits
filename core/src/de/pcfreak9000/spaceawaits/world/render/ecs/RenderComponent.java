@@ -9,12 +9,12 @@ public class RenderComponent implements Component {
     public boolean enabled = true;
     public boolean considerAsGui = false;
     
-    public final int layer;
+    public final float layer;
     public final String renderStratId;
     //Cache the render strategy:
     IRenderStrategy renderStrategy;
     
-    public RenderComponent(int layer, String rDecId) {
+    public RenderComponent(float layer, String rDecId) {
         this.layer = layer;
         this.renderStratId = rDecId;
     }

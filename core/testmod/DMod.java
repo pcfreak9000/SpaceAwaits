@@ -1,4 +1,5 @@
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,11 +23,15 @@ import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.render.WorldView;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
@@ -133,18 +138,14 @@ public class DMod {
                     public void generateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
                         entities.addEntity(b2.createEntity());
+                        entities.addEntity(testFogEntity());
                     }
                     
                     @Override
                     public void regenerateUnchunk(SerializableEntityList entities, World world) {
                         entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
                         entities.addEntity(b2.createEntity());
-//                        entities.addEntity(fog());
-//                        entities.addEntity(fog());
-//                        entities.addEntity(fog());
-//                        entities.addEntity(fog());
-//                        entities.addEntity(fog());
-//                        entities.addEntity(fog());
+                        entities.addEntity(testFogEntity());
                     }
                 });
                 //                p.setLightProvider(new AmbientLightProvider() {
@@ -160,20 +161,44 @@ public class DMod {
         });
     }
     
-//    private Entity fog() {
-//        Entity e = new EntityImproved();
-//        e.add(new RenderComponent(10, "entity"));
-//        RenderTextureComponent rtc = new RenderTextureComponent();
-//        rtc.color = Color.CYAN;
-//        rtc.texture = fog;
-//        rtc.width = 1000;
-//        rtc.height = 200;
-//        e.add(rtc);
-//        TransformComponent tc = new TransformComponent();
-//        tc.position.set(2000, 500);
-//        e.add(tc);
-//        return e;
-//    }
+    //    private Entity fog() {
+    //        Entity e = new EntityImproved();
+    //        e.add(new RenderComponent(10, "entity"));
+    //        RenderTextureComponent rtc = new RenderTextureComponent();
+    //        rtc.color = Color.CYAN;
+    //        rtc.texture = fog;
+    //        rtc.width = 1000;
+    //        rtc.height = 200;
+    //        e.add(rtc);
+    //        TransformComponent tc = new TransformComponent();
+    //        tc.position.set(2000, 500);
+    //        e.add(tc);
+    //        return e;
+    //    }
+    
+    private Entity testFogEntity() {
+        Entity e = new EntityImproved();
+        RenderComponent rc = new RenderComponent(50, "fog");
+        RenderFogComponent rfc = new RenderFogComponent();
+        TransformComponent tc = new TransformComponent();
+        tc.position.set(2497, 512);
+        rfc.width = 2789 - 2497;
+        rfc.height = 763 - 512;
+        rfc.color = Color.CORAL;
+        rfc.oversize = true;
+        rfc.innerRect = new Rectangle(2607, 624, 2670 - 2607, 648 - 624);
+        rfc.scalex = 60.0f;
+        rfc.scaley = 10.0f;
+        rfc.velx = 1;
+        rfc.vely = 1;
+        rfc.fbmVelx = 1;
+        rfc.fbmVely = 1;
+        rfc.coeffb = 0.5f;
+        e.add(tc);
+        e.add(rc);
+        e.add(rfc);
+        return e;
+    }
     
     private void reee() {
         SpriteBatch b = new SpriteBatch();

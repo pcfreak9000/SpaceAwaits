@@ -2,9 +2,11 @@
 uniform float time;
 uniform vec2 vel;
 uniform vec4 color;
-uniform vec2 scales = vec2(60.0, 10.0);
+uniform vec2 scales;
 uniform vec4 rectOuter;
 uniform vec4 rectInner;
+uniform vec2 finalCoeff;
+uniform vec2 fbmVel;
 
 varying vec2 v_pos;
 
@@ -41,12 +43,12 @@ float fbm(vec2 coord){
 
 void main(){
 	vec2 coord = vec2(v_pos.x/scales.x, v_pos.y/scales.y);
-	vec2 offset = -vec2(vel.x/1, vel.y/1)*time;
-	vec2 motion = vec2( fbm(coord + offset + vec2(time/scales.x * -0.5, time/scales.y * 0.5)) );
+	vec2 offset = -vec2(vel.x/1, vel.y/1) * time;
+	vec2 motion = vec2( fbm(coord + offset + vec2(time/scales.x * fbmVel.x, time/scales.y * fbmVel.y)) );
 
 	float final = fbm(coord + motion + offset);
 	
-	final = final + 0.5;
+	final = final * finalCoeff.x + finalCoeff.y;
 	
 	final = final * smoothstep(rectOuter.x, rectInner.x, v_pos.x);
 	final = final * smoothstep(rectOuter.y, rectInner.y, v_pos.y);

@@ -29,12 +29,12 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private static final Comparator<Entity> COMPARATOR = (e1, e2) -> {
         RenderComponent r1 = rMapper.get(e1);
         RenderComponent r2 = rMapper.get(e2);
-        int maj = r1.layer - r2.layer;
+        float maj = r1.layer - r2.layer;
         if (maj == 0) {
             int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
             return min;
         }
-        return maj;
+        return (int) Math.signum(maj);
     };
     
     public static final class RegisterRenderStrategiesEvent extends Event {
@@ -50,8 +50,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final int BEGIN_LIGHT_LAYER = 0;
-    private static final int END_LIGHT_LAYER = 100;
+    private static final float BEGIN_LIGHT_LAYER = 0;
+    private static final float END_LIGHT_LAYER = 100;
     
     private final GameRegistry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
@@ -134,7 +134,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void update(float deltaTime) {
         super.update(deltaTime);
         IRenderStrategy last = null;
-        int lastLayer = Integer.MIN_VALUE;
+        float lastLayer = Float.MIN_VALUE;
         boolean endedLight = false;
         for (Entity e : entities) {
             RenderComponent rc = rMapper.get(e);

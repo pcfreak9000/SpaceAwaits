@@ -1,9 +1,9 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -13,47 +13,81 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 
 public class RenderFogStrategy extends AbstractRenderStrategy implements Disposable {
+    
+    private static final ComponentMapper<TransformComponent> TMAPPER = ComponentMapper.getFor(TransformComponent.class);
+    private static final ComponentMapper<RenderFogComponent> RFMAPPER = ComponentMapper
+            .getFor(RenderFogComponent.class);
     
     private Mesh mesh;
     private GameRenderer renderer;
     private ShaderProvider shader = CoreRes.FOG_SHADER;
     
     public RenderFogStrategy(GameRenderer renderer) {
-        super(Family.all(RenderFogComponent.class).get());
+        super(Family.all(RenderFogComponent.class, TransformComponent.class).get());
         this.renderer = renderer;
         mesh = new Mesh(false, 4, 6, new VertexAttribute(Usage.Position, 2, "pos"));
         mesh.setIndices(new short[] { 0, 1, 3, 0, 3, 2 });
-        float xmin = -1, ymin = -1, xmax = 1, ymax = 1;
-        mesh.setVertices(new float[] { xmin, ymin, xmax, ymin, xmin, ymax, xmax, ymax });
+        
         ShaderProgram.pedantic = false;
         shader.getShader().bind();
         System.out.println(shader.getShader().getLog());
-        shader.getShader().setUniformf("vel", 1, 1);
-        shader.getShader().setUniformf("color", Color.CYAN);
-        shader.getShader().setUniformf("rectOuter", 2497, 512, 2789, 763);
-        shader.getShader().setUniformf("rectInner", 2607, 624, 2670, 648);
     }
     
-    float time = 0;
+    private float time = 0;
+    private float[] vertices = new float[8];
+    
+    @Override
+    public void begin() {
+        super.begin();
+        renderer.setDefaultBlending();
+        renderer.applyViewport();
+    }
     
     @Override
     public void render(Entity e, float dt) {
-        renderer.setDefaultBlending();
-        //      Gdx.gl.glEnable(GL20.GL_BLEND);
-        //        Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        renderer.applyViewport();
+        time += dt;
+        RenderFogComponent rfc = RFMAPPER.get(e);
+        TransformComponent tc = TMAPPER.get(e);
         Camera cam = renderer.getCurrentView().getCamera();
         shader.getShader().bind();
-        shader.getShader().setUniformf("corners", cam.position.x - cam.viewportWidth / 2,
-                cam.position.y - cam.viewportHeight / 2, cam.position.x + cam.viewportWidth / 2,
-                cam.position.y + cam.viewportHeight / 2);
-        time += dt;
+        shader.getShader().setUniformMatrix("u_projView", cam.combined);
         shader.getShader().setUniformf("time", time);
-        mesh.render(CoreRes.FOG_SHADER.getShader(), GL20.GL_TRIANGLES);
+        float xmin, ymin, xmax, ymax;
+        if (rfc.oversize) {//TODO test is this affects performance or if this is a useless optimization
+            xmin = cam.position.x - cam.viewportWidth / 2;
+            ymin = cam.position.y - cam.viewportHeight / 2;
+            xmax = cam.position.x + cam.viewportWidth / 2;
+            ymax = cam.position.y + cam.viewportHeight / 2;
+        } else {
+            xmin = tc.position.x;
+            ymin = tc.position.y;
+            xmax = xmin + rfc.width;
+            ymax = ymin + rfc.height;
+        }
+        vertices[0] = xmin;
+        vertices[1] = ymin;
+        vertices[2] = xmax;
+        vertices[3] = ymin;
+        vertices[4] = xmin;
+        vertices[5] = ymax;
+        vertices[6] = xmax;
+        vertices[7] = ymax;
+        mesh.setVertices(vertices);
+        shader.getShader().setUniformf("rectOuter", tc.position.x, tc.position.y, tc.position.x + rfc.width,
+                tc.position.y + rfc.height);
+        shader.getShader().setUniformf("color", rfc.color);
+        shader.getShader().setUniformf("vel", rfc.velx, rfc.vely);
+        shader.getShader().setUniformf("rectInner", rfc.innerRect.x, rfc.innerRect.y,
+                rfc.innerRect.x + rfc.innerRect.width, rfc.innerRect.y + rfc.innerRect.height);
+        shader.getShader().setUniformf("scales", rfc.scalex, rfc.scaley);
+        shader.getShader().setUniformf("finalCoeff", rfc.coeffa, rfc.coeffb);
+        shader.getShader().setUniformf("fbmVel", rfc.fbmVelx, rfc.fbmVely);
+        mesh.render(shader.getShader(), GL20.GL_TRIANGLES);
     }
     
     @Override
