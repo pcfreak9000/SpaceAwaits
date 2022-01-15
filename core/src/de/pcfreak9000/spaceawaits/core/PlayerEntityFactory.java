@@ -15,6 +15,13 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerEntityFactory implements WorldEntityFactory {
+    
+    public static Entity setupPlayerEntity(Player player) {
+        Entity e = CoreRes.PLAYER_FACTORY.createEntity();
+        e.getComponent(PlayerInputComponent.class).player = player;
+        return e;
+    }
+    
     @Override
     public Entity createEntity() {
         Entity e = new EntityImproved();

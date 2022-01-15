@@ -14,17 +14,16 @@ import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
-import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -234,7 +233,7 @@ public abstract class World {
             breaker.onTileBreak(tx, ty, layer, tile, this, drops, worldRandom);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
-                    dropItemStack(s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
+                    ItemEntityFactory.dropItemStack(this, s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
                             ty + worldRandom.nextFloat() / 2F - Item.WORLD_SIZE / 2);
                 }
                 drops.clear();
@@ -252,17 +251,8 @@ public abstract class World {
             .getFor(ChunkMarkerComponent.class);
     private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
             .getFor(TransformComponent.class);
-    private static final ComponentMapper<ItemStackComponent> ITEMSTACK_COMP_MAPPER = ComponentMapper
-            .getFor(ItemStackComponent.class);
     private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
             .getFor(PhysicsComponent.class);
-    
-    public void dropItemStack(ItemStack stack, float x, float y) {
-        Entity e = CoreRes.ITEM_FACTORY.createEntity();
-        ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
-        TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
-        spawnEntity(e, false);
-    }
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {
         //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
