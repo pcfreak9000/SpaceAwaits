@@ -8,12 +8,11 @@ import com.badlogic.ashley.core.EntitySystem;
 
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class TicketedChunkManager extends EntitySystem {
     
     private World world;
-    private ChunkStuff chunkStuff;
+    private ChunkProvider chunkProvider;
     
     private Set<ITicket> tickets;
     
@@ -21,11 +20,11 @@ public class TicketedChunkManager extends EntitySystem {
     private Set<IntCoordKey> chunksToUpdate = new LinkedHashSet<>();
     private Set<IntCoordKey> chunksToLoad = new LinkedHashSet<>();
     
-    public TicketedChunkManager(World world, ChunkStuff chunkprovider) {
+    public TicketedChunkManager(World world, ChunkProvider chunkprovider) {
         this.tickets = new LinkedHashSet<>();
         this.chunksPrev = new LinkedHashSet<>();
         this.world = world;
-        this.chunkStuff = chunkprovider;
+        this.chunkProvider = chunkprovider;
     }
     
     public void addTicket(ITicket t) {
@@ -73,20 +72,18 @@ public class TicketedChunkManager extends EntitySystem {
         //Find chunks which aren't needed anymore and unload them
         for (IntCoordKey k : chunksPrev) {
             if (!chunksToUpdate.contains(k)) {
-                Chunk c = this.chunkStuff.getChunk(k.getX(), k.getY());
                 if (!chunksToLoad.contains(k)) {
-                    this.chunkStuff.releaseChunk(k.getX(), k.getY(), this);
-                    //this.chunkProvider.queueUnloadChunk(k.getX(), k.getY());
+                    this.chunkProvider.releaseChunk(k.getX(), k.getY(), this);
                 }
             }
         }
         //load bordering chunks
         for (IntCoordKey k : chunksToLoad) {
-            this.chunkStuff.requireChunk(k.getX(), k.getY(), false, this);
+            this.chunkProvider.requireChunk(k.getX(), k.getY(), false, this);
         }
         //load and activate chunks to update
         for (IntCoordKey k : chunksToUpdate) {
-            this.chunkStuff.requireChunk(k.getX(), k.getY(), true, this);
+            this.chunkProvider.requireChunk(k.getX(), k.getY(), true, this);
         }
         chunksPrev.clear();
         chunksPrev.addAll(chunksToLoad);

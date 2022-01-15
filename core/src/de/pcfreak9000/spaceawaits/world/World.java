@@ -447,9 +447,8 @@ public abstract class World {
     }
     
     public void unloadAll() {
-        //this.chunkProvider.queueUnloadAll();
-        //this.chunkProvider.unloadQueued();
-        ((ChunkStuff) chunkProvider).saveAll();
+        ((ChunkProvider) chunkProvider).saveAll();
+        ((ChunkProvider) chunkProvider).releaseAll();
         this.unchunkProvider.unload();
         ecsEngine.removeAllEntities();
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
@@ -465,7 +464,7 @@ public abstract class World {
     }
     
     public int getLoadedChunksCount() {
-        return chunkProvider.loadedChunkCount();
+        return chunkProvider.getLoadedChunkCount();
         // return this.chunkProvider.loadedChunkCount();
     }
     

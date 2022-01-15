@@ -11,5 +11,4 @@ public interface IChunkLoader {
     
     Chunk loadChunk(IntCoordKey key);
     
-    boolean canLoad(IntCoordKey key);
 }

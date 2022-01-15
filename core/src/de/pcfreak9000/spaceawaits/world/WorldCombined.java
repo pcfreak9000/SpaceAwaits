@@ -60,7 +60,7 @@ public class WorldCombined extends World {
     }
     
     public void saveAll() {
-        ((ChunkStuff) chunkProvider).saveAll();
+        ((ChunkProvider) chunkProvider).saveAll();
         ((UnchunkProvider) unchunkProvider).save();
     }
     
@@ -71,7 +71,7 @@ public class WorldCombined extends World {
     
     @Override
     protected IChunkProvider createChunkProvider(WorldPrimer primer) {
-        return new ChunkStuff(this, chunkLoader);
+        return new ChunkProvider(this, chunkLoader);
     }
     
     @Override
@@ -89,7 +89,7 @@ public class WorldCombined extends World {
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
-        ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkStuff) chunkProvider));
+        ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         //LightCalculator lightCalc = new LightCalculator(this);
@@ -114,7 +114,7 @@ public class WorldCombined extends World {
     public Vector2 findSpawnpoint(Player player) {
         Rectangle spawnArea = playerSpawn.getSpawnArea(player);//TODO what about a spawnpoint near a bed? or another disjunct rect?
         RandomXS128 rand = new RandomXS128(this.getSeed());
-        ChunkStuff chunkProvider = (ChunkStuff) this.chunkProvider;
+        ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
         Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                 .boundingBoxWidthAndHeight();
         
@@ -130,8 +130,6 @@ public class WorldCombined extends World {
                 for (int j = cx; j <= cw; j++) {
                     for (int k = cy; k <= ch; k++) {
                         chunkProvider.requireChunk(j, k, true, lock);
-                        //chunkProvider.addLevel(j, k, 3, lock);
-                        //probeChunkMgr.loadChunk(j, k, true);
                     }
                 }
                 if (!checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
@@ -143,8 +141,6 @@ public class WorldCombined extends World {
                             for (int j = cx; j <= cw; j++) {
                                 for (int k = cy; k <= ch; k++) {
                                     chunkProvider.requireChunk(j, k, true, lock);
-                                    //chunkProvider.addLevel(j, k, 3, lock);
-                                    //probeChunkMgr.loadChunk(j, k, true);
                                 }
                             }
                             if (checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
@@ -155,13 +151,11 @@ public class WorldCombined extends World {
                     }
                     //can spawn here, so do that
                     chunkProvider.releaseLock(lock);
-                    //chunkProvider.removeAllSrc(lock);
-                    //probeChunkMgr.unloadExtraChunks();
                     Logger.getLogger(World.class)
                             .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
                     return new Vector2(x, y);
                 }
-                if (chunkProvider.loadedChunksLock(lock) > 13) {
+                if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
                     chunkProvider.releaseLock(lock);
                 }
             }

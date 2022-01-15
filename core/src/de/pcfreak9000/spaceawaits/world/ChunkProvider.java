@@ -1,146 +1,125 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-import com.badlogic.gdx.utils.IntArray;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
-public class ChunkProvider implements IChunkProvider {//TODO implement IChunkProvider and clean it up
-    private static int max(IntArray array) {
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < array.size; i++) {
-            max = Math.max(max, array.items[i]);
-        }
-        return max;
+public class ChunkProvider implements IChunkProvider {
+    
+    private static class ChunkData {
+        private Set<Object> required = new HashSet<>();
+        private Set<Object> requiredActive = new HashSet<>();
+        private Chunk c;
     }
     
-    public static class ChunkData {
-        private Chunk chunk;
-        private int levelActual;
-        private IntArray levels = new IntArray();
-        
-        public Chunk getChunk() {
-            return chunk;
-        }
-        
-        public int getLevel() {
-            return levelActual;
-        }
-    }
-    
-    public static final int LOWEST_ACTIVE_LEVEL = 3;
-    
-    private Map<IntCoordKey, ChunkData> chunks = new LinkedHashMap<>();
-    private Multimap<Object, int[]> sources = ArrayListMultimap.create();
-    private IChunkLoader chunkLoader;
+    private Multimap<Object, IntCoordKey> chunkStuff = MultimapBuilder.hashKeys().linkedHashSetValues().build();
+    private Map<IntCoordKey, ChunkData> chunks = new HashMap<>();
     private World world;
+    private IChunkLoader loader;
     
-    public ChunkProvider(World world, IChunkLoader icl) {
+    public ChunkProvider(World world, IChunkLoader loader) {
         this.world = world;
-        this.chunkLoader = icl;
+        this.loader = loader;
     }
     
-    public ChunkData get(int x, int y) {
-        if (!world.getBounds().inChunkBounds(x, y))
-            return null;
-        IntCoordKey key = new IntCoordKey(x, y);
-        ChunkData d = chunks.get(key);
-        return d;
-    }
-    
-    @Override
-    public Chunk getChunk(int x, int y) {
-        ChunkData cd = get(x, y);
-        return cd == null ? null : cd.chunk;
-    }
-    
-    public void saveAll() {
-        for (ChunkData cd : chunks.values()) {
-            this.chunkLoader.saveChunk(cd.chunk);
-        }
-    }
-    
-    public void save(int x, int y) {
+    public void requireChunk(int x, int y, boolean active, Object lock) {
+        Objects.requireNonNull(lock);
         if (!world.getBounds().inChunkBounds(x, y))
             return;
         IntCoordKey key = new IntCoordKey(x, y);
         ChunkData cd = chunks.get(key);
-        if (cd != null) {
-            this.chunkLoader.saveChunk(cd.chunk);
+        if (cd == null) {
+            cd = new ChunkData();
+            chunks.put(key, cd);
+            cd.c = loader.loadChunk(key);
         }
-    }
-    
-    public void removeLevel(int x, int y, int level) {
-        if (!world.getBounds().inChunkBounds(x, y))
-            return;
-        IntCoordKey key = new IntCoordKey(x, y);
-        ChunkData d = chunks.get(key);
-        if (d == null)
-            return;
-        boolean b = d.levels.removeValue(level);
-        if (!b)
-            return;
-        if (d.levels.isEmpty()) {
-            chunks.remove(key);
-            Chunk c = d.chunk;
+        Chunk c = cd.c;
+        chunkStuff.put(lock, key);
+        if (active) {
+            cd.requiredActive.add(lock);
+            cd.required.remove(lock);
+            if (!c.isActive()) {
+                world.addChunk(c);
+            }
+        } else {
+            cd.required.add(lock);
+            cd.requiredActive.remove(lock);
             if (c.isActive()) {
                 world.removeChunk(c);
             }
-            //save chunk, schedule unloading, whatever
-            chunkLoader.unloadChunk(c);
-        } else {
-            d.levelActual = max(d.levels);
-            if (d.levelActual < LOWEST_ACTIVE_LEVEL && d.chunk.isActive()) {
-                world.removeChunk(d.chunk);
-            }
         }
     }
     
-    public void addLevel(int x, int y, int level, Object src) {
+    public void releaseChunk(int x, int y, Object lock) {
+        Objects.requireNonNull(lock);
         if (!world.getBounds().inChunkBounds(x, y))
             return;
         IntCoordKey key = new IntCoordKey(x, y);
-        ChunkData d = chunks.get(key);
-        if (d == null) {
-            if (!this.chunkLoader.canLoad(key)) {
-                return;
-            }
-            d = new ChunkData();
-            chunks.put(key, d);
-            //load chunk
-            d.chunk = chunkLoader.loadChunk(key);
+        ChunkData cd = chunks.get(key);
+        if (cd == null)
+            return;
+        Chunk c = cd.c;
+        chunkStuff.remove(lock, key);
+        cd.required.remove(lock);
+        cd.requiredActive.remove(lock);
+        if (c.isActive()) {
+            world.removeChunk(c);
         }
-        d.levels.add(level);
-        d.levelActual = level > d.levelActual ? level : max(d.levels);
-        if (d.levelActual >= LOWEST_ACTIVE_LEVEL && !d.chunk.isActive()) {
-            world.addChunk(d.chunk);
-        }
-        if (src != null) {
-            sources.put(src, new int[] { x, y, level });
+        if (cd.required.isEmpty() && cd.requiredActive.isEmpty()) {
+            chunks.remove(key);
+            loader.unloadChunk(c);
         }
     }
     
-    public int getChunkCount() {
-        return chunks.size();
+    public void releaseLock(Object lock) {
+        Objects.requireNonNull(lock);
+        Set<IntCoordKey> keys = new LinkedHashSet<>(chunkStuff.get(lock));
+        for (IntCoordKey key : keys) {
+            releaseChunk(key.getX(), key.getY(), lock);
+        }
+    }
+    
+    public int getLoadedChunkCountLock(Object lock) {
+        return chunkStuff.get(lock).size();
+    }
+    
+    public void releaseAll() {
+        for (ChunkData cd : chunks.values()) {
+            if (cd.c.isActive()) {
+                world.removeChunk(cd.c);
+            }
+            loader.unloadChunk(cd.c);
+        }
+        chunks.clear();
+        chunkStuff.clear();
     }
     
     @Override
-    public int loadedChunkCount() {
-        return getChunkCount();
+    public Chunk getChunk(int x, int y) {
+        if (!world.getBounds().inChunkBounds(x, y))
+            return null;
+        IntCoordKey key = new IntCoordKey(x, y);
+        ChunkData cd = chunks.get(key);
+        return cd == null ? null : cd.c;
     }
     
-    public int getSrcChunkCount(Object src) {
-        return sources.get(src).size();
+    @Override
+    public int getLoadedChunkCount() {
+        return chunks.size();
     }
     
-    public void removeAllSrc(Object src) {
-        for (int[] k : sources.get(src)) {
-            removeLevel(k[0], k[1], k[2]);
+    public void saveAll() {
+        for (ChunkData cd : chunks.values()) {
+            this.loader.saveChunk(cd.c);
         }
     }
 }

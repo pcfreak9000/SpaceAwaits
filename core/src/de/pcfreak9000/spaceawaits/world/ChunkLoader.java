@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.ashley.core.Entity;
 
@@ -14,14 +14,14 @@ import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkLoader implements IChunkLoader {
     
-    private Set<IntCoordKey> loadedChunks;
+    private Map<IntCoordKey, Chunk> loadedChunks;
     
     private World world;
     private IChunkGenerator chunkGen;
     private IWorldSave save;
     
     public ChunkLoader(World world, IChunkGenerator chunkGen) {
-        this.loadedChunks = new HashSet<>();
+        this.loadedChunks = new HashMap<>();
         this.world = world;
         this.chunkGen = chunkGen;
     }
@@ -39,8 +39,7 @@ public class ChunkLoader implements IChunkLoader {
         if (!world.getBounds().inChunkBounds(key.getX(), key.getY())) {
             return null;
         }
-        if (!this.loadedChunks.contains(key)) {
-            this.loadedChunks.add(key);
+        if (!this.loadedChunks.containsKey(key)) {
             Chunk c = new Chunk(key.getX(), key.getY(), this.world);
             if (save.hasChunk(key.getX(), key.getY())) {
                 readChunk(c);
@@ -51,9 +50,10 @@ public class ChunkLoader implements IChunkLoader {
             for (Entity e : c.getEntities()) {//TODO Dyn Meh
                 DynamicAssetUtil.checkAndCreateAsset(e);
             }
+            this.loadedChunks.put(key, c);
             return c;
         }
-        return null;
+        return loadedChunks.get(key);
     }
     
     private void readChunk(Chunk c) {
@@ -73,11 +73,6 @@ public class ChunkLoader implements IChunkLoader {
     public void unloadChunk(Chunk c) {
         saveChunk(c);
         loadedChunks.remove(new IntCoordKey(c.getGlobalChunkX(), c.getGlobalChunkY()));
-    }
-    
-    @Override
-    public boolean canLoad(IntCoordKey key) {
-        return true;
     }
     
 }
