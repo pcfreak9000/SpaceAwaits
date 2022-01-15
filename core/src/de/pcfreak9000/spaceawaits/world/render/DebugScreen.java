@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class DebugScreen {
@@ -23,6 +24,7 @@ public class DebugScreen {
     private Table table;
     private Label labelFps;
     private Label playerPos;
+    private Label chunkPos;
     private Label chunkUpdates;
     
     private Label time;
@@ -42,6 +44,9 @@ public class DebugScreen {
         this.playerPos = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(this.playerPos).align(Align.left);
         this.table.row();
+        this.chunkPos = new Label("", CoreRes.SKIN.getSkin());
+        this.table.add(this.chunkPos).align(Align.left);
+        this.table.row();
         this.time = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(this.time).align(Align.left);
         this.stage.addActor(table);
@@ -51,6 +56,8 @@ public class DebugScreen {
         int fps = Gdx.graphics.getFramesPerSecond();
         Vector2 playerPos = TRANSFORM_MAPPER.get(
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
+        int cx = Chunk.toGlobalChunkf(playerPos.x);
+        int cy = Chunk.toGlobalChunkf(playerPos.y);
         int loadedChunks = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent()
                 .getLoadedChunksCount();
         int updatedChunks = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent()
@@ -59,6 +66,7 @@ public class DebugScreen {
         this.labelFps.setText("FPS: " + fps);
         this.chunkUpdates.setText(String.format("t: %d l: %d", updatedChunks, loadedChunks));
         this.playerPos.setText(String.format("x: %.3f y: %.3f", playerPos.x, playerPos.y));
+        this.chunkPos.setText(String.format("cx: %d cy: %d", cx, cy));
         this.time.setText(String.format("time: %d", time));
         renderer.getGuiHelper().actAndDraw(stage, dt);
     }

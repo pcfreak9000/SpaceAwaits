@@ -17,7 +17,7 @@ public class GuiHelper implements Disposable {
     private SpriteBatch guiSpriteBatch;
     
     public GuiHelper() {
-        this.viewport = new ExtendViewport(1280/1.9f, 720/1.9f, 1920/1.9f, 1920/1.9f);
+        this.viewport = new ExtendViewport(1280 / 1.9f, 720 / 1.9f, 1920 / 1.9f, 1920 / 1.9f);
         this.backgroundVp = new FillViewport(200 * 16 / 9f, 200);
         this.guiSpriteBatch = new SpriteBatch();
     }
@@ -54,6 +54,12 @@ public class GuiHelper implements Disposable {
     }
     
     public void showDialog(String title, String text, Stage stage) {
+        if (title.length() > 40) {
+            title = title.substring(0, 40) + "...";
+        }
+        if (text.length() > 55) {
+            text = text.substring(0, 55) + "...";
+        }
         Dialog d = new Dialog(title, CoreRes.SKIN.getSkin());
         d.text(text);
         d.button("Ok");

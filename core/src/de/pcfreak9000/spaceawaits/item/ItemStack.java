@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
  */
 public class ItemStack {
     
-    public static final int MAX_STACKSIZE = 128;
+    public static final int MAX_STACKSIZE = 999;
     
     public static final ItemStack EMPTY = new ItemStack();
     
@@ -51,7 +51,7 @@ public class ItemStack {
     public static NBTTag writeNBT(ItemStack stack) {
         NBTCompound c = new NBTCompound();
         if (stack != EMPTY) {
-            c.putByte("c", (byte) stack.getCount());
+            c.putShort("c", (short) stack.getCount());
             String id = GameRegistry.ITEM_REGISTRY.getId(stack.getItem());
             c.putString("id", id);
             if (stack.nbt != null && !stack.nbt.isEmpty()) {
@@ -68,7 +68,7 @@ public class ItemStack {
         ItemStack stack = new ItemStack();
         NBTCompound c = (NBTCompound) tag;
         String id = c.getString("id");
-        stack.count = Byte.toUnsignedInt(c.getByte("c"));//Hopefully works with conversion... now it does. Dumbass forgot max stacksize is 128 and thats problematic for a signed byte
+        stack.count = Short.toUnsignedInt(c.getShort("c"));//Hopefully works with conversion... now it does. Dumbass forgot max stacksize is 128 and thats problematic for a signed byte
         stack.item = GameRegistry.ITEM_REGISTRY.get(id);
         if (c.hasKey("nbt")) {
             stack.nbt = c.getCompound("nbt");
