@@ -49,6 +49,7 @@ public abstract class World {
     private final long seed;
     
     protected final IChunkProvider chunkProvider;
+    protected final IChunkLoader chunkLoader;
     protected final IUnchunkProvider unchunkProvider;
     protected final IPlayerSpawn playerSpawn;
     protected final IWorldProperties worldProperties;
@@ -79,6 +80,7 @@ public abstract class World {
         this.playerSpawn = primer.getPlayerSpawn();
         this.worldProperties = primer.getWorldProperties();
         
+        this.chunkLoader = createChunkLoader(primer);
         this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
         //        //setup
@@ -91,9 +93,11 @@ public abstract class World {
     
     protected abstract IUnchunkProvider createUnchunkProvider(WorldPrimer primer);
     
+    protected abstract IChunkLoader createChunkLoader(WorldPrimer primer);
+    
     public void update(float dt) {
         this.ecsEngine.update(dt);
-        this.chunkProvider.unloadQueued();
+        //this.chunkProvider.unloadQueued();
         
         timehelper += dt * 50;
         if (timehelper >= 1) {
@@ -443,8 +447,9 @@ public abstract class World {
     }
     
     public void unloadAll() {
-        this.chunkProvider.queueUnloadAll();
-        this.chunkProvider.unloadQueued();
+        //this.chunkProvider.queueUnloadAll();
+        //this.chunkProvider.unloadQueued();
+        ((ChunkStuff) chunkProvider).saveAll();
         this.unchunkProvider.unload();
         ecsEngine.removeAllEntities();
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
@@ -460,7 +465,8 @@ public abstract class World {
     }
     
     public int getLoadedChunksCount() {
-        return this.chunkProvider.loadedChunkCount();
+        return chunkProvider.loadedChunkCount();
+        // return this.chunkProvider.loadedChunkCount();
     }
     
     public int getUpdatingChunksCount() {

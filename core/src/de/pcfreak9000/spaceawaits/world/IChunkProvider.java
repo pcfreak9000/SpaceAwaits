@@ -12,11 +12,11 @@ public interface IChunkProvider {
     
     //Chunk loadChunk(int x, int y); //- server only???
     
-    void queueUnloadChunk(int x, int y);
+    //void queueUnloadChunk(int x, int y);
     
     //void saveAll(); //- server only???
     
-    void queueUnloadAll();
+    //void queueUnloadAll();
     
-    void unloadQueued();
+    // void unloadQueued();
 }

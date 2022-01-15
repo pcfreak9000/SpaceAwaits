@@ -1,125 +1,146 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
-import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.utils.IntArray;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
-import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
-import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
-public class ChunkProvider implements IChunkProvider {
+public class ChunkProvider implements IChunkProvider {//TODO implement IChunkProvider and clean it up
+    private static int max(IntArray array) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < array.size; i++) {
+            max = Math.max(max, array.items[i]);
+        }
+        return max;
+    }
     
-    private Map<IntCoordKey, Chunk> chunks;
+    public static class ChunkData {
+        private Chunk chunk;
+        private int levelActual;
+        private IntArray levels = new IntArray();
+        
+        public Chunk getChunk() {
+            return chunk;
+        }
+        
+        public int getLevel() {
+            return levelActual;
+        }
+    }
     
-    private Set<IntCoordKey> queueUnload;
+    public static final int LOWEST_ACTIVE_LEVEL = 3;
     
+    private Map<IntCoordKey, ChunkData> chunks = new LinkedHashMap<>();
+    private Multimap<Object, int[]> sources = ArrayListMultimap.create();
+    private IChunkLoader chunkLoader;
     private World world;
-    private IChunkGenerator chunkGen;
-    private IWorldSave save;
     
-    public ChunkProvider(World world, IChunkGenerator chunkGen) {
-        this.chunks = new LinkedHashMap<>();
-        this.queueUnload = new LinkedHashSet<>();
+    public ChunkProvider(World world, IChunkLoader icl) {
         this.world = world;
-        this.chunkGen = chunkGen;
+        this.chunkLoader = icl;
     }
     
-    void setSave(IWorldSave save) {
-        this.save = save;
-    }
-    
-    boolean isLoaded(int x, int y) {
-        return chunks.get(new IntCoordKey(x, y)) != null;
-    }
-    
-    public Chunk loadChunk(int x, int y) {
-        if (!world.getBounds().inChunkBounds(x, y)) {
+    public ChunkData get(int x, int y) {
+        if (!world.getBounds().inChunkBounds(x, y))
             return null;
-        }
         IntCoordKey key = new IntCoordKey(x, y);
-        Chunk c = chunks.get(key);
-        queueUnload.remove(key);
-        if (c == null) {
-            c = new Chunk(x, y, this.world);
-            if (save.hasChunk(x, y)) {
-                readChunk(c);
-                chunkGen.regenerateChunk(c, this.world);
-            } else {
-                chunkGen.generateChunk(c, this.world);
-            }
-            for(Entity e : c.getEntities()) {//TODO Dyn Meh
-                DynamicAssetUtil.checkAndCreateAsset(e);
-            }
-            chunks.put(key, c);
-        }
-        return c;
+        ChunkData d = chunks.get(key);
+        return d;
     }
     
     @Override
     public Chunk getChunk(int x, int y) {
-        if (!world.getBounds().inChunkBounds(x, y)) {
-            return null;
-        }
-        return chunks.get(new IntCoordKey(x, y));
+        ChunkData cd = get(x, y);
+        return cd == null ? null : cd.chunk;
     }
     
-    @Override
-    public void queueUnloadChunk(int x, int y) {
-        if (world.getBounds().inChunkBounds(x, y)) {
-            IntCoordKey key = new IntCoordKey(x, y);
-            queueUnload.add(key);
+    public void saveAll() {
+        for (ChunkData cd : chunks.values()) {
+            this.chunkLoader.saveChunk(cd.chunk);
         }
+    }
+    
+    public void save(int x, int y) {
+        if (!world.getBounds().inChunkBounds(x, y))
+            return;
+        IntCoordKey key = new IntCoordKey(x, y);
+        ChunkData cd = chunks.get(key);
+        if (cd != null) {
+            this.chunkLoader.saveChunk(cd.chunk);
+        }
+    }
+    
+    public void removeLevel(int x, int y, int level) {
+        if (!world.getBounds().inChunkBounds(x, y))
+            return;
+        IntCoordKey key = new IntCoordKey(x, y);
+        ChunkData d = chunks.get(key);
+        if (d == null)
+            return;
+        boolean b = d.levels.removeValue(level);
+        if (!b)
+            return;
+        if (d.levels.isEmpty()) {
+            chunks.remove(key);
+            Chunk c = d.chunk;
+            if (c.isActive()) {
+                world.removeChunk(c);
+            }
+            //save chunk, schedule unloading, whatever
+            chunkLoader.unloadChunk(c);
+        } else {
+            d.levelActual = max(d.levels);
+            if (d.levelActual < LOWEST_ACTIVE_LEVEL && d.chunk.isActive()) {
+                world.removeChunk(d.chunk);
+            }
+        }
+    }
+    
+    public void addLevel(int x, int y, int level, Object src) {
+        if (!world.getBounds().inChunkBounds(x, y))
+            return;
+        IntCoordKey key = new IntCoordKey(x, y);
+        ChunkData d = chunks.get(key);
+        if (d == null) {
+            if (!this.chunkLoader.canLoad(key)) {
+                return;
+            }
+            d = new ChunkData();
+            chunks.put(key, d);
+            //load chunk
+            d.chunk = chunkLoader.loadChunk(key);
+        }
+        d.levels.add(level);
+        d.levelActual = level > d.levelActual ? level : max(d.levels);
+        if (d.levelActual >= LOWEST_ACTIVE_LEVEL && !d.chunk.isActive()) {
+            world.addChunk(d.chunk);
+        }
+        if (src != null) {
+            sources.put(src, new int[] { x, y, level });
+        }
+    }
+    
+    public int getChunkCount() {
+        return chunks.size();
     }
     
     @Override
     public int loadedChunkCount() {
-        return chunks.size();
+        return getChunkCount();
     }
     
-    public void saveAll() {
-        for (Chunk c : chunks.values()) {
-            saveChunk(c);
+    public int getSrcChunkCount(Object src) {
+        return sources.get(src).size();
+    }
+    
+    public void removeAllSrc(Object src) {
+        for (int[] k : sources.get(src)) {
+            removeLevel(k[0], k[1], k[2]);
         }
     }
-    
-    @Override
-    public void queueUnloadAll() {
-        for (IntCoordKey k : chunks.keySet()) {
-            queueUnload.add(k);
-        }
-    }
-    
-    @Override
-    public void unloadQueued() {
-        for (IntCoordKey key : queueUnload) {
-            Chunk c = chunks.remove(key);
-            if (c != null) {
-                for (Entity e : c.getEntities()) {//TODO Dyn Meh
-                    DynamicAssetUtil.checkAndDisposeAsset(e);
-                }
-                saveChunk(c);
-            }
-        }
-        queueUnload.clear();
-    }
-    
-    private void readChunk(Chunk c) {
-        NBTCompound nbtc = save.readChunk(c.getGlobalChunkX(), c.getGlobalChunkY());
-        c.readNBT(nbtc);
-    }
-    
-    private void saveChunk(Chunk c) {
-        NBTCompound nbtc = (NBTCompound) c.writeNBT();
-        if (nbtc != null) {
-            save.writeChunk(c.getGlobalChunkX(), c.getGlobalChunkY(), nbtc);
-        }
-    }
-    
 }
