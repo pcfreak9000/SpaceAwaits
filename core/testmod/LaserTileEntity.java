@@ -1,11 +1,12 @@
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
 public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializable {
     
@@ -25,8 +26,8 @@ public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializ
     public void tick(float time) {
         progress += time;
         if (gty - progress >= 0 && progress >= 1) {
-            if (world.getTile(gtx, gty - Mathf.floori(progress), TileLayer.Front).canBreak()) {
-                world.setTile(gtx, gty - Mathf.floori(progress), TileLayer.Front, Tile.NOTHING);
+            if (world.getECS().getSystem(TileSystem.class).getTile(gtx, gty - Mathf.floori(progress), TileLayer.Front).canBreak()) {
+                world.getECS().getSystem(TileSystem.class).setTile(gtx, gty - Mathf.floori(progress), TileLayer.Front, Tile.NOTHING);
             }
         } else if (gty - progress < 0) {
             progress = 0;

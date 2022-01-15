@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -79,7 +80,8 @@ public class LightRenderer implements Disposable {
                 gwi = texture.getWidth();
                 ghi = texture.getHeight();
                 pix.dispose();
-            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius).call();
+            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius, world.getECS().getSystem(TileSystem.class))
+                    .call();//TODO oof system stuff
         } catch (Exception e) {
             e.printStackTrace();
         }

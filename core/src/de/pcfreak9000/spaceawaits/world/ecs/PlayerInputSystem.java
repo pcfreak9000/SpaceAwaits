@@ -1,11 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.ecs;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -15,6 +16,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
@@ -66,7 +68,7 @@ public class PlayerInputSystem extends EntitySystem {
         
         @Override
         public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
-                RandomXS128 random) {
+                Random random) {
         }
         
         @Override
@@ -132,7 +134,8 @@ public class PlayerInputSystem extends EntitySystem {
                     if (Mathf.square(i) + Mathf.square(j) <= Mathf.square(rad)) {
                         int tx = txm + i;
                         int ty = tym + j;
-                        world.breakTile(tx, ty, layer, InstantBreaker.INSTANCE);
+                        //TODO is this system access nice? see two times below!
+                        getEngine().getSystem(TileSystem.class).breakTile(tx, ty, layer, InstantBreaker.INSTANCE);
                     }
                 }
             }
@@ -148,7 +151,7 @@ public class PlayerInputSystem extends EntitySystem {
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
             if (!used) {
-                world.breakTile(tx, ty, layer, br);
+                getEngine().getSystem(TileSystem.class).breakTile(tx, ty, layer, br);
             }
         }
         if (InptMgr.isPressed(EnumInputIds.Use)) {
@@ -168,7 +171,7 @@ public class PlayerInputSystem extends EntitySystem {
                 }
             }
             if (!used) {
-                Tile clicked = world.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
+                Tile clicked = getEngine().getSystem(TileSystem.class).getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
                 //onTileUse
                 ItemStack cp = stack != null ? stack.cpy() : null;
                 used = clicked.onTileUse(player, world, cp, tx, ty);

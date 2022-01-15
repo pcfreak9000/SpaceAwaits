@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 public class BodyWrapper {
     
     //If this class is reused for space as well this isn't suitable anymore
-    private static final UnitConversion METER_CONV = PhysicsSystemBox2D.METER_CONV;
+    private static final UnitConversion METER_CONV = PhysicsSystem.METER_CONV;
     
     private final Body body;
     

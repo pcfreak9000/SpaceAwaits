@@ -1,13 +1,9 @@
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -53,16 +49,14 @@ public class TestChunkGenerator implements IChunkGenerator {
                 chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Back, t);
             }
         }
-        Entity item = GameRegistry.WORLD_ENTITY_REGISTRY.get("item").createEntity();
-        item.getComponent(ItemStackComponent.class).stack = new ItemStack(DMod.instance.gun, 128);
-        TransformComponent ttc = item.getComponent(TransformComponent.class);//Not good?
-        ttc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
-        chunk.addEntity(item);
+        //        Entity item = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.gun, 128), chunk.getGlobalTileX(),
+        //                chunk.getGlobalTileY() - 1);
+        //        chunk.addEntity(item);
         
-//        Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
-//        TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
-//        tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
-//        chunk.addEntity(entity);
+        //        Entity entity = GameRegistry.WORLD_ENTITY_REGISTRY.get("fallingthing").createEntity();
+        //        TransformComponent tc = entity.getComponent(TransformComponent.class);//Not good?
+        //        tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
+        //        chunk.addEntity(entity);
         
     }
 }

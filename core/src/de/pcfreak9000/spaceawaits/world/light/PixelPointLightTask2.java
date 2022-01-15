@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -22,6 +23,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     
     private float threshold = 0.02f;
     private World world;
+    private TileSystem tiles;
     private AmbientLightProvider ambientLight;
     private Consumer<Pixmap> consumer;
     private int atx;
@@ -29,8 +31,9 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     private int areawidth;
     private int areaheight;
     
-    public PixelPointLightTask2(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth,
-            int areaheight) {
+    public PixelPointLightTask2(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight,
+            TileSystem tiles) {
+        this.tiles = tiles;
         this.world = world;
         this.consumer = consumer;
         this.atx = tx;
@@ -54,8 +57,8 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
                 int gtx = i + atx;
                 int gty = j + aty;
                 if (world.getBounds().inBounds(gtx, gty)) {
-                    Tile tile = world.getTile(gtx, gty, TileLayer.Front);
-                    Tile backTile = world.getTile(gtx, gty, TileLayer.Back);
+                    Tile tile = tiles.getTile(gtx, gty, TileLayer.Front);
+                    Tile backTile = tiles.getTile(gtx, gty, TileLayer.Back);
                     Color light = null;
                     if (tile == null || !tile.isOpaque()) {
                         if (backTile == null || !backTile.isOpaque()) {
@@ -115,7 +118,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
         int ty = aty + j;
         Tile tile = null;
         if (world.getBounds().inBounds(tx, ty)) {
-            tile = world.getTile(tx, ty, TileLayer.Front);
+            tile = tiles.getTile(tx, ty, TileLayer.Front);
         }
         float loss = tile == null ? this.ambientLight.getEmptyTileTransmission(tx, ty) : tile.getLightTransmission();
         float nr = loss * intens[front.i][front.j].r;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public interface BodyFactory {
     
     //If this class is reused for space as well this isn't suitable anymore
-    public static final UnitConversion METER_CONV = PhysicsSystemBox2D.METER_CONV;
+    public static final UnitConversion METER_CONV = PhysicsSystem.METER_CONV;
     
     Body createBody(World world);
     

@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
@@ -21,11 +20,11 @@ public class ItemEntityFactory implements WorldEntityFactory {
     private static final ComponentMapper<ItemStackComponent> ITEMSTACK_COMP_MAPPER = ComponentMapper
             .getFor(ItemStackComponent.class);
     
-    public static void dropItemStack(World world, ItemStack stack, float x, float y) {
+    public static Entity setupItemEntity(ItemStack stack, float x, float y) {
         Entity e = CoreRes.ITEM_FACTORY.createEntity();
         ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
         TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
-        world.spawnEntity(e, false);
+        return e;
     }
     
     private ItemContactListener listener = new ItemContactListener();

@@ -17,11 +17,11 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     
     private Box2DDebugRenderer debugRend;
     private Camera cam;
-    private PhysicsSystemBox2D phsystem;
+    private PhysicsSystem phsystem;
     
     private boolean enabled;
     
-    public PhysicsDebugRendererSystem(PhysicsSystemBox2D sys, GameRenderer renderer) {
+    public PhysicsDebugRendererSystem(PhysicsSystem sys, GameRenderer renderer) {
         this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
         this.phsystem = sys;
         this.cam = renderer.getCurrentView().getCamera();
@@ -34,10 +34,10 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
         }
         if (enabled) {
             OrthographicCamera cam = new OrthographicCamera();
-            cam.setToOrtho(false, PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportWidth),
-                    PhysicsSystemBox2D.METER_CONV.in(this.cam.viewportHeight));
-            cam.position.set(PhysicsSystemBox2D.METER_CONV.in(this.cam.position.x),
-                    PhysicsSystemBox2D.METER_CONV.in(this.cam.position.y), 0);
+            cam.setToOrtho(false, PhysicsSystem.METER_CONV.in(this.cam.viewportWidth),
+                    PhysicsSystem.METER_CONV.in(this.cam.viewportHeight));
+            cam.position.set(PhysicsSystem.METER_CONV.in(this.cam.position.x),
+                    PhysicsSystem.METER_CONV.in(this.cam.position.y), 0);
             cam.update();
             debugRend.render(phsystem.getB2DWorld(), cam.combined);
         }

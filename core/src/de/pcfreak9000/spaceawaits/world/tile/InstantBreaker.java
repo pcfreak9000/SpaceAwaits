@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
-import com.badlogic.gdx.math.RandomXS128;
+import java.util.Random;
+
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -26,7 +27,7 @@ public class InstantBreaker implements ITileBreaker {
     
     @Override
     public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
-            RandomXS128 random) {
+            Random random) {
         //do nothing
     }
 

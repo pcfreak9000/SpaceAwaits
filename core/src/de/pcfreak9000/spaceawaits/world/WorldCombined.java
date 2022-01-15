@@ -27,7 +27,7 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsForcesSystem;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystemBox2D;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -81,11 +81,12 @@ public class WorldCombined extends World {
     
     private void setupECS(WorldPrimer primer, Engine engine) {
         SystemResolver ecs = new SystemResolver();
+        ecs.addSystem(new TileSystem(this, worldRandom, chunkProvider));
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
         ecs.addSystem(new TickChunkSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
-        PhysicsSystemBox2D phsys = new PhysicsSystemBox2D(this);
+        PhysicsSystem phsys = new PhysicsSystem(this);
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));
@@ -132,7 +133,7 @@ public class WorldCombined extends World {
                         chunkProvider.requireChunk(j, k, true, lock);
                     }
                 }
-                if (!checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
+                if (!ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
                     if (worldProperties.autoLowerSpawnpointToSolidGround()) {
                         while (true) {
                             y--;
@@ -143,7 +144,8 @@ public class WorldCombined extends World {
                                     chunkProvider.requireChunk(j, k, true, lock);
                                 }
                             }
-                            if (checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
+                            if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(x, y, playerBounds.x,
+                                    playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
                                 y++;
                                 break;
                             }
@@ -176,7 +178,7 @@ public class WorldCombined extends World {
     
     private Entity createBreakingAnimationsEntity() {
         Entity e = new EntityImproved();
-        e.add(new BreakingTilesComponent(this.breakingTiles));
+        e.add(new BreakingTilesComponent(ecsEngine.getSystem(TileSystem.class).breakingTiles));
         e.add(new RenderComponent(1, "break"));
         return e;
     }

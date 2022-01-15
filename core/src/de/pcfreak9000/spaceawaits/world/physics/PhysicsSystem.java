@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
-public class PhysicsSystemBox2D extends IteratingSystem implements EntityListener {
+public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
             .getFor(TransformComponent.class);
@@ -33,7 +33,12 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     
     private ContactListenerImpl contactEventDispatcher;
     
-    public PhysicsSystemBox2D(de.pcfreak9000.spaceawaits.world.World world) {
+    private final RaycastCallbackBox2DImpl raycastImpl = new RaycastCallbackBox2DImpl();
+    private final RaycastCallbackEntityImpl raycastCallbackWr = new RaycastCallbackEntityImpl();
+    private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
+    private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
+    
+    public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world) {
         super(Family.all(PhysicsComponent.class).get());
         this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(false);
@@ -61,7 +66,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
     public void update(float deltat) {
         this.deltaAcc += deltat;
         if (deltaAcc > 10 * STEPSIZE_SECONDS) {
-            Logger.getLogger(PhysicsSystemBox2D.class).warnf("Skipping physics ticks, acc. physics time: %f", deltaAcc);
+            Logger.getLogger(PhysicsSystem.class).warnf("Skipping physics ticks, acc. physics time: %f", deltaAcc);
             deltaAcc = 10 * STEPSIZE_SECONDS;
         }
         for (Entity e : getEntities()) {
@@ -77,9 +82,6 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         }
     }
     
-    private final RaycastCallbackImpl raycastImpl = new RaycastCallbackImpl();
-    private final QueryCallbackImpl queryImpl = new QueryCallbackImpl();
-    
     public void raycast(IRaycastFixtureCallback callback, float x1, float y1, float x2, float y2) {
         x1 = METER_CONV.in(x1);
         y1 = METER_CONV.in(y1);
@@ -88,6 +90,19 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         raycastImpl.callback = callback;
         this.box2dWorld.rayCast(raycastImpl, x1, y1, x2, y2);
         raycastImpl.callback = null;
+    }
+    
+    public void raycastEntities(IRaycastEntityCallback callback, float x1, float y1, float x2, float y2) {
+        raycastCallbackWr.callb = callback;
+        raycast(raycastCallbackWr, x1, y1, x2, y2);
+        raycastCallbackWr.callb = null;
+    }
+    
+    public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
+        queryAABB(entCheck, x1, y1, x2, y2);
+        boolean b = entCheck.ud.isEntity();
+        entCheck.ud.clear();
+        return b;
     }
     
     public void queryAABB(IQueryCallback callback, float x1, float y1, float x2, float y2) {
@@ -100,16 +115,6 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         queryImpl.callback = null;
     }
     
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        if (transformMapper.has(entity)) {
-            PhysicsComponent pc = this.physicsMapper.get(entity);
-            TransformComponent tc = this.transformMapper.get(entity);
-            pc.body.setTransformW(tc.position.x + pc.factory.bodyOffset().x, tc.position.y + pc.factory.bodyOffset().y,
-                    0);
-        }
-    }
-    
     private void post(Entity entity) {
         if (transformMapper.has(entity)) {
             TransformComponent tc = this.transformMapper.get(entity);
@@ -120,6 +125,16 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
             pc.xVel = vel.x;
             pc.yVel = vel.y;
             pc.rotVel = pc.body.getBody().getAngularVelocity();
+        }
+    }
+    
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+        if (transformMapper.has(entity)) {
+            PhysicsComponent pc = this.physicsMapper.get(entity);
+            TransformComponent tc = this.transformMapper.get(entity);
+            pc.body.setTransformW(tc.position.x + pc.factory.bodyOffset().x, tc.position.y + pc.factory.bodyOffset().y,
+                    0);
         }
     }
     
@@ -137,17 +152,6 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
                 }
             }
         }
-        //        if (pc.body.getBody().getUserData() instanceof UserData) {
-        //            UserData ud = (UserData) pc.body.getBody().getUserData();
-        //            pc.body.getBody().setUserData(entity);
-        //            if (ud.applyToChildren) {
-        //                
-        //            }
-        //        } else {
-        //            for (Fixture f : pc.body.getBody().getFixtureList()) {
-        //                f.setUserData(entity);
-        //            }
-        //        }
     }
     
     @Override
@@ -157,7 +161,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         pc.body = null;
     }
     
-    private static final class QueryCallbackImpl implements QueryCallback {
+    private static final class QueryCallbackBox2DImpl implements QueryCallback {
         
         private IQueryCallback callback;
         
@@ -168,7 +172,7 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         
     }
     
-    private static final class RaycastCallbackImpl implements RayCastCallback {
+    private static final class RaycastCallbackBox2DImpl implements RayCastCallback {
         
         private IRaycastFixtureCallback callback;
         
@@ -180,4 +184,34 @@ public class PhysicsSystemBox2D extends IteratingSystem implements EntityListene
         
     }
     
+    private static final class RaycastCallbackEntityImpl implements IRaycastFixtureCallback {
+        private IRaycastEntityCallback callb;
+        private final UserDataHelper ud = new UserDataHelper();
+        
+        @Override
+        public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,
+                float fraction, UnitConversion conv) {
+            //ignore everything which is not an Entity
+            ud.set(fixture.getUserData(), fixture);
+            if (!ud.isEntity()) {
+                return -1;
+            }
+            return callb.reportRayEntity(ud.getEntity(), pointx, pointy, normalx, normaly, fraction, conv);
+        }
+    }
+    
+    private static final class EntityOccupationChecker implements IQueryCallback {
+        
+        public final UserDataHelper ud = new UserDataHelper();
+        
+        @Override
+        public boolean reportFixture(Fixture fix, UnitConversion conv) {
+            if (fix.isSensor()) {
+                return true;
+            }
+            ud.set(fix.getUserData(), fix);
+            return !ud.isEntity();
+        }
+        
+    }
 }

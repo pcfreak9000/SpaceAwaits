@@ -1,9 +1,9 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
 import java.util.Objects;
+import java.util.Random;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
@@ -166,7 +166,7 @@ public class Tile {
         return itemTile;
     }
     
-    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, RandomXS128 random) {
+    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, Random random) {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
