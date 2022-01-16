@@ -23,12 +23,12 @@ public class ItemGun extends Item {
     @Override
     public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
         TransformComponent tc = CoreRes.TRANSFORM_M.get(player.getPlayerEntity());
-        world.getECS().getSystem(TileSystem.class).raycastTiles(new IRaycastTileCallback() {
+        world.getSystem(TileSystem.class).raycastTiles(new IRaycastTileCallback() {
             
             @Override
             public boolean reportRayTile(Tile tile, int tx, int ty) {
                 if (tile != Tile.NOTHING) {
-                    world.getECS().getSystem(TileSystem.class).breakTile(tx, ty, TileLayer.Front, tilebreaker);
+                    world.getSystem(TileSystem.class).breakTile(tx, ty, TileLayer.Front, tilebreaker);
                 }
                 return tile == Tile.NOTHING;
             }

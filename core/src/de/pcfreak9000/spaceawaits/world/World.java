@@ -25,6 +25,12 @@ import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 
 public abstract class World {
+    private static final ComponentMapper<ChunkMarkerComponent> CHUNK_COMP_MAPPER = ComponentMapper
+            .getFor(ChunkMarkerComponent.class);
+    private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
+            .getFor(TransformComponent.class);
+    private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
+            .getFor(PhysicsComponent.class);
     
     private WorldBounds worldBounds;
     private final long seed;
@@ -86,14 +92,6 @@ public abstract class World {
         }
     }
     
-    public WorldBounds getBounds() {
-        return worldBounds;
-    }
-    
-    public AmbientLightProvider getLightProvider() {
-        return ambientLightProvider;
-    }
-    
     protected void addChunk(Chunk c) {
         c.addToECS(ecsEngine);
     }
@@ -105,13 +103,6 @@ public abstract class World {
     public void joinWorld(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
-    
-    private static final ComponentMapper<ChunkMarkerComponent> CHUNK_COMP_MAPPER = ComponentMapper
-            .getFor(ChunkMarkerComponent.class);
-    private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
-            .getFor(TransformComponent.class);
-    private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
-            .getFor(PhysicsComponent.class);
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {
         //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
@@ -183,26 +174,6 @@ public abstract class World {
         }
     }
     
-    public long getSeed() {
-        return seed;
-    }
-    
-    public EventBus getWorldBus() {
-        return this.eventBus;
-    }
-    
-    public Random getWorldRandom() {
-        return worldRandom;
-    }
-    
-    public Engine getECS() {
-        return ecsEngine;
-    }
-    
-    public IWorldProperties getWorldProperties() {
-        return worldProperties;
-    }
-    
     public void unloadAll() {
         ((ChunkProvider) chunkProvider).saveAll();
         ((ChunkProvider) chunkProvider).releaseAll();
@@ -222,11 +193,37 @@ public abstract class World {
     
     public int getLoadedChunksCount() {
         return chunkProvider.getLoadedChunkCount();
-        // return this.chunkProvider.loadedChunkCount();
     }
     
     public int getUpdatingChunksCount() {
-        return this.ecsEngine.getSystem(TickChunkSystem.class).getEntities().size();//Ooof, this is pretty specific...
+        return getSystem(TickChunkSystem.class).getEntities().size();//Ooof, this is pretty specific...
     }
     
+    public WorldBounds getBounds() {
+        return worldBounds;
+    }
+    
+    public AmbientLightProvider getLightProvider() {
+        return ambientLightProvider;
+    }
+    
+    public long getSeed() {
+        return seed;
+    }
+    
+    public EventBus getWorldBus() {
+        return this.eventBus;
+    }
+    
+    public Random getWorldRandom() {
+        return worldRandom;
+    }
+    
+    public <T extends EntitySystem> T getSystem(Class<T> clazz) {
+        return ecsEngine.getSystem(clazz);
+    }
+    
+    public IWorldProperties getWorldProperties() {
+        return worldProperties;
+    }
 }
