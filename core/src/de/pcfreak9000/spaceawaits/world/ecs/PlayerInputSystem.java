@@ -3,28 +3,33 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import java.util.Random;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.InstantBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class PlayerInputSystem extends EntitySystem {
     
@@ -41,9 +46,12 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Player player;
     
+    private Entity tileSelectorEntity;
+    
     public PlayerInputSystem(World world, GameRenderer renderer) {
         this.world = world;
         this.worldRend = renderer;
+        this.tileSelectorEntity = createTileSelectorEntity();
         world.getWorldBus().register(this);
     }
     
@@ -52,6 +60,18 @@ public class PlayerInputSystem extends EntitySystem {
         if (ev.world == this.world) {//TODO world specific eventbus?
             this.player = ev.player;
         }
+    }
+    
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        engine.addEntity(tileSelectorEntity);
+    }
+    
+    @Override
+    public void removedFromEngine(Engine engine) {
+        super.removedFromEngine(engine);
+        engine.removeEntity(tileSelectorEntity);
     }
     
     private final ITileBreaker br = new ITileBreaker() {
@@ -193,5 +213,23 @@ public class PlayerInputSystem extends EntitySystem {
             return select + 9;
         }
         return select % 9;
+    }
+    
+    private Entity createTileSelectorEntity() {
+        Entity e = new EntityImproved();
+        RenderComponent rc = new RenderComponent(200, "entity");
+        rc.considerAsGui = true;
+        e.add(rc);
+        RenderTextureComponent tex = new RenderTextureComponent();
+        tex.texture = CoreRes.TILEMARKER_DEF;
+        tex.width = 1;
+        tex.height = 1;
+        tex.color = Color.GRAY;
+        e.add(tex);
+        e.add(new TransformComponent());
+        FollowMouseComponent fmc = new FollowMouseComponent();
+        fmc.tiled = true;
+        e.add(fmc);
+        return e;
     }
 }

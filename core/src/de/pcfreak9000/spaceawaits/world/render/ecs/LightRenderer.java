@@ -12,13 +12,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.world.TileSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 //Optimize for the case if everything is lit anyways? the scenebuffer wouldnt be required then
 public class LightRenderer implements Disposable {

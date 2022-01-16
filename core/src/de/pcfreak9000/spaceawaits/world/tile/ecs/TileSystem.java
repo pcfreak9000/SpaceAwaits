@@ -1,7 +1,9 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.tile.ecs;
 
+import java.util.Iterator;
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
@@ -13,9 +15,13 @@ import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.world.IChunkProvider;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -27,12 +33,46 @@ public class TileSystem extends EntitySystem {
     private World world;
     private Random worldRandom;
     private IChunkProvider chunkProvider;
-    public final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();//TODO public??!?!?!?!
+    private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
+    private final Entity entity;
     
     public TileSystem(World world, Random r, IChunkProvider ch) {
         this.world = world;
         this.worldRandom = r;
         this.chunkProvider = ch;
+        this.entity = createInfoEntity();
+    }
+    
+    private Entity createInfoEntity() {
+        Entity e = new EntityImproved();
+        e.add(new BreakingTilesComponent(this.breakingTiles));
+        e.add(new RenderComponent(1, "break"));
+        return e;
+    }
+    
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        engine.addEntity(entity);
+    }
+    
+    @Override
+    public void removedFromEngine(Engine engine) {
+        super.removedFromEngine(engine);
+        engine.removeEntity(entity);
+    }
+    
+    @Override
+    public void update(float deltaTime) {
+        Iterator<BreakTileProgress> it = breakingTiles.values().iterator();
+        while (it.hasNext()) {
+            BreakTileProgress t = it.next();
+            if (t.getLast() == t.getProgress()) {
+                it.remove();
+            } else {
+                t.setLast(t.getProgress());
+            }
+        }
     }
     
     /**
@@ -145,7 +185,8 @@ public class TileSystem extends EntitySystem {
             breaker.onTileBreak(tx, ty, layer, tile, world, drops, worldRandom);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
-                    Entity e = ItemEntityFactory.setupItemEntity(s, tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
+                    Entity e = ItemEntityFactory.setupItemEntity(s,
+                            tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
                             ty + worldRandom.nextFloat() / 2F - Item.WORLD_SIZE / 2);
                     world.spawnEntity(e, false);
                 }

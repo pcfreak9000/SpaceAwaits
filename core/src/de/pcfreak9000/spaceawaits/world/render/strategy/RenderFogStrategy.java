@@ -35,7 +35,7 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
         
         ShaderProgram.pedantic = false;
         shader.getShader().bind();
-        System.out.println(shader.getShader().getLog());
+        //System.out.println(shader.getShader().getLog());
     }
     
     private float time = 0;

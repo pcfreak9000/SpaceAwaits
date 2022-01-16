@@ -12,4 +12,5 @@ public class BreakingTilesComponent implements Component {
     public BreakingTilesComponent(LongMap<BreakTileProgress> breaktiles) {
         this.breaktiles = breaktiles;
     }
+    
 }
