@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntSet;
 
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
@@ -34,7 +33,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     private int count;
     
     public RenderChunkStrategy(GameRenderer renderer) {
-        super(Family.all(ChunkComponent.class).get());
+        super(Family.all(ChunkRenderComponent.class).get());
         this.freeCacheIds = new IntSet();
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
         this.camera = renderer.getCurrentView().getCamera();
@@ -74,24 +73,22 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         //this.regionCache.clear();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        regionCache.setProjectionMatrix(
-                SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera().combined);
+        regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;
     }
     
     @Override
     public void render(Entity entity, float deltaTime) {
-        ChunkComponent c = tMapper.get(entity);
-        float mx = (c.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
-        float my = (c.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
+        ChunkRenderComponent crc = rMapper.get(entity);
+        float mx = (crc.c.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
+        float my = (crc.c.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
         if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0)) {
             return;
         }
         SpriteCache ca = this.regionCache;
         ca.clear();
         ca.beginCache();
-        ChunkRenderComponent crc = rMapper.get(entity);
-        recacheTiles(regionCache, c.chunk, crc);
+        recacheTiles(regionCache, crc.c, crc);
         int id = ca.endCache();
         ca.begin();
         ca.draw(id, 0, crc.len);
@@ -107,36 +104,37 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     private void recacheTiles(SpriteCache cache, Chunk c, ChunkRenderComponent crc) {
         Color backgroundColor = new Color();
         crc.len = 0;
-        crc.blen = 0;
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int gtx = i + c.getGlobalTileX();
                 int gty = j + c.getGlobalTileY();
-                Tile tile = c.getTile(gtx, gty, TileLayer.Back);
+                Tile tile = c.getTile(gtx, gty, crc.layer);
                 if (!isVisible(tile)) {
                     continue;
                 }
                 backgroundColor.set(tile.color());
-                backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
+                if (crc.layer == TileLayer.Back) {
+                    backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
+                }
                 cache.setColor(backgroundColor);
                 addTile(tile, gtx, gty, cache);
-                crc.blen++;
+                //                crc.blen++;
                 crc.len++;
             }
         }
-        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
-                int gtx = i + c.getGlobalTileX();
-                int gty = j + c.getGlobalTileY();
-                Tile tile = c.getTile(gtx, gty, TileLayer.Front);
-                if (!isVisible(tile)) {
-                    continue;
-                }
-                cache.setColor(tile.color());
-                addTile(tile, gtx, gty, cache);
-                crc.len++;
-            }
-        }
+        //        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
+        //            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
+        //                int gtx = i + c.getGlobalTileX();
+        //                int gty = j + c.getGlobalTileY();
+        //                Tile tile = c.getTile(gtx, gty, TileLayer.Front);
+        //                if (!isVisible(tile)) {
+        //                    continue;
+        //                }
+        //                cache.setColor(tile.color());
+        //                addTile(tile, gtx, gty, cache);
+        //                crc.len++;
+        //            }
+        //        }
     }
     
     private boolean isVisible(Tile t) {

@@ -30,8 +30,8 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
 public class Chunk implements NBTSerializable {
     
@@ -70,7 +70,7 @@ public class Chunk implements NBTSerializable {
     
     private boolean addedToEngine;
     
-    private final Entity chunkEntity;
+    private final Entity chunkEntity, backEntity;
     
     public Chunk(int rx, int ry, World world) {
         this.rx = rx;
@@ -89,11 +89,21 @@ public class Chunk implements NBTSerializable {
         this.chunkEntity = new EntityImproved();
         this.chunkEntity.flags = 1;
         this.chunkEntity.add(new ChunkComponent(this));
-        this.chunkEntity.add(new ChunkRenderComponent());//TMP because server side stuff
-        this.chunkEntity.add(new RenderComponent(0, "chunk"));
+        ChunkRenderComponent crcFront = new ChunkRenderComponent();
+        crcFront.c = this;
+        crcFront.layer = TileLayer.Front;
+        this.chunkEntity.add(crcFront);//TMP because server side stuff
+        this.chunkEntity.add(new RenderComponent(0.1f, "chunk"));
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.chunkEntity.add(pc);
+        this.backEntity = new EntityImproved();
+        this.backEntity.flags = 1;
+        ChunkRenderComponent crcBack = new ChunkRenderComponent();
+        crcBack.c = this;
+        crcBack.layer = TileLayer.Back;
+        this.backEntity.add(crcBack);
+        this.backEntity.add(new RenderComponent(0, "chunk"));
     }
     
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
@@ -121,10 +131,10 @@ public class Chunk implements NBTSerializable {
     public int getGlobalTileY() {
         return this.ty;
     }
-    
-    public Entity getECSEntity() {
-        return this.chunkEntity;
-    }
+    //    
+    //    public Entity getECSEntity() {
+    //        return this.chunkEntity;
+    //    }
     
     public boolean isActive() {
         return addedToEngine;
@@ -135,7 +145,8 @@ public class Chunk implements NBTSerializable {
             throw new IllegalStateException();
         }
         addedToEngine = true;
-        ecs.addEntity(getECSEntity());
+        ecs.addEntity(chunkEntity);
+        ecs.addEntity(backEntity);
         for (Entity e : entities) {
             ecs.addEntity(e);
         }
@@ -146,7 +157,8 @@ public class Chunk implements NBTSerializable {
             throw new IllegalStateException();
         }
         addedToEngine = false;
-        ecs.removeEntity(getECSEntity());
+        ecs.removeEntity(chunkEntity);
+        ecs.removeEntity(backEntity);
         for (Entity e : entities) {
             ecs.removeEntity(e);
         }
