@@ -47,6 +47,10 @@ public class TestChunkGenerator implements IChunkGenerator {
                 }
                 chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Front, t);
                 chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Back, t);
+                if (Math.random() < 0.002) {
+                    chunk.setTile(i + chunk.getGlobalTileX(), j + chunk.getGlobalTileY(), TileLayer.Front,
+                            GameRegistry.TILE_REGISTRY.get("water"));
+                }
             }
         }
         //        Entity item = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.gun, 128), chunk.getGlobalTileX(),

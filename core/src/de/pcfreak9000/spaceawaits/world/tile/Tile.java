@@ -182,6 +182,10 @@ public class Tile {
         
     }
     
+    public void updateTick(int tx, int ty, TileLayer layer, World world, int tick) {
+        
+    }
+    
     public boolean hasTileEntity() {
         return false;
     }
@@ -200,6 +204,14 @@ public class Tile {
     
     public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
             int ngty) {
+    }
+    
+    public boolean hasMetadata() {
+        return false;
+    }
+    
+    public IMetadata createMetadata() {
+        return null;
     }
     
     @Override

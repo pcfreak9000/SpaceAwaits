@@ -50,8 +50,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final float BEGIN_LIGHT_LAYER = 0;
-    private static final float END_LIGHT_LAYER = 100;
+    private static final float BEGIN_LIGHT_LAYER = -1000;//0;//TODO make light disableable
+    private static final float END_LIGHT_LAYER = -500;//100;
     
     private final GameRegistry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
@@ -148,7 +148,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                     last.end();
                 }
                 if (startLight) {
-                    lightRenderer.enterLitScene();
+                    //lightRenderer.enterLitScene();
                 }
                 dec.begin();
                 last = dec;
@@ -157,7 +157,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 if (last != null) {
                     last.end();
                 }
-                lightRenderer.exitAndRenderLitScene();
+                //lightRenderer.exitAndRenderLitScene();
                 endedLight = true;
                 if (last != null) {
                     last.begin();
@@ -170,7 +170,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             last.end();
         }
         if (!endedLight) {
-            lightRenderer.exitAndRenderLitScene();
+           // lightRenderer.exitAndRenderLitScene();
         }
     }
     

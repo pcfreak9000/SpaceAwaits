@@ -283,7 +283,6 @@ public class RegionFile {
             int sectorNumber = offset >> 8;
             int sectorsAllocated = offset & 0xFF;
             int sectorsNeeded = (length + CHUNK_HEADER_SIZE) / SECTOR_BYTES + 1;
-            
             // maximum chunk size is 1MB
             if (sectorsNeeded >= 256) {
                 debugln("Exceeding max chunks size at " + x + "|" + z + ", sectors needed: " + sectorsNeeded);

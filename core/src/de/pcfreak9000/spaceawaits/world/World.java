@@ -23,6 +23,8 @@ import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class World {
@@ -81,8 +83,11 @@ public abstract class World {
     
     protected abstract IChunkLoader createChunkLoader(WorldPrimer primer);
     
+    private int ticks = 0;
+    
     public void update(float dt) {
         this.ecsEngine.update(dt);
+        ticks++;
         //this.chunkProvider.unloadQueued();
         
         timehelper += dt * 50;
@@ -91,6 +96,10 @@ public abstract class World {
             timehelper -= i;
             time += i;
         }
+    }
+    
+    public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
+        getSystem(TileSystem.class).scheduleTick(tx, ty, layer, tile, waitticks);
     }
     
     protected void addChunk(Chunk c) {
@@ -206,6 +215,10 @@ public abstract class World {
     
     public AmbientLightProvider getLightProvider() {
         return ambientLightProvider;
+    }
+    
+    public int getTick() {//TODO TMP?
+        return ticks;
     }
     
     public long getSeed() {

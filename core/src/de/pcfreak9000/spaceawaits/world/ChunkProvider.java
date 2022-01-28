@@ -26,6 +26,8 @@ public class ChunkProvider implements IChunkProvider {
     private World world;
     private IChunkLoader loader;
     
+    private Chunk cached = null;
+    
     public ChunkProvider(World world, IChunkLoader loader) {
         this.world = world;
         this.loader = loader;
@@ -76,6 +78,9 @@ public class ChunkProvider implements IChunkProvider {
         }
         if (cd.required.isEmpty() && cd.requiredActive.isEmpty()) {
             chunks.remove(key);
+            if (cached == c) {
+                invalidateCache();
+            }
             loader.unloadChunk(c);
         }
     }
@@ -92,7 +97,12 @@ public class ChunkProvider implements IChunkProvider {
         return chunkStuff.get(lock).size();
     }
     
+    private void invalidateCache() {
+        cached = null;
+    }
+    
     public void releaseAll() {
+        invalidateCache();
         for (ChunkData cd : chunks.values()) {
             if (cd.c.isActive()) {
                 world.removeChunk(cd.c);
@@ -107,9 +117,18 @@ public class ChunkProvider implements IChunkProvider {
     public Chunk getChunk(int x, int y) {
         if (!world.getBounds().inChunkBounds(x, y))
             return null;
+        if (cached != null) {
+            if (cached.getGlobalChunkX() == x && cached.getGlobalChunkY() == y) {
+                return cached;
+            }
+        }
         IntCoordKey key = new IntCoordKey(x, y);
         ChunkData cd = chunks.get(key);
-        return cd == null ? null : cd.c;
+        if (cd != null) {
+            cached = cd.c;
+            return cd.c;
+        }
+        return null;
     }
     
     @Override

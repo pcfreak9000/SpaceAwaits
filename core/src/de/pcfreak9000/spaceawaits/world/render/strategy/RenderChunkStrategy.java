@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntSet;
 
@@ -16,15 +17,17 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.tile.LiquidState;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
 //TODO having there global (gameregistrey and stuff) might not be the best idea
 public class RenderChunkStrategy extends AbstractRenderStrategy implements EntityListener, Disposable {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
-    private static final float BACKGROUND_FACTOR = 0.5f;
+    private static final float BACKGROUND_FACTOR = 0.55f;
     
     private SpriteCache regionCache;//Maybe use something global instead
     private IntSet freeCacheIds;
@@ -72,7 +75,8 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
     public void begin() {
         //this.regionCache.clear();
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
+                GL20.GL_ONE_MINUS_SRC_ALPHA);
         regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;
     }
@@ -117,7 +121,7 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
                     backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
                 }
                 cache.setColor(backgroundColor);
-                addTile(tile, gtx, gty, cache);
+                addTile(tile, gtx, gty, cache, crc.c, crc.layer);
                 //                crc.blen++;
                 crc.len++;
             }
@@ -141,8 +145,15 @@ public class RenderChunkStrategy extends AbstractRenderStrategy implements Entit
         return t.color().a > 0;
     }
     
-    private void addTile(Tile t, int gtx, int gty, SpriteCache c) {
-        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, 1);
+    private void addTile(Tile t, int gtx, int gty, SpriteCache c, Chunk chunk, TileLayer layer) {
+        float height = 1;
+        if (t instanceof TileLiquid) {
+            TileLiquid tl = (TileLiquid) t;
+            LiquidState s = (LiquidState) chunk.getMetadata(gtx, gty, layer);
+            height = s.getLiquid() / tl.getMaxValue();
+            height = MathUtils.clamp(height, 0, 1);
+        }
+        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, height);
     }
     
     public int getRenderedChunkCount() {

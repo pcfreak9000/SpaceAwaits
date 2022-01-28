@@ -34,6 +34,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
 public class DMod {
@@ -57,10 +58,20 @@ public class DMod {
     Tile torch = new Tile();
     Item gun = new ItemGun();
     
+    TileLiquid water = new TileLiquid();
+    
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
+        
+        water.setTexture("stone.png");
+        water.setSolid(false);
+        water.setCanBreak(false);
+        water.setCanBeReplaced(true);
+        water.setLightTransmission(0.9f);
+        water.color().set(0, 0, 1, 0.5f);
+        GameRegistry.TILE_REGISTRY.register("water", water);
         
         gun.setTexture("gun_0.png");
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
@@ -130,7 +141,7 @@ public class DMod {
                 WorldPrimer p = new WorldPrimer(this);
                 p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
-                p.setLightProvider(AmbientLightProvider.constant(Color.GRAY));
+                p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
                 p.setChunkGenerator(new TestChunkGenerator());
                 p.setUnchunkGenerator(new IUnchunkGenerator() {
                     

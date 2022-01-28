@@ -14,6 +14,7 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -23,6 +24,7 @@ import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
+import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -85,46 +87,87 @@ public class TileSystem extends EntitySystem {
      * @return the old tile or null if nothing changed (out of bounds or not loaded)
      */
     public Tile setTile(int tx, int ty, TileLayer layer, Tile tile) {
-        if (world.getBounds().inBounds(tx, ty)) {
-            Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
-            if (c != null) {
-                Tile old = c.setTile(tx, ty, layer, tile);
-                breakingTiles.remove(IntCoords.toLong(tx, ty));
-                old.onTileRemoved(tx, ty, layer, world);
-                tile.onTileSet(tx, ty, layer, world);
-                notifyNeighbours(tile, old, tx, ty, layer);
-                return old;
-            }
+        Chunk c = getChunkForTile(tx, ty);
+        if (c != null) {
+            Tile old = c.setTile(tx, ty, layer, tile);
+            breakingTiles.remove(IntCoords.toLong(tx, ty));
+            old.onTileRemoved(tx, ty, layer, world);
+            tile.onTileSet(tx, ty, layer, world);
+            notifyNeighbours(tile, old, tx, ty, layer);
+            return old;
         }
         return null;
     }
     
     //Hmmm. What about tiles on the edge to only loaded but not updated? What about resonance cascades?
     private void notifyNeighbours(Tile tile, Tile old, int tx, int ty, TileLayer layer) {
-        getTile(tx + 1, ty, layer).onNeighbourChange(world, tx + 1, ty, tile, old, tx, ty);
-        getTile(tx, ty + 1, layer).onNeighbourChange(world, tx, ty + 1, tile, old, tx, ty);
-        getTile(tx - 1, ty, layer).onNeighbourChange(world, tx - 1, ty, tile, old, tx, ty);
-        getTile(tx, ty - 1, layer).onNeighbourChange(world, tx, ty - 1, tile, old, tx, ty);
+        for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+            int i = tx + d.dx;
+            int j = ty + d.dy;
+            getTile(i, j, layer).onNeighbourChange(world, i, j, tile, old, tx, ty);
+        }
     }
     
     public Tile getTile(int tx, int ty, TileLayer layer) {
-        if (world.getBounds().inBounds(tx, ty)) {
-            Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
-            if (c != null) {
-                return c.getTile(tx, ty, layer);
-            }
+        Chunk c = getChunkForTile(tx, ty);
+        if (c != null) {
+            return c.getTile(tx, ty, layer);
         }
         return Tile.NOTHING;
     }
     
-    public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
-        if (world.getBounds().inBounds(tx, ty)) {
-            Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
-            if (c != null) {
-                return c.getTileEntity(tx, ty, layer);
-            }
+    public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
+        Chunk c = getChunkForTile(tx, ty);
+        if (c != null) {
+            return c.getMetadata(tx, ty, layer);
         }
         return null;
+    }
+    
+    //    public float getLiquid(int tx, int ty, TileLayer layer) {
+    //        Chunk c = getChunkForTile(tx, ty);
+    //        if (c != null) {
+    //            return c.getLiquid(tx, ty, layer);
+    //        }
+    //        return 0;
+    //    }
+    //    
+    //    public void updateLiquid(int tx, int ty, TileLayer layer, int tick) {
+    //        Chunk c = getChunkForTile(tx, ty);
+    //        if (c != null) {
+    //            c.updateLiquid(tx, ty, layer, tick);
+    //        }
+    //    }
+    //    
+    //    public void addLiquid(int tx, int ty, TileLayer layer, float amount) {
+    //        Chunk c = getChunkForTile(tx, ty);
+    //        if (c != null) {
+    //            c.addLiquid(tx, ty, layer, amount);
+    //        }
+    //    }
+    
+    private Chunk getChunkForTile(int tx, int ty) {//The last accessed chunk could be cached, but check if it hasnt been unloaded yet or something
+        if (world.getBounds().inBounds(tx, ty)) {
+            Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
+            return c;
+        }
+        return null;
+    }
+    
+    public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
+        Chunk c = getChunkForTile(tx, ty);
+        if (c != null) {
+            return c.getTileEntity(tx, ty, layer);
+        }
+        return null;
+    }
+    
+    public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
+        Chunk c = getChunkForTile(tx, ty);
+        if (c != null) {
+            c.scheduleTick(tx, ty, layer, tile, waitticks);
+        }
+        //do something if this fails?
     }
     
     public Tile placeTile(int tx, int ty, TileLayer layer, Tile tile) {
@@ -135,7 +178,7 @@ public class TileSystem extends EntitySystem {
             }
         }
         Tile current = getTile(tx, ty, layer);
-        if (current != null && !current.canBeReplaced()) {
+        if (current != null && (!current.canBeReplaced() || current == tile)) {
             //check current occupation, only place tile if there isnt already one
             return null;
         }
@@ -277,4 +320,5 @@ public class TileSystem extends EntitySystem {
         }
         return false;
     }
+    
 }

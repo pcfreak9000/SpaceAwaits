@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
@@ -12,6 +13,7 @@ import java.util.function.Predicate;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
@@ -21,6 +23,7 @@ import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
@@ -28,6 +31,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -65,6 +69,7 @@ public class Chunk implements NBTSerializable {
     
     private final List<ChunkChangeListener> listeners;
     
+    private OrderedSet<NextTickTile> tickTiles = new OrderedSet<>();
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
@@ -131,10 +136,6 @@ public class Chunk implements NBTSerializable {
     public int getGlobalTileY() {
         return this.ty;
     }
-    //    
-    //    public Entity getECSEntity() {
-    //        return this.chunkEntity;
-    //    }
     
     public boolean isActive() {
         return addedToEngine;
@@ -205,6 +206,10 @@ public class Chunk implements NBTSerializable {
         return this.getStorageForLayer(layer).get(tx, ty).getTile();
     }
     
+    public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
+        return this.getStorageForLayer(layer).get(tx, ty).getMetadata();
+    }
+    
     //Not the best solution, but TileState visibility is a problem anyways
     TileState getTileState(int tx, int ty) {
         return this.tiles.get(tx, ty);
@@ -267,12 +272,34 @@ public class Chunk implements NBTSerializable {
                 && this.world.getBounds().inBounds(gtx, gty);
     }
     
+    
     public void tick(float time) {
         this.ticking = true;
         this.tickables.forEach((t) -> t.tick(time));
+        this.tickTiles(world.getTick());
         this.ticking = false;
         while (!this.tickablesForRemoval.isEmpty()) {
             this.tickables.remove(this.tickablesForRemoval.poll());
+        }
+    }
+    
+    private void tickTiles(int ticks) {
+        Iterator<NextTickTile> it = tickTiles.iterator();
+        while (it.hasNext()) {
+            NextTickTile k = it.next();
+            if (ticks >= k.getTick()) {
+                it.remove();
+                Tile t = getTile(k.getX(), k.getY(), k.getLayer());
+                if (t == k.getTile()) {
+                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, ticks);
+                }
+            }
+        }
+    }
+    
+    public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
+        if (inBounds(tx, ty) && tile != null && tile != Tile.NOTHING) {
+            tickTiles.add(new NextTickTile(tx, ty, layer, tile, waitticks + world.getTick()));
         }
     }
     
