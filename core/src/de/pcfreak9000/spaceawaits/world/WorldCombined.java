@@ -50,6 +50,7 @@ public class WorldCombined extends World {
             DynamicAssetUtil.checkAndCreateAsset(e);//TODO Dyn Meh
             ecsEngine.addEntity(e);
         }
+        init();
     }
     
     public void saveAll() {

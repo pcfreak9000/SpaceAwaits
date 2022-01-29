@@ -70,17 +70,20 @@ public class DMod {
         water.setCanBreak(false);
         water.setCanBeReplaced(true);
         water.setLightTransmission(0.9f);
-        water.color().set(0, 0, 1, 0.5f);
+        water.color().set(0, 0.5f, 1, 0.75f);
+        water.setDisplayName("Water");
         GameRegistry.TILE_REGISTRY.register("water", water);
         
         gun.setTexture("gun_0.png");
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
         
         tstoneTile.setTexture("stone.png");
+        tstoneTile.setDisplayName("Stone");
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
-        tstoneTile.setLightTransmission(0.55f);
+        tstoneTile.setLightTransmission(0.6f);
         
         Tile ironTile = new Tile();
+        ironTile.setDisplayName("Iron Ore");
         ironTile.setTexture("ore_iron.png");
         // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
@@ -88,24 +91,29 @@ public class DMod {
         Tile bottom = new Tile();
         bottom.setCanBreak(false);
         bottom.setTexture("stone_dark.png");
+        bottom.setDisplayName("Bedrock or something");
         GameRegistry.TILE_REGISTRY.register("bottom", bottom);
         
         Tile grasstile = new Tile();
+        grasstile.setDisplayName("Grass tile");
         grasstile.setTexture("grass.png");
         //grasstile.setFilterColor(new Color(0.3f, 0.3f, 0.3f));
         GameRegistry.TILE_REGISTRY.register("grass", grasstile);
         
         Tile dirttile = new Tile();
+        dirttile.setDisplayName("Dirt");
         dirttile.setTexture("dirt.png");
-        dirttile.setBouncyness(1);
+        //dirttile.setBouncyness(1);
         //dirttile.setFilterColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("dirt", dirttile);
         
-        torch.setLightColor(new Color(0, 1, 0, 1));
+        torch.setLightColor(Color.WHITE);
+        torch.setDisplayName("torch");
         GameRegistry.TILE_REGISTRY.register("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
         laser.setTexture("dirt.png");
+        laser.setDisplayName("Laser");
         laser.color().set(1, 0, 0, 1);
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);

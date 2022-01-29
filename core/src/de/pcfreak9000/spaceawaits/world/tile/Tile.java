@@ -59,6 +59,8 @@ public class Tile {
     private float materialLevel = 0f;
     private float hardness = 1f;
     
+    private String displayName;
+    
     private Item itemTile;
     
     public void setTexture(String name) {
@@ -68,6 +70,14 @@ public class Tile {
     public void setTextureProvider(ITextureProvider prov) {
         Objects.requireNonNull(prov);
         this.textureProvider = prov;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
     
     public void setBouncyness(float b) {
@@ -203,7 +213,7 @@ public class Tile {
     }
     
     public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
-            int ngty) {
+            int ngty, TileLayer layer) {
     }
     
     public boolean hasMetadata() {

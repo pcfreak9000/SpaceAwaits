@@ -92,7 +92,7 @@ public class TileSystem extends EntitySystem {
             Tile old = c.setTile(tx, ty, layer, tile);
             breakingTiles.remove(IntCoords.toLong(tx, ty));
             old.onTileRemoved(tx, ty, layer, world);
-            tile.onTileSet(tx, ty, layer, world);
+            tile.onTileSet(tx, ty, layer, world);//Hmmmmm, oof. Decide if this listener stuff happens in chunk or here
             notifyNeighbours(tile, old, tx, ty, layer);
             return old;
         }
@@ -104,7 +104,7 @@ public class TileSystem extends EntitySystem {
         for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
             int i = tx + d.dx;
             int j = ty + d.dy;
-            getTile(i, j, layer).onNeighbourChange(world, i, j, tile, old, tx, ty);
+            getTile(i, j, layer).onNeighbourChange(world, i, j, tile, old, tx, ty, layer);
         }
     }
     

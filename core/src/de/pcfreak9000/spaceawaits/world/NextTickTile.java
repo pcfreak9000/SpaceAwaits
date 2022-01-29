@@ -1,9 +1,13 @@
 package de.pcfreak9000.spaceawaits.world;
 
+import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-public class NextTickTile {
+public class NextTickTile implements NBTSerializable {
     private int x;
     private int y;
     private TileLayer layer;
@@ -71,6 +75,27 @@ public class NextTickTile {
             return false;
         }
         return true;
+    }
+    
+    @Override
+    public void readNBT(NBTTag tag) {
+        NBTCompound c = (NBTCompound) tag;
+        x = c.getInt("x");
+        y = c.getInt("y");
+        layer = c.getByte("z") == 1 ? TileLayer.Front : TileLayer.Back;
+        tile = GameRegistry.TILE_REGISTRY.get(c.getString("t"));
+        tick = c.getInt("tick");
+    }
+    
+    @Override
+    public NBTTag writeNBT() {
+        NBTCompound c = new NBTCompound();
+        c.putInt("x", x);
+        c.putInt("y", y);
+        c.putByte("z", layer == TileLayer.Front ? (byte) 1 : (byte) 0);
+        c.putString("t", GameRegistry.TILE_REGISTRY.getId(tile));
+        c.putInt("tick", tick);
+        return c;
     }
     
 }

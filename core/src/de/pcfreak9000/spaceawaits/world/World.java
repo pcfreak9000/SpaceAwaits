@@ -75,6 +75,10 @@ public abstract class World {
         //        finishSetup(primer, ecsEngine);
     }
     
+    protected void init() {//this is garbage
+        this.ticks = this.unchunkProvider.worldInfo().getIntOrDefault("ticks", 0);
+    }
+    
     //    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
     
     protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
@@ -88,6 +92,8 @@ public abstract class World {
     public void update(float dt) {
         this.ecsEngine.update(dt);
         ticks++;
+        this.unchunkProvider.worldInfo().remove("ticks");//OOOOF??
+        this.unchunkProvider.worldInfo().putInt("ticks", ticks);
         //this.chunkProvider.unloadQueued();
         
         timehelper += dt * 50;

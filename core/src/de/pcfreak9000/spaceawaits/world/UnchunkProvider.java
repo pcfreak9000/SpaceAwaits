@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 public class UnchunkProvider implements IUnchunkProvider {
     
     private SerializableEntityList data;
+    private NBTCompound nbt = new NBTCompound();
     
     private World world;
     private IUnchunkGenerator unchunkGen;
@@ -34,6 +35,7 @@ public class UnchunkProvider implements IUnchunkProvider {
         if (save.hasGlobal()) {
             NBTCompound nbt = save.readGlobal();
             data.readNBT(nbt.get("entities"));
+            this.nbt = nbt.getCompound("dat");
             unchunkGen.regenerateUnchunk(data, world);
         } else {
             unchunkGen.generateUnchunk(data, world);
@@ -49,6 +51,7 @@ public class UnchunkProvider implements IUnchunkProvider {
         if (data != null) {
             NBTCompound nbt = new NBTCompound();
             nbt.put("entities", data.writeNBT());
+            nbt.put("dat", this.nbt);
             save.writeGlobal(nbt);
         }
     }
@@ -56,10 +59,15 @@ public class UnchunkProvider implements IUnchunkProvider {
     @Override
     public void unload() {
         save();
-        for(Entity e : data.getEntities()) {//TODO Dyn Meh
+        for (Entity e : data.getEntities()) {//TODO Dyn Meh
             DynamicAssetUtil.checkAndDisposeAsset(e);
         }
         data = null;
+    }
+    
+    @Override
+    public NBTCompound worldInfo() {
+        return nbt;
     }
     
 }
