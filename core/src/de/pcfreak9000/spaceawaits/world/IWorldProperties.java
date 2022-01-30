@@ -9,7 +9,7 @@ public interface IWorldProperties {
         return new IWorldProperties() {
             
             @Override
-            public Tile getTileOnBreak(int tx, int ty, TileLayer layer) {
+            public Tile getTileDefault(int tx, int ty, TileLayer layer) {
                 return Tile.NOTHING;
             }
             
@@ -25,7 +25,7 @@ public interface IWorldProperties {
         };
     }
     
-    Tile getTileOnBreak(int tx, int ty, TileLayer layer);
+    Tile getTileDefault(int tx, int ty, TileLayer layer);
     
     boolean autoLowerSpawnpointToSolidGround();
     

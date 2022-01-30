@@ -204,7 +204,7 @@ public class TileSystem extends EntitySystem {
         t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
-            setTile(tx, ty, layer, world.getWorldProperties().getTileOnBreak(tx, ty, layer));
+            setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
             tile.onTileBroken(tx, ty, layer, drops, world, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, world, drops, worldRandom);
             if (drops.size > 0) {

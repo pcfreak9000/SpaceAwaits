@@ -75,7 +75,7 @@ public class TileLiquid extends Tile {
     @Override
     public void onTileSet(int tx, int ty, TileLayer layer, World world) {
         super.onTileSet(tx, ty, layer, world);
-        world.scheduleTick(tx, ty, layer, this, 1);//Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
+        world.scheduleTick(tx, ty, layer, this, 1);//TODO Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
     }
     
     @Override
@@ -126,7 +126,7 @@ public class TileLiquid extends Tile {
             }
         }
         if (liquiddata.isEmpty()) {
-            ts.setTile(tx, ty, layer, NOTHING);//TODO use a world default tile instead
+            ts.setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
         } else {
             float dif = oldliquid - myLiquid;
             if (dif != 0) {
