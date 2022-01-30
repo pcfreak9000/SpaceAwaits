@@ -72,6 +72,7 @@ public class DMod {
         water.setLightTransmission(0.9f);
         water.color().set(0, 0.5f, 1, 0.75f);
         water.setDisplayName("Water");
+        water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);
         
         gun.setTexture("gun_0.png");

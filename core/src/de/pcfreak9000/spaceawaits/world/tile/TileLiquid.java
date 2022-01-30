@@ -8,12 +8,15 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TileLiquid extends Tile {
     
-    private float flowMin = 0.001f;//Hmmm
+    private static final Direction[] ORDER_DOWN = { Direction.Down, Direction.Left, Direction.Right, Direction.Up };
+    private static final Direction[] ORDER_UP = { Direction.Up, Direction.Left, Direction.Right, Direction.Down };
+    
+    private float flowMin = 0.00001f;//Hmmm. Makes liquids stationary after some time
     
     private float maxValue = 1;
-    private float maxComp = 1;
+    private float maxComp = 1;//Hmmm. Higher makes the liquid level faster, which is weird
     private float flowSpeed = 1;
-    private boolean flowUp = false;//?
+    private boolean flowUp = false;
     
     public float getMaxValue() {
         return maxValue;
@@ -65,18 +68,20 @@ public class TileLiquid extends Tile {
     }
     
     @Override
+    public boolean canPlace(int tx, int ty, TileLayer layer, World world) {
+        return layer == TileLayer.Front;
+    }
+    
+    @Override
     public void onTileSet(int tx, int ty, TileLayer layer, World world) {
         super.onTileSet(tx, ty, layer, world);
-        world.scheduleTick(tx, ty, layer, this, 1);
+        world.scheduleTick(tx, ty, layer, this, 1);//Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
     }
     
     @Override
     public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
             int ngty, TileLayer layer) {
         super.onNeighbourChange(world, gtx, gty, newNeighbour, oldNeighbour, ngtx, ngty, layer);
-        TileSystem ts = world.getSystem(TileSystem.class);
-        LiquidState liquiddata = (LiquidState) ts.getMetadata(gtx, gty, layer);
-        liquiddata.setSettled(false);
         world.scheduleTick(gtx, gty, layer, this, 1);
     }
     
@@ -88,8 +93,10 @@ public class TileLiquid extends Tile {
         liquiddata.updateLiquid(tick);
         float myLiquid = liquiddata.getLiquid();
         final float oldliquid = myLiquid;
-        for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-            if (myLiquid <= 0) {
+        Direction[] order = flowUp ? ORDER_UP : ORDER_DOWN;
+        for (Direction d : order) {
+            if (myLiquid <= LiquidState.MIN_LIQUID) {
+                liquiddata.addLiquid(-myLiquid * 2);
                 break;
             }
             int i = tx + d.dx;
@@ -97,34 +104,37 @@ public class TileLiquid extends Tile {
             if (world.getBounds().inBounds(i, j)) {
                 Tile ne = ts.getTile(i, j, layer);
                 if (ne != null && canFlowInto(ne)) {
-                    if (ne != this) {
-                        ts.setTile(i, j, layer, this);
+                    LiquidState neighdata = null;
+                    float neLiquid = 0;
+                    if (ne == this) {
+                        neighdata = (LiquidState) ts.getMetadata(i, j, layer);
+                        neighdata.updateLiquid(tick);
+                        neLiquid = neighdata.getLiquid();
                     }
-                    LiquidState neighdata = (LiquidState) ts.getMetadata(i, j, layer);
-                    neighdata.updateLiquid(tick);
-                    float neLiquid = neighdata.getLiquid();
                     float flow = getFlowForDirection(d, neLiquid, myLiquid);
                     if (flow > flowMin) {
+                        if (ne != this) {
+                            ts.setTile(i, j, layer, this);
+                            neighdata = (LiquidState) ts.getMetadata(i, j, layer);
+                        }
                         flow = MathUtils.clamp(flow, 0, myLiquid);
                         myLiquid -= flow;
                         liquiddata.addLiquid(-flow);
                         neighdata.addLiquid(flow);
-                        //neighdata.setSettled(false);
-                        world.scheduleTick(i, j, layer, ne, 1);
                     }
-                } //Is this tile empty, does it require removal? also neighbours
+                }
             }
         }
         if (liquiddata.isEmpty()) {
-            ts.setTile(tx, ty, layer, NOTHING);
+            ts.setTile(tx, ty, layer, NOTHING);//TODO use a world default tile instead
         } else {
-            world.scheduleTick(tx, ty, layer, this, 1);
-
-            //            liquiddata.setSettled(oldliquid == myLiquid);
-            //            if (!liquiddata.isSettled()) {
-            //            } else {
-            //                //System.out.println("Ah yes");
-            //            }
+            float dif = oldliquid - myLiquid;
+            if (dif != 0) {
+                world.scheduleTick(tx, ty, layer, this, 1);
+                for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+                    world.scheduleTick(tx + d.dx, ty + d.dy, layer, this, 1);
+                }
+            }
         }
     }
     

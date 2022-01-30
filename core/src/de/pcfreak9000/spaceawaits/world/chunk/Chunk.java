@@ -288,15 +288,20 @@ public class Chunk implements NBTSerializable {
     
     private void tickTiles(int ticks) {
         Iterator<NextTickTile> it = tickTiles.iterator();
+        int ahyes = 0;
         while (it.hasNext()) {
             NextTickTile k = it.next();
             if (ticks >= k.getTick()) {
+                ahyes++;
                 it.remove();
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
                     t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, ticks);
                 }
             }
+        }
+        if (ahyes > 0) {
+            System.out.println(ahyes);
         }
     }
     

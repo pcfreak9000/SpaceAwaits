@@ -188,6 +188,10 @@ public class Tile {
         
     }
     
+    public boolean canPlace(int tx, int ty, TileLayer layer, World world) {
+        return true;
+    }
+    
     public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
         
     }

@@ -124,28 +124,6 @@ public class TileSystem extends EntitySystem {
         return null;
     }
     
-    //    public float getLiquid(int tx, int ty, TileLayer layer) {
-    //        Chunk c = getChunkForTile(tx, ty);
-    //        if (c != null) {
-    //            return c.getLiquid(tx, ty, layer);
-    //        }
-    //        return 0;
-    //    }
-    //    
-    //    public void updateLiquid(int tx, int ty, TileLayer layer, int tick) {
-    //        Chunk c = getChunkForTile(tx, ty);
-    //        if (c != null) {
-    //            c.updateLiquid(tx, ty, layer, tick);
-    //        }
-    //    }
-    //    
-    //    public void addLiquid(int tx, int ty, TileLayer layer, float amount) {
-    //        Chunk c = getChunkForTile(tx, ty);
-    //        if (c != null) {
-    //            c.addLiquid(tx, ty, layer, amount);
-    //        }
-    //    }
-    
     private Chunk getChunkForTile(int tx, int ty) {//The last accessed chunk could be cached, but check if it hasnt been unloaded yet or something
         if (world.getBounds().inBounds(tx, ty)) {
             Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
@@ -187,6 +165,9 @@ public class TileSystem extends EntitySystem {
             if (getEngine().getSystem(PhysicsSystem.class).checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
+        }
+        if (!tile.canPlace(tx, ty, layer, world)) {
+            return null;
         }
         Tile ret = setTile(tx, ty, layer, tile);
         tile.onTilePlaced(tx, ty, layer, world);
