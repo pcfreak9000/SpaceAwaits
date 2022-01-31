@@ -48,6 +48,8 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Entity tileSelectorEntity;
     
+    private TileSystem tileSystem;
+    
     public PlayerInputSystem(World world, GameRenderer renderer) {
         this.world = world;
         this.worldRend = renderer;
@@ -66,12 +68,14 @@ public class PlayerInputSystem extends EntitySystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntity(tileSelectorEntity);
+        tileSystem = engine.getSystem(TileSystem.class);
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
         super.removedFromEngine(engine);
         engine.removeEntity(tileSelectorEntity);
+        tileSystem = null;
     }
     
     private final ITileBreaker br = new ITileBreaker() {
@@ -87,12 +91,12 @@ public class PlayerInputSystem extends EntitySystem {
         }
         
         @Override
-        public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
+        public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem, Array<ItemStack> drops,
                 Random random) {
         }
         
         @Override
-        public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+        public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tilesystem) {
             return true;
         }
     };
@@ -154,8 +158,7 @@ public class PlayerInputSystem extends EntitySystem {
                     if (Mathf.square(i) + Mathf.square(j) <= Mathf.square(rad)) {
                         int tx = txm + i;
                         int ty = tym + j;
-                        //TODO is this system access nice? see two times below!
-                        getEngine().getSystem(TileSystem.class).breakTile(tx, ty, layer, InstantBreaker.INSTANCE);
+                        tileSystem.breakTile(tx, ty, layer, InstantBreaker.INSTANCE);
                     }
                 }
             }
@@ -171,7 +174,7 @@ public class PlayerInputSystem extends EntitySystem {
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
             if (!used) {
-                getEngine().getSystem(TileSystem.class).breakTile(tx, ty, layer, br);
+                tileSystem.breakTile(tx, ty, layer, br);
             }
         }
         if (InptMgr.isPressed(EnumInputIds.Use)) {
@@ -191,10 +194,10 @@ public class PlayerInputSystem extends EntitySystem {
                 }
             }
             if (!used) {
-                Tile clicked = getEngine().getSystem(TileSystem.class).getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
+                Tile clicked = tileSystem.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
                 //onTileUse
                 ItemStack cp = stack != null ? stack.cpy() : null;
-                used = clicked.onTileUse(player, world, cp, tx, ty);
+                used = clicked.onTileUse(player, world, tileSystem, cp, tx, ty);
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
         }

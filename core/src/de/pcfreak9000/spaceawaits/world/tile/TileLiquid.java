@@ -61,34 +61,33 @@ public class TileLiquid extends Tile {
     }
     
     @Override
-    public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
-        super.onTilePlaced(tx, ty, layer, world);
+    public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem ts) {
+        super.onTilePlaced(tx, ty, layer, world, ts);
         LiquidState liquid = (LiquidState) world.getSystem(TileSystem.class).getMetadata(tx, ty, layer);
         liquid.addLiquid(getMaxValue());
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         return layer == TileLayer.Front;
     }
     
     @Override
-    public void onTileSet(int tx, int ty, TileLayer layer, World world) {
-        super.onTileSet(tx, ty, layer, world);
-        world.scheduleTick(tx, ty, layer, this, 1);//TODO Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
+    public void onTileSet(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+        super.onTileSet(tx, ty, layer, world, tileSystem);
+        tileSystem.scheduleTick(tx, ty, layer, this, 1);//TODO Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
     }
     
     @Override
-    public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
-            int ngty, TileLayer layer) {
-        super.onNeighbourChange(world, gtx, gty, newNeighbour, oldNeighbour, ngtx, ngty, layer);
-        world.scheduleTick(gtx, gty, layer, this, 1);
+    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+        super.onNeighbourChange(world, tileSystem, gtx, gty, newNeighbour, oldNeighbour, ngtx, ngty, layer);
+        tileSystem.scheduleTick(gtx, gty, layer, this, 1);
     }
     
     @Override
-    public void updateTick(int tx, int ty, TileLayer layer, World world, int tick) {
-        super.updateTick(tx, ty, layer, world, tick);
-        TileSystem ts = world.getSystem(TileSystem.class);
+    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem ts, int tick) {
+        super.updateTick(tx, ty, layer, world, ts, tick);
         LiquidState liquiddata = (LiquidState) ts.getMetadata(tx, ty, layer);
         liquiddata.updateLiquid(tick);
         float myLiquid = liquiddata.getLiquid();
@@ -126,13 +125,13 @@ public class TileLiquid extends Tile {
             }
         }
         if (liquiddata.isEmpty()) {
-            ts.setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
+            ts.removeTile(tx, ty, layer);
         } else {
             float dif = oldliquid - myLiquid;
             if (dif != 0) {
-                world.scheduleTick(tx, ty, layer, this, 1);
+                ts.scheduleTick(tx, ty, layer, this, 1);
                 for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-                    world.scheduleTick(tx + d.dx, ty + d.dy, layer, this, 1);
+                    ts.scheduleTick(tx + d.dx, ty + d.dy, layer, this, 1);
                 }
             }
         }

@@ -49,12 +49,12 @@ public class ItemGun extends Item {
         }
         
         @Override
-        public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
-                Random random) {
+        public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem,
+                Array<ItemStack> drops, Random random) {
         }
         
         @Override
-        public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+        public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem) {
             return true;
         }
     };

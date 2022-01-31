@@ -109,7 +109,7 @@ public class WorldCombined extends World {
         ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
         Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                 .boundingBoxWidthAndHeight();
-        
+        TileSystem ts = ecsEngine.getSystem(TileSystem.class);
         Object lock = new Object();
         for (int i = 0; i < 100; i++) {
             float x = spawnArea.x + rand.nextFloat() * spawnArea.width;
@@ -124,7 +124,7 @@ public class WorldCombined extends World {
                         chunkProvider.requireChunk(j, k, true, lock);
                     }
                 }
-                if (!ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
+                if (!ts.checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
                     if (worldProperties.autoLowerSpawnpointToSolidGround()) {
                         while (true) {
                             y--;
@@ -135,7 +135,7 @@ public class WorldCombined extends World {
                                     chunkProvider.requireChunk(j, k, true, lock);
                                 }
                             }
-                            if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(x, y, playerBounds.x,
+                            if (ts.checkSolidOccupation(x, y, playerBounds.x,
                                     playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
                                 y++;
                                 break;

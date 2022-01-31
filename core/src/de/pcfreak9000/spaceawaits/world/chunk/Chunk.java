@@ -36,6 +36,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Chunk implements NBTSerializable {
     
@@ -74,6 +75,7 @@ public class Chunk implements NBTSerializable {
     private boolean ticking = false;
     
     private boolean addedToEngine;
+    private TileSystem tileSystem;
     
     private final Entity chunkEntity, backEntity;
     
@@ -146,6 +148,7 @@ public class Chunk implements NBTSerializable {
             throw new IllegalStateException();
         }
         addedToEngine = true;
+        this.tileSystem = ecs.getSystem(TileSystem.class);
         ecs.addEntity(chunkEntity);
         ecs.addEntity(backEntity);
         for (Entity e : entities) {
@@ -158,6 +161,7 @@ public class Chunk implements NBTSerializable {
             throw new IllegalStateException();
         }
         addedToEngine = false;
+        this.tileSystem = null;
         ecs.removeEntity(chunkEntity);
         ecs.removeEntity(backEntity);
         for (Entity e : entities) {
@@ -296,12 +300,12 @@ public class Chunk implements NBTSerializable {
                 it.remove();
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
-                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, ticks);
+                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, this.tileSystem, ticks);
                 }
             }
         }
         if (ahyes > 0) {
-            System.out.println(ahyes);
+            //System.out.println(ahyes);
         }
     }
     

@@ -23,8 +23,6 @@ import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class World {
@@ -92,7 +90,7 @@ public abstract class World {
     public void update(float dt) {
         this.ecsEngine.update(dt);
         ticks++;
-        this.unchunkProvider.worldInfo().remove("ticks");//OOOOF??
+        this.unchunkProvider.worldInfo().remove("ticks");//OOOOF?? fix in nbt lib?
         this.unchunkProvider.worldInfo().putInt("ticks", ticks);
         //this.chunkProvider.unloadQueued();
         
@@ -102,10 +100,6 @@ public abstract class World {
             timehelper -= i;
             time += i;
         }
-    }
-    
-    public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
-        getSystem(TileSystem.class).scheduleTick(tx, ty, layer, tile, waitticks);
     }
     
     protected void addChunk(Chunk c) {
@@ -129,6 +123,7 @@ public abstract class World {
             if (PHYSICS_COMP_MAPPER.has(entity) && checkOccupation) {
                 PhysicsComponent pc = PHYSICS_COMP_MAPPER.get(entity);
                 Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
+                //getSystem... oof
                 if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(t.position.x + wh.x / 4,
                         t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
                     return false;

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class InstantBreaker implements ITileBreaker {
     
@@ -26,13 +27,13 @@ public class InstantBreaker implements ITileBreaker {
     }
     
     @Override
-    public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, Array<ItemStack> drops,
-            Random random) {
+    public void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem,
+            Array<ItemStack> drops, Random random) {
         //do nothing
     }
-
+    
     @Override
-    public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world) {
+    public boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem) {
         return true;
     }
     

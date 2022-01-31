@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Tile {
     
@@ -48,6 +49,7 @@ public class Tile {
     private boolean opaque = true;
     private boolean solid = true;
     private boolean canBeReplaced = false;
+    //private boolean indestructible = false;
     
     private final Color color = new Color(1, 1, 1, 1);
     
@@ -176,27 +178,28 @@ public class Tile {
         return itemTile;
     }
     
-    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, Random random) {
+    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world,
+            TileSystem tileSystem, Random random) {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
-    public void onTileRemoved(int tx, int ty, TileLayer layer, World world) {
+    public void onTileRemoved(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         
     }
     
-    public void onTileSet(int tx, int ty, TileLayer layer, World world) {
+    public void onTileSet(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         
     }
     
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         return true;
     }
     
-    public void onTilePlaced(int tx, int ty, TileLayer layer, World world) {
+    public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         
     }
     
-    public void updateTick(int tx, int ty, TileLayer layer, World world, int tick) {
+    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, int tick) {
         
     }
     
@@ -208,7 +211,7 @@ public class Tile {
         return null;
     }
     
-    public boolean onTileUse(Player player, World world, ItemStack stackUsed, int gtx, int gty) {
+    public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty) {
         return false;
     }
     
@@ -216,8 +219,8 @@ public class Tile {
         return null;
     }
     
-    public void onNeighbourChange(World world, int gtx, int gty, Tile newNeighbour, Tile oldNeighbour, int ngtx,
-            int ngty, TileLayer layer) {
+    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
     }
     
     public boolean hasMetadata() {

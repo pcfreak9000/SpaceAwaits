@@ -38,6 +38,8 @@ public class TileSystem extends EntitySystem {
     private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     private final Entity entity;
     
+    private PhysicsSystem physicsSystem;
+    
     public TileSystem(World world, Random r, IChunkProvider ch) {
         this.world = world;
         this.worldRandom = r;
@@ -56,12 +58,14 @@ public class TileSystem extends EntitySystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntity(entity);
+        this.physicsSystem = engine.getSystem(PhysicsSystem.class);
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
         super.removedFromEngine(engine);
         engine.removeEntity(entity);
+        this.physicsSystem = null;
     }
     
     @Override
@@ -91,12 +95,16 @@ public class TileSystem extends EntitySystem {
         if (c != null) {
             Tile old = c.setTile(tx, ty, layer, tile);
             breakingTiles.remove(IntCoords.toLong(tx, ty));
-            old.onTileRemoved(tx, ty, layer, world);
-            tile.onTileSet(tx, ty, layer, world);//Hmmmmm, oof. Decide if this listener stuff happens in chunk or here
+            old.onTileRemoved(tx, ty, layer, world, this);
+            tile.onTileSet(tx, ty, layer, world, this);//Hmmmmm, oof. Decide if this listener stuff happens in chunk or here
             notifyNeighbours(tile, old, tx, ty, layer);
             return old;
         }
         return null;
+    }
+    
+    public Tile removeTile(int tx, int ty, TileLayer layer) {
+        return setTile(tx, ty, layer, this.world.getWorldProperties().getTileDefault(tx, ty, layer));
     }
     
     //Hmmm. What about tiles on the edge to only loaded but not updated? What about resonance cascades?
@@ -104,7 +112,7 @@ public class TileSystem extends EntitySystem {
         for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
             int i = tx + d.dx;
             int j = ty + d.dy;
-            getTile(i, j, layer).onNeighbourChange(world, i, j, tile, old, tx, ty, layer);
+            getTile(i, j, layer).onNeighbourChange(world, this, i, j, tile, old, tx, ty, layer);
         }
     }
     
@@ -124,7 +132,7 @@ public class TileSystem extends EntitySystem {
         return null;
     }
     
-    private Chunk getChunkForTile(int tx, int ty) {//The last accessed chunk could be cached, but check if it hasnt been unloaded yet or something
+    private Chunk getChunkForTile(int tx, int ty) {
         if (world.getBounds().inBounds(tx, ty)) {
             Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
             return c;
@@ -161,16 +169,15 @@ public class TileSystem extends EntitySystem {
             return null;
         }
         if (tile.isSolid() && layer == TileLayer.Front) {
-            //TODO that physicssystem stuff is not nice
-            if (getEngine().getSystem(PhysicsSystem.class).checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
+            if (physicsSystem.checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
         }
-        if (!tile.canPlace(tx, ty, layer, world)) {
+        if (!tile.canPlace(tx, ty, layer, world, this)) {
             return null;
         }
         Tile ret = setTile(tx, ty, layer, tile);
-        tile.onTilePlaced(tx, ty, layer, world);
+        tile.onTilePlaced(tx, ty, layer, world, this);
         return ret;
     }
     
@@ -191,7 +198,7 @@ public class TileSystem extends EntitySystem {
                 && breaker.getMaterialLevel() != Float.POSITIVE_INFINITY) {
             return -1f;
         }
-        if (!breaker.canBreak(tx, ty, layer, tile, world)) {
+        if (!breaker.canBreak(tx, ty, layer, tile, world, this)) {
             return -1f;
         }
         long l = IntCoords.toLong(tx, ty);
@@ -205,8 +212,8 @@ public class TileSystem extends EntitySystem {
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
             setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
-            tile.onTileBroken(tx, ty, layer, drops, world, worldRandom);
-            breaker.onTileBreak(tx, ty, layer, tile, world, drops, worldRandom);
+            tile.onTileBroken(tx, ty, layer, drops, world, this, worldRandom);
+            breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
                     Entity e = ItemEntityFactory.setupItemEntity(s,
@@ -283,8 +290,7 @@ public class TileSystem extends EntitySystem {
     }
     
     public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        //TODO that physics system stuff is not nice
-        if (getEngine().getSystem(PhysicsSystem.class).checkRectEntityOccupation(x, y, x + w, y + h)) {
+        if (physicsSystem.checkRectEntityOccupation(x, y, x + w, y + h)) {
             return true;
         }
         int ix = Mathf.floori(x);
