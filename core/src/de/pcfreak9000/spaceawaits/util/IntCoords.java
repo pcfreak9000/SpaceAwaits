@@ -6,9 +6,17 @@ public class IntCoords {
         return (((long) x) << 32) | (y & 0xffffffffL);
     }
     
+    public static int xOfLong(long l) {
+        return (int) (l >> 32);
+    }
+    
+    public static int yOfLong(long l) {
+        return (int) l;
+    }
+    
     public static IntCoords ofLong(long l) {
-        int x = (int) (l >> 32);
-        int y = (int) l;
+        int x = xOfLong(l);
+        int y = yOfLong(l);
         return new IntCoords(x, y);
     }
     

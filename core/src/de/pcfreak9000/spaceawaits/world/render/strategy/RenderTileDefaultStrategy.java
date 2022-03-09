@@ -3,14 +3,14 @@ package de.pcfreak9000.spaceawaits.world.render.strategy;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.LongArray;
 
+import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -23,24 +23,23 @@ import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements Disposable {
     
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
-    private static final float BACKGROUND_FACTOR = 0.55f;
     
     private SpriteCache regionCache;//Maybe use something global instead
+    private GameRenderer gameRenderer;
     private Camera camera;
     
     private int count;
     
     public RenderTileDefaultStrategy(GameRenderer renderer) {
         super(Family.all(ChunkRenderComponent.class).get());
+        this.gameRenderer = renderer;
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
         this.camera = renderer.getCurrentView().getCamera();
     }
     
     @Override
     public void begin() {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
-                GL20.GL_ONE_MINUS_SRC_ALPHA);
+        this.gameRenderer.setDefaultBlending();
         regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;
     }
@@ -56,7 +55,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
         SpriteCache ca = this.regionCache;
         ca.clear();
         ca.beginCache();
-        int len = recacheTiles(regionCache, crc.chunk, crc.layer);
+        int len = recacheTiles(regionCache, crc.chunk, crc.layer, crc.tilePositions);
         int id = ca.endCache();
         ca.begin();
         ca.draw(id, 0, len);
@@ -69,25 +68,25 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
         this.regionCache.dispose();
     }
     
-    private int recacheTiles(SpriteCache cache, Chunk c, TileLayer layer) {
+    private int recacheTiles(SpriteCache cache, Chunk c, TileLayer layer, LongArray poss) {
         Color backgroundColor = new Color();
         int len = 0;
-        for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
-            for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
-                int gtx = i + c.getGlobalTileX();
-                int gty = j + c.getGlobalTileY();
-                Tile tile = c.getTile(gtx, gty, layer);
-                if (!isVisible(tile)) {
-                    continue;
-                }
-                backgroundColor.set(tile.color());
-                if (layer == TileLayer.Back) {
-                    backgroundColor.mul(BACKGROUND_FACTOR, BACKGROUND_FACTOR, BACKGROUND_FACTOR, 1);
-                }
-                cache.setColor(backgroundColor);
-                addTile(tile, gtx, gty, cache, c, layer);
-                len++;
+        for (int i = 0; i < poss.size; i++) {
+            long l = poss.items[i];
+            int gtx = IntCoords.xOfLong(l);
+            int gty = IntCoords.yOfLong(l);
+            Tile tile = c.getTile(gtx, gty, layer);
+            if (!isVisible(tile)) {
+                continue;
             }
+            backgroundColor.set(tile.color());
+            if (layer == TileLayer.Back) {
+                backgroundColor.mul(Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, 1);
+            }
+            cache.setColor(backgroundColor);
+            addTile(tile, gtx, gty, cache, c, layer);
+            len++;
+            
         }
         return len;
     }

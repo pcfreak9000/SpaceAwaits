@@ -24,6 +24,7 @@ public class Tile {
         Front, Back;
     }
     
+    public static final float BACKGROUND_FACTOR = 0.55f;
     public static final float MAX_LIGHT_VALUE = 16;
     public static final Tile NOTHING = new Tile();//The last bastion against the void
     
