@@ -241,4 +241,8 @@ public class Tile {
     public ITextureProvider getTextureProvider() {
         return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
+    
+    public String getRendererId() {
+        return "tileDefault";
+    }
 }

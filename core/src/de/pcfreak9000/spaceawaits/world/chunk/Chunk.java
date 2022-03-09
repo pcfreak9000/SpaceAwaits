@@ -2,13 +2,11 @@ package de.pcfreak9000.spaceawaits.world.chunk;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.function.Predicate;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
@@ -27,10 +25,8 @@ import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -68,16 +64,19 @@ public class Chunk implements NBTSerializable {
     private final List<Entity> entities;
     private final List<Entity> immutableEntities;
     
+    private final RenderTileStorage tilesRender;
+    private final RenderTileStorage tilesBckRender;
+    
     private final List<ChunkChangeListener> listeners;
     
     private OrderedSet<NextTickTile> tickTiles = new OrderedSet<>();
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
-    private boolean addedToEngine;
+    private Engine addedToEngine;
     private TileSystem tileSystem;
     
-    private final Entity chunkEntity, backEntity;
+    private final Entity chunkEntity;
     
     public Chunk(int rx, int ry, World world) {
         this.rx = rx;
@@ -96,21 +95,11 @@ public class Chunk implements NBTSerializable {
         this.chunkEntity = new EntityImproved();
         this.chunkEntity.flags = 1;
         this.chunkEntity.add(new ChunkComponent(this));
-        ChunkRenderComponent crcFront = new ChunkRenderComponent();
-        crcFront.c = this;
-        crcFront.layer = TileLayer.Front;
-        this.chunkEntity.add(crcFront);//TMP because server side stuff
-        this.chunkEntity.add(new RenderComponent(0.1f, "chunk"));
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.chunkEntity.add(pc);
-        this.backEntity = new EntityImproved();
-        this.backEntity.flags = 1;
-        ChunkRenderComponent crcBack = new ChunkRenderComponent();
-        crcBack.c = this;
-        crcBack.layer = TileLayer.Back;
-        this.backEntity.add(crcBack);
-        this.backEntity.add(new RenderComponent(0, "chunk"));
+        this.tilesRender = new RenderTileStorage(0.1f, this, TileLayer.Front);
+        this.tilesBckRender = new RenderTileStorage(0, this, TileLayer.Back);
     }
     
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
@@ -140,55 +129,35 @@ public class Chunk implements NBTSerializable {
     }
     
     public boolean isActive() {
+        return addedToEngine != null;
+    }
+    
+    Engine getECS() {
         return addedToEngine;
     }
     
     public void addToECS(Engine ecs) {
-        if (addedToEngine) {
+        if (addedToEngine != null) {
             throw new IllegalStateException();
         }
-        addedToEngine = true;
+        addedToEngine = ecs;
         this.tileSystem = ecs.getSystem(TileSystem.class);
         ecs.addEntity(chunkEntity);
-        ecs.addEntity(backEntity);
         for (Entity e : entities) {
             ecs.addEntity(e);
         }
     }
     
-    public void removeFromECS(Engine ecs) {
-        if (!addedToEngine) {
+    public void removeFromECS() {
+        if (addedToEngine == null) {
             throw new IllegalStateException();
         }
-        addedToEngine = false;
         this.tileSystem = null;
-        ecs.removeEntity(chunkEntity);
-        ecs.removeEntity(backEntity);
+        addedToEngine.removeEntity(chunkEntity);
         for (Entity e : entities) {
-            ecs.removeEntity(e);
+            addedToEngine.removeEntity(e);
         }
-    }
-    
-    @Deprecated
-    public void tileIntersections(Collection<TileState> output, int x, int y, int w, int h,
-            Predicate<TileState> predicate) {
-        this.tiles.getAABB(output, x, y, w, h, predicate);
-    }
-    
-    @Deprecated
-    public void tileIntersectionsBackground(Collection<TileState> output, int x, int y, int w, int h,
-            Predicate<TileState> predicate) {
-        this.tilesBackground.getAABB(output, x, y, w, h, predicate);
-    }
-    
-    @Deprecated
-    public void tileAll(Collection<TileState> output, Predicate<TileState> predicate) {
-        this.tiles.getAll(output, predicate);
-    }
-    
-    @Deprecated
-    public void tileBackgroundAll(Collection<TileState> output, Predicate<TileState> predicate) {
-        this.tilesBackground.getAll(output, predicate);
+        addedToEngine = null;
     }
     
     private TileStorage getStorageForLayer(TileLayer layer) {
@@ -239,6 +208,10 @@ public class Chunk implements NBTSerializable {
         Tile old = state.getTile();
         //old.onTileRemoved(tx, ty, TileLayer.Back, world);
         state.setTile(t);
+        // if (!old.getRendererId().equals(t.getRendererId())) {
+        this.tilesBckRender.removeTilePos(old.getRendererId(), tx, ty);
+        this.tilesBckRender.addTilePos(t.getRendererId(), tx, ty);
+        // }
         //t.onTileSet(tx, ty, TileLayer.Back, world);
         return old;
     }
@@ -262,6 +235,10 @@ public class Chunk implements NBTSerializable {
             state.setTileEntity(null);
         }
         state.setTile(t);
+        //if (!oldTile.getRendererId().equals(t.getRendererId())) {
+        this.tilesRender.removeTilePos(oldTile.getRendererId(), tx, ty);
+        this.tilesRender.addTilePos(t.getRendererId(), tx, ty);
+        //}
         if (t.hasTileEntity()) {
             TileEntity te = t.createTileEntity(this.world, tx, ty);
             this.tileEntities.add(te);

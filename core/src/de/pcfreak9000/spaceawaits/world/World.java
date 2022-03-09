@@ -107,7 +107,7 @@ public abstract class World {
     }
     
     protected void removeChunk(Chunk c) {
-        c.removeFromECS(ecsEngine);
+        c.removeFromECS();
     }
     
     public void joinWorld(Player player) {
