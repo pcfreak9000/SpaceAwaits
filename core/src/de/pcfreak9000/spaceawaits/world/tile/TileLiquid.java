@@ -18,6 +18,11 @@ public class TileLiquid extends Tile {
     private float flowSpeed = 1;
     private boolean flowUp = false;
     
+    @Override
+    public String getRendererId() {
+        return "liquid";
+    }
+    
     public float getMaxValue() {
         return maxValue;
     }

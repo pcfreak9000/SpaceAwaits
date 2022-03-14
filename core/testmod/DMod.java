@@ -70,7 +70,7 @@ public class DMod {
         water.setCanBreak(false);
         water.setCanBeReplaced(true);
         water.setLightTransmission(0.9f);
-        water.color().set(0, 0.5f, 1, 0.75f);
+        water.color().set(0, 0.5f, 1, 0.8f);//0.75f
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);

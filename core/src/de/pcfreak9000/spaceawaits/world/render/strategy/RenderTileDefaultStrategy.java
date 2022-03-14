@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongArray;
 
@@ -14,10 +13,8 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
-import de.pcfreak9000.spaceawaits.world.tile.LiquidState;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
 //TODO having there global (gameregistrey and stuff) might not be the best idea
 public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements Disposable {
@@ -96,14 +93,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     }
     
     private void addTile(Tile t, int gtx, int gty, SpriteCache c, Chunk chunk, TileLayer layer) {
-        float height = 1;
-        if (t instanceof TileLiquid) {
-            TileLiquid tl = (TileLiquid) t;
-            LiquidState s = (LiquidState) chunk.getMetadata(gtx, gty, layer);
-            height = s.getLiquid() / tl.getMaxValue();
-            height = MathUtils.clamp(height, 0, 1);
-        }
-        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, height);
+        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, 1);
     }
     
     public int getRenderedChunkCount() {

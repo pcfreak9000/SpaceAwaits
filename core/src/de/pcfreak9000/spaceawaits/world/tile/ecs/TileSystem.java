@@ -58,7 +58,7 @@ public class TileSystem extends EntitySystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntity(entity);
-        this.physicsSystem = engine.getSystem(PhysicsSystem.class);
+        
     }
     
     @Override
@@ -70,6 +70,9 @@ public class TileSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
+        if (this.physicsSystem == null) {//TODO tmp, make an entity with stuff like this maybe?
+            this.physicsSystem = getEngine().getSystem(PhysicsSystem.class);
+        }
         Iterator<BreakTileProgress> it = breakingTiles.values().iterator();
         while (it.hasNext()) {
             BreakTileProgress t = it.next();

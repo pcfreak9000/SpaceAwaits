@@ -60,6 +60,7 @@ public class CoreRes {
     public static final SkinProvider SKIN = new SkinProvider();
     
     public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
+    public static final ShaderProvider WATER_SHADER = new ShaderProvider("liquid.vert");
     
     public static final Texture WHITE;
     

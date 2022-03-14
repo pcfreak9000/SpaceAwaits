@@ -50,7 +50,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final float BEGIN_LIGHT_LAYER = 0;//TODO make light disableable
+    private static final float BEGIN_LIGHT_LAYER = -Float.MAX_VALUE;//TODO make light disableable
     private static final float END_LIGHT_LAYER = 100;
     
     private final GameRegistry<IRenderStrategy> renderStrategies;
@@ -134,7 +134,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void update(float deltaTime) {
         super.update(deltaTime);
         IRenderStrategy last = null;
-        float lastLayer = Float.MIN_VALUE;
+        float lastLayer = Float.NEGATIVE_INFINITY;
         boolean endedLight = false;
         for (Entity e : entities) {
             RenderComponent rc = rMapper.get(e);
