@@ -58,12 +58,13 @@ public class RenderTileStorage {
             if (array.isEmpty()) {
                 storage.remove(rendererId);
                 Entity e = this.entities.remove(rendererId);
+                e.flags = 4206969;
                 this.chunk.removeEntity(e);
                 Engine ecs = this.chunk.getECS();
                 if (ecs != null) {
                     ecs.removeEntity(e);
                 }
-                e.removeAll();
+                //e.removeAll(); //oh no, delayed entity removal causes some trouble if this is used... 
             }
         }
     }

@@ -16,8 +16,10 @@ import com.badlogic.gdx.utils.Disposable;
 import de.omnikryptec.event.Event;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
 public class RenderSystem extends EntitySystem implements EntityListener, Disposable {
@@ -57,13 +59,19 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
     private GameRenderer renderer;
+    private FrameBufferStack fbostack;
     
     public RenderSystem(World world, GameRenderer renderer) {
         this.entities = new Array<>();
         this.renderStrategies = new GameRegistry<>();
         this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
+        this.fbostack = new FrameBufferStack();
         SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
+    }
+    
+    public FrameBufferStack getFBOStack() {
+        return this.fbostack;
     }
     
     @Override
@@ -76,10 +84,22 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             addEntityInternal(e);
         }
         this.entities.sort(COMPARATOR);
+        for (IRenderStrategy strat : this.renderStrategies.getAll()) {
+            if (strat instanceof AbstractRenderStrategy) {
+                AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
+                ast.addedToEngineInternal(engine);
+            }
+        }
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
+        for (IRenderStrategy strat : this.renderStrategies.getAll()) {
+            if (strat instanceof AbstractRenderStrategy) {
+                AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
+                ast.removedFromEngineInternal(engine);
+            }
+        }
         super.removedFromEngine(engine);
         engine.removeEntityListener(this);
         for (Entity e : entities) {

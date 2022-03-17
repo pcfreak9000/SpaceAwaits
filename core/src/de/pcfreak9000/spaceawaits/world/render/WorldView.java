@@ -12,7 +12,7 @@ import de.pcfreak9000.spaceawaits.menu.Hud;
 import de.pcfreak9000.spaceawaits.world.World;
 
 public class WorldView implements View {
-    public static final int VISIBLE_TILES_MIN = 25;
+    public static final int VISIBLE_TILES_MIN = 40;
     public static final int VISIBLE_TILES_MAX = 6 * VISIBLE_TILES_MIN;
     
     private Hud hud;

@@ -99,7 +99,7 @@ public class WorldCombined extends World {
     public void joinWorld(Player player) {
         super.joinWorld(player);
         Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
-        addTicket(new FollowingTicket(playerpos));
+        addTicket(new FollowingTicket(playerpos, 4));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
     }
     

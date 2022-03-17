@@ -68,8 +68,9 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        compile "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
+        implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
         implementation 'info.picocli:picocli:4.6.1'
-       	compile files('lib/Java-NBT.jar')    
+       	implementation files('lib/Java-NBT.jar')    
+       	implementation "com.cyphercove.flexbatch:flexbatch:1.2.3"
     }
 }

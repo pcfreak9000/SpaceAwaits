@@ -13,9 +13,9 @@ public class FollowingTicket implements ITicket {
     
     private int radius;
     
-    public FollowingTicket(Vector2 pos) {
+    public FollowingTicket(Vector2 pos, int rangeRad) {
         this.pos = pos;
-        updateRange(2);
+        updateRange(rangeRad);
     }
     
     public void updateRange(int radius) {

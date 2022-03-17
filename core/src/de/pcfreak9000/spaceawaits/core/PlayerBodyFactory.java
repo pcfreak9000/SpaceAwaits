@@ -33,12 +33,14 @@ public class PlayerBodyFactory implements BodyFactory {
         bd.position.set(METER_CONV.in(OFFSET.x), METER_CONV.in(OFFSET.x));
         FixtureDef fd = new FixtureDef();
         CircleShape shape = new CircleShape();
-        shape.setRadius(METER_CONV.in(WH.y / 4));
-        shape.setPosition(METER_CONV.in(new Vector2(0, WH.y / 4 * 0.95f)));
+        shape.setRadius(METER_CONV.in(WH.y / 5.5f));
+        shape.setPosition(METER_CONV.in(new Vector2(0, WH.y / 3.6f)));
         fd.shape = shape;
         Body b = world.createBody(bd);
         b.createFixture(fd);
         shape.setPosition(METER_CONV.in(new Vector2(0, -WH.y / 4)));
+        b.createFixture(fd);
+        shape.setPosition(METER_CONV.in(new Vector2(0, 0)));
         b.createFixture(fd);
         PolygonShape psh = new PolygonShape();
         psh.setAsBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 16), METER_CONV.in(new Vector2(0, -WH.y / 2)), 0);

@@ -7,6 +7,7 @@ precision mediump float;
 
 varying LOWP vec4 v_color;
 varying vec2 v_texCoords;
+varying vec2 v_pos;
 
 uniform sampler2D u_texture;
 uniform float time;
@@ -33,8 +34,8 @@ float noise(vec2 coord){
 
 void main(){
 
-	vec2 noisec1 = v_texCoords * size;
-	vec2 noisec2 = v_texCoords * size + vec2(4.0);
+	vec2 noisec1 = v_pos;//v_texCoords * size;
+	vec2 noisec2 = v_pos+vec2(4.0);//v_texCoords * size + vec2(4.0);
 	
 	vec2 motion1 = vec2(time * 0.3, time * -0.4);
 	vec2 motion2 = vec2(time * 0.1, time * 0.5);
