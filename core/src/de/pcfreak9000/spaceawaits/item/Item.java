@@ -60,7 +60,8 @@ public class Item {
      * @param tiley
      * @return whether this item has actually been used
      */
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y, TileLayer layer) {
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y,
+            TileLayer layer) {
         return false;
     }
     

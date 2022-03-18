@@ -15,7 +15,8 @@ import de.omnikryptec.math.Mathf;
 
 public class Util {
     
-    public static void blitFramebuffer(FrameBuffer origin, FrameBuffer target, int originAttachment, int targetAttachment) {
+    public static void blitFramebuffer(FrameBuffer origin, FrameBuffer target, int originAttachment,
+            int targetAttachment) {
         target.bind();
         GL30 gl = Gdx.gl30;
         gl.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, origin.getFramebufferHandle());

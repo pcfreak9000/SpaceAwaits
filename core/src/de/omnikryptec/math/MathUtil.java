@@ -107,51 +107,47 @@ public class MathUtil {
     
     /**
      * 
-     * Test whether the given ray with the origin <code>(originX, originY, originZ)</code> and direction <code>(dirX, dirY, dirZ)</code>
-     * intersects the axis-aligned box given as its minimum corner <code>(minX, minY, minZ)</code> and maximum corner <code>(maxX, maxY, maxZ)</code>,
-     * and return the values of the parameter <i>t</i> in the ray equation <i>p(t) = origin + t * dir</i> of the near and far point of intersection.
+     * Test whether the given ray with the origin
+     * <code>(originX, originY, originZ)</code> and direction
+     * <code>(dirX, dirY, dirZ)</code> intersects the axis-aligned box given as its
+     * minimum corner <code>(minX, minY, minZ)</code> and maximum corner
+     * <code>(maxX, maxY, maxZ)</code>, and return the values of the parameter
+     * <i>t</i> in the ray equation <i>p(t) = origin + t * dir</i> of the near and
+     * far point of intersection.
      * <p>
-     * This method returns <code>true</code> for a ray whose origin lies inside the axis-aligned box.
+     * This method returns <code>true</code> for a ray whose origin lies inside the
+     * axis-aligned box.
      * <p>
-     * If many boxes need to be tested against the same ray, then the {@link RayAabIntersection} class is likely more efficient.
+     * If many boxes need to be tested against the same ray, then the
+     * {@link RayAabIntersection} class is likely more efficient.
      * <p>
-     * Reference: <a href="https://dl.acm.org/citation.cfm?id=1198748">An Efficient and Robust Ray–Box Intersection</a>
+     * Reference: <a href="https://dl.acm.org/citation.cfm?id=1198748">An Efficient
+     * and Robust Ray–Box Intersection</a>
      * 
      * @see #intersectRayAab(Vector3fc, Vector3fc, Vector3fc, Vector3fc, Vector2f)
      * @see RayAabIntersection
      * @author Kai Burjack (org.joml)
-     * @param originX
-     *              the x coordinate of the ray's origin
-     * @param originY
-     *              the y coordinate of the ray's origin
-     * @param originZ
-     *              the z coordinate of the ray's origin
-     * @param dirX
-     *              the x coordinate of the ray's direction
-     * @param dirY
-     *              the y coordinate of the ray's direction
-     * @param dirZ
-     *              the z coordinate of the ray's direction
-     * @param minX
-     *              the x coordinate of the minimum corner of the axis-aligned box
-     * @param minY
-     *              the y coordinate of the minimum corner of the axis-aligned box
-     * @param minZ
-     *              the z coordinate of the minimum corner of the axis-aligned box
-     * @param maxX
-     *              the x coordinate of the maximum corner of the axis-aligned box
-     * @param maxY
-     *              the y coordinate of the maximum corner of the axis-aligned box
-     * @param maxZ
-     *              the y coordinate of the maximum corner of the axis-aligned box
-     * @param result
-     *              a vector which will hold the resulting values of the parameter
-     *              <i>t</i> in the ray equation <i>p(t) = origin + t * dir</i> of the near and far point of intersection
-     *              iff the ray intersects the axis-aligned box
-     * @return <code>true</code> if the given ray intersects the axis-aligned box; <code>false</code> otherwise
+     * @param originX the x coordinate of the ray's origin
+     * @param originY the y coordinate of the ray's origin
+     * @param originZ the z coordinate of the ray's origin
+     * @param dirX    the x coordinate of the ray's direction
+     * @param dirY    the y coordinate of the ray's direction
+     * @param dirZ    the z coordinate of the ray's direction
+     * @param minX    the x coordinate of the minimum corner of the axis-aligned box
+     * @param minY    the y coordinate of the minimum corner of the axis-aligned box
+     * @param minZ    the z coordinate of the minimum corner of the axis-aligned box
+     * @param maxX    the x coordinate of the maximum corner of the axis-aligned box
+     * @param maxY    the y coordinate of the maximum corner of the axis-aligned box
+     * @param maxZ    the y coordinate of the maximum corner of the axis-aligned box
+     * @param result  a vector which will hold the resulting values of the parameter
+     *                <i>t</i> in the ray equation <i>p(t) = origin + t * dir</i> of
+     *                the near and far point of intersection iff the ray intersects
+     *                the axis-aligned box
+     * @return <code>true</code> if the given ray intersects the axis-aligned box;
+     *         <code>false</code> otherwise
      */
-    public static boolean intersectRayAab(float originX, float originY, float originZ, float dirX, float dirY, float dirZ,
-            float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Vector2 result) {
+    public static boolean intersectRayAab(float originX, float originY, float originZ, float dirX, float dirY,
+            float dirZ, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Vector2 result) {
         float invDirX = 1.0f / dirX, invDirY = 1.0f / dirY, invDirZ = 1.0f / dirZ;
         float tNear, tFar, tymin, tymax, tzmin, tzmax;
         if (invDirX >= 0.0f) {

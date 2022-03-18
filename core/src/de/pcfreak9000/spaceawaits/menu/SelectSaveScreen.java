@@ -124,8 +124,8 @@ public class SelectSaveScreen extends MenuScreen {
                                     updateSavesListEntries();
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                    guiHelper.showDialog("Error", "An error occured while deleting the save:\n" + e.toString(),
-                                            stage);
+                                    guiHelper.showDialog("Error",
+                                            "An error occured while deleting the save:\n" + e.toString(), stage);
                                 }
                             }
                         };
@@ -165,8 +165,8 @@ public class SelectSaveScreen extends MenuScreen {
                                     updateSavesListEntries();
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                    guiHelper.showDialog("Error", "An error occured while renaming the save:\n" + e.toString(),
-                                            stage);
+                                    guiHelper.showDialog("Error",
+                                            "An error occured while renaming the save:\n" + e.toString(), stage);
                                 }
                             }
                         };

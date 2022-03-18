@@ -36,7 +36,8 @@ public class PixelPointLightTask implements AsyncTask<Void> {
     private int areaheight;
     private Color color;
     
-    public PixelPointLightTask(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight, Color color, TileSystem tiles) {
+    public PixelPointLightTask(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight,
+            Color color, TileSystem tiles) {
         this.tiles = tiles;
         this.world = world;
         this.consumer = consumer;

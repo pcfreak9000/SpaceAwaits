@@ -6,7 +6,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 
 public class WorldEvents {
- 
     
     public static class SetupEntitySystemsEvent extends Event {
         public final World world;

@@ -36,7 +36,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
-@Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 1 })
+@Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 2 })
 public class DMod {
     
     @Instance
@@ -70,7 +70,7 @@ public class DMod {
         water.setCanBreak(false);
         water.setCanBeReplaced(true);
         water.setLightTransmission(0.9f);
-        water.color().set(0, 0.5f, 1, 0.8f);//0.75f
+        water.color().set(0, 100 / 255f, 1, 0.1f);//0.75f
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);

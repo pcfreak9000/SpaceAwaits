@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
+
 //in the future, this class could resolve dependencies between systems
 public class SystemResolver {
     

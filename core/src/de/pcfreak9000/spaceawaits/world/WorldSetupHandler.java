@@ -23,7 +23,7 @@ public class WorldSetupHandler {
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
         ev.renderStrategies.register("fog", new RenderFogStrategy(ev.renderer));
-        ev.renderStrategies.register("liquid", new RenderWaterStrategy(ev.renderer));
+        ev.renderStrategies.register("liquid", new RenderWaterStrategy(ev.renderer, ev.world));
     }
     
 }

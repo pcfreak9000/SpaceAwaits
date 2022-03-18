@@ -63,7 +63,6 @@ public class InvUtil {
         return inv.removeStack(slot);
     }
     
-    
     //    public static void sort(IInventory inv, int begIncl, int endExcl) {
     //        //does nothing right now
     //    }

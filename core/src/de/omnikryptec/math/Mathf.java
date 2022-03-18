@@ -56,37 +56,37 @@ public strictfp class Mathf {
         }
     }
     
-//    public static float sin(final float rad) {
-//        return (float) Math.sin(rad);
-//    }
-//    
-//    public static float cos(final float rad) {
-//        return (float) Math.cos(rad);
-//    }
-//    
-//    public static float tan(final float rad) {
-//        return (float) Math.tan(rad);
-//    }
-//    
-//    public static float arcsin(final float x) {
-//        return (float) Math.asin(x);
-//    }
-//    
-//    public static float arccos(final float x) {
-//        return (float) Math.acos(x);
-//    }
-//    
-//    public static float arctan(final float x) {
-//        return (float) java.lang.Math.atan(x);
-//    }
-//    
-//    public static float arctan2(final float y, final float x) {
-//        return (float) Math.atan2(y, x);
-//    }
-//    
-//    public static float sqrt(final float value) {
-//        return (float) Math.sqrt(value);
-//    }
+    //    public static float sin(final float rad) {
+    //        return (float) Math.sin(rad);
+    //    }
+    //    
+    //    public static float cos(final float rad) {
+    //        return (float) Math.cos(rad);
+    //    }
+    //    
+    //    public static float tan(final float rad) {
+    //        return (float) Math.tan(rad);
+    //    }
+    //    
+    //    public static float arcsin(final float x) {
+    //        return (float) Math.asin(x);
+    //    }
+    //    
+    //    public static float arccos(final float x) {
+    //        return (float) Math.acos(x);
+    //    }
+    //    
+    //    public static float arctan(final float x) {
+    //        return (float) java.lang.Math.atan(x);
+    //    }
+    //    
+    //    public static float arctan2(final float y, final float x) {
+    //        return (float) Math.atan2(y, x);
+    //    }
+    //    
+    //    public static float sqrt(final float value) {
+    //        return (float) Math.sqrt(value);
+    //    }
     
     public static float abs(final float value) {
         return value < 0.0f ? 0.0f - value : value;
@@ -159,8 +159,8 @@ public strictfp class Mathf {
         return (long) rint(value);
     }
     
-//    public static float toRadians(final float i) {
-//        return (float) Math.toRadians(i);
-//    }
+    //    public static float toRadians(final float i) {
+    //        return (float) Math.toRadians(i);
+    //    }
     
 }

@@ -1,5 +1,4 @@
 
-
 import de.pcfreak9000.spaceawaits.core.DynamicAsset;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetComponent;
@@ -18,7 +17,7 @@ public class Background implements WorldEntityFactory {
     private final float width;
     private final float height;
     
-    public float xoff, yoff,w,h;
+    public float xoff, yoff, w, h;
     
     public Background(ITextureProvider texture, float width, float height) {
         this.texture = texture;

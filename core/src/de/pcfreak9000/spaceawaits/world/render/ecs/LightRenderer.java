@@ -45,7 +45,8 @@ public class LightRenderer implements Disposable {
     }
     
     public void enterLitScene() {
-        sceneBuffer.begin();
+        this.renderer.getFBOStack().push(sceneBuffer);
+        //sceneBuffer.begin();
         ScreenUtils.clear(0, 0, 0, 0);
     }
     
@@ -61,7 +62,7 @@ public class LightRenderer implements Disposable {
     }
     
     public void exitAndRenderLitScene() {
-        sceneBuffer.end();
+        this.renderer.getFBOStack().pop(sceneBuffer);
         Camera cam = renderer.getWorldView().getCamera();
         SpriteBatchImpr batch = renderer.getSpriteBatch();
         batch.resetSettings();
@@ -86,7 +87,7 @@ public class LightRenderer implements Disposable {
         }
         //}
         
-        this.lightsBuffer.begin();//This framebuffer is good because places where the light is not yet calculated will be pitch black
+        this.renderer.getFBOStack().push(lightsBuffer);//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);
             if (texture != null) {
@@ -96,8 +97,8 @@ public class LightRenderer implements Disposable {
                 batch.end();
             }
         }
-        this.lightsBuffer.end();
-        this.sceneBuffer.begin();
+        this.renderer.getFBOStack().pop(lightsBuffer);
+        this.renderer.getFBOStack().push(sceneBuffer);
         renderer.applyViewport();
         batch.setMultiplicativeBlending();
         batch.begin();
@@ -105,7 +106,7 @@ public class LightRenderer implements Disposable {
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.lightsBuffer.getWidth(), this.lightsBuffer.getHeight(), false, true);
         batch.end();
-        sceneBuffer.end();
+        this.renderer.getFBOStack().pop(sceneBuffer);
         batch.setDefaultBlending();
         batch.begin();
         batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,

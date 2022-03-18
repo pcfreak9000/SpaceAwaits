@@ -135,8 +135,7 @@ public class WorldCombined extends World {
                                     chunkProvider.requireChunk(j, k, true, lock);
                                 }
                             }
-                            if (ts.checkSolidOccupation(x, y, playerBounds.x,
-                                    playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
+                            if (ts.checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
                                 y++;
                                 break;
                             }

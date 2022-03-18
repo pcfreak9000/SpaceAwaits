@@ -10,15 +10,23 @@ import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.Event;
+import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
+import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
@@ -59,19 +67,31 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
     private GameRenderer renderer;
-    private FrameBufferStack fbostack;
+    
+    private FrameBuffer sceneBuffer;
+    private SpriteBatchImpr batch;
     
     public RenderSystem(World world, GameRenderer renderer) {
+        world.getWorldBus().register(this);
         this.entities = new Array<>();
         this.renderStrategies = new GameRegistry<>();
         this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
-        this.fbostack = new FrameBufferStack();
+        this.batch = renderer.getSpriteBatch();//new SpriteBatchImpr(100);
+        resize();
         SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
     }
     
-    public FrameBufferStack getFBOStack() {
-        return this.fbostack;
+    @EventSubscription
+    public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
+        resize();
+    }
+    
+    private void resize() {
+        if (sceneBuffer != null) {
+            this.sceneBuffer.dispose();
+        }
+        this.sceneBuffer = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
     
     @Override
@@ -153,6 +173,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+        renderer.getFBOStack().push(sceneBuffer);
+        ScreenUtils.clear(0, 0, 0, 0);
         IRenderStrategy last = null;
         float lastLayer = Float.NEGATIVE_INFINITY;
         boolean endedLight = false;
@@ -192,11 +214,22 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         if (!endedLight) {
             lightRenderer.exitAndRenderLitScene();
         }
+        renderer.getFBOStack().pop(sceneBuffer);
+        renderer.applyViewport();
+        batch.setDefaultBlending();
+        batch.setColor(Color.WHITE);
+        Camera cam = this.renderer.getWorldView().getCamera();
+        batch.begin();
+        batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
+                cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
+                this.sceneBuffer.getWidth(), this.sceneBuffer.getHeight(), false, true);
+        batch.end();
     }
     
     @Override
     public void dispose() {
         this.lightRenderer.dispose();
+        this.sceneBuffer.dispose();
         for (IRenderStrategy irs : this.renderStrategies.getAll()) {
             if (irs instanceof Disposable) {
                 Disposable d = (Disposable) irs;

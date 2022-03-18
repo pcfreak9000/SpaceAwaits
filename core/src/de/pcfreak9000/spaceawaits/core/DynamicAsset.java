@@ -8,5 +8,6 @@ public interface DynamicAsset {
     //entity/chunk scale: dynamicassetcomponent?
     
     void create();
+    
     void dispose();
 }

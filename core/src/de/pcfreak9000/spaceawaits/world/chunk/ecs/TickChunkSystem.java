@@ -8,9 +8,9 @@ import com.badlogic.ashley.systems.IteratingSystem;
 public class TickChunkSystem extends IteratingSystem {
     
     private ComponentMapper<ChunkComponent> tMapper = ComponentMapper.getFor(ChunkComponent.class);
-        
+    
     public TickChunkSystem() {
-        super(Family.all(ChunkComponent.class).get());    
+        super(Family.all(ChunkComponent.class).get());
     }
     
     @Override

@@ -8,6 +8,7 @@ precision mediump float;
 varying LOWP vec4 v_color;
 varying vec2 v_texCoords;
 varying vec2 v_pos;
+varying vec2 v_sspos;
 
 uniform sampler2D u_texture;
 uniform float time;
@@ -43,7 +44,10 @@ void main(){
 	vec2 distort1 = vec2(noise(noisec1 + motion1), noise(noisec2 + motion1)) - vec2(0.5);
 	vec2 distort2 = vec2(noise(noisec1 + motion2), noise(noisec2 + motion2)) - vec2(0.5);
 	
-	vec2 distortTotal = (distort1 + distort2) / 2.0;
+	vec2 distortTotal = (distort1 + distort2) / 150.0;
 	
-	gl_FragColor = v_color * texture2D(u_texture, v_texCoords.xy+distortTotal);
+	vec4 texCol = texture2D(u_texture, v_sspos*0.5+vec2(0.5)+distortTotal);
+	vec3 mixed = mix(texCol.rgb, v_color.rgb, v_color.a);
+	vec4 totalCol = vec4(mixed.rgb, 1.0);
+	gl_FragColor = totalCol;
 }

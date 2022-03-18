@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.menu.GuiChat;
 import de.pcfreak9000.spaceawaits.menu.GuiHelper;
 import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
 import de.pcfreak9000.spaceawaits.menu.ScreenManager;
+import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
 public class GameRenderer extends ScreenAdapter {
     
@@ -24,6 +25,7 @@ public class GameRenderer extends ScreenAdapter {
     private SpriteBatchImpr spriteBatch;
     private GuiOverlay guiContainerCurrent;
     private Vector2 mousePosVec = new Vector2();
+    private FrameBufferStack fbostack;
     
     private WorldView worldView;
     
@@ -40,6 +42,7 @@ public class GameRenderer extends ScreenAdapter {
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
         this.worldView = new WorldView(guiHelper);
         this.debugScreen = new DebugScreen(this);
+        this.fbostack = new FrameBufferStack();
         setWorldView();
     }
     
@@ -160,6 +163,10 @@ public class GameRenderer extends ScreenAdapter {
     
     public boolean showGui() {
         return showGui;
+    }
+    
+    public FrameBufferStack getFBOStack() {
+        return this.fbostack;
     }
     
 }

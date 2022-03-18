@@ -6,18 +6,26 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongArray;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.cyphercove.flexbatch.FlexBatch;
 
+import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
+import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.render.water.LiquidQuad2D;
 import de.pcfreak9000.spaceawaits.world.tile.LiquidState;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -33,20 +41,36 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
     
     private ShaderProvider shader = CoreRes.WATER_SHADER;
     
-    //private SpriteBatchImpr batch;
+    private SpriteBatchImpr batchSimple;
     
     private FlexBatch<LiquidQuad2D> batch;
     
     private TileSystem tiles;
     
-    public RenderWaterStrategy(GameRenderer rend) {
+    private FrameBuffer refl;
+    
+    public RenderWaterStrategy(GameRenderer rend, World world) {
         super(Family.all(ChunkRenderComponent.class).get());
         this.rend = rend;
         this.camera = this.rend.getCurrentView().getCamera();
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);
-        //this.batch = new SpriteBatchImpr(8191);
+        this.batchSimple = rend.getSpriteBatch();
         this.batch.setShader(shader.getShader());
+        world.getWorldBus().register(this);
+        resize();
         System.out.println(shader.getShader().getLog());
+    }
+    
+    @EventSubscription
+    public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
+        resize();
+    }
+    
+    private void resize() {
+        if (refl != null) {
+            this.refl.dispose();
+        }
+        this.refl = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
     
     @Override
@@ -63,9 +87,19 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
     
     @Override
     public void begin() {
+        this.batchSimple.setDefaultBlending();
+        this.batchSimple.setColor(Color.WHITE);
+        this.refl.begin();
+        ScreenUtils.clear(0, 0, 0, 0);
+        this.batchSimple.begin();
+        this.rend.getFBOStack().drawAll(batchSimple, camera);
+        this.batchSimple.end();
+        this.refl.end();
+        this.rend.getFBOStack().rebind();
+        
         time += Gdx.graphics.getDeltaTime();
         shader.getShader().bind();
-        shader.getShader().setUniformf("time", time*3f);
+        shader.getShader().setUniformf("time", time * 1.5f);
         shader.getShader().setUniformf("size", 1f, 1f);
         batch.setProjectionMatrix(this.camera.combined);
         batch.enableBlending();
@@ -114,18 +148,19 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
                 }
             }
             height = MathUtils.clamp(height, 0, 1);
-            batch.draw().color(tile.color()).textureRegion(tile.getTextureProvider().getRegion()).position(gtx, gty)
+            batch.draw().color(tile.color()).texture(refl.getColorBufferTexture()).region(0, 0, 1, 1).position(gtx, gty)
                     .size(1, height);
             //batch.draw(tile.getTextureProvider().getRegion(), gtx, gty, 1, height);
         }
     }
     
     private boolean isVisible(Tile t) {
-        return t.color().a > 0;
+        return true;
     }
     
     @Override
     public void dispose() {
         this.batch.dispose();
+        this.refl.dispose();
     }
 }
