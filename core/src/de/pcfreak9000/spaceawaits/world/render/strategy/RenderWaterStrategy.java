@@ -99,8 +99,7 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
         
         time += Gdx.graphics.getDeltaTime();
         shader.getShader().bind();
-        shader.getShader().setUniformf("time", time * 1.5f);
-        shader.getShader().setUniformf("size", 1f, 1f);
+        shader.getShader().setUniformf("time", time * 1.8f);
         batch.setProjectionMatrix(this.camera.combined);
         batch.enableBlending();
         batch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
@@ -130,10 +129,10 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
             TileLiquid tile = (TileLiquid) crc.chunk.getTile(gtx, gty, crc.layer);
             LiquidState s = (LiquidState) crc.chunk.getMetadata(gtx, gty, crc.layer);
             float height = s.getLiquid() / tile.getMaxValue();
-            Tile neigh = tiles.getTile(gtx, gty + 1, crc.layer);
+            Tile tileAbove = tiles.getTile(gtx, gty + 1, crc.layer);
             boolean inBetween = false;
             float topHeight = height;
-            if (neigh == tile) {
+            if (tileAbove == tile) {
                 LiquidState ns = (LiquidState) tiles.getMetadata(gtx, gty + 1, crc.layer);
                 if (!ns.isEmpty()) {
                     topHeight = ns.getLiquid() / tile.getMaxValue();
@@ -150,12 +149,14 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
             //the base is always one tile below liquid level, topLayer is the y-position of the liquid level
             float topLayer = inBetween ? (topHeight + gty + 1) : (height + gty);
             float base = topLayer - 1; //inBetween ? (gty + topHeight) : gty - (1 - height);
-            if ((height < 1f && inBetween) || (neigh.isSolid() && height > 0.99f)) {
+            if ((height < 1f && inBetween) || (tileAbove.isSolid() && height > 0.99f)) {
                 //liquid is flowing or is quite full and has some solid above it, so just render a full cell without waves
                 topLayer = Float.POSITIVE_INFINITY;
+                height = 1;
             }
-            batch.draw().shore(topLayer).base(base).color(tile.color()).texture(refl.getColorBufferTexture())
-                    .region(0, 0, 1, 1).position(gtx, gty).size(1, inBetween ? 1 : height);
+            batch.draw().time(time * 1.8f).distortionStrength(1 / 250f).levelDistortionModifier(20f).lvlThickness(0.4f)
+                    .shore(topLayer).base(base).color(tile.color()).texture(refl.getColorBufferTexture())
+                    .region(0, 0, 1, 1).position(gtx, gty).size(1, height);
         }
     }
     
