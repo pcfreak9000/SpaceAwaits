@@ -10,11 +10,22 @@ import com.cyphercove.flexbatch.utils.AttributeOffsets;
 public class LiquidQuad2D extends Quad2D {
     
     private float shoreline;
+    private float baseline;
+    
+    public LiquidQuad2D shore(float l) {
+        this.shoreline = l;
+        return this;
+    }
+    
+    public LiquidQuad2D base(float b) {
+        this.baseline = b;
+        return this;
+    }
     
     @Override
     protected void addVertexAttributes(Array<VertexAttribute> attributes) {
         super.addVertexAttributes(attributes);
-        VertexAttribute info = new VertexAttribute(Usage.Generic, 1, GL20.GL_FLOAT, false, "a_shoreline");
+        VertexAttribute info = new VertexAttribute(Usage.Generic, 2, GL20.GL_FLOAT, false, "a_shoreline");
         attributes.add(info);
     }
     
@@ -23,10 +34,11 @@ public class LiquidQuad2D extends Quad2D {
         super.apply(vertices, vertexStartingIndex, offsets, vertexSize);
         
         int ind = vertexStartingIndex + offsets.generic0;
-        vertices[ind] = shoreline;
-        vertices[ind + vertexSize] = shoreline;
-        vertices[ind + vertexSize] = shoreline;
-        vertices[ind + vertexSize] = shoreline;
+        for (int i = 0; i < 4; i++) {
+            vertices[ind] = shoreline;
+            vertices[ind + 1] = baseline;
+            ind += vertexSize;
+        }
         return 4;
     }
 }

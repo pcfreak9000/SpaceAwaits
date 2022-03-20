@@ -122,40 +122,41 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
         if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0)) {
             return;
         }
-        //FlexBatch<Quad2D> b = new FlexBatch<>(Quad2D.class, 32767, 0);
         LongArray pos = crc.tilePositions;
-        //        Color backgroundColor = new Color();
         for (int i = 0; i < pos.size; i++) {
             long l = pos.items[i];
             int gtx = IntCoords.xOfLong(l);
             int gty = IntCoords.yOfLong(l);
             TileLiquid tile = (TileLiquid) crc.chunk.getTile(gtx, gty, crc.layer);
-            if (!isVisible(tile)) {
-                continue;
-            }
-            //            backgroundColor.set(tile.color());
-            //            if (crc.layer == TileLayer.Back) {
-            //                backgroundColor.mul(Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, 1);
-            //            }
-            //batch.setColor(tile.color());
             LiquidState s = (LiquidState) crc.chunk.getMetadata(gtx, gty, crc.layer);
             float height = s.getLiquid() / tile.getMaxValue();
             Tile neigh = tiles.getTile(gtx, gty + 1, crc.layer);
+            boolean inBetween = false;
+            float topHeight = height;
             if (neigh == tile) {
                 LiquidState ns = (LiquidState) tiles.getMetadata(gtx, gty + 1, crc.layer);
                 if (!ns.isEmpty()) {
-                    height = 1;
+                    topHeight = ns.getLiquid() / tile.getMaxValue();
+                    topHeight = MathUtils.clamp(topHeight, 0, 1);
+                    if (topHeight == 1f) {
+                        //make sure that for interesting parameters the animation doesn't mine too deep and greedy... 
+                        topHeight = Float.POSITIVE_INFINITY;
+                    }
+                    inBetween = true;
                 }
             }
             height = MathUtils.clamp(height, 0, 1);
-            batch.draw().color(tile.color()).texture(refl.getColorBufferTexture()).region(0, 0, 1, 1).position(gtx, gty)
-                    .size(1, height);
-            //batch.draw(tile.getTextureProvider().getRegion(), gtx, gty, 1, height);
+            //the animation has to continue in this cell for low amounts of liquid in the top cell
+            //the base is always one tile below liquid level, topLayer is the y-position of the liquid level
+            float topLayer = inBetween ? (topHeight + gty + 1) : (height + gty);
+            float base = topLayer - 1; //inBetween ? (gty + topHeight) : gty - (1 - height);
+            if ((height < 1f && inBetween) || (neigh.isSolid() && height > 0.99f)) {
+                //liquid is flowing or is quite full and has some solid above it, so just render a full cell without waves
+                topLayer = Float.POSITIVE_INFINITY;
+            }
+            batch.draw().shore(topLayer).base(base).color(tile.color()).texture(refl.getColorBufferTexture())
+                    .region(0, 0, 1, 1).position(gtx, gty).size(1, inBetween ? 1 : height);
         }
-    }
-    
-    private boolean isVisible(Tile t) {
-        return true;
     }
     
     @Override

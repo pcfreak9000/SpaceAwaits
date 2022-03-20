@@ -60,7 +60,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final float BEGIN_LIGHT_LAYER = -Float.MAX_VALUE;//TODO make light disableable
+    private static final float BEGIN_LIGHT_LAYER = 0;//TODO make light disableable
     private static final float END_LIGHT_LAYER = 100;
     
     private final GameRegistry<IRenderStrategy> renderStrategies;

@@ -35,7 +35,7 @@ public class ItemEntityFactory implements WorldEntityFactory {
         e.add(new ItemStackComponent());
         e.add(new ChunkMarkerComponent());
         e.add(new SerializeEntityComponent(this));
-        e.add(new RenderComponent(1, "item"));
+        e.add(new RenderComponent(0.05f, "item"));
         e.add(new TransformComponent());
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ItemBodyFactory();//AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();

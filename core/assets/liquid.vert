@@ -1,12 +1,14 @@
 attribute vec4 a_position;
 attribute vec4 a_color;
 attribute vec2 a_texCoord0;
+attribute vec2 a_shoreline;
 
 uniform mat4 u_projTrans;
 varying vec4 v_color;
 varying vec2 v_texCoords;
 varying vec2 v_pos;
 varying vec2 v_sspos;
+varying vec2 v_shoreline;
 
 void main(){
 	v_color = a_color;
@@ -15,5 +17,6 @@ void main(){
 	v_pos = a_position.xy;
 	vec4 blub = u_projTrans * a_position;
 	v_sspos = blub.xy;
+	v_shoreline = a_shoreline;
 	gl_Position = blub;
 }
