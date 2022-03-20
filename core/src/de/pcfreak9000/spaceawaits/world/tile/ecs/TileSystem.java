@@ -6,7 +6,6 @@ import java.util.Random;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
@@ -211,7 +210,7 @@ public class TileSystem extends EntitySystem {
             breakingTiles.put(l, t);
         }
         float speedActual = breaker.getSpeed() / tile.getHardness();
-        t.incProgress(speedActual * Gdx.graphics.getDeltaTime());//Hmmmm oof
+        t.incProgress(speedActual * World.STEP_LENGTH);
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
             setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));

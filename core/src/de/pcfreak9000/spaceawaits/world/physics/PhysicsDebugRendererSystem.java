@@ -9,9 +9,10 @@ import com.badlogic.gdx.utils.Disposable;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
-public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable {
+public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable, RenderSystemMarker {
     
     //maybe there is a better way of doing this, seems kinda crude to injekt the PhysicsSystem...
     

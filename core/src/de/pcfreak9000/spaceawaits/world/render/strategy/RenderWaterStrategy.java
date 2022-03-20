@@ -58,7 +58,7 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
         this.batch.setShader(shader.getShader());
         world.getWorldBus().register(this);
         resize();
-        System.out.println(shader.getShader().getLog());
+        //System.out.println(shader.getShader().getLog());
     }
     
     @EventSubscription

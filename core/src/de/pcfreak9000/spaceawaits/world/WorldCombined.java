@@ -87,9 +87,6 @@ public class WorldCombined extends World {
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
-        //LightCalculator lightCalc = new LightCalculator(this);
-        //ecs.addSystem(lightCalc);
-        //lightCalc.setProcessing(false);
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
