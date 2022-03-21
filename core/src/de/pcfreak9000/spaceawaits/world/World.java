@@ -27,7 +27,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class World {
     
-    public static final float STEP_LENGTH = 1/60f;
+    public static final float STEPLENGTH_SECONDS = 1/60f;
     
     private static final ComponentMapper<ChunkMarkerComponent> CHUNK_COMP_MAPPER = ComponentMapper
             .getFor(ChunkMarkerComponent.class);
@@ -58,7 +58,7 @@ public abstract class World {
     public World(WorldPrimer primer, long seed) {
         //initialize fields
         this.seed = seed;
-        this.ecsEngine = new ModifiedEngine(STEP_LENGTH);
+        this.ecsEngine = new ModifiedEngine(STEPLENGTH_SECONDS);
         this.eventBus = new EventBus();
         SpaceAwaits.BUS.register(eventBus);//Not too sure about this
         this.worldRandom = new RandomXS128(seed);

@@ -20,8 +20,8 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -32,14 +32,14 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class RenderWaterStrategy extends AbstractRenderStrategy implements Disposable {
+public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy implements Disposable {
     
     private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
     
     private GameRenderer rend;
     private Camera camera;
     
-    private ShaderProvider shader = CoreRes.WATER_SHADER;
+    private ShaderProvider shader = CoreRes.LIQUID_TRANSPARENT_SHADER;
     
     private SpriteBatchImpr batchSimple;
     
@@ -49,7 +49,7 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
     
     private FrameBuffer refl;
     
-    public RenderWaterStrategy(GameRenderer rend, World world) {
+    public RenderLiquidTransparentStrategy(GameRenderer rend, World world) {
         super(Family.all(ChunkRenderComponent.class).get());
         this.rend = rend;
         this.camera = this.rend.getCurrentView().getCamera();
@@ -97,9 +97,8 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
         this.refl.end();
         this.rend.getFBOStack().rebind();
         
-        time += Gdx.graphics.getDeltaTime();
+        time += Gdx.graphics.getDeltaTime();//TODO time stuff
         shader.getShader().bind();
-        shader.getShader().setUniformf("time", time * 1.8f);
         batch.setProjectionMatrix(this.camera.combined);
         batch.enableBlending();
         batch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
@@ -116,9 +115,7 @@ public class RenderWaterStrategy extends AbstractRenderStrategy implements Dispo
     @Override
     public void render(Entity e, float dt) {
         ChunkRenderComponent crc = rMapper.get(e);
-        float mx = (crc.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
-        float my = (crc.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
-        if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0)) {
+        if (!Util.checkChunkInFrustum(crc.chunk, camera)) {
             return;
         }
         LongArray pos = crc.tilePositions;

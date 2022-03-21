@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongArray;
 
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -44,9 +45,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     @Override
     public void render(Entity entity, float deltaTime) {
         ChunkRenderComponent crc = rMapper.get(entity);
-        float mx = (crc.chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
-        float my = (crc.chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
-        if (!camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0)) {
+        if (!Util.checkChunkInFrustum(crc.chunk, camera)) {
             return;
         }
         SpriteCache ca = this.regionCache;

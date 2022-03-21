@@ -210,7 +210,7 @@ public class TileSystem extends EntitySystem {
             breakingTiles.put(l, t);
         }
         float speedActual = breaker.getSpeed() / tile.getHardness();
-        t.incProgress(speedActual * World.STEP_LENGTH);
+        t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
             setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));

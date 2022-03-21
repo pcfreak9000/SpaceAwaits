@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class PhysicsSystem extends IteratingSystem implements EntityListener {
@@ -21,13 +20,11 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             .getFor(TransformComponent.class);
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
-    private static final float STEPSIZE_SECONDS = 1 / 60f;
+    private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1.5f;
     
     //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);
-    
-    private float deltaAcc = 0;
     
     private World box2dWorld;
     
@@ -41,7 +38,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world) {
         super(Family.all(PhysicsComponent.class).get());
         this.box2dWorld = new World(new Vector2(0, 0), true);
-        this.box2dWorld.setAutoClearForces(false);
+        this.box2dWorld.setAutoClearForces(true);
         this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);
     }
@@ -64,19 +61,11 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     @Override
     public void update(float deltat) {
-        this.deltaAcc += deltat;
-        if (deltaAcc > 10 * STEPSIZE_SECONDS) {
-            Logger.getLogger(PhysicsSystem.class).warnf("Skipping physics ticks, acc. physics time: %f", deltaAcc);
-            deltaAcc = 10 * STEPSIZE_SECONDS;
-        }
         for (Entity e : getEntities()) {
             processEntity(e, deltat);
         }
-        while (deltaAcc >= STEPSIZE_SECONDS) {
-            deltaAcc -= STEPSIZE_SECONDS;
-            this.box2dWorld.step(STEPSIZE_SECONDS, 5, 2);
-        }
-        this.box2dWorld.clearForces();
+        this.box2dWorld.step(STEPLENGTH_SECONDS, 5, 2);
+        //this.box2dWorld.clearForces();
         for (Entity e : getEntities()) {
             post(e);
         }

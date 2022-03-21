@@ -7,7 +7,7 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTextureStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderWaterStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentStrategy;
 
 public class WorldSetupHandler {
     
@@ -23,7 +23,7 @@ public class WorldSetupHandler {
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));
         ev.renderStrategies.register("fog", new RenderFogStrategy(ev.renderer));
-        ev.renderStrategies.register("liquid", new RenderWaterStrategy(ev.renderer, ev.world));
+        ev.renderStrategies.register("liquid", new RenderLiquidTransparentStrategy(ev.renderer, ev.world));
     }
     
 }

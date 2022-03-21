@@ -6,24 +6,18 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class Util {
     
-    public static void blitFramebuffer(FrameBuffer origin, FrameBuffer target, int originAttachment,
-            int targetAttachment) {
-        target.bind();
-        GL30 gl = Gdx.gl30;
-        gl.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, origin.getFramebufferHandle());
-        gl.glReadBuffer(originAttachment);//Hmm
-        gl.glBlitFramebuffer(0, 0, origin.getWidth(), origin.getHeight(), 0, 0, target.getWidth(), target.getHeight(),
-                GL30.GL_COLOR_BUFFER_BIT, GL30.GL_NEAREST);
-        
+    public static boolean checkChunkInFrustum(Chunk chunk, Camera camera) {
+        float mx = (chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
+        float my = (chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
+        return camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0);
     }
     
     public static void deleteDirectoryRecursion(Path path) throws IOException {

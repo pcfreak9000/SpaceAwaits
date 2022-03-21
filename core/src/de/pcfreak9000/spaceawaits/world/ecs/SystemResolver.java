@@ -6,7 +6,7 @@ import java.util.List;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 
-//in the future, this class could resolve dependencies between systems
+//in the future, this class could resolve dependencies between systems i.e. putting them in the right order
 public class SystemResolver {
     
     private List<EntitySystem> systems = new ArrayList<>();
