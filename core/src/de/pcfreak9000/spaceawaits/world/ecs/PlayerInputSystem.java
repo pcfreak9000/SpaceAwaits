@@ -205,7 +205,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     private int checkSelectHotbarSlot(int current) {
         for (int i = Keys.NUM_1; i <= Keys.NUM_9; i++) {
-            if (Gdx.input.isKeyJustPressed(i)) {
+            if (Gdx.input.isKeyPressed(i)) {
                 return i - Keys.NUM_1;
             }
         }

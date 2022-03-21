@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
 
 public class ModifiedEngine extends Engine {
@@ -62,6 +63,7 @@ public class ModifiedEngine extends Engine {
             while (timeAccum >= stepsize) {
                 timeAccum -= stepsize;
                 updateCycleFor(stepsize, logicsystems);
+                InptMgr.clear();//Hmmm. Input is kinda cursed right now?
             }
             updateCycleFor(deltaTime, rendersystems);
         } finally {

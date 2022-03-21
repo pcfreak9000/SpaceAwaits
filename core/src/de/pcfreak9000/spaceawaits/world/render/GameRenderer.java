@@ -139,7 +139,7 @@ public class GameRenderer extends ScreenAdapter {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();
         }
-        InptMgr.clear();
+        //InptMgr.clear();
     }
     
     private void updateMouseWorldPosCache() {
