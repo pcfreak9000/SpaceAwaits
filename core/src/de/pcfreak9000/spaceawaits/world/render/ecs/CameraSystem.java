@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.Camera;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 
 public class CameraSystem extends IteratingSystem {
     private static final boolean DEBUG = false;

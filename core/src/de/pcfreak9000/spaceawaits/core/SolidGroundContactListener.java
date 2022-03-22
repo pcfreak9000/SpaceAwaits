@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;

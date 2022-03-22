@@ -8,8 +8,8 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;

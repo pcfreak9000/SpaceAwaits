@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.ecs;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -8,7 +8,6 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
 
 public class ModifiedEngine extends Engine {
     

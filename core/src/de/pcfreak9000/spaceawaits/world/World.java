@@ -14,11 +14,13 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -76,10 +78,6 @@ public abstract class World {
         //        finishSetup(primer, ecsEngine);
     }
     
-    protected void init() {//this is garbage
-        this.ticks = this.unchunkProvider.worldInfo().getIntOrDefault("ticks", 0);
-    }
-    
     //    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
     
     protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
@@ -88,13 +86,9 @@ public abstract class World {
     
     protected abstract IChunkLoader createChunkLoader(WorldPrimer primer);
     
-    private int ticks = 0;
     
     public void update(float dt) {
         this.ecsEngine.update(dt);
-        ticks++;
-        this.unchunkProvider.worldInfo().remove("ticks");//OOOOF?? fix in nbt lib?
-        this.unchunkProvider.worldInfo().putInt("ticks", ticks);
         //this.chunkProvider.unloadQueued();
         
         timehelper += dt * 50;
@@ -189,6 +183,7 @@ public abstract class World {
     }
     
     public void unloadAll() {
+        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Writing));
         ((ChunkProvider) chunkProvider).saveAll();
         ((ChunkProvider) chunkProvider).releaseAll();
         this.unchunkProvider.unload();
@@ -221,9 +216,7 @@ public abstract class World {
         return ambientLightProvider;
     }
     
-    public int getTick() {//TODO TMP?
-        return ticks;
-    }
+   
     
     public long getSeed() {
         return seed;

@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -28,6 +29,21 @@ public class WorldEvents {
             this.player = player;
         }
         
+    }
+    
+    public static class WorldMetaNBTEvent extends Event {
+        
+        public static enum Type {
+            Writing, Reading;
+        }
+        
+        public final NBTCompound worldMetaNbt;
+        public final Type type;
+        
+        public WorldMetaNBTEvent(NBTCompound worldMetaNbt, Type type) {
+            this.worldMetaNbt = worldMetaNbt;
+            this.type = type;
+        }
     }
     
 }

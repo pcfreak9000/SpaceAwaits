@@ -1,11 +1,11 @@
 
 import de.pcfreak9000.spaceawaits.core.DynamicAsset;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
-import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 

@@ -46,6 +46,13 @@ public class TileSystem extends EntitySystem {
         this.entity = createInfoEntity();
     }
     
+    private PhysicsSystem getPhysicsSystem() {
+        if (this.physicsSystem == null) {//TODO tmp, make an entity with stuff like this maybe?
+            this.physicsSystem = getEngine().getSystem(PhysicsSystem.class);
+        }
+        return this.physicsSystem;
+    }
+    
     private Entity createInfoEntity() {
         Entity e = new EntityImproved();
         e.add(new BreakingTilesComponent(this.breakingTiles));
@@ -69,9 +76,6 @@ public class TileSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
-        if (this.physicsSystem == null) {//TODO tmp, make an entity with stuff like this maybe?
-            this.physicsSystem = getEngine().getSystem(PhysicsSystem.class);
-        }
         Iterator<BreakTileProgress> it = breakingTiles.values().iterator();
         while (it.hasNext()) {
             BreakTileProgress t = it.next();
@@ -171,7 +175,7 @@ public class TileSystem extends EntitySystem {
             return null;
         }
         if (tile.isSolid() && layer == TileLayer.Front) {
-            if (physicsSystem.checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
+            if (getPhysicsSystem().checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
         }
@@ -292,7 +296,7 @@ public class TileSystem extends EntitySystem {
     }
     
     public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        if (physicsSystem.checkRectEntityOccupation(x, y, x + w, y + h)) {
+        if (getPhysicsSystem().checkRectEntityOccupation(x, y, x + w, y + h)) {
             return true;
         }
         int ix = Mathf.floori(x);

@@ -26,6 +26,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
@@ -257,17 +258,17 @@ public class Chunk implements NBTSerializable {
                 && this.world.getBounds().inBounds(gtx, gty);
     }
     
-    public void tick(float time) {
+    public void tick(float time, long tick) {
         this.ticking = true;
         this.tickables.forEach((t) -> t.tick(time));
-        this.tickTiles(world.getTick());
+        this.tickTiles(tick);
         this.ticking = false;
         while (!this.tickablesForRemoval.isEmpty()) {
             this.tickables.remove(this.tickablesForRemoval.poll());
         }
     }
     
-    private void tickTiles(int ticks) {
+    private void tickTiles(long ticks) {
         Iterator<NextTickTile> it = tickTiles.iterator();
         int ahyes = 0;
         while (it.hasNext()) {
@@ -288,7 +289,8 @@ public class Chunk implements NBTSerializable {
     
     public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
         if (inBounds(tx, ty) && tile != null && tile != Tile.NOTHING) {
-            tickTiles.add(new NextTickTile(tx, ty, layer, tile, waitticks + world.getTick()));
+            tickTiles.add(new NextTickTile(tx, ty, layer, tile,
+                    waitticks + world.getSystem(TickCounterSystem.class).getTick()));
         }
     }
     

@@ -9,7 +9,7 @@ public class LiquidState implements IMetadata, NBTSerializable {
     //This is useful, makes sure there isn't any small amounts of liquid laying around
     public static final float MIN_LIQUID = 0.001f;
     
-    private int lasttick;
+    private long lasttick;
     private float liquid;
     public float liquidNew;
     
@@ -21,7 +21,7 @@ public class LiquidState implements IMetadata, NBTSerializable {
         return liquid;
     }
     
-    public void updateLiquid(int tick) {
+    public void updateLiquid(long tick) {
         if (tick != lasttick) {
             this.liquid = this.liquidNew;
             this.lasttick = tick;
@@ -42,7 +42,7 @@ public class LiquidState implements IMetadata, NBTSerializable {
     @Override
     public void readNBT(NBTTag tag) {
         NBTCompound comp = (NBTCompound) tag;
-        this.lasttick = comp.getInt("lasttick");
+        this.lasttick = comp.getLong("lasttick");
         this.liquid = comp.getFloat("liquid");
         this.liquidNew = comp.getFloat("liquidNew");
         //this.settled = comp.getByte("settled") == 1;
@@ -51,7 +51,7 @@ public class LiquidState implements IMetadata, NBTSerializable {
     @Override
     public NBTTag writeNBT() {
         NBTCompound comp = new NBTCompound();
-        comp.putInt("lasttick", lasttick);
+        comp.putLong("lasttick", lasttick);
         comp.putFloat("liquid", liquid);
         comp.putFloat("liquidNew", liquidNew);
         //comp.putByte("settled", settled ? (byte) 1 : (byte) 0);

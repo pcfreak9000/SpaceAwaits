@@ -11,14 +11,17 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
-import de.pcfreak9000.spaceawaits.world.ecs.FollowMouseSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
+import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
+import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
@@ -42,6 +45,7 @@ public class WorldCombined extends World {
         ((ChunkLoader) chunkLoader).setSave(save);
         ((UnchunkProvider) unchunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).load();
+        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Reading));
         if (worldProperties.autoWorldBorders()) {
             WorldUtil.createWorldBorders(unchunkProvider.get().getEntities(), getBounds().getWidth(),
                     getBounds().getHeight());
@@ -50,10 +54,10 @@ public class WorldCombined extends World {
             DynamicAssetUtil.checkAndCreateAsset(e);//TODO Dyn Meh
             ecsEngine.addEntity(e);
         }
-        init();
     }
     
     public void saveAll() {
+        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Writing));
         ((ChunkProvider) chunkProvider).saveAll();
         ((UnchunkProvider) unchunkProvider).save();
     }
@@ -88,6 +92,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
+        ecs.addSystem(new TickCounterSystem(this));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
     }

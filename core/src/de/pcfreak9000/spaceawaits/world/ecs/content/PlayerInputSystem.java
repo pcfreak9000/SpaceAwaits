@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.world.ecs.content;
 
 import java.util.Random;
 
@@ -21,6 +21,7 @@ import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;

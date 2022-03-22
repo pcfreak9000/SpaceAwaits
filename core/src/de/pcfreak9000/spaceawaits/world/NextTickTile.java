@@ -12,9 +12,9 @@ public class NextTickTile implements NBTSerializable {
     private int y;
     private TileLayer layer;
     private Tile tile;
-    private int tick;
+    private long tick;
     
-    public NextTickTile(int x, int y, TileLayer layer, Tile tile, int tick) {
+    public NextTickTile(int x, int y, TileLayer layer, Tile tile, long tick) {
         this.x = x;
         this.y = y;
         this.layer = layer;
@@ -22,7 +22,7 @@ public class NextTickTile implements NBTSerializable {
         this.tick = tick;
     }
     
-    public int getTick() {
+    public long getTick() {
         return tick;
     }
     
@@ -49,7 +49,7 @@ public class NextTickTile implements NBTSerializable {
         result = prime * result + ((layer == null) ? 0 : layer.hashCode());
         result = prime * result + x;
         result = prime * result + y;
-        result = prime * result + tick;
+        result = prime * result + Long.hashCode(tick);
         return result;
     }
     
@@ -84,7 +84,7 @@ public class NextTickTile implements NBTSerializable {
         y = c.getInt("y");
         layer = c.getByte("z") == 1 ? TileLayer.Front : TileLayer.Back;
         tile = GameRegistry.TILE_REGISTRY.get(c.getString("t"));
-        tick = c.getInt("tick");
+        tick = c.getLong("tick");
     }
     
     @Override
@@ -94,7 +94,7 @@ public class NextTickTile implements NBTSerializable {
         c.putInt("y", y);
         c.putByte("z", layer == TileLayer.Front ? (byte) 1 : (byte) 0);
         c.putString("t", GameRegistry.TILE_REGISTRY.getId(tile));
-        c.putInt("tick", tick);
+        c.putLong("tick", tick);
         return c;
     }
     

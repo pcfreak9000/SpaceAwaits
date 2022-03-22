@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.ecs.content;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -8,6 +8,9 @@ import com.badlogic.ashley.core.EntitySystem;
 
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.world.ChunkProvider;
+import de.pcfreak9000.spaceawaits.world.ITicket;
+import de.pcfreak9000.spaceawaits.world.World;
 
 public class TicketedChunkManager extends EntitySystem {
     

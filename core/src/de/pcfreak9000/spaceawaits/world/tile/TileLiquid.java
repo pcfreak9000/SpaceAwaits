@@ -91,7 +91,7 @@ public class TileLiquid extends Tile {
     }
     
     @Override
-    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem ts, int tick) {
+    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem ts, long tick) {
         super.updateTick(tx, ty, layer, world, ts, tick);
         LiquidState liquiddata = (LiquidState) ts.getMetadata(tx, ty, layer);
         liquiddata.updateLiquid(tick);

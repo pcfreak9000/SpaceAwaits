@@ -9,7 +9,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.ecs.DynamicAssetUtil;
+import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkLoader implements IChunkLoader {

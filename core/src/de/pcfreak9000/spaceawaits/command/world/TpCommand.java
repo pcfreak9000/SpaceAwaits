@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.command.world;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 

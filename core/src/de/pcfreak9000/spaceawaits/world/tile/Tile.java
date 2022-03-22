@@ -200,7 +200,7 @@ public class Tile {
         
     }
     
-    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, int tick) {
+    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
         
     }
     

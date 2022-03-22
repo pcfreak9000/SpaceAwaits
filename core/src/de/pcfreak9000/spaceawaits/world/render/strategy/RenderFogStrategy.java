@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 

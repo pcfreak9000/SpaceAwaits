@@ -24,7 +24,7 @@ import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
