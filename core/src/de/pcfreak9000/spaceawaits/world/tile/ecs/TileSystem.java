@@ -16,9 +16,11 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -37,7 +39,7 @@ public class TileSystem extends EntitySystem {
     private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     private final Entity entity;
     
-    private PhysicsSystem physicsSystem;
+    private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
     public TileSystem(World world, Random r, IChunkProvider ch) {
         this.world = world;
@@ -46,17 +48,10 @@ public class TileSystem extends EntitySystem {
         this.entity = createInfoEntity();
     }
     
-    private PhysicsSystem getPhysicsSystem() {
-        if (this.physicsSystem == null) {//TODO tmp, make an entity with stuff like this maybe?
-            this.physicsSystem = getEngine().getSystem(PhysicsSystem.class);
-        }
-        return this.physicsSystem;
-    }
-    
     private Entity createInfoEntity() {
         Entity e = new EntityImproved();
         e.add(new BreakingTilesComponent(this.breakingTiles));
-        e.add(new RenderComponent(1, "break"));
+        e.add(new RenderComponent(RenderLayers.TILE_EFFECT, "break"));
         return e;
     }
     
@@ -64,14 +59,12 @@ public class TileSystem extends EntitySystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntity(entity);
-        
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
         super.removedFromEngine(engine);
         engine.removeEntity(entity);
-        this.physicsSystem = null;
     }
     
     @Override
@@ -170,12 +163,12 @@ public class TileSystem extends EntitySystem {
             }
         }
         Tile current = getTile(tx, ty, layer);
-        if (current != null && (!current.canBeReplaced() || current == tile)) {
+        if (current != null && (!current.canBeReplacedBy(tile) || current == tile)) {
             //check current occupation, only place tile if there isnt already one
             return null;
         }
         if (tile.isSolid() && layer == TileLayer.Front) {
-            if (getPhysicsSystem().checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
+            if (phys.get(getEngine()).checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
                 return null;
             }
         }
@@ -296,7 +289,7 @@ public class TileSystem extends EntitySystem {
     }
     
     public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        if (getPhysicsSystem().checkRectEntityOccupation(x, y, x + w, y + h)) {
+        if (phys.get(getEngine()).checkRectEntityOccupation(x, y, x + w, y + h)) {
             return true;
         }
         int ix = Mathf.floori(x);

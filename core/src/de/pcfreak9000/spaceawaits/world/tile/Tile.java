@@ -26,7 +26,12 @@ public class Tile {
     
     public static final float BACKGROUND_FACTOR = 0.55f;
     public static final float MAX_LIGHT_VALUE = 16;
-    public static final Tile NOTHING = new Tile();//The last bastion against the void
+    public static final Tile NOTHING = new Tile() {
+        @Override
+        public boolean canBeReplacedBy(Tile t) {
+            return true;
+        }
+    };//The last bastion against the void
     
     public static int toGlobalTile(float x) {
         return Mathf.floori(x);//well i hope this floor function works properly
@@ -39,7 +44,6 @@ public class Tile {
         NOTHING.setOpaque(false);
         NOTHING.setTexture(null);
         NOTHING.setSolid(false);
-        NOTHING.setCanBeReplaced(true);
         NOTHING.color().set(0, 0, 0, 0);
         GameRegistry.TILE_REGISTRY.register("empty", NOTHING);
     }
@@ -49,7 +53,7 @@ public class Tile {
     private boolean canBreak = true;
     private boolean opaque = true;
     private boolean solid = true;
-    private boolean canBeReplaced = false;
+    //private boolean canBeReplaced = false;
     //private boolean indestructible = false;
     
     private final Color color = new Color(1, 1, 1, 1);
@@ -155,12 +159,8 @@ public class Tile {
         this.hardness = hardness;
     }
     
-    public boolean canBeReplaced() {
-        return canBeReplaced;
-    }
-    
-    public void setCanBeReplaced(boolean canBeReplaced) {
-        this.canBeReplaced = canBeReplaced;
+    public boolean canBeReplacedBy(Tile t) {
+        return false;
     }
     
     public final Item getRegisterItem() {

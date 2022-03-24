@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.HealthComponent;
@@ -55,7 +56,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         //        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
         //                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));
-        e.add(new RenderComponent(0.05f, "entity"));
+        e.add(new RenderComponent(RenderLayers.ENTITY, "entity"));
         e.add(new ContactListenerComponent(new PlayerContactListener()));
         return e;
     }

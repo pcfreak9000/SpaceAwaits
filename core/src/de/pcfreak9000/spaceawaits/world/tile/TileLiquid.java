@@ -55,6 +55,15 @@ public class TileLiquid extends Tile {
         this.flowUp = flowUp;
     }
     
+    public boolean canReplace(Tile t) {
+        return true;
+    }
+    
+    @Override
+    public boolean canBeReplacedBy(Tile t) {
+        return t.isSolid();
+    }
+    
     @Override
     public boolean hasMetadata() {
         return true;
@@ -68,7 +77,7 @@ public class TileLiquid extends Tile {
     @Override
     public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem ts) {
         super.onTilePlaced(tx, ty, layer, world, ts);
-        LiquidState liquid = (LiquidState) world.getSystem(TileSystem.class).getMetadata(tx, ty, layer);
+        LiquidState liquid = (LiquidState) ts.getMetadata(tx, ty, layer);
         liquid.addLiquid(getMaxValue());
     }
     
@@ -143,7 +152,7 @@ public class TileLiquid extends Tile {
     }
     
     private boolean canFlowInto(Tile neigh) {
-        return neigh == this || !neigh.isSolid() || neigh.canBeReplaced();
+        return neigh == this || (neigh.canBeReplacedBy(this) && this.canReplace(neigh));
     }
     
     private float calculateVerticalFlowValue(float remainingLiquid, float neValue) {

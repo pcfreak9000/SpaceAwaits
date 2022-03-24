@@ -19,6 +19,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
@@ -221,7 +222,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Entity createTileSelectorEntity() {
         Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(200, "entity");
+        RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD, "entity");
         rc.considerAsGui = true;
         e.add(rc);
         RenderTextureComponent tex = new RenderTextureComponent();

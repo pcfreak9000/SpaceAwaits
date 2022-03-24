@@ -23,6 +23,7 @@ import de.omnikryptec.event.Event;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -61,8 +62,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final float BEGIN_LIGHT_LAYER = 0;//TODO make light disableable
-    private static final float END_LIGHT_LAYER = 100;
+    private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;//TODO make light disableable
+    private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
     
     private final GameRegistry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;

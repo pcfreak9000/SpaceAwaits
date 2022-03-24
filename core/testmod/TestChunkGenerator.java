@@ -1,9 +1,11 @@
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -53,6 +55,10 @@ public class TestChunkGenerator implements IChunkGenerator {
                 }
             }
         }
+        Entity ship = DMod.instance.fac.createEntity();
+        TransformComponent tc = ship.getComponent(TransformComponent.class);//Not good?
+        tc.position.set(chunk.getGlobalTileX(), chunk.getGlobalTileY() - 1);
+        chunk.addEntity(ship);
         //        Entity item = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.gun, 128), chunk.getGlobalTileX(),
         //                chunk.getGlobalTileY() - 1);
         //        chunk.addEntity(item);

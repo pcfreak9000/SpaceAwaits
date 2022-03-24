@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
@@ -35,7 +36,7 @@ public class ItemEntityFactory implements WorldEntityFactory {
         e.add(new ItemStackComponent());
         e.add(new ChunkMarkerComponent());
         e.add(new SerializeEntityComponent(this));
-        e.add(new RenderComponent(0.05f, "item"));
+        e.add(new RenderComponent(RenderLayers.ENTITY, "item"));
         e.add(new TransformComponent());
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ItemBodyFactory();//AABBBodyFactory.builder().dimensions(Item.WORLD_SIZE, Item.WORLD_SIZE).create();

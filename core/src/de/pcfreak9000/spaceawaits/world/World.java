@@ -29,7 +29,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class World {
     
-    public static final float STEPLENGTH_SECONDS = 1/60f;
+    public static final float STEPLENGTH_SECONDS = 1 / 60f;
     
     private static final ComponentMapper<ChunkMarkerComponent> CHUNK_COMP_MAPPER = ComponentMapper
             .getFor(ChunkMarkerComponent.class);
@@ -85,7 +85,6 @@ public abstract class World {
     protected abstract IUnchunkProvider createUnchunkProvider(WorldPrimer primer);
     
     protected abstract IChunkLoader createChunkLoader(WorldPrimer primer);
-    
     
     public void update(float dt) {
         this.ecsEngine.update(dt);
@@ -160,6 +159,7 @@ public abstract class World {
         }
         unchunkProvider.get().removeEntity(entity);
         ecsEngine.removeEntity(entity);
+        DynamicAssetUtil.checkAndDisposeAsset(entity);
     }
     
     public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
@@ -215,8 +215,6 @@ public abstract class World {
     public AmbientLightProvider getLightProvider() {
         return ambientLightProvider;
     }
-    
-   
     
     public long getSeed() {
         return seed;

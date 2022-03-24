@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+@Deprecated
 public class SingleEntityCompRetriever<T extends Component> {
     
     private final ComponentMapper<T> mapper;

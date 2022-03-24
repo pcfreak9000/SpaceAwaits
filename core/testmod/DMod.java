@@ -60,15 +60,16 @@ public class DMod {
     
     TileLiquid water = new TileLiquid();
     
+    SpaceshipFactory fac = new SpaceshipFactory();
+    
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
-        
+        GameRegistry.WORLD_ENTITY_REGISTRY.register("spac", fac);
         water.setTexture("stone.png");
         water.setSolid(false);
         water.setCanBreak(false);
-        water.setCanBeReplaced(true);
         water.setLightTransmission(0.9f);
         water.color().set(0, 100 / 255f, 1, 0.1f);//0.75f
         water.setDisplayName("Water");

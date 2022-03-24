@@ -22,6 +22,7 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
+import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
@@ -99,8 +100,8 @@ public class Chunk implements NBTSerializable {
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.chunkEntity.add(pc);
-        this.tilesRender = new RenderTileStorage(0.1f, this, TileLayer.Front);
-        this.tilesBckRender = new RenderTileStorage(0, this, TileLayer.Back);
+        this.tilesRender = new RenderTileStorage(RenderLayers.TILE_FRONT, this, TileLayer.Front);
+        this.tilesBckRender = new RenderTileStorage(RenderLayers.TILE_BACK, this, TileLayer.Back);
     }
     
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {

@@ -1,33 +1,35 @@
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.Color;
 
+import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
-public class FallingEntityFactory implements WorldEntityFactory {
+public class SpaceshipFactory implements WorldEntityFactory {
+    
+    private static final TextureProvider tex = TextureProvider.get("spaceship2_final.png");
+    
     @Override
     public Entity createEntity() {
         Entity entity = new EntityImproved();
-        entity.flags = 3;
         entity.add(new ChunkMarkerComponent());
         RenderTextureComponent rec = new RenderTextureComponent();
-        Sprite s = new Sprite();
-        s.setSize(200 / 16, 100 / 16);
-        //rec.sprite = s;
-        //rec.action = new TextureSpriteAction(DMod.instance.texture);
+        rec.texture = tex;
+        rec.color = Color.WHITE;
+        rec.width = 159 / 32f;
+        rec.height = 73 / 32f;
         entity.add(rec);
         TransformComponent tc = new TransformComponent();
         entity.add(tc);
         PhysicsComponent pc = new PhysicsComponent();
-        pc.factory = AABBBodyFactory.builder().dimensions(200 / 16, 100 / 16).create();//new AABBBodyFactory(200, 100);
+        pc.factory = new SpaceshipBodyFactory();//AABBBodyFactory.builder().dimensions(rec.width, rec.height).create();//new AABBBodyFactory(200, 100);
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
         entity.add(new RenderComponent(RenderLayers.ENTITY, "entity"));

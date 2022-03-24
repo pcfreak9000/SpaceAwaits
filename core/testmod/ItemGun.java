@@ -27,10 +27,10 @@ public class ItemGun extends Item {
             
             @Override
             public boolean reportRayTile(Tile tile, int tx, int ty) {
-                if (tile != Tile.NOTHING) {
+                if (tile != Tile.NOTHING && tile.isSolid()) {
                     world.getSystem(TileSystem.class).breakTile(tx, ty, TileLayer.Front, tilebreaker);
                 }
-                return tile == Tile.NOTHING;
+                return tile == Tile.NOTHING || !tile.isSolid();
             }
         }, tc.position.x + 1, tc.position.y + 2, x, y, TileLayer.Front);
         return true;
