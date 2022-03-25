@@ -1,12 +1,16 @@
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Activator;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -33,6 +37,24 @@ public class SpaceshipFactory implements WorldEntityFactory {
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
         entity.add(new RenderComponent(RenderLayers.ENTITY, "entity"));
+        ActivatorComponent ac = new ActivatorComponent();
+        ac.layer = RenderLayers.ENTITY;
+        ac.activators.add(tt);
+        entity.add(ac);
         return entity;
     }
+    
+    private Activator tt = new Activator() {
+        
+        @Override
+        public boolean handle(float mousex, float mousey, Entity entity, World world) {
+            System.out.println("Gurke");
+            return true;
+        }
+        
+        @Override
+        public Object getInputKey() {
+            return EnumInputIds.Use;
+        }
+    };
 }

@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
@@ -81,6 +82,7 @@ public class WorldCombined extends World {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new TileSystem(this, worldRandom, chunkProvider));
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
+        ecs.addSystem(new ActivatorSystem(gameRenderer, this));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
         ecs.addSystem(new TickChunkSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
