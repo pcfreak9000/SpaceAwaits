@@ -19,7 +19,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
     
     public static Entity setupPlayerEntity(Player player) {
         Entity e = CoreRes.PLAYER_FACTORY.createEntity();
-        e.getComponent(PlayerInputComponent.class).player = player;
+        e.getComponent(PlayerInputComponent.class).player = player;//Move this into dedicated component?
         return e;
     }
     

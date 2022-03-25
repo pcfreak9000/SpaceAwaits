@@ -47,7 +47,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
     private Activator tt = new Activator() {
         
         @Override
-        public boolean handle(float mousex, float mousey, Entity entity, World world) {
+        public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
             System.out.println("Gurke");
             return true;
         }

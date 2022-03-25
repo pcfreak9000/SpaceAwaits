@@ -195,7 +195,7 @@ public class PlayerInputSystem extends EntitySystem {
                     player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
                 }
             }
-            if (!used) {
+            if (!used) {//TODO Move to activator in chunk entity?
                 Tile clicked = tileSystem.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
                 //onTileUse
                 ItemStack cp = stack != null ? stack.cpy() : null;
