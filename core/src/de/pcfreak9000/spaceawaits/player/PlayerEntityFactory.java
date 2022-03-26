@@ -1,11 +1,14 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.player;
 
 import com.badlogic.ashley.core.Entity;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
+import de.pcfreak9000.spaceawaits.core.SolidGroundContactListener;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.content.ActionComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.HealthComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
@@ -58,6 +61,11 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         e.add(new SerializeEntityComponent(this));
         e.add(new RenderComponent(RenderLayers.ENTITY, "entity"));
         e.add(new ContactListenerComponent(new PlayerContactListener()));
+        ActionComponent actionComp = new ActionComponent();
+        actionComp.actions.add(new TestExplodeTilesAction());
+        actionComp.actions.add(new BreakAttackAction());
+        actionComp.actions.add(new UseAction());
+        e.add(actionComp);
         return e;
     }
 }

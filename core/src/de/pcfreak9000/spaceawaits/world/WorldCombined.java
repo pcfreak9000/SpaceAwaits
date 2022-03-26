@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -19,6 +19,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
@@ -80,6 +81,7 @@ public class WorldCombined extends World {
     
     private void setupECS(WorldPrimer primer, Engine engine) {
         SystemResolver ecs = new SystemResolver();
+        ecs.addSystem(new InventoryOpenerSystem(gameRenderer, this));
         ecs.addSystem(new TileSystem(this, worldRandom, chunkProvider));
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));

@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Activator;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -48,6 +49,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
         
         @Override
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
+            source.getComponent(PlayerInputComponent.class).player.openInventory();
             System.out.println("Gurke");
             return true;
         }

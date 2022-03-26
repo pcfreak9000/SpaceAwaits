@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;

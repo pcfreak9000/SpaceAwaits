@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;

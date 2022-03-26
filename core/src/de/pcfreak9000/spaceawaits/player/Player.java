@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.player;
 
 import com.badlogic.ashley.core.Entity;
 

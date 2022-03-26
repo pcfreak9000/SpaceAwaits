@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
+import de.pcfreak9000.spaceawaits.player.PlayerEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;

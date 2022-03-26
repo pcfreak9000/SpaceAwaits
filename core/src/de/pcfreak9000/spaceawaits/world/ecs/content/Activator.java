@@ -14,7 +14,7 @@ public interface Activator {
      * @param mousey
      * @param entity the activated entity
      * @param world
-     * @param source the entity that activated thsi Activator
+     * @param source the entity that activated this Activator
      * @return
      */
     boolean handle(float mousex, float mousey, Entity entity, World world, Entity source);

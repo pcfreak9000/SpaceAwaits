@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Set;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.core.Player;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
@@ -23,7 +26,10 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class ActivatorSystem extends EntitySystem {
     
+    private static final Family FAMILY = Family.all(ActionComponent.class).get();
+    
     private static final ComponentMapper<ActivatorComponent> AMAP = ComponentMapper.getFor(ActivatorComponent.class);
+    private static final ComponentMapper<ActionComponent> AAMAP = ComponentMapper.getFor(ActionComponent.class);
     
     private static final SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
@@ -34,6 +40,7 @@ public class ActivatorSystem extends EntitySystem {
     private GameRenderer gameRend;
     private World world;
     private Player player;
+    private ImmutableArray<Entity> entities;
     
     private final UserDataHelper udh = new UserDataHelper();
     private final Set<Entity> entitySet = new HashSet<>();
@@ -51,10 +58,24 @@ public class ActivatorSystem extends EntitySystem {
     }
     
     @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        this.entities = engine.getEntitiesFor(FAMILY);
+    }
+    
+    @Override
+    public void removedFromEngine(Engine engine) {
+        super.removedFromEngine(engine);
+        this.entities = null;
+    }
+    
+    @Override
     public void update(float deltaTime) {
         if (gameRend.isGuiContainerOpen()) {
             return;
         }
+        entitySet.clear();
+        entityList.clear();
         Vector2 mouse = gameRend.getMouseWorldPos();
         phys.get(getEngine()).queryAABB((fix, uc) -> {
             if (fix.testPoint(uc.in(mouse.x), uc.in(mouse.y))) {//really test point? or let the activators decide if they like something?
@@ -73,21 +94,25 @@ public class ActivatorSystem extends EntitySystem {
         entityList.sort(COMP);
         for (Entity e : entityList) {
             ActivatorComponent ac = AMAP.get(e);
-            boolean handled = false;
             for (Activator a : ac.activators) {
                 if (InptMgr.isPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, e, this.world, this.player.getPlayerEntity())) {
-                        handled = true;
-                        //TODO dont break the outer loop immediately, instead let all activators of this entity check if they want to activate????
+                        return;
                     }
                 }
             }
-            if (handled) {
-                break;
+        }
+        for (Entity e : entities) {
+            ActionComponent ac = AAMAP.get(e);
+            for (Action a : ac.actions) {
+                if (InptMgr.isPressed(a.getInputKey())) {
+                    if (a.handle(mouse.x, mouse.y, world, e)) {
+                        return;
+                    }
+                }
             }
         }
-        entitySet.clear();
-        entityList.clear();
+        
     }
     
 }

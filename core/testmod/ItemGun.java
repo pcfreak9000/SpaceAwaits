@@ -3,9 +3,9 @@ import java.util.Random;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.player;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import de.pcfreak9000.spaceawaits.core.SolidGroundContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.UserData;
 

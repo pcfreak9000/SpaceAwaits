@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.Player;
 import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.ecs.content.HealthComponent;
 
 public class Hud {
