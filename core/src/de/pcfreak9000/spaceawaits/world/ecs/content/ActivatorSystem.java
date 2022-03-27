@@ -89,8 +89,8 @@ public class ActivatorSystem extends EntitySystem {
                     }
                 }
             }
-            return false;
-        }, mouse.x - 0.5f, mouse.y - 0.5f, mouse.x + 0.5f, mouse.y + 0.5f);
+            return true;
+        }, mouse.x - 0.01f, mouse.y - 0.01f, mouse.x + 0.01f, mouse.y + 0.01f);
         entityList.sort(COMP);
         for (Entity e : entityList) {
             ActivatorComponent ac = AMAP.get(e);
