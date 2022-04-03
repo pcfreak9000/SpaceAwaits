@@ -65,6 +65,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         actionComp.actions.add(new TestExplodeTilesAction());
         actionComp.actions.add(new BreakAttackAction());
         actionComp.actions.add(new UseAction());
+        actionComp.actions.add(new ConsoleAction());
         e.add(actionComp);
         return e;
     }

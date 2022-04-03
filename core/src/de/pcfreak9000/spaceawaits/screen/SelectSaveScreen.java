@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.screen;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

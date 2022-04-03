@@ -73,6 +73,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (worldRend.isGuiContainerOpen()) {
             return;
         }
+
         Entity entity = this.player.getPlayerEntity();
         PlayerInputComponent play = mapper.get(entity);
         float vy = 0;

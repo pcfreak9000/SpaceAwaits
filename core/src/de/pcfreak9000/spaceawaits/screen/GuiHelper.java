@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.screen;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;

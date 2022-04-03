@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.badlogic.gdx.graphics.Color;
 
+import de.pcfreak9000.spaceawaits.comp.Composite;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -67,5 +68,9 @@ public class Item {
     
     public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
         return false;
+    }
+    
+    public Composite getComposite() {
+        return null;
     }
 }

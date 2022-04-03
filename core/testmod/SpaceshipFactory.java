@@ -2,7 +2,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.gui.ContainerDisassembler;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -49,7 +51,8 @@ public class SpaceshipFactory implements WorldEntityFactory {
         
         @Override
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
-            source.getComponent(PlayerInputComponent.class).player.openInventory();
+            Player player = source.getComponent(PlayerInputComponent.class).player;
+            player.openContainer(new ContainerDisassembler());
             System.out.println("Gurke");
             return true;
         }

@@ -8,12 +8,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
+import de.pcfreak9000.spaceawaits.screen.GuiHelper;
+import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.menu.GuiChat;
-import de.pcfreak9000.spaceawaits.menu.GuiHelper;
-import de.pcfreak9000.spaceawaits.menu.GuiOverlay;
-import de.pcfreak9000.spaceawaits.menu.ScreenManager;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
 public class GameRenderer extends ScreenAdapter {
@@ -127,9 +126,9 @@ public class GameRenderer extends ScreenAdapter {
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
             }
-            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
-                this.setGuiCurrent(new GuiChat(this));
-            }
+//            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
+//                this.setGuiCurrent(new GuiChat());
+//            }
             if (this.guiContainerCurrent != null) {
                 this.guiContainerCurrent.actAndDraw(delta);
             }

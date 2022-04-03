@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.gui;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 public class FollowMouseStack extends InputListener {
     
     private ActorItemStack actorItemStack;
+    private Slot originSlot;
     
     public FollowMouseStack() {
         this.actorItemStack = new ActorItemStack();
@@ -29,6 +30,14 @@ public class FollowMouseStack extends InputListener {
         if (stack != null && !stack.isEmpty()) {
             this.actorItemStack.toFront();
         }
+    }
+    
+    public void setSlotOrigin(Slot slot) {
+        this.originSlot = slot;
+    }
+    
+    public Slot getSlotOrigin() {
+        return this.originSlot;
     }
     
     public boolean hasStack() {

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.gui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,6 +27,14 @@ public class Slot extends Actor {
         this.listener = new ClickListener();
         addListener(listener);
         setSize(SIZE, SIZE);
+    }
+    
+    public boolean canTake() {
+        return true;
+    }
+    
+    public boolean canPut() {
+        return true;
     }
     
     @Override

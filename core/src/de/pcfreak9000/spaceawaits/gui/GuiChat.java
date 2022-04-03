@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class GuiChat extends GuiOverlay {
     
@@ -21,8 +20,8 @@ public class GuiChat extends GuiOverlay {
     private int historyIndex = -1;
     private String current;
     
-    public GuiChat(GameRenderer gameRenderer) {
-        super(gameRenderer);
+    @Override
+    protected void create() {
         reactsToToggleInventory = false;
         Table t = new Table();
         t.setFillParent(true);

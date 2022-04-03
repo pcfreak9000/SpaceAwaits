@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.menu;
+package de.pcfreak9000.spaceawaits.gui;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -7,8 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.item.InventoryPlayer;
+import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.world.ecs.content.HealthComponent;
 
 public class Hud {
@@ -63,7 +64,7 @@ public class Hud {
     private Table createHotbarSlotsTable() {
         Table table = new Table();
         for (HotbarSlot hs : slots) {
-            table.add(hs).pad(5);
+            table.add(hs).pad(0.5f);
         }
         return table;
     }
