@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.item;
 
 import com.badlogic.gdx.graphics.Color;
 
+import de.pcfreak9000.spaceawaits.comp.Composite;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -24,6 +25,11 @@ public class ItemTile extends Item {
     @Override
     public ITextureProvider getTextureProvider() {
         return this.tile.getTextureProvider();
+    }
+    
+    @Override
+    public Composite getComposite() {
+        return this.tile.getComposite();
     }
     
     @Override

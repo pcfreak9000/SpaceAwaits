@@ -31,7 +31,8 @@ public class GuiInventory extends GuiOverlay {
             } else {
                 if (clicked.canPut()) {
                     ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, currentAttached);//This could be handled better...
-                    if (leftover != null && leftover.getCount() == currentAttached.getCount()) {
+                    if (leftover != null && leftover.getCount() == currentAttached.getCount()
+                            && clicked.inventoryBacking.isItemValidForSlot(clicked.slotIndex, leftover)) {
                         followmouse.setItemStack(clicked.getStack());
                         InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
                         InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, leftover);

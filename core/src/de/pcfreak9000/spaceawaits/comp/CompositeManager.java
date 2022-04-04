@@ -18,7 +18,7 @@ public class CompositeManager {
         return composites.get(id);
     }
     
-    private class Builder {
+    public class Builder {
         
         private int level;
         private String id;
@@ -52,7 +52,7 @@ public class CompositeManager {
         }
         
         public Composite build() {
-            Composite comp = new Composite(level, new ImmutableArray<>(this.composition));
+            Composite comp = new Composite(level, new ImmutableArray<>(this.composition), id);
             composites.put(id, comp);
             return comp;
         }

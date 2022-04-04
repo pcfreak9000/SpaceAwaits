@@ -1,8 +1,8 @@
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
+import de.pcfreak9000.spaceawaits.comp.CompositeInventory;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
-import de.pcfreak9000.spaceawaits.gui.ContainerDisassembler;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
@@ -44,6 +44,12 @@ public class SpaceshipFactory implements WorldEntityFactory {
         ac.layer = RenderLayers.ENTITY;
         ac.activators.add(tt);
         entity.add(ac);
+        CompositeInventoryComponent cic = new CompositeInventoryComponent();
+        cic.compositeInv = new CompositeInventory();
+        entity.add(cic);
+        DisassemblerComponent disscomp = new DisassemblerComponent();
+        disscomp.disassembler = new Disassembler(0);
+        entity.add(disscomp);
         return entity;
     }
     
@@ -52,8 +58,9 @@ public class SpaceshipFactory implements WorldEntityFactory {
         @Override
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
             Player player = source.getComponent(PlayerInputComponent.class).player;
-            player.openContainer(new ContainerDisassembler());
-            System.out.println("Gurke");
+            player.openContainer(
+                    new ContainerDisassembler(entity.getComponent(DisassemblerComponent.class).disassembler,
+                            entity.getComponent(CompositeInventoryComponent.class).compositeInv));
             return true;
         }
         

@@ -27,6 +27,8 @@ public class Item {
     
     private Color color = new Color(1, 1, 1, 1);
     
+    private Composite composite;
+    
     public void setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
     }
@@ -46,6 +48,14 @@ public class Item {
     
     public Color color() {
         return this.color;
+    }
+    
+    public void setComposite(Composite composite) {
+        this.composite = composite;
+    }
+    
+    public Composite getComposite() {
+        return composite;
     }
     
     public ITextureProvider getTextureProvider() {
@@ -70,7 +80,4 @@ public class Item {
         return false;
     }
     
-    public Composite getComposite() {
-        return null;
-    }
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.comp.CompositeManager;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -28,6 +29,8 @@ public class GameRegistry<T> {
             return this;
         };
     };
+    
+    public static final CompositeManager COMPOSITE_MANAGER = new CompositeManager();
     
     public static final GameRegistry<WorldEntityFactory> WORLD_ENTITY_REGISTRY = new GameRegistry<>();
     

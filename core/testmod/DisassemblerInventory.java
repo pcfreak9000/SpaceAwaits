@@ -1,4 +1,3 @@
-package de.pcfreak9000.spaceawaits.gui;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -6,6 +5,12 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 public class DisassemblerInventory implements IInventory {
     
     private final ItemStack[] stacks = new ItemStack[1];
+    
+    private final Disassembler disassembler;
+    
+    public DisassemblerInventory(Disassembler d) {
+        this.disassembler = d;
+    }
     
     @Override
     public int slots() {
@@ -31,7 +36,7 @@ public class DisassemblerInventory implements IInventory {
     
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+        return disassembler.canDisassemble(stack);
     }
     
 }

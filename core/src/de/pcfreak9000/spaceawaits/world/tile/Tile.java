@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.comp.Composite;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
@@ -69,6 +70,8 @@ public class Tile {
     private String displayName;
     
     private Item itemTile;
+    
+    private Composite composite;
     
     public void setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
@@ -157,6 +160,14 @@ public class Tile {
     
     public void setHardness(float hardness) {
         this.hardness = hardness;
+    }
+    
+    public Composite getComposite() {
+        return composite;
+    }
+    
+    public void setComposite(Composite composite) {
+        this.composite = composite;
     }
     
     public boolean canBeReplacedBy(Tile t) {

@@ -64,6 +64,11 @@ public class DMod {
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
+        
+        GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
+        GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
+        GameRegistry.COMPOSITE_MANAGER.create(1, "Stonestuff").add(10f, "Proton").add(10f, "Electron").build();
+        
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
         GameRegistry.WORLD_ENTITY_REGISTRY.register("spac", fac);
@@ -81,6 +86,7 @@ public class DMod {
         
         tstoneTile.setTexture("stone.png");
         tstoneTile.setDisplayName("Stone");
+        tstoneTile.setComposite(GameRegistry.COMPOSITE_MANAGER.getCompositeForName("Stonestuff"));
         GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
         tstoneTile.setLightTransmission(0.6f);
         
@@ -152,7 +158,7 @@ public class DMod {
                 p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
-                p.setChunkGenerator(new TestChunkGenerator());
+                p.setChunkGenerator(new TestChunkGenerator(seed));
                 p.setUnchunkGenerator(new IUnchunkGenerator() {
                     
                     @Override

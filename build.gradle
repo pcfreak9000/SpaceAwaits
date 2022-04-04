@@ -72,5 +72,6 @@ project(":core") {
         implementation 'info.picocli:picocli:4.6.1'
        	implementation files('lib/Java-NBT.jar')    
        	implementation "com.cyphercove.flexbatch:flexbatch:1.2.3"
+       	implementation "com.sudoplay.joise:joise:1.1.0"
     }
 }
