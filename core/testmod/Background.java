@@ -6,6 +6,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
@@ -46,6 +47,7 @@ public class Background implements WorldEntityFactory {
         e.add(tc);
         e.add(pc);
         e.add(tex);
+        e.add(new WorldGlobalComponent());
         e.add(new RenderComponent(-1000, "entity"));
         return e;
     }

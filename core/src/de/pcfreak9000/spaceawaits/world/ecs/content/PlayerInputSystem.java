@@ -73,7 +73,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (worldRend.isGuiContainerOpen()) {
             return;
         }
-
+        
         Entity entity = this.player.getPlayerEntity();
         PlayerInputComponent play = mapper.get(entity);
         float vy = 0;
@@ -85,26 +85,30 @@ public class PlayerInputSystem extends EntitySystem {
         boolean down = InptMgr.isPressed(EnumInputIds.Down);
         boolean right = InptMgr.isPressed(EnumInputIds.Right);
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
+        boolean onSolidGround = solidGroundMapper.get(entity).isOnSolidGround();
         if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
             healthMapper.get(entity).currentHealth -= backlayer ? -10 : 10;
         }
-        if (up) {//&& solidGroundMapper.get(entity).isOnSolidGround()
-            vy += play.maxYv * 5;
+        if (onSolidGround) {
+            if (up) {
+                vy += play.maxYv * 5;
+                
+            }
+            //kinda useless, use for sneaking/ladders instead?
+            if (down) {
+                vy -= play.maxYv * 5;
+            }
         }
-        //kinda useless, use for sneaking/ladders instead?
-        if (down) {
-            vy -= play.maxYv * 5;
-        }
-        //}
         if (left) {
-            vx -= play.maxXv * 5;
+            vx -= play.maxXv * (onSolidGround ? 1.2f : 1);
         }
         if (right) {
-            vx += play.maxXv * 5;
+            vx += play.maxXv * (onSolidGround ? 1.2f : 1);
         }
         PhysicsComponent pc = physicsMapper.get(entity);
-        pc.body.applyAccelerationW(vx * 3, vy * 3);
-        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 1.5f, -pc.body.getLinearVelocityPh().y * 1.5f);
+        pc.body.setVelocityW(vx,vy);
+        //pc.body.applyAccelerationW(vx * 3, vy * 3);
+        //pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 12, -pc.body.getLinearVelocityPh().y * 1.4f);
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
         player.getInventory().setSelectedSlot(hotbarChecked);
     }

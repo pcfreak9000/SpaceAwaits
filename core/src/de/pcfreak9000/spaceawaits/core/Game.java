@@ -18,9 +18,10 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator.GeneratorCapabilitiesBase;
+import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
+import de.pcfreak9000.spaceawaits.world.gen.WorldSetup.GeneratorCapabilitiesBase;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class Game {
@@ -34,10 +35,13 @@ public class Game {
     private String uuidPlayerLocation;
     private World world;
     
-    public Game(ISave save, GameRenderer renderer) {
+    private boolean fresh;//TMP!!! also what if the spawn world is deleted? that shoudl then be replaced by another spawn world
+    
+    public Game(ISave save, GameRenderer renderer, boolean fresh) {
         this.mySave = save;
         this.gameRenderer = renderer;
         this.player = new Player(renderer);
+        this.fresh = fresh;
         this.readPlayer();
     }
     
@@ -56,7 +60,7 @@ public class Game {
     }
     
     //TMP
-    private WorldGenerator pickGenerator(List<WorldGenerator> list) {
+    private WorldSetup pickGenerator(List<WorldSetup> list) {
         return MathUtil.getWeightedRandom(new Random(), list);
     }
     
@@ -67,15 +71,17 @@ public class Game {
             String genId = meta.getWorldGeneratorUsed();
             long worldSeed = meta.getWorldSeed();
             //No default because this is crucial information and can't really be defaulted
-            WorldGenerator gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
-            WorldPrimer worldPrimer = gen.generateWorld(worldSeed);
+            WorldSetup gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
+            WorldPrimer worldPrimer = gen.setupWorld(new GeneratorSettings(worldSeed, fresh));
+            fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
             WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
-            this.uuidPlayerLocation = uuid;
             this.world = world;
+            //worldPrimer.getWorldGenerator().generate(world);
+            this.uuidPlayerLocation = uuid;
             if (newLocation) {
-                Vector2 spawnpoint = world.findSpawnpoint(player);
+                Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
                 Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
                 playerpos.x = spawnpoint.x;
                 playerpos.y = spawnpoint.y;
@@ -86,15 +92,14 @@ public class Game {
             world.joinWorld(player);
             this.gameRenderer.setWorldView();
             this.gameRenderer.getWorldView().setWorld(world);
-        } catch (
-        
-        IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
     
-    public String createWorld(String name, WorldGenerator generator, long seed) {
-        WorldPrimer worldPrimer = generator.generateWorld(seed);
+    public String createWorld(String name, WorldSetup generator, long seed) {
+        WorldPrimer worldPrimer = generator.setupWorld(new GeneratorSettings(seed, fresh));
+        fresh = false;
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
                 .worldGenerator(GameRegistry.GENERATOR_REGISTRY.getId(generator))
                 .dimensions(worldPrimer.getWorldBounds()).create();

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.badlogic.gdx.utils.Queue;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 
@@ -27,6 +28,8 @@ public class ChunkProvider implements IChunkProvider {
     private IChunkLoader loader;
     
     private Chunk cached = null;
+    
+    private Queue<IntCoordKey> extra = new Queue<>();
     
     public ChunkProvider(World world, IChunkLoader loader) {
         this.world = world;
@@ -111,6 +114,7 @@ public class ChunkProvider implements IChunkProvider {
         }
         chunks.clear();
         chunkStuff.clear();
+        extra.clear();
     }
     
     @Override
@@ -126,9 +130,19 @@ public class ChunkProvider implements IChunkProvider {
         ChunkData cd = chunks.get(key);
         if (cd != null) {
             cached = cd.c;
+            extra.removeValue(key, false);
+            extra.addLast(key);
             return cd.c;
         }
-        return null;
+        requireChunk(key.getX(), key.getY(), true, this);
+        extra.addLast(key);
+        //Thread.dumpStack();
+        //System.out.println("Extra Chunk!");
+        if (extra.size > 6) {
+            IntCoordKey k = extra.removeFirst();
+            releaseChunk(k.getX(), k.getY(), this);
+        }
+        return getChunk(x, y);
     }
     
     @Override

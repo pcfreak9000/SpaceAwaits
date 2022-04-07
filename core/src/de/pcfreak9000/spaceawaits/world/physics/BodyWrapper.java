@@ -35,6 +35,10 @@ public class BodyWrapper {
                 true);
     }
     
+    public void applyVelocityW(float x, float y) {
+        //this.body.getce
+    }
+    
     public void applyAccelerationPh(float ax, float ay) {
         this.body.applyForceToCenter(ax * this.body.getMass(), ay * this.body.getMass(), true);
     }
@@ -45,6 +49,10 @@ public class BodyWrapper {
     
     public Vector2 getPositionW() {
         return METER_CONV.out(this.body.getPosition());
+    }
+    
+    public void setVelocityW(float vx, float vy) {
+        this.body.setLinearVelocity(METER_CONV.in(vx), METER_CONV.in(vy));
     }
     
 }

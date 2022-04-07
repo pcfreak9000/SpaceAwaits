@@ -7,6 +7,7 @@ import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 
 public class UnchunkProvider implements IUnchunkProvider {
     
@@ -15,12 +16,14 @@ public class UnchunkProvider implements IUnchunkProvider {
     
     private World world;
     private IUnchunkGenerator unchunkGen;
+    private IWorldGenerator worldGen;
     
     private IWorldSave save;
     
-    public UnchunkProvider(World world, IUnchunkGenerator gen) {
+    public UnchunkProvider(World world, IUnchunkGenerator gen, IWorldGenerator worldGenerator) {
         this.world = world;
         this.unchunkGen = gen;
+        this.worldGen = worldGenerator;
     }
     
     public void setSave(IWorldSave save) {
@@ -39,6 +42,7 @@ public class UnchunkProvider implements IUnchunkProvider {
             unchunkGen.regenerateUnchunk(data, world);
         } else {
             unchunkGen.generateUnchunk(data, world);
+            worldGen.generate(world);
         }
     }
     

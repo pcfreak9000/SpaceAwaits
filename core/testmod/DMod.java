@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.EventSubscription;
@@ -18,17 +19,24 @@ import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
+import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
+import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.WorldGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.WorldView;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
@@ -143,7 +151,7 @@ public class DMod {
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         
-        GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldGenerator() {
+        GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;
             
@@ -153,12 +161,38 @@ public class DMod {
             }
             
             @Override
-            public WorldPrimer generateWorld(long seed) {
+            public WorldPrimer setupWorld(GeneratorSettings genset) {
                 WorldPrimer p = new WorldPrimer(this);
-                p.setPlayerSpawn((pl) -> new Rectangle(0, 300, WIDTH, 700));
+                p.setWorldGenerator(new IWorldGenerator() {
+                    
+                    @Override
+                    public void generate(World world) {
+                        Entity ship = DMod.instance.fac.createEntity();
+                        TransformComponent tc = ship.getComponent(TransformComponent.class);
+                        Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
+                        Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
+                        tc.position.set(s);
+                        world.spawnEntity(ship, false);
+                    }
+                });
+                p.setPlayerSpawn(new IPlayerSpawn() {
+                    
+                    @Override
+                    public Rectangle getSpawnArea(Player player) {
+                        return new Rectangle(0, 300, WIDTH, 700);
+                    }
+                    
+                    @Override
+                    public Vector2 getPlayerSpawn(Player player, World world) {
+                        Vector2 dim = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
+                                .boundingBoxWidthAndHeight();
+                        Rectangle rect = getSpawnArea(player);
+                        return WorldUtil.findSpawnpoint(world, dim.x, dim.y, rect.x, rect.y, rect.width, rect.height);
+                    }
+                });
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
-                p.setChunkGenerator(new TestChunkGenerator(seed));
+                p.setChunkGenerator(new TestChunkGenerator(genset.getSeed()));
                 p.setUnchunkGenerator(new IUnchunkGenerator() {
                     
                     @Override
@@ -175,33 +209,10 @@ public class DMod {
                         entities.addEntity(testFogEntity());
                     }
                 });
-                //                p.setLightProvider(new AmbientLightProvider() {
-                //                    
-                //                    @Override
-                //                    public Color getAmbientLightNew(int tx, int ty) {
-                //                        return Util.ofTemperature(
-                //                                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent().time);
-                //                    }
-                //                });
                 return p;
             }
         });
     }
-    
-    //    private Entity fog() {
-    //        Entity e = new EntityImproved();
-    //        e.add(new RenderComponent(10, "entity"));
-    //        RenderTextureComponent rtc = new RenderTextureComponent();
-    //        rtc.color = Color.CYAN;
-    //        rtc.texture = fog;
-    //        rtc.width = 1000;
-    //        rtc.height = 200;
-    //        e.add(rtc);
-    //        TransformComponent tc = new TransformComponent();
-    //        tc.position.set(2000, 500);
-    //        e.add(tc);
-    //        return e;
-    //    }
     
     private Entity testFogEntity() {
         Entity e = new EntityImproved();
@@ -224,6 +235,7 @@ public class DMod {
         e.add(tc);
         e.add(rc);
         e.add(rfc);
+        e.add(new WorldGlobalComponent());
         return e;
     }
     

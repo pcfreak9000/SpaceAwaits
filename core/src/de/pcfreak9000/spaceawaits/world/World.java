@@ -21,6 +21,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -37,6 +38,8 @@ public abstract class World {
             .getFor(TransformComponent.class);
     private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
             .getFor(PhysicsComponent.class);
+    private static final ComponentMapper<WorldGlobalComponent> WORLD_GLOBAL_MARKER = ComponentMapper
+            .getFor(WorldGlobalComponent.class);
     
     private WorldBounds worldBounds;
     private final long seed;
@@ -114,17 +117,18 @@ public abstract class World {
         //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
         //TODO what happens if the coordinates are somewhere out of bounds?
         //in both cases c is null and false is returned, but...
-        if (TRANSFORM_COMP_MAPPER.has(entity)) {
+        if (TRANSFORM_COMP_MAPPER.has(entity) && PHYSICS_COMP_MAPPER.has(entity) && checkOccupation) {
             TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
-            if (PHYSICS_COMP_MAPPER.has(entity) && checkOccupation) {
-                PhysicsComponent pc = PHYSICS_COMP_MAPPER.get(entity);
-                Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
-                //getSystem... oof
-                if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(t.position.x + wh.x / 4,
-                        t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
-                    return false;
-                }
+            PhysicsComponent pc = PHYSICS_COMP_MAPPER.get(entity);
+            Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
+            //getSystem... oof
+            if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(t.position.x + wh.x / 4,
+                    t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
+                return false;
             }
+        }
+        if (TRANSFORM_COMP_MAPPER.has(entity) && !WORLD_GLOBAL_MARKER.has(entity)) {
+            TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
@@ -214,6 +218,10 @@ public abstract class World {
     
     public AmbientLightProvider getLightProvider() {
         return ambientLightProvider;
+    }
+    
+    public IPlayerSpawn getPlayerSpawn() {
+        return this.playerSpawn;
     }
     
     public long getSeed() {

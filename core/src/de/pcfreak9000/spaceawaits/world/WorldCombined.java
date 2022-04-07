@@ -2,17 +2,13 @@ package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
@@ -25,7 +21,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsForcesSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
@@ -76,7 +71,7 @@ public class WorldCombined extends World {
     
     @Override
     protected IUnchunkProvider createUnchunkProvider(WorldPrimer primer) {
-        return new UnchunkProvider(this, primer.getUnchunkGenerator());
+        return new UnchunkProvider(this, primer.getUnchunkGenerator(), primer.getWorldGenerator());
     }
     
     private void setupECS(WorldPrimer primer, Engine engine) {
@@ -107,61 +102,6 @@ public class WorldCombined extends World {
         Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
         addTicket(new FollowingTicket(playerpos, 4));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
-    }
-    
-    public Vector2 findSpawnpoint(Player player) {
-        Rectangle spawnArea = playerSpawn.getSpawnArea(player);//TODO what about a spawnpoint near a bed? or another disjunct rect?
-        RandomXS128 rand = new RandomXS128(this.getSeed());
-        ChunkProvider chunkProvider = (ChunkProvider) this.chunkProvider;
-        Vector2 playerBounds = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
-                .boundingBoxWidthAndHeight();
-        TileSystem ts = ecsEngine.getSystem(TileSystem.class);
-        Object lock = new Object();
-        for (int i = 0; i < 100; i++) {
-            float x = spawnArea.x + rand.nextFloat() * spawnArea.width;
-            float y = spawnArea.y + rand.nextFloat() * spawnArea.height;
-            if (getBounds().inBoundsf(x, y)) {
-                int cx = Chunk.toGlobalChunkf(x);
-                int cy = Chunk.toGlobalChunkf(y);
-                int cw = Chunk.toGlobalChunkf(x + playerBounds.x);
-                int ch = Chunk.toGlobalChunkf(y + playerBounds.y);
-                for (int j = cx; j <= cw; j++) {
-                    for (int k = cy; k <= ch; k++) {
-                        chunkProvider.requireChunk(j, k, true, lock);
-                    }
-                }
-                if (!ts.checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {
-                    if (worldProperties.autoLowerSpawnpointToSolidGround()) {
-                        while (true) {
-                            y--;
-                            cy = Chunk.toGlobalChunkf(y);
-                            ch = Chunk.toGlobalChunkf(y + playerBounds.y);
-                            for (int j = cx; j <= cw; j++) {
-                                for (int k = cy; k <= ch; k++) {
-                                    chunkProvider.requireChunk(j, k, true, lock);
-                                }
-                            }
-                            if (ts.checkSolidOccupation(x, y, playerBounds.x, playerBounds.y)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
-                                y++;
-                                break;
-                            }
-                        }
-                    }
-                    //can spawn here, so do that
-                    chunkProvider.releaseLock(lock);
-                    Logger.getLogger(World.class)
-                            .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
-                    return new Vector2(x, y);
-                }
-                if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
-                    chunkProvider.releaseLock(lock);
-                }
-            }
-        }
-        chunkProvider.releaseLock(lock);
-        Logger.getLogger(World.class).debug("Couldn't find a suitable spawning location.");
-        //TODO no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
-        return null;
     }
     
     public void addTicket(ITicket ticket) {

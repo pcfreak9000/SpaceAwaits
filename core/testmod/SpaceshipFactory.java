@@ -26,6 +26,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
     @Override
     public Entity createEntity() {
         Entity entity = new EntityImproved();
+        entity.flags = 1029384756;
         entity.add(new ChunkMarkerComponent());
         RenderTextureComponent rec = new RenderTextureComponent();
         rec.texture = tex;

@@ -33,8 +33,8 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         OnSolidGroundComponent osgc = new OnSolidGroundComponent();
         SolidGroundContactListener l = new SolidGroundContactListener(osgc);
         PlayerInputComponent pic = new PlayerInputComponent();
-        pic.maxXv = 100 / 16;
-        pic.maxYv = 100 / 16;
+        pic.maxXv = 35;
+        pic.maxYv = 100/12;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
         RenderTextureComponent rc = new RenderTextureComponent();

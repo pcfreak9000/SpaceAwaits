@@ -8,19 +8,28 @@ import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
 public class WorldPrimer {
     
-    public final WorldGenerator worldGenerator;
+    public final WorldSetup worldSetup;
     
     private IChunkGenerator iChunkGenerator;
     private IUnchunkGenerator unchunkGenerator;
     private AmbientLightProvider lightProvider;
     private IPlayerSpawn playerSpawn;
     private IWorldProperties worldProperties;
+    private IWorldGenerator worldGenerator;
     private WorldBounds worldBounds;
     
-    public WorldPrimer(WorldGenerator generator) {
-        this.worldGenerator = generator;
+    public WorldPrimer(WorldSetup generator) {
+        this.worldSetup = generator;
         this.lightProvider = AmbientLightProvider.constant(Color.WHITE);
         this.worldProperties = IWorldProperties.defaultProperties();
+    }
+    
+    public IWorldGenerator getWorldGenerator() {
+        return worldGenerator;
+    }
+    
+    public void setWorldGenerator(IWorldGenerator worldGenerator) {
+        this.worldGenerator = worldGenerator;
     }
     
     public IChunkGenerator getChunkGenerator() {

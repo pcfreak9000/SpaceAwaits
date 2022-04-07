@@ -20,7 +20,7 @@ public class GuiInventory extends GuiOverlay {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             Slot clicked = (Slot) event.getListenerActor();
-            followmouse.setBounds(event.getStageX(), event.getStageY(), Slot.SIZE, Slot.SIZE);
+            followmouse.setBounds(event.getStageX(), event.getStageY(), Slot.SIZE*0.9f, Slot.SIZE*0.9f);
             ItemStack currentAttached = followmouse.getItemStack();
             if (currentAttached == null || currentAttached.isEmpty()) {
                 if (clicked.canTake()) {

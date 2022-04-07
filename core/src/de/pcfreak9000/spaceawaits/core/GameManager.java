@@ -32,15 +32,15 @@ public class GameManager {
     
     public void createAndLoadGame(String name, long seed) throws IOException {
         ISave save = this.saveManager.createSave(name, seed);
-        loadGame(save.getSaveMeta().getNameOnDisk());
+        loadGame(save.getSaveMeta().getNameOnDisk(), true);
     }
     
-    public void loadGame(String uniqueSaveDesc) throws IOException {
+    public void loadGame(String uniqueSaveDesc, boolean fresh) throws IOException {
         if (!saveManager.exists(uniqueSaveDesc)) {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Game game = new Game(save, gameRenderer);
+        Game game = new Game(save, gameRenderer, fresh);
         game.joinGame();
         this.gameCurrent = game;
     }

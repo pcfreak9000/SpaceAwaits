@@ -19,8 +19,9 @@ public class TestChunkGenerator implements IChunkGenerator {
     private Module genNoise(long seed) {
         ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
         gen.setSeed(seed);
-        gen.setNumOctaves(5);
-        gen.setFrequency(0.00154);
+        gen.setNumOctaves(6);
+        gen.setFrequency(0.00184);
+        gen.setLacunarity(2.1);
         
         ModuleAutoCorrect source = new ModuleAutoCorrect(-1, 1);
         source.setSource(gen);

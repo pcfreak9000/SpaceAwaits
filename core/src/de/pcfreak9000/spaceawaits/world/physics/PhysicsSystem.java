@@ -88,9 +88,9 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
+        entCheck.ud.clear();
         queryAABB(entCheck, x1, y1, x2, y2);
         boolean b = entCheck.ud.isEntity();
-        entCheck.ud.clear();
         return b;
     }
     

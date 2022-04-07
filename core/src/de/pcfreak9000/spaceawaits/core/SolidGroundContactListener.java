@@ -47,7 +47,7 @@ public class SolidGroundContactListener implements IContactListener {
                 } else if (n == 2) {
                     backingComp.lastContactX = p[0].x * 0.5f + p[1].x * 0.5f;
                     backingComp.lastContactY = p[0].y * 0.5f + p[1].y * 0.5f;
-                }
+                }//FIXME ? this looks like it needs a METER_CONV conversion?
             }
         }
         return false;

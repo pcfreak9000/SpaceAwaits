@@ -98,7 +98,7 @@ public class SelectSaveScreen extends MenuScreen {
                 SaveMetaUi selected = savesList.getSelected();
                 if (selected != null) {
                     try {
-                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk(), false);
                         g.setGameScreen();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -189,7 +189,7 @@ public class SelectSaveScreen extends MenuScreen {
                 SaveMetaUi selected = savesList.getSelected();
                 if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     try {
-                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk());
+                        SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk(), false);
                         g.setGameScreen();
                         last = 0;
                     } catch (IOException e) {

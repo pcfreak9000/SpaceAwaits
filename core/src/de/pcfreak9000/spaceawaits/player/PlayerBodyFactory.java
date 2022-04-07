@@ -44,7 +44,7 @@ public class PlayerBodyFactory implements BodyFactory {
         shape.setPosition(METER_CONV.in(new Vector2(0, 0)));
         b.createFixture(fd);
         PolygonShape psh = new PolygonShape();
-        psh.setAsBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 16), METER_CONV.in(new Vector2(0, -WH.y / 2)), 0);
+        psh.setAsBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 16), METER_CONV.in(new Vector2(0, -WH.y / 2+WH.y/32f)), 0);
         fd.shape = psh;
         fd.isSensor = true;
         Fixture f = b.createFixture(fd);
