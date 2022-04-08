@@ -100,15 +100,14 @@ public class PlayerInputSystem extends EntitySystem {
             }
         }
         if (left) {
-            vx -= play.maxXv * (onSolidGround ? 1.2f : 1);
+            vx -= play.maxXv;
         }
         if (right) {
-            vx += play.maxXv * (onSolidGround ? 1.2f : 1);
+            vx += play.maxXv;
         }
         PhysicsComponent pc = physicsMapper.get(entity);
-        pc.body.setVelocityW(vx,vy);
-        //pc.body.applyAccelerationW(vx * 3, vy * 3);
-        //pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 12, -pc.body.getLinearVelocityPh().y * 1.4f);
+        pc.body.applyAccelerationW(vx * 6, vy * 3);
+        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
         player.getInventory().setSelectedSlot(hotbarChecked);
     }

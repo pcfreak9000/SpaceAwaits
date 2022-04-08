@@ -21,7 +21,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
-    private static final float PIXELS_PER_METER = 1.5f;
+    private static final float PIXELS_PER_METER = 1f;
     
     //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);

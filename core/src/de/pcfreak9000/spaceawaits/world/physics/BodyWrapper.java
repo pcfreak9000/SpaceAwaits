@@ -34,11 +34,7 @@ public class BodyWrapper {
         this.body.applyForceToCenter(METER_CONV.in(ax) * this.body.getMass(), METER_CONV.in(ay) * this.body.getMass(),
                 true);
     }
-    
-    public void applyVelocityW(float x, float y) {
-        //this.body.getce
-    }
-    
+
     public void applyAccelerationPh(float ax, float ay) {
         this.body.applyForceToCenter(ax * this.body.getMass(), ay * this.body.getMass(), true);
     }
