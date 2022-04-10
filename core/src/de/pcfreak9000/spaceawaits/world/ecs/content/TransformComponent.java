@@ -5,14 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 public class TransformComponent implements Component, NBTSerializable {
-    
-    static {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsTransform", TransformComponent.class);
-    }
+
     
     public final Vector2 position;
     

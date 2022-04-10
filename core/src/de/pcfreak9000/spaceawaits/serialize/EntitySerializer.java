@@ -4,33 +4,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class EntitySerializer {
-    
-    private static final ComponentMapper<SerializeEntityComponent> seMapper = ComponentMapper
-            .getFor(SerializeEntityComponent.class);
     
     private static final EntityComponentHolderWrapper ENTITY_WRAPPER = new EntityComponentHolderWrapper();
     
     //TODO Check for illegal characters!! also in the registries...
     
     public static boolean isSerializable(Entity e) {
-        return seMapper.has(e);
+        return Components.SERIALIZE_ENTITY.has(e);
     }
     
     public static NBTCompound serializeEntity(Entity entityImproved) {
         if (isSerializable(entityImproved)) {
             NBTCompound nbt = new NBTCompound();
-            WorldEntityFactory fac = seMapper.get(entityImproved).factory;
+            WorldEntityFactory fac = Components.SERIALIZE_ENTITY.get(entityImproved).factory;
             GameRegistry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
-            String facId = GameRegistry.WORLD_ENTITY_REGISTRY.getId(seMapper.get(entityImproved).factory);
+            String facId = GameRegistry.WORLD_ENTITY_REGISTRY
+                    .getId(Components.SERIALIZE_ENTITY.get(entityImproved).factory);
             nbt.putString("entityFactoryId", facId);
             //This could also happen in a serialize function in the factory
             nbt.putCompound("components", serializeEntityComponents(entityImproved));

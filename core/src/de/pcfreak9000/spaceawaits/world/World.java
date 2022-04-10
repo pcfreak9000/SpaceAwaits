@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world;
 
 import java.util.Random;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -11,17 +10,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
-import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -31,15 +28,6 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public abstract class World {
     
     public static final float STEPLENGTH_SECONDS = 1 / 60f;
-    
-    private static final ComponentMapper<ChunkMarkerComponent> CHUNK_COMP_MAPPER = ComponentMapper
-            .getFor(ChunkMarkerComponent.class);
-    private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
-            .getFor(TransformComponent.class);
-    private static final ComponentMapper<PhysicsComponent> PHYSICS_COMP_MAPPER = ComponentMapper
-            .getFor(PhysicsComponent.class);
-    private static final ComponentMapper<WorldGlobalComponent> WORLD_GLOBAL_MARKER = ComponentMapper
-            .getFor(WorldGlobalComponent.class);
     
     private WorldBounds worldBounds;
     private final long seed;
@@ -57,8 +45,10 @@ public abstract class World {
     //Used for random item drops etc, not terrain gen etc
     protected final RandomXS128 worldRandom;
     
-    public long time;//TMP until there is a proper class updating the universe
-    private float timehelper;
+//    public long time;//TMP until there is a proper class updating the universe
+//    private float timehelper;
+    
+    private int countChunkActive = 0;
     
     public World(WorldPrimer primer, long seed) {
         //initialize fields
@@ -93,20 +83,22 @@ public abstract class World {
         this.ecsEngine.update(dt);
         //this.chunkProvider.unloadQueued();
         
-        timehelper += dt * 50;
-        if (timehelper >= 1) {
-            int i = Mathf.floori(timehelper);
-            timehelper -= i;
-            time += i;
-        }
+//        timehelper += dt * 50;
+//        if (timehelper >= 1) {
+//            int i = Mathf.floori(timehelper);
+//            timehelper -= i;
+//            time += i;
+//        }
     }
     
     protected void addChunk(Chunk c) {
         c.addToECS(ecsEngine);
+        countChunkActive++;
     }
     
     protected void removeChunk(Chunk c) {
         c.removeFromECS();
+        countChunkActive--;
     }
     
     public void joinWorld(Player player) {
@@ -117,9 +109,9 @@ public abstract class World {
         //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
         //TODO what happens if the coordinates are somewhere out of bounds?
         //in both cases c is null and false is returned, but...
-        if (TRANSFORM_COMP_MAPPER.has(entity) && PHYSICS_COMP_MAPPER.has(entity) && checkOccupation) {
-            TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
-            PhysicsComponent pc = PHYSICS_COMP_MAPPER.get(entity);
+        if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity) && checkOccupation) {
+            TransformComponent t = Components.TRANSFORM.get(entity);
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
             Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
             //getSystem... oof
             if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(t.position.x + wh.x / 4,
@@ -127,8 +119,8 @@ public abstract class World {
                 return false;
             }
         }
-        if (TRANSFORM_COMP_MAPPER.has(entity) && !WORLD_GLOBAL_MARKER.has(entity)) {
-            TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
+        if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
+            TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
@@ -149,13 +141,13 @@ public abstract class World {
     }
     
     public void despawnEntity(Entity entity) {
-        if (CHUNK_COMP_MAPPER.has(entity)) {
-            Chunk c = CHUNK_COMP_MAPPER.get(entity).currentChunk;
+        if (Components.CHUNK_MARKER.has(entity)) {
+            Chunk c = Components.CHUNK_MARKER.get(entity).currentChunk;
             if (c != null) {
                 c.removeEntity(entity);
             }
-        } else if (TRANSFORM_COMP_MAPPER.has(entity)) {
-            TransformComponent t = TRANSFORM_COMP_MAPPER.get(entity);
+        } else if (Components.TRANSFORM.has(entity)) {
+            TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
@@ -209,7 +201,7 @@ public abstract class World {
     }
     
     public int getUpdatingChunksCount() {
-        return getSystem(TickChunkSystem.class).getEntities().size();//Ooof, this is pretty specific...
+        return countChunkActive;
     }
     
     public WorldBounds getBounds() {

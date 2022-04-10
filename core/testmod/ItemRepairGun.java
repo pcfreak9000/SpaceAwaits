@@ -18,7 +18,7 @@ public class ItemRepairGun extends Item {
     
     private final UserDataHelper udh = new UserDataHelper();
     
-    private static final ComponentMapper<DamagedComponent> MAP = ComponentMapper.getFor(DamagedComponent.class);
+    private static final ComponentMapper<DamagedComponent> MAP = ComponentMapper.getFor(DamagedComponent.class);//Move
     
     @Override
     public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y,
@@ -40,7 +40,7 @@ public class ItemRepairGun extends Item {
         }, x - 0.01f, y - 0.01f, x + 0.01f, y + 0.01f);
         if (ent[0] != null) {
             DamagedComponent dc = MAP.get(ent[0]);
-            dc.damage -= 0.00075f;
+            dc.damage -= 0.0075f;
             NBTCompound nbt = stackUsed.getOrCreateNBT();
             nbt.putByte("bar", (byte) (nbt.getByteOrDefault("bar", (byte) 255) - 1));
             if (nbt.getByte("bar") == 0) {

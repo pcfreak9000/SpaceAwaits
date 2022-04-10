@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
@@ -8,15 +7,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
 public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
-    
-    private static final ComponentMapper<BreakingTilesComponent> MAPPER = ComponentMapper
-            .getFor(BreakingTilesComponent.class);
     
     public RenderTileBreakingStrategy(GameRenderer renderer) {
         super(Family.all(BreakingTilesComponent.class).get());
@@ -39,7 +36,7 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     
     @Override
     public void render(Entity e, float dt) {
-        BreakingTilesComponent c = MAPPER.get(e);
+        BreakingTilesComponent c = Components.TILES_BREAKING.get(e);
         for (BreakTileProgress t : c.breaktiles.values()) {
             int tx = t.getX();
             int ty = t.getY();

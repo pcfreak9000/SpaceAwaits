@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.item;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
@@ -9,6 +8,7 @@ import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
@@ -16,15 +16,11 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 
 public class ItemEntityFactory implements WorldEntityFactory {
-    private static final ComponentMapper<TransformComponent> TRANSFORM_COMP_MAPPER = ComponentMapper
-            .getFor(TransformComponent.class);
-    private static final ComponentMapper<ItemStackComponent> ITEMSTACK_COMP_MAPPER = ComponentMapper
-            .getFor(ItemStackComponent.class);
     
     public static Entity setupItemEntity(ItemStack stack, float x, float y) {
         Entity e = CoreRes.ITEM_FACTORY.createEntity();
-        ITEMSTACK_COMP_MAPPER.get(e).stack = stack;
-        TRANSFORM_COMP_MAPPER.get(e).position.set(x, y);
+        Components.ITEM_STACK.get(e).stack = stack;
+        Components.TRANSFORM.get(e).position.set(x, y);
         return e;
     }
     

@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
@@ -8,15 +7,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class RenderTextureStrategy extends AbstractRenderStrategy {
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
-    private final ComponentMapper<RenderTextureComponent> renderMapper = ComponentMapper
-            .getFor(RenderTextureComponent.class);
     
     private GameRenderer renderer;
     
@@ -43,8 +39,8 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     
     @Override
     public void render(Entity entity, float deltaTime) {
-        RenderTextureComponent rec = renderMapper.get(entity);
-        Vector2 p = transformMapper.get(entity).position;
+        RenderTextureComponent rec = Components.RENDER_TEXTURE.get(entity);
+        Vector2 p = Components.TRANSFORM.get(entity).position;
         float wh = 0.5f * rec.width;
         float hh = 0.5f * rec.height;
         float mx = p.x + wh;

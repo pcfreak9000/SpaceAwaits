@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -28,13 +27,10 @@ public class ActivatorSystem extends EntitySystem {
     
     private static final Family FAMILY = Family.all(ActionComponent.class).get();
     
-    private static final ComponentMapper<ActivatorComponent> AMAP = ComponentMapper.getFor(ActivatorComponent.class);
-    private static final ComponentMapper<ActionComponent> AAMAP = ComponentMapper.getFor(ActionComponent.class);
-    
     private static final SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
     private static final Comparator<Entity> COMP = (e0, e1) -> {
-        return (int) Math.signum(AMAP.get(e1).layer - AMAP.get(e0).layer);
+        return (int) Math.signum(Components.ACTIVATOR.get(e1).layer - Components.ACTIVATOR.get(e0).layer);
     };
     
     private GameRenderer gameRend;
@@ -82,7 +78,7 @@ public class ActivatorSystem extends EntitySystem {
                 udh.set(fix.getUserData(), fix);
                 if (udh.isEntity()) {
                     Entity e = udh.getEntity();
-                    if (AMAP.has(e)) {
+                    if (Components.ACTIVATOR.has(e)) {
                         if (entitySet.add(e)) {
                             entityList.add(e);
                         }
@@ -92,7 +88,7 @@ public class ActivatorSystem extends EntitySystem {
             return true;
         }, mouse.x - 0.01f, mouse.y - 0.01f, mouse.x + 0.01f, mouse.y + 0.01f);
         for (Entity e : entities) {
-            ActionComponent ac = AAMAP.get(e);
+            ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {
                 if (InptMgr.isPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, world, e)) {
@@ -103,7 +99,7 @@ public class ActivatorSystem extends EntitySystem {
         }
         entityList.sort(COMP);
         for (Entity e : entityList) {
-            ActivatorComponent ac = AMAP.get(e);
+            ActivatorComponent ac = Components.ACTIVATOR.get(e);
             for (Activator a : ac.activators) {
                 if (InptMgr.isPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, e, this.world, this.player.getPlayerEntity())) {
@@ -112,7 +108,6 @@ public class ActivatorSystem extends EntitySystem {
                 }
             }
         }
-
         
     }
     

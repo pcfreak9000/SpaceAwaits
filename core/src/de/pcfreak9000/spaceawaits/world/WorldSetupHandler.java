@@ -4,10 +4,10 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderFogStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTextureStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileBreakingStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultStrategy;
-import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentStrategy;
 
 public class WorldSetupHandler {
     

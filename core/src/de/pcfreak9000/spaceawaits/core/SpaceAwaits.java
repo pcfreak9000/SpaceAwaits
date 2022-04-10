@@ -20,9 +20,11 @@ import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
+    public static final boolean DEBUG_CAMERA = false;
     
     public static final String NAME = "Space Awaits";
     public static final String VERSION = "pre-Alpha-0";
@@ -73,6 +75,7 @@ public class SpaceAwaits extends Game {
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
         CoreRes.init();
+        Components.registerComponents();
         LOGGER.info("Init...");
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");

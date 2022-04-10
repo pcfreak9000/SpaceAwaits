@@ -13,7 +13,7 @@ import picocli.CommandLine.Parameters;
 public class GiveItemCommand implements Runnable {
     @Parameters(index = "0")
     private String id;
-    @Parameters(index = "1")
+    @Parameters(index = "1", defaultValue = "1")
     private int amount;
     
     @Override

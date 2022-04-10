@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
@@ -16,10 +16,6 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 public class RenderItemStrategy implements IRenderStrategy {
     
     private static final Family FAMILY = Family.all(ItemStackComponent.class, TransformComponent.class).get();
-    
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
-    private final ComponentMapper<ItemStackComponent> renderMapper = ComponentMapper.getFor(ItemStackComponent.class);
     
     private static final Vector2[] offsets = new Vector2[8];
     
@@ -46,8 +42,8 @@ public class RenderItemStrategy implements IRenderStrategy {
     
     @Override
     public void render(Entity e, float dt) {
-        TransformComponent tc = transformMapper.get(e);
-        ItemStackComponent ic = renderMapper.get(e);
+        TransformComponent tc = Components.TRANSFORM.get(e);
+        ItemStackComponent ic = Components.ITEM_STACK.get(e);
         ItemStack stack = ic.stack;
         if (stack != null && !stack.isEmpty()) {
             batch.setColor(stack.getItem().color());

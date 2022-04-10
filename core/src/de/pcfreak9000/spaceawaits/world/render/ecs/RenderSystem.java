@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world.render.ecs;
 import java.util.Comparator;
 import java.util.Objects;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
@@ -26,6 +25,7 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -36,11 +36,9 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private static final Family FAMILY = Family.all(RenderComponent.class).get();
     
-    private static final ComponentMapper<RenderComponent> rMapper = ComponentMapper.getFor(RenderComponent.class);
-    
     private static final Comparator<Entity> COMPARATOR = (e1, e2) -> {
-        RenderComponent r1 = rMapper.get(e1);
-        RenderComponent r2 = rMapper.get(e2);
+        RenderComponent r1 = Components.RENDER.get(e1);
+        RenderComponent r2 = Components.RENDER.get(e2);
         float maj = r1.layer - r2.layer;
         if (maj == 0) {
             int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
@@ -144,7 +142,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     }
     
     private void addEntityInternal(Entity entity) {
-        RenderComponent rc = rMapper.get(entity);
+        RenderComponent rc = Components.RENDER.get(entity);
         Objects.requireNonNull(rc.renderStratId);
         IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderStratId);
         if (renderStrategy == null) {
@@ -164,7 +162,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     }
     
     private void removeEntityPrep(Entity entity) {
-        RenderComponent rc = rMapper.get(entity);
+        RenderComponent rc = Components.RENDER.get(entity);
         IRenderStrategy dec = rc.renderStrategy;
         if (dec instanceof EntityListener) {
             EntityListener el = (EntityListener) dec;
@@ -181,7 +179,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         float lastLayer = Float.NEGATIVE_INFINITY;
         boolean endedLight = false;
         for (Entity e : entities) {
-            RenderComponent rc = rMapper.get(e);
+            RenderComponent rc = Components.RENDER.get(e);
             if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
                 continue;
             }

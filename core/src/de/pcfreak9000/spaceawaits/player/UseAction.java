@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.player;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
@@ -8,14 +7,12 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Action;
-import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class UseAction implements Action {
-    private static final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper
-            .getFor(PlayerInputComponent.class);
     
     @Override
     public Object getInputKey() {
@@ -26,7 +23,7 @@ public class UseAction implements Action {
     public boolean handle(float mousex, float mousey, World world, Entity source) {
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
-        Player player = mapper.get(source).player;
+        Player player = Components.PLAYER_INPUT.get(source).player;
         //Current mouse stuff
         int tx = Tile.toGlobalTile(mousex);
         int ty = Tile.toGlobalTile(mousey);

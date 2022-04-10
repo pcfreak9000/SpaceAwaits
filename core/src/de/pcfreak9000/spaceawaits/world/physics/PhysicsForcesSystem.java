@@ -1,16 +1,14 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class PhysicsForcesSystem extends IteratingSystem {
-    
-    private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private final World world;
     
@@ -21,7 +19,7 @@ public class PhysicsForcesSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        PhysicsComponent comp = physicsMapper.get(entity);
+        PhysicsComponent comp = Components.PHYSICS.get(entity);
         if (comp.body.getBody().getType() == BodyType.StaticBody) {
             return;
         }

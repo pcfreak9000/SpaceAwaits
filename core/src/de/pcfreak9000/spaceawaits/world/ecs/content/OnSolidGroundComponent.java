@@ -4,15 +4,11 @@ import com.badlogic.ashley.core.Component;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 public class OnSolidGroundComponent implements Component, NBTSerializable {
     
-    static {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("OnSolidGroundComponent", OnSolidGroundComponent.class);
-    }
-    
+
     public int solidGroundContacts;
     public float lastContactX;
     public float lastContactY;

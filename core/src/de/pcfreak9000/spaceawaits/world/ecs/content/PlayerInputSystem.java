@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.ecs.content;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -23,14 +22,6 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerInputSystem extends EntitySystem {
-    
-    private static final ComponentMapper<PlayerInputComponent> mapper = ComponentMapper
-            .getFor(PlayerInputComponent.class);
-    private static final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper
-            .getFor(PhysicsComponent.class);
-    private static final ComponentMapper<OnSolidGroundComponent> solidGroundMapper = ComponentMapper
-            .getFor(OnSolidGroundComponent.class);
-    private static final ComponentMapper<HealthComponent> healthMapper = ComponentMapper.getFor(HealthComponent.class);
     
     private final World world;
     private final GameRenderer worldRend;
@@ -75,7 +66,7 @@ public class PlayerInputSystem extends EntitySystem {
         }
         
         Entity entity = this.player.getPlayerEntity();
-        PlayerInputComponent play = mapper.get(entity);
+        PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
         float vx = 0;
         //        Vector2 transform = transformMapper.get(entity).position;
@@ -85,9 +76,9 @@ public class PlayerInputSystem extends EntitySystem {
         boolean down = InptMgr.isPressed(EnumInputIds.Down);
         boolean right = InptMgr.isPressed(EnumInputIds.Right);
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
-        boolean onSolidGround = solidGroundMapper.get(entity).isOnSolidGround();
+        boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
         if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
-            healthMapper.get(entity).currentHealth -= backlayer ? -10 : 10;
+            Components.HEALTH.get(entity).currentHealth -= backlayer ? -10 : 10;
         }
         if (onSolidGround) {
             if (up) {
@@ -105,7 +96,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (right) {
             vx += play.maxXv;
         }
-        PhysicsComponent pc = physicsMapper.get(entity);
+        PhysicsComponent pc = Components.PHYSICS.get(entity);
         pc.body.applyAccelerationW(vx * 6, vy * 3);
         pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());

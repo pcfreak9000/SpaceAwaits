@@ -17,6 +17,7 @@ import de.pcfreak9000.spaceawaits.save.WorldMeta;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -82,7 +83,7 @@ public class Game {
             this.uuidPlayerLocation = uuid;
             if (newLocation) {
                 Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
-                Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
+                Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
                 playerpos.x = spawnpoint.x;
                 playerpos.y = spawnpoint.y;
                 OnSolidGroundComponent osgc = player.getPlayerEntity().getComponent(OnSolidGroundComponent.class);

@@ -33,7 +33,7 @@ public class ActorItemStack extends Actor {
             batch.setColor(i.color());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {
-                if (itemstack.getNBT().hasKey("bar")) {
+                if (itemstack.getNBT().hasKey("bar")) {//FIXME this stinks
                     byte b = itemstack.getNBT().getByte("bar");
                     int bar = Byte.toUnsignedInt(b);
                     float fill = bar / 255f;

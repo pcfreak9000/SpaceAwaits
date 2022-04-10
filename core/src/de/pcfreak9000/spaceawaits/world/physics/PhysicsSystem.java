@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
@@ -12,13 +11,10 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 
 public class PhysicsSystem extends IteratingSystem implements EntityListener {
-    
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
-    private final ComponentMapper<PhysicsComponent> physicsMapper = ComponentMapper.getFor(PhysicsComponent.class);
     
     private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1f;
@@ -105,9 +101,9 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void post(Entity entity) {
-        if (transformMapper.has(entity)) {
-            TransformComponent tc = this.transformMapper.get(entity);
-            PhysicsComponent pc = this.physicsMapper.get(entity);
+        if (Components.TRANSFORM.has(entity)) {
+            TransformComponent tc = Components.TRANSFORM.get(entity);
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
             Vector2 pos = pc.body.getPositionW();
             tc.position.set(pos.x - pc.factory.bodyOffset().x, pos.y - pc.factory.bodyOffset().y);
             Vector2 vel = pc.body.getLinearVelocityPh();
@@ -119,9 +115,9 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        if (transformMapper.has(entity)) {
-            PhysicsComponent pc = this.physicsMapper.get(entity);
-            TransformComponent tc = this.transformMapper.get(entity);
+        if (Components.TRANSFORM.has(entity)) {
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
+            TransformComponent tc = Components.TRANSFORM.get(entity);
             pc.body.setTransformW(tc.position.x + pc.factory.bodyOffset().x, tc.position.y + pc.factory.bodyOffset().y,
                     0);
         }
@@ -129,7 +125,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     @Override
     public void entityAdded(Entity entity) {
-        PhysicsComponent pc = this.physicsMapper.get(entity);
+        PhysicsComponent pc = Components.PHYSICS.get(entity);
         pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
         pc.body.getBody().setAngularVelocity(pc.rotVel);
@@ -145,7 +141,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     @Override
     public void entityRemoved(Entity entity) {
-        PhysicsComponent pc = this.physicsMapper.get(entity);
+        PhysicsComponent pc = Components.PHYSICS.get(entity);
         pc.factory.destroyBody(pc.body.getBody(), box2dWorld);
         pc.body = null;
     }

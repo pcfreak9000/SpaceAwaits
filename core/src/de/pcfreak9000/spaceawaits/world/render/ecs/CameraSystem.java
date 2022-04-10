@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.ecs;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -9,16 +8,12 @@ import com.badlogic.gdx.graphics.Camera;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 
 public class CameraSystem extends IteratingSystem {
-    private static final boolean DEBUG = false;
     
-    private static final ComponentMapper<TransformComponent> transformMapper = ComponentMapper
-            .getFor(TransformComponent.class);
-    private static final ComponentMapper<PlayerInputComponent> playerMapper = ComponentMapper
-            .getFor(PlayerInputComponent.class);
     private World world;
     
     public CameraSystem(World world) {
@@ -30,12 +25,12 @@ public class CameraSystem extends IteratingSystem {
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        TransformComponent tc = transformMapper.get(entity);
-        PlayerInputComponent pc = playerMapper.get(entity);
+        TransformComponent tc = Components.TRANSFORM.get(entity);
+        PlayerInputComponent pc = Components.PLAYER_INPUT.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
         Camera camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera();
-        if (!DEBUG) {
+        if (!SpaceAwaits.DEBUG_CAMERA) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
             x = Mathf.min(world.getBounds().getWidth() - camera.viewportWidth / 2, x);

@@ -5,8 +5,8 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializable {
     
@@ -23,7 +23,7 @@ public class LaserTileEntity extends TileEntity implements Tickable, NBTSerializ
     }
     
     @Override
-    public void tick(float time) {
+    public void tick(float time, long tick) {
         progress += time;
         if (gty - progress >= 0 && progress >= 1) {
             if (world.getSystem(TileSystem.class).getTile(gtx, gty - Mathf.floori(progress), TileLayer.Front)

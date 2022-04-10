@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
@@ -13,14 +12,13 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 //TODO having there global (gameregistrey and stuff) might not be the best idea
 public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements Disposable {
-    
-    private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
     
     private SpriteCache regionCache;//Maybe use something global instead
     private GameRenderer gameRenderer;
@@ -44,7 +42,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     
     @Override
     public void render(Entity entity, float deltaTime) {
-        ChunkRenderComponent crc = rMapper.get(entity);
+        ChunkRenderComponent crc = Components.RENDER_CHUNK.get(entity);
         if (!Util.checkChunkInFrustum(crc.chunk, camera)) {
             return;
         }

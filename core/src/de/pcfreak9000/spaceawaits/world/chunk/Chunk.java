@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.OrderedSet;
@@ -24,9 +23,10 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
@@ -36,10 +36,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Chunk implements NBTSerializable {
-    
-    private static final ComponentMapper<ChunkMarkerComponent> ChunkMarkerCompMapper = ComponentMapper
-            .getFor(ChunkMarkerComponent.class); //Having ECS code in this class isn't entirely fancy either
+public class Chunk implements NBTSerializable, Tickable {
     
     public static final int CHUNK_SIZE = 64;
     
@@ -96,7 +93,7 @@ public class Chunk implements NBTSerializable {
         this.tickablesForRemoval = new ArrayDeque<>();
         this.chunkEntity = new EntityImproved();
         this.chunkEntity.flags = 1;
-        this.chunkEntity.add(new ChunkComponent(this));
+        this.chunkEntity.add(new TickComponent(this));
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.chunkEntity.add(pc);
@@ -259,9 +256,10 @@ public class Chunk implements NBTSerializable {
                 && this.world.getBounds().inBounds(gtx, gty);
     }
     
+    @Override
     public void tick(float time, long tick) {
         this.ticking = true;
-        this.tickables.forEach((t) -> t.tick(time));
+        this.tickables.forEach((t) -> t.tick(time, tick));
         this.tickTiles(tick);
         this.ticking = false;
         while (!this.tickablesForRemoval.isEmpty()) {
@@ -296,8 +294,8 @@ public class Chunk implements NBTSerializable {
     }
     
     public void addEntity(Entity e) {
-        if (ChunkMarkerCompMapper.has(e)) {
-            ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
+        if (Components.CHUNK_MARKER.has(e)) {
+            ChunkMarkerComponent mw = Components.CHUNK_MARKER.get(e);
             if (mw.currentChunk != null) {
                 throw new IllegalStateException();
             }
@@ -307,8 +305,8 @@ public class Chunk implements NBTSerializable {
     }
     
     public void removeEntity(Entity e) {
-        if (ChunkMarkerCompMapper.has(e)) {
-            ChunkMarkerComponent mw = ChunkMarkerCompMapper.get(e);
+        if (Components.CHUNK_MARKER.has(e)) {
+            ChunkMarkerComponent mw = Components.CHUNK_MARKER.get(e);
             if (mw.currentChunk == null) {
                 throw new IllegalStateException();
             }

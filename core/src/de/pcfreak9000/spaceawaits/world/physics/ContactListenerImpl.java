@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -8,11 +7,9 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 class ContactListenerImpl implements ContactListener {
-    
-    private static final ComponentMapper<ContactListenerComponent> CONTACT_LISTENER_COMP_MAPPER = ComponentMapper
-            .getFor(ContactListenerComponent.class);
     
     private UserDataHelper userdata1 = new UserDataHelper();
     private UserDataHelper userdata2 = new UserDataHelper();
@@ -28,9 +25,9 @@ class ContactListenerImpl implements ContactListener {
         if (in.isTile()) {
             return in.getTile().getContactListener();
         } else if (in.isEntity()) {
-            ContactListenerComponent comp = CONTACT_LISTENER_COMP_MAPPER.get(in.getEntity());
+            ContactListenerComponent comp = Components.CONTACT_LISTENER.get(in.getEntity());
             if (comp != null) {
-                return CONTACT_LISTENER_COMP_MAPPER.get(in.getEntity()).listener;
+                return Components.CONTACT_LISTENER.get(in.getEntity()).listener;
             }
         } else if (in.isUDCustom()) {
             UserData ud = in.getUDCustom();

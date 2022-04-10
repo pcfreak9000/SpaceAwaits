@@ -4,15 +4,14 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
-import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickChunkSystem;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
@@ -81,7 +80,6 @@ public class WorldCombined extends World {
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
-        ecs.addSystem(new TickChunkSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystem phsys = new PhysicsSystem(this);
         ecs.addSystem(phsys);
@@ -99,7 +97,7 @@ public class WorldCombined extends World {
     @Override
     public void joinWorld(Player player) {
         super.joinWorld(player);
-        Vector2 playerpos = CoreRes.TRANSFORM_M.get(player.getPlayerEntity()).position;
+        Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(new FollowingTicket(playerpos, 4));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
     }

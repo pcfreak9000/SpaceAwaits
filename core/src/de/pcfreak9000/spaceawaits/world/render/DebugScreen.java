@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,15 +11,12 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class DebugScreen {
-    
-    private static final ComponentMapper<TransformComponent> TRANSFORM_MAPPER = ComponentMapper
-            .getFor(TransformComponent.class);
     
     private GameRenderer renderer;
     private Stage stage;
@@ -66,14 +62,13 @@ public class DebugScreen {
     
     public void actAndDraw(float dt) {
         int fps = Gdx.graphics.getFramesPerSecond();
-        Vector2 playerPos = TRANSFORM_MAPPER.get(
+        Vector2 playerPos = Components.TRANSFORM.get(
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
         World world = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent();
         int loadedChunks = world.getLoadedChunksCount();
         int updatedChunks = world.getUpdatingChunksCount();
-        long time = world.time;//oof
         this.labelFps.setText("FPS: " + fps);
         this.chunkUpdates.setText(String.format("t: %d l: %d", updatedChunks, loadedChunks));
         this.playerPos.setText(String.format("x: %.3f y: %.3f", playerPos.x, playerPos.y));
@@ -85,8 +80,8 @@ public class DebugScreen {
         Tile back = ts.getTile(tx, ty, TileLayer.Back);
         this.tile.setText(
                 "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));//Hmmm
-        //this.meta.setText(null);
-        this.time.setText(String.format("time: %d", time));
+        this.meta.setText("Not displaying meta");
+        //this.time.setText(String.format("time: %d", time));
         renderer.getGuiHelper().actAndDraw(stage, dt);
     }
     

@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
@@ -13,15 +12,12 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 
 public class RenderFogStrategy extends AbstractRenderStrategy implements Disposable {
-    
-    private static final ComponentMapper<TransformComponent> TMAPPER = ComponentMapper.getFor(TransformComponent.class);
-    private static final ComponentMapper<RenderFogComponent> RFMAPPER = ComponentMapper
-            .getFor(RenderFogComponent.class);
     
     private Mesh mesh;
     private GameRenderer renderer;
@@ -51,8 +47,8 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     @Override
     public void render(Entity e, float dt) {
         time += dt;
-        RenderFogComponent rfc = RFMAPPER.get(e);
-        TransformComponent tc = TMAPPER.get(e);
+        RenderFogComponent rfc = Components.RENDER_FOG.get(e);
+        TransformComponent tc = Components.TRANSFORM.get(e);
         Camera cam = renderer.getCurrentView().getCamera();
         shader.getShader().bind();
         shader.getShader().setUniformMatrix("u_projView", cam.combined);

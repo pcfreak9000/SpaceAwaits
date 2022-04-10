@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.render.strategy;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -23,6 +22,7 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -33,8 +33,6 @@ import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy implements Disposable {
-    
-    private ComponentMapper<ChunkRenderComponent> rMapper = ComponentMapper.getFor(ChunkRenderComponent.class);
     
     private GameRenderer rend;
     private Camera camera;
@@ -114,7 +112,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     
     @Override
     public void render(Entity e, float dt) {
-        ChunkRenderComponent crc = rMapper.get(e);
+        ChunkRenderComponent crc = Components.RENDER_CHUNK.get(e);
         if (!Util.checkChunkInFrustum(crc.chunk, camera)) {
             return;
         }

@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.core;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +14,6 @@ import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.player.PlayerEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 
 public class CoreRes {
     
@@ -54,8 +52,7 @@ public class CoreRes {
         p.dispose();
     }
     
-    public static final ComponentMapper<TransformComponent> TRANSFORM_M = ComponentMapper
-            .getFor(TransformComponent.class);
+
     
     public static final BitmapFont FONT = new BitmapFont();//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();

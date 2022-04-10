@@ -76,6 +76,10 @@ public class DMod {
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsDamagedComponent", DamagedComponent.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentInventoryShip",
+                ComponentInventoryShip.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsCompositeInventoryComponent",
+                CompositeInventoryComponent.class);
         
         GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
         GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
