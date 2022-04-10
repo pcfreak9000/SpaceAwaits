@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 
 import de.codemakers.base.os.OSUtil;
 import de.codemakers.io.file.AdvancedFile;
@@ -67,6 +68,7 @@ public class SpaceAwaits extends Game {
         
         //Load mods and resources
         preloadResources();
+        setupTooltipManager();
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
@@ -104,6 +106,13 @@ public class SpaceAwaits extends Game {
         this.assetManager.load("missing_texture.png", Texture.class);
         //...
         this.assetManager.finishLoading();
+    }
+    
+    private void setupTooltipManager() {
+        TooltipManager mgr = TooltipManager.getInstance();
+        mgr.offsetX = 0.15f;
+        mgr.offsetY = 0.15f;
+        mgr.animations = false;
     }
     
     public void exit() {

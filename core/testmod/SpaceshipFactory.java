@@ -51,6 +51,8 @@ public class SpaceshipFactory implements WorldEntityFactory {
         DisassemblerComponent disscomp = new DisassemblerComponent();
         disscomp.disassembler = new Disassembler(0);
         entity.add(disscomp);
+        ComponentInventoryShip invshipcomp = new ComponentInventoryShip();
+        entity.add(invshipcomp);
         return entity;
     }
     
@@ -59,9 +61,14 @@ public class SpaceshipFactory implements WorldEntityFactory {
         @Override
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
             Player player = source.getComponent(PlayerInputComponent.class).player;
-            player.openContainer(
-                    new ContainerDisassembler(entity.getComponent(DisassemblerComponent.class).disassembler,
-                            entity.getComponent(CompositeInventoryComponent.class).compositeInv));
+            if (entity.getComponent(DamagedComponent.class) != null) {
+                player.openContainer(new ContainerInventoryShip(entity.getComponent(ComponentInventoryShip.class).invShip));
+                return true;
+            }
+            player.openContainer(new ContainerCrafter(4));
+            //            player.openContainer(
+            //                    new ContainerDisassembler(entity.getComponent(DisassemblerComponent.class).disassembler,
+            //                            entity.getComponent(CompositeInventoryComponent.class).compositeInv));
             return true;
         }
         

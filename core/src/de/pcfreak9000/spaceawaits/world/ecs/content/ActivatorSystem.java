@@ -91,6 +91,16 @@ public class ActivatorSystem extends EntitySystem {
             }
             return true;
         }, mouse.x - 0.01f, mouse.y - 0.01f, mouse.x + 0.01f, mouse.y + 0.01f);
+        for (Entity e : entities) {
+            ActionComponent ac = AAMAP.get(e);
+            for (Action a : ac.actions) {
+                if (InptMgr.isPressed(a.getInputKey())) {
+                    if (a.handle(mouse.x, mouse.y, world, e)) {
+                        return;
+                    }
+                }
+            }
+        }
         entityList.sort(COMP);
         for (Entity e : entityList) {
             ActivatorComponent ac = AMAP.get(e);
@@ -102,16 +112,7 @@ public class ActivatorSystem extends EntitySystem {
                 }
             }
         }
-        for (Entity e : entities) {
-            ActionComponent ac = AAMAP.get(e);
-            for (Action a : ac.actions) {
-                if (InptMgr.isPressed(a.getInputKey())) {
-                    if (a.handle(mouse.x, mouse.y, world, e)) {
-                        return;
-                    }
-                }
-            }
-        }
+
         
     }
     

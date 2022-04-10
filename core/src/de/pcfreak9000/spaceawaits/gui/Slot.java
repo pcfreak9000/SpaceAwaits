@@ -3,6 +3,8 @@ package de.pcfreak9000.spaceawaits.gui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
@@ -18,6 +20,7 @@ public class Slot extends Actor {
     protected final ActorItemStack actorItemStack;
     
     private ClickListener listener;
+    private Label tooltipLabel;
     
     public Slot(IInventory invBacking, int index) {
         this.inventoryBacking = invBacking;
@@ -27,6 +30,10 @@ public class Slot extends Actor {
         this.listener = new ClickListener();
         addListener(listener);
         setSize(SIZE, SIZE);
+        tooltipLabel = new Label("", CoreRes.SKIN.getSkin());
+        Tooltip<Label> tooltip = new Tooltip<>(tooltipLabel);
+        tooltip.setInstant(true);
+        addListener(tooltip);
     }
     
     public boolean canTake() {
@@ -45,6 +52,7 @@ public class Slot extends Actor {
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
         layoutActorItemStack();
         this.actorItemStack.setItemStack(itemstack);
+        tooltipLabel.setText(ItemStack.isEmptyOrNull(itemstack) ? "" : "Some Item");
         this.actorItemStack.draw(batch, parentAlpha);
         if (highlightSlot()) {
             drawSlotHighlight(batch);

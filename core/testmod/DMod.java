@@ -17,6 +17,7 @@ import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -66,12 +67,15 @@ public class DMod {
     Tile torch = new Tile();
     Item gun = new ItemGun();
     
+    Item repairGun = new ItemRepairGun();
+    
     TileLiquid water = new TileLiquid();
     
     SpaceshipFactory fac = new SpaceshipFactory();
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsDamagedComponent", DamagedComponent.class);
         
         GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
         GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
@@ -91,6 +95,10 @@ public class DMod {
         
         gun.setTexture("gun_0.png");
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
+        
+        repairGun.setTexture("gun_0.png");
+        repairGun.color().set(Color.GOLD);
+        GameRegistry.ITEM_REGISTRY.register("repairGun", repairGun);
         
         tstoneTile.setTexture("stone.png");
         tstoneTile.setDisplayName("Stone");
@@ -172,6 +180,12 @@ public class DMod {
                         Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
                         Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
                         tc.position.set(s);
+                        DamagedComponent dc = new DamagedComponent();
+                        dc.damage = 1;
+                        ship.add(dc);
+                        ItemStack stack = new ItemStack(repairGun, 1);
+                        stack.getOrCreateNBT().putByte("bar", (byte) 255);
+                        ship.getComponent(ComponentInventoryShip.class).invShip.setSlotContent(0, stack);
                         world.spawnEntity(ship, false);
                     }
                 });
