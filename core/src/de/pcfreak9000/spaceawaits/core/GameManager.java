@@ -46,7 +46,7 @@ public class GameManager {
     }
     
     public void unloadGame() {
-        if (getGameCurrent() == null) {
+        if (!isInGame()) {
             throw new IllegalStateException();
         }
         this.gameCurrent.saveAndLeaveCurrentWorld();
@@ -59,6 +59,10 @@ public class GameManager {
     
     public Game getGameCurrent() {
         return this.gameCurrent;
+    }
+    
+    public boolean isInGame() {
+        return this.gameCurrent != null;
     }
     
     public ISaveManager getSaveManager() {

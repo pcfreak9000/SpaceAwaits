@@ -5,8 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.MathUtils;
@@ -81,12 +79,9 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         this.tiles = null;
     }
     
-    float time = 0;
-    
     @Override
     public void begin() {
-        this.batchSimple.setDefaultBlending();
-        this.batchSimple.setColor(Color.WHITE);
+        this.batchSimple.resetSettings();
         this.refl.begin();
         ScreenUtils.clear(0, 0, 0, 0);
         this.batchSimple.begin();
@@ -94,13 +89,9 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         this.batchSimple.end();
         this.refl.end();
         this.rend.getFBOStack().rebind();
-        
-        time += Gdx.graphics.getDeltaTime();//TODO time stuff
         shader.getShader().bind();
         batch.setProjectionMatrix(this.camera.combined);
-        batch.enableBlending();
-        batch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
-                GL20.GL_ONE_MINUS_SRC_ALPHA);
+        this.rend.setDefaultBlending(batch);
         // batch.setDefaultBlending();
         batch.begin();
     }
@@ -149,9 +140,9 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
                 topLayer = Float.POSITIVE_INFINITY;
                 height = 1;
             }
-            batch.draw().time(time * 1.8f).distortionStrength(1 / 250f).levelDistortionModifier(20f).lvlThickness(0.4f)
-                    .shore(topLayer).base(base).color(tile.color()).texture(refl.getColorBufferTexture())
-                    .region(0, 0, 1, 1).position(gtx, gty).size(1, height);
+            batch.draw().time(this.rend.getRenderTime() * 1.8f).distortionStrength(1 / 250f)
+                    .levelDistortionModifier(20f).lvlThickness(0.4f).shore(topLayer).base(base).color(tile.color())
+                    .texture(refl.getColorBufferTexture()).region(0, 0, 1, 1).position(gtx, gty).size(1, height);
         }
     }
     

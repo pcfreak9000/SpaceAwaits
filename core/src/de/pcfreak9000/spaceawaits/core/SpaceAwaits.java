@@ -24,7 +24,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
-    public static final boolean DEBUG_CAMERA = false;
+    public static final boolean DEBUG_CAMERA = true;
     
     public static final String NAME = "Space Awaits";
     public static final String VERSION = "pre-Alpha-0";
@@ -124,7 +124,7 @@ public class SpaceAwaits extends Game {
     
     @Override
     public void dispose() {
-        if (this.gameManager.getGameCurrent() != null) {//TODO this could be better, like some isIngame or smth
+        if (this.gameManager.isInGame()) {
             LOGGER.warn("Unloading world (Exit while in loaded world)");
             this.gameManager.unloadGame();
         }

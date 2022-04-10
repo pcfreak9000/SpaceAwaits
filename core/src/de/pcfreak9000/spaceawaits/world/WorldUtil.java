@@ -3,34 +3,35 @@ package de.pcfreak9000.spaceawaits.world;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class WorldUtil {
     
-    public static void createWorldBorders(Array<Entity> entities, int width, int height) {
+    public static void createWorldBorders(World world, int width, int height) {
         float wf = width;
         float hf = height;
-        entities.add(createBorderEntity(-50, -50, 50, hf + 100));
-        entities.add(createBorderEntity(0, -50, wf, 50));
-        entities.add(createBorderEntity(0, hf, wf, 50));
-        entities.add(createBorderEntity(wf, -50, 50, hf + 100));
+        world.spawnEntity(createBorderEntity(-50, -50, 50, hf + 100), false);
+        world.spawnEntity(createBorderEntity(0, -50, wf, 50), false);
+        world.spawnEntity(createBorderEntity(0, hf, wf, 50), false);
+        world.spawnEntity(createBorderEntity(wf, -50, 50, hf + 100), false);
     }
     
     private static Entity createBorderEntity(float x, float y, float w, float h) {
         Entity e = new EntityImproved();
         PhysicsComponent ph = new PhysicsComponent();
+        e.add(new WorldGlobalComponent());
         ph.factory = AABBBodyFactory.builder().staticBody().dimensions(w, h).initialPosition(x, y).create();//AABBBodyFactory.create(w, h, x, y);
         e.add(ph);
         return e;
     }
     
+    //TODO refine spawning system
     public static Vector2 findSpawnpoint(World world, float entWidth, float entHeight, float spawnX, float spawnY,
             float spawnWidth, float spawnHeight) {
         //System.out.println("Finding Spawnpoint");
@@ -70,8 +71,6 @@ public class WorldUtil {
                     }
                     //can spawn here, so do that
                     chunkProvider.releaseLock(lock);
-                    Logger.getLogger(World.class)
-                            .debug("Found a spawning location for the player on the " + (i + 1) + ". try");
                     return new Vector2(x, y);
                 }
                 if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
@@ -80,8 +79,7 @@ public class WorldUtil {
             }
         }
         chunkProvider.releaseLock(lock);
-        Logger.getLogger(World.class).debug("Couldn't find a suitable spawning location.");
-        //TODO no spawn was found so just pick a random location and forcefully blow a hole into the ground or something
+        //no spawn was found so just pick a random location and forcefully blow a hole into the ground or something?
         return null;
     }
 }

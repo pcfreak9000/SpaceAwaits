@@ -3,9 +3,11 @@ package de.pcfreak9000.spaceawaits.world.render;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.cyphercove.flexbatch.FlexBatch;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
@@ -34,6 +36,8 @@ public class GameRenderer extends ScreenAdapter {
     
     private boolean showDebugScreen;
     private DebugScreen debugScreen;
+    
+    private float renderTime = 0;
     
     public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
         this.gsm = gsm;
@@ -89,9 +93,22 @@ public class GameRenderer extends ScreenAdapter {
         return guiHelper;
     }
     
-    public void setDefaultBlending() {//Doesn't work for the batch
+    //Doesn't work for the batch
+    public void setDefaultBlending() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFuncSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
+                GL20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    public void setDefaultBlending(FlexBatch<?> batch) {
+        batch.enableBlending();
+        batch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
+                GL20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    public void setDefaultBlending(SpriteBatch batch) {
+        batch.enableBlending();
+        batch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ONE,
                 GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
     
@@ -110,6 +127,7 @@ public class GameRenderer extends ScreenAdapter {
     
     @Override
     public void render(float delta) {
+        renderTime += delta;
         boolean exit = this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc);
         if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
             showDebugScreen = !showDebugScreen;
@@ -126,9 +144,9 @@ public class GameRenderer extends ScreenAdapter {
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
             }
-//            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
-//                this.setGuiCurrent(new GuiChat());
-//            }
+            //            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
+            //                this.setGuiCurrent(new GuiChat());
+            //            }
             if (this.guiContainerCurrent != null) {
                 this.guiContainerCurrent.actAndDraw(delta);
             }
@@ -168,4 +186,7 @@ public class GameRenderer extends ScreenAdapter {
         return this.fbostack;
     }
     
+    public float getRenderTime() {
+        return renderTime;
+    }
 }

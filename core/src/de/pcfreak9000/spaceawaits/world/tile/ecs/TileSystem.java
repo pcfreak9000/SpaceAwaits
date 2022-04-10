@@ -289,9 +289,6 @@ public class TileSystem extends EntitySystem {
     }
     
     public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        if (phys.get(getEngine()).checkRectEntityOccupation(x, y, x + w, y + h)) {
-            return true;
-        }
         int ix = Mathf.floori(x);
         int iy = Mathf.floori(y);
         int iw = Mathf.ceili(x + w);
@@ -303,6 +300,10 @@ public class TileSystem extends EntitySystem {
                     return true;
                 }
             }
+        }
+        //first asking for tiles will load chunks if they arent loaded, physics doesnt load chunks itself
+        if (phys.get(getEngine()).checkRectEntityOccupation(x, y, x + w, y + h)) {
+            return true;
         }
         return false;
     }

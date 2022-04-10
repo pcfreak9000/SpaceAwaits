@@ -1,7 +1,6 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
@@ -12,7 +11,6 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
@@ -43,12 +41,8 @@ public class WorldCombined extends World {
         ((UnchunkProvider) unchunkProvider).load();
         this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Reading));
         if (worldProperties.autoWorldBorders()) {
-            WorldUtil.createWorldBorders(unchunkProvider.get().getEntities(), getBounds().getWidth(),
+            WorldUtil.createWorldBorders(this, getBounds().getWidth(),
                     getBounds().getHeight());
-        }
-        for (Entity e : unchunkProvider.get().getEntities()) {
-            DynamicAssetUtil.checkAndCreateAsset(e);//TODO Dyn Meh
-            ecsEngine.addEntity(e);
         }
     }
     

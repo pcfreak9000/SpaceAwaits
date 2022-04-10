@@ -40,9 +40,11 @@ public class UnchunkProvider implements IUnchunkProvider {
             data.readNBT(nbt.get("entities"));
             this.nbt = nbt.getCompound("dat");
             unchunkGen.regenerateUnchunk(data, world);
+            worldGen.onLoading(world);
         } else {
             unchunkGen.generateUnchunk(data, world);
             worldGen.generate(world);
+            worldGen.onLoading(world);
         }
     }
     
@@ -63,7 +65,7 @@ public class UnchunkProvider implements IUnchunkProvider {
     @Override
     public void unload() {
         save();
-        for (Entity e : data.getEntities()) {//TODO Dyn Meh
+        for (Entity e : data.getEntities()) {
             DynamicAssetUtil.checkAndDisposeAsset(e);
         }
         data = null;

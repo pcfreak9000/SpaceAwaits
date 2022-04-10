@@ -6,4 +6,6 @@ public interface IWorldGenerator {
     
     void generate(World world);
     
+    default void onLoading(World world) {
+    }
 }

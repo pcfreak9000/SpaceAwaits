@@ -23,7 +23,6 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
-    private final World world;
     private final GameRenderer worldRend;
     
     private Player player;
@@ -31,7 +30,6 @@ public class PlayerInputSystem extends EntitySystem {
     private Entity tileSelectorEntity;
     
     public PlayerInputSystem(World world, GameRenderer renderer) {
-        this.world = world;
         this.worldRend = renderer;
         this.tileSelectorEntity = createTileSelectorEntity();
         world.getWorldBus().register(this);
@@ -39,9 +37,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     @EventSubscription
     public void joined(WorldEvents.PlayerJoinedEvent ev) {
-        if (ev.world == this.world) {//TODO world specific eventbus?
-            this.player = ev.player;
-        }
+        this.player = ev.player;
     }
     
     @Override

@@ -31,7 +31,7 @@ public class UseAction implements Action {
         boolean used = false;
         ItemStack stack = player.getInventory().getSelectedStack();
         TileSystem tileSystem = world.getSystem(TileSystem.class);
-        if (!used) {//TODO Move to activator in chunk entity?
+        if (!used) {//Move to activator in chunk entity? -> chunk isnt filled with fixtures but they are used for detection, so no (for now)
             Tile clicked = tileSystem.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
             //onTileUse
             ItemStack cp = stack != null ? stack.cpy() : null;

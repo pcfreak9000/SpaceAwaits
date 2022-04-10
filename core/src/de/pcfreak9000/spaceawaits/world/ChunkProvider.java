@@ -134,7 +134,7 @@ public class ChunkProvider implements IChunkProvider {
             extra.addLast(key);
             return cd.c;
         }
-        requireChunk(key.getX(), key.getY(), true, this);
+        requireChunk(key.getX(), key.getY(), true, this);//active chunks could lead to weird stuff, but for testing against physics bodies...
         extra.addLast(key);
         //Thread.dumpStack();
         //System.out.println("Extra Chunk!");

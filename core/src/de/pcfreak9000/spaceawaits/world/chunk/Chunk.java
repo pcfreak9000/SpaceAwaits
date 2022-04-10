@@ -13,6 +13,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
@@ -23,8 +24,8 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
@@ -370,7 +371,9 @@ public class Chunk implements NBTSerializable, Tickable {
                 NBTSerializable se = (NBTSerializable) meta;
                 se.readNBT(comp.get("tag"));
             } else {
-                //TODO log this incident, or crash ?
+                Logger.getLogger(Chunk.class)
+                        .warn("Found metadata which was saved but isn't serializable. It will not be loaded. "
+                                + Objects.toString(meta));
             }
         }
         for (NBTTag tet : ticklist.getContent()) {

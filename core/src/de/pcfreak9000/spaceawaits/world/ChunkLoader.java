@@ -47,7 +47,7 @@ public class ChunkLoader implements IChunkLoader {
             } else {
                 chunkGen.generateChunk(c, this.world);
             }
-            for (Entity e : c.getEntities()) {//TODO Dyn Meh
+            for (Entity e : c.getEntities()) {
                 DynamicAssetUtil.checkAndCreateAsset(e);
             }
             this.loadedChunks.put(key, c);

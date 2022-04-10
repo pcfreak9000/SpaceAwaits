@@ -34,7 +34,6 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
         //System.out.println(shader.getShader().getLog());
     }
     
-    private float time = 0;
     private float[] vertices = new float[8];
     
     @Override
@@ -46,13 +45,12 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     
     @Override
     public void render(Entity e, float dt) {
-        time += dt;
         RenderFogComponent rfc = Components.RENDER_FOG.get(e);
         TransformComponent tc = Components.TRANSFORM.get(e);
         Camera cam = renderer.getCurrentView().getCamera();
         shader.getShader().bind();
         shader.getShader().setUniformMatrix("u_projView", cam.combined);
-        shader.getShader().setUniformf("time", time);
+        shader.getShader().setUniformf("time", renderer.getRenderTime());
         float xmin, ymin, xmax, ymax;
         if (rfc.oversize) {//TODO test is this affects performance or if this is a useless optimization
             xmin = cam.position.x - cam.viewportWidth / 2;

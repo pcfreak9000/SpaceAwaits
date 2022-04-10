@@ -45,8 +45,8 @@ public abstract class World {
     //Used for random item drops etc, not terrain gen etc
     protected final RandomXS128 worldRandom;
     
-//    public long time;//TMP until there is a proper class updating the universe
-//    private float timehelper;
+    //    public long time;//TMP until there is a proper class updating the universe
+    //    private float timehelper;
     
     private int countChunkActive = 0;
     
@@ -83,12 +83,12 @@ public abstract class World {
         this.ecsEngine.update(dt);
         //this.chunkProvider.unloadQueued();
         
-//        timehelper += dt * 50;
-//        if (timehelper >= 1) {
-//            int i = Mathf.floori(timehelper);
-//            timehelper -= i;
-//            time += i;
-//        }
+        //        timehelper += dt * 50;
+        //        if (timehelper >= 1) {
+        //            int i = Mathf.floori(timehelper);
+        //            timehelper -= i;
+        //            time += i;
+        //        }
     }
     
     protected void addChunk(Chunk c) {
@@ -106,9 +106,8 @@ public abstract class World {
     }
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {
-        //TODO what happens if the chunk is not loaded? -> theoretically could use ProbeChunkManager, but this is World and not necessarily WorldCombined... maybe change the ChunkProvider stuff?
+        //what happens if the chunk is not loaded? -> the chunk gets loaded if this World has the generating backend, but spawning should only happen there anyways
         //TODO what happens if the coordinates are somewhere out of bounds?
-        //in both cases c is null and false is returned, but...
         if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity) && checkOccupation) {
             TransformComponent t = Components.TRANSFORM.get(entity);
             PhysicsComponent pc = Components.PHYSICS.get(entity);
@@ -136,7 +135,7 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
-        DynamicAssetUtil.checkAndCreateAsset(entity);//TODO Dyn Meh
+        DynamicAssetUtil.checkAndCreateAsset(entity);
         return true;
     }
     
@@ -146,7 +145,7 @@ public abstract class World {
             if (c != null) {
                 c.removeEntity(entity);
             }
-        } else if (Components.TRANSFORM.has(entity)) {
+        } else if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
             TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);

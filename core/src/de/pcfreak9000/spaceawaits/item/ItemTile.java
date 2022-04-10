@@ -35,7 +35,7 @@ public class ItemTile extends Item {
     @Override
     public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley, float x, float y,
             TileLayer layer) {
-        if (!used.isEmpty()) {//TODO oof system stuff
+        if (!used.isEmpty()) {
             if (world.getSystem(TileSystem.class).placeTile(tilex, tiley, layer, this.tile) != null) {
                 used.changeNumber(-1);
                 return true;

@@ -81,7 +81,7 @@ public class LightRenderer implements Disposable {
                 gwi = texture.getWidth();
                 ghi = texture.getHeight();
                 pix.dispose();
-            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius, world.getSystem(TileSystem.class)).call();//TODO oof system stuff
+            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius, world.getSystem(TileSystem.class)).call();
         } catch (Exception e) {
             e.printStackTrace();
         }

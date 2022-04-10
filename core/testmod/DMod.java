@@ -192,6 +192,13 @@ public class DMod {
                         ship.getComponent(ComponentInventoryShip.class).invShip.setSlotContent(0, stack);
                         world.spawnEntity(ship, false);
                     }
+                    
+                    @Override
+                    public void onLoading(World world) {
+                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
+                        world.spawnEntity(b2.createEntity(), false);
+                        world.spawnEntity(testFogEntity(), false);
+                    }
                 });
                 p.setPlayerSpawn(new IPlayerSpawn() {
                     
@@ -215,16 +222,14 @@ public class DMod {
                     
                     @Override
                     public void generateUnchunk(SerializableEntityList entities, World world) {
-                        entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                        entities.addEntity(b2.createEntity());
-                        entities.addEntity(testFogEntity());
+                      //  entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
+                     //   entities.addEntity(b2.createEntity());
+                      //  entities.addEntity(testFogEntity());
                     }
                     
                     @Override
                     public void regenerateUnchunk(SerializableEntityList entities, World world) {
-                        entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                        entities.addEntity(b2.createEntity());
-                        entities.addEntity(testFogEntity());
+                       
                     }
                 });
                 return p;

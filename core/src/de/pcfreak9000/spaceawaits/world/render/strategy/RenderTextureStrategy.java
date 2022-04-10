@@ -28,7 +28,7 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     
     @Override
     public void begin() {
-        renderer.applyViewport();//TODO consider a FBO stack
+        renderer.applyViewport();
         this.b.begin();
     }
     
