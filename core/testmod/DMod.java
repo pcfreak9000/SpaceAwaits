@@ -22,7 +22,6 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
@@ -32,7 +31,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
-import de.pcfreak9000.spaceawaits.world.gen.IUnchunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
@@ -195,7 +193,8 @@ public class DMod {
                     
                     @Override
                     public void onLoading(World world) {
-                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
+                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(),
+                                false);
                         world.spawnEntity(b2.createEntity(), false);
                         world.spawnEntity(testFogEntity(), false);
                     }
@@ -218,20 +217,6 @@ public class DMod {
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
                 p.setChunkGenerator(new TestChunkGenerator(genset.getSeed()));
-                p.setUnchunkGenerator(new IUnchunkGenerator() {
-                    
-                    @Override
-                    public void generateUnchunk(SerializableEntityList entities, World world) {
-                      //  entities.addEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity());
-                     //   entities.addEntity(b2.createEntity());
-                      //  entities.addEntity(testFogEntity());
-                    }
-                    
-                    @Override
-                    public void regenerateUnchunk(SerializableEntityList entities, World world) {
-                       
-                    }
-                });
                 return p;
             }
         });

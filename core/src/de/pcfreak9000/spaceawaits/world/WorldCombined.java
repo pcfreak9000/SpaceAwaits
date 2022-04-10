@@ -41,8 +41,7 @@ public class WorldCombined extends World {
         ((UnchunkProvider) unchunkProvider).load();
         this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Reading));
         if (worldProperties.autoWorldBorders()) {
-            WorldUtil.createWorldBorders(this, getBounds().getWidth(),
-                    getBounds().getHeight());
+            WorldUtil.createWorldBorders(this, getBounds().getWidth(), getBounds().getHeight());
         }
     }
     
@@ -64,7 +63,7 @@ public class WorldCombined extends World {
     
     @Override
     protected IUnchunkProvider createUnchunkProvider(WorldPrimer primer) {
-        return new UnchunkProvider(this, primer.getUnchunkGenerator(), primer.getWorldGenerator());
+        return new UnchunkProvider(this, primer.getWorldGenerator());
     }
     
     private void setupECS(WorldPrimer primer, Engine engine) {

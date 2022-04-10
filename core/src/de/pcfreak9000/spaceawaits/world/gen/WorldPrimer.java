@@ -11,7 +11,6 @@ public class WorldPrimer {
     public final WorldSetup worldSetup;
     
     private IChunkGenerator iChunkGenerator;
-    private IUnchunkGenerator unchunkGenerator;
     private AmbientLightProvider lightProvider;
     private IPlayerSpawn playerSpawn;
     private IWorldProperties worldProperties;
@@ -54,14 +53,6 @@ public class WorldPrimer {
     
     public void setWorldBounds(WorldBounds worldBounds) {
         this.worldBounds = worldBounds;
-    }
-    
-    public IUnchunkGenerator getUnchunkGenerator() {
-        return unchunkGenerator;
-    }
-    
-    public void setUnchunkGenerator(IUnchunkGenerator unchunkGenerator) {
-        this.unchunkGenerator = unchunkGenerator;
     }
     
     public IPlayerSpawn getPlayerSpawn() {
