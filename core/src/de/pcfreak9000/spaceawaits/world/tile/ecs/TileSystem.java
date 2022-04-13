@@ -21,8 +21,11 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
@@ -40,6 +43,7 @@ public class TileSystem extends EntitySystem {
     private final Entity entity;
     
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
+    private UserDataHelper ud = new UserDataHelper();
     
     public TileSystem(World world, Random r, IChunkProvider ch) {
         this.world = world;
@@ -167,13 +171,46 @@ public class TileSystem extends EntitySystem {
             //check current occupation, only place tile if there isnt already one
             return null;
         }
+        Array<Entity> ents = new Array<>();
+        Direction reloc = null;
         if (tile.isSolid() && layer == TileLayer.Front) {
-            if (phys.get(getEngine()).checkRectEntityOccupation(tx, ty, tx + 0.99f, ty + 0.99f)) {
+            boolean[] blocking = new boolean[1];
+            phys.get(getEngine()).queryAABB((fix, conv) -> {
+                if (fix.isSensor()) {
+                    return true;
+                }
+                ud.set(fix.getUserData(), fix);
+                if (ud.isEntity()) {
+                    if (Components.ITEM_STACK.has(ud.getEntity())) {//Maybe exchange for some MakesWayForTileComponent? Might get complicated for entities bigger than a Tile
+                        ents.add(ud.getEntity());
+                    } else {
+                        blocking[0] = true;
+                        return false;
+                    }
+                }
+                return true;
+            }, tx, ty, tx + 1f, ty + 1f);
+            if (blocking[0]) {
                 return null;
+            }
+            if (!ents.isEmpty()) {
+                for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+                    if (!checkSolidOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f)) {//This doesn't account for possible item mergers...
+                        reloc = d;
+                        break;
+                    }
+                }
+                if (reloc == null) {
+                    return null;
+                }
             }
         }
         if (!tile.canPlace(tx, ty, layer, world, this)) {
             return null;
+        }
+        for (Entity e : ents) {
+            TransformComponent tc = Components.TRANSFORM.get(e);
+            tc.position.add(reloc.dx, reloc.dy);
         }
         Tile ret = setTile(tx, ty, layer, tile);
         tile.onTilePlaced(tx, ty, layer, world, this);

@@ -22,6 +22,28 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);
     
+    public static void syncTransformToBody(Entity entity) {
+        if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity)) {
+            TransformComponent tc = Components.TRANSFORM.get(entity);
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
+            Vector2 pos = pc.body.getPositionW();
+            tc.position.set(pos.x - pc.factory.bodyOffset().x, pos.y - pc.factory.bodyOffset().y);
+            Vector2 vel = pc.body.getLinearVelocityPh();
+            pc.xVel = vel.x;
+            pc.yVel = vel.y;
+            pc.rotVel = pc.body.getBody().getAngularVelocity();
+        }
+    }
+    
+    public static void syncBodyToTransform(Entity entity) {
+        if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity)) {
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
+            TransformComponent tc = Components.TRANSFORM.get(entity);
+            pc.body.setTransformW(tc.position.x + pc.factory.bodyOffset().x, tc.position.y + pc.factory.bodyOffset().y,
+                    0);
+        }
+    }
+    
     private World box2dWorld;
     
     private ContactListenerImpl contactEventDispatcher;
@@ -101,26 +123,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void post(Entity entity) {
-        if (Components.TRANSFORM.has(entity)) {
-            TransformComponent tc = Components.TRANSFORM.get(entity);
-            PhysicsComponent pc = Components.PHYSICS.get(entity);
-            Vector2 pos = pc.body.getPositionW();
-            tc.position.set(pos.x - pc.factory.bodyOffset().x, pos.y - pc.factory.bodyOffset().y);
-            Vector2 vel = pc.body.getLinearVelocityPh();
-            pc.xVel = vel.x;
-            pc.yVel = vel.y;
-            pc.rotVel = pc.body.getBody().getAngularVelocity();
-        }
+        syncTransformToBody(entity);
     }
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        if (Components.TRANSFORM.has(entity)) {
-            PhysicsComponent pc = Components.PHYSICS.get(entity);
-            TransformComponent tc = Components.TRANSFORM.get(entity);
-            pc.body.setTransformW(tc.position.x + pc.factory.bodyOffset().x, tc.position.y + pc.factory.bodyOffset().y,
-                    0);
-        }
+        syncBodyToTransform(entity);
     }
     
     @Override

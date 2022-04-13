@@ -1,11 +1,8 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import com.badlogic.ashley.core.Entity;
-
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
-import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 
 public class UnchunkProvider implements IUnchunkProvider {
@@ -60,9 +57,9 @@ public class UnchunkProvider implements IUnchunkProvider {
     @Override
     public void unload() {
         save();
-        for (Entity e : data.getEntities()) {
-            DynamicAssetUtil.checkAndDisposeAsset(e);
-        }
+        //        for (Entity e : data.getEntities()) {
+        //            DynamicAssetUtil.checkAndDisposeAsset(e);
+        //        }
         data = null;
     }
     

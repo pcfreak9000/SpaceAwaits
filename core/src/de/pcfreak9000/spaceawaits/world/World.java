@@ -17,7 +17,6 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -135,7 +134,7 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
-        DynamicAssetUtil.checkAndCreateAsset(entity);
+//        DynamicAssetUtil.checkAndCreateAsset(entity);
         return true;
     }
     
@@ -154,7 +153,7 @@ public abstract class World {
         }
         unchunkProvider.get().removeEntity(entity);
         ecsEngine.removeEntity(entity);
-        DynamicAssetUtil.checkAndDisposeAsset(entity);
+//        DynamicAssetUtil.checkAndDisposeAsset(entity);
     }
     
     public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {

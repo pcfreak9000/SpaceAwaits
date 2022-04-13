@@ -3,13 +3,10 @@ package de.pcfreak9000.spaceawaits.world;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.ashley.core.Entity;
-
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkLoader implements IChunkLoader {
@@ -47,9 +44,9 @@ public class ChunkLoader implements IChunkLoader {
             } else {
                 chunkGen.generateChunk(c, this.world);
             }
-            for (Entity e : c.getEntities()) {
-                DynamicAssetUtil.checkAndCreateAsset(e);
-            }
+//            for (Entity e : c.getEntities()) {
+//                DynamicAssetUtil.checkAndCreateAsset(e);
+//            }
             this.loadedChunks.put(key, c);
             return c;
         }

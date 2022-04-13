@@ -85,6 +85,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new TickCounterSystem(this));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
+        new DynamicAssetListener().register(engine);
     }
     
     @Override
