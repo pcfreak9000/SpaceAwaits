@@ -26,7 +26,7 @@ public class LootTable {
     }
     
     private ArrayList<WeightedRandomInventoryContent> loot = new ArrayList<>();
-    private ArrayList<GuranteedInventoryContent> loot2 = new ArrayList<>();
+    private ArrayList<GuaranteedInventoryContent> loot2 = new ArrayList<>();
     private int minItems, maxItems;
     
     private LootTable() {
@@ -52,7 +52,7 @@ public class LootTable {
         loot.add(wric);
     }
     
-    public void add(GuranteedInventoryContent mic) {
+    public void add(GuaranteedInventoryContent mic) {
         loot2.add(mic);
     }
     
@@ -75,7 +75,7 @@ public class LootTable {
                 inv.setSlotContent(index, st);
             }
         }
-        for (GuranteedInventoryContent mic : loot2) {
+        for (GuaranteedInventoryContent mic : loot2) {
             ItemStack[] stacks = mic.generate(random);
             IntArray emptySlots = InvUtil.findEmptySlots(inv);
             for (ItemStack st : stacks) {

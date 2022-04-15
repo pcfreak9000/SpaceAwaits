@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.loot.GuranteedInventoryContent;
+import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
 import de.pcfreak9000.spaceawaits.mod.Instance;
@@ -163,7 +163,7 @@ public class DMod {
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
-        shipStarterTable.add(new GuranteedInventoryContent(repairGun, 1, 1));
+        shipStarterTable.add(new GuaranteedInventoryContent(repairGun, 1, 1));
         shipStarterTable.add(new WeightedRandomInventoryContent(gun, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
