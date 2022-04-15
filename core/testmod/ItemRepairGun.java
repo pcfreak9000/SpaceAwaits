@@ -1,5 +1,6 @@
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.graphics.Color;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.item.Item;
@@ -14,6 +15,9 @@ public class ItemRepairGun extends Item {
     
     public ItemRepairGun() {
         setMaxStackSize(1);
+        setDisplayName("Repair tool");
+        setTexture("gun_0.png");
+        color().set(Color.GOLD);
     }
     
     private final UserDataHelper udh = new UserDataHelper();
@@ -42,8 +46,8 @@ public class ItemRepairGun extends Item {
             DamagedComponent dc = MAP.get(ent[0]);
             dc.damage -= 0.0075f;
             NBTCompound nbt = stackUsed.getOrCreateNBT();
-            nbt.putByte("bar", (byte) (nbt.getByteOrDefault("bar", (byte) 255) - 1));
-            if (nbt.getByte("bar") == 0) {
+            nbt.putFloat("bar", nbt.getFloatOrDefault("bar", 1f) - 0.003f);
+            if (nbt.getFloat("bar") <= 0f) {
                 stackUsed.changeNumber(-1);
             }
             System.out.println(dc.damage);

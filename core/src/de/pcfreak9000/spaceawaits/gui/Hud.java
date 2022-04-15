@@ -45,9 +45,9 @@ public class Hud {
         healthbar = new ProgressBar(0, 1, 0.01f, false, CoreRes.SKIN.getSkin());
         healthbar.setAnimateInterpolation(Interpolation.fade);
         healthbar.setAnimateDuration(0.1f);
-        table.add(healthbar).expandX().top().left().pad(15);
+       // table.add(healthbar).expandX().top().left().pad(15);
         table.add(createHotbarSlotsTable()).padTop(10).top().center();
-        table.add().expandX().top().right().pad(10).prefSize(healthbar.getPrefWidth(), healthbar.getPrefHeight());
+        //table.add().expandX().top().right().pad(10).prefSize(healthbar.getPrefWidth(), healthbar.getPrefHeight());
         this.stage.clear();//For now, fixes a bug. also clears listeners
         this.stage.addActor(table);
     }

@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.item;
 
+import com.badlogic.gdx.utils.IntArray;
+
 public class InvUtil {
     
     //Illegal stack sizes are pruned, so items can get lost
@@ -63,6 +65,16 @@ public class InvUtil {
         return inv.removeStack(slot);
     }
     
+    public static IntArray findEmptySlots(IInventory inv) {
+        IntArray ar = new IntArray(false, 1);
+        for (int i = 0; i < inv.slots(); i++) {
+            if (ItemStack.isEmptyOrNull(inv.getStack(i))) {
+                ar.add(i);
+            }
+        }
+        ar.shrink();
+        return ar;
+    }
     //    public static void sort(IInventory inv, int begIncl, int endExcl) {
     //        //does nothing right now
     //    }

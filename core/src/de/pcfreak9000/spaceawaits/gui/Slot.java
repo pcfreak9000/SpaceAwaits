@@ -52,7 +52,7 @@ public class Slot extends Actor {
         ItemStack itemstack = inventoryBacking.getStack(slotIndex);
         layoutActorItemStack();
         this.actorItemStack.setItemStack(itemstack);
-        tooltipLabel.setText(ItemStack.isEmptyOrNull(itemstack) ? "" : "Some Item");
+        tooltipLabel.setText(ItemStack.isEmptyOrNull(itemstack) ? "" : itemstack.getItem().getDisplayName());
         this.actorItemStack.draw(batch, parentAlpha);
         if (highlightSlot()) {
             drawSlotHighlight(batch);

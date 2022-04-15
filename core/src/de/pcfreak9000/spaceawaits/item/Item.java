@@ -26,6 +26,7 @@ public class Item {
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
     
     private Color color = new Color(1, 1, 1, 1);
+    private String displayName = "";
     
     private Composite composite;
     
@@ -48,6 +49,14 @@ public class Item {
     
     public Color color() {
         return this.color;
+    }
+    
+    public void setDisplayName(String name) {
+        this.displayName = name;
+    }
+    
+    public String getDisplayName() {
+        return this.displayName;
     }
     
     public void setComposite(Composite composite) {

@@ -127,6 +127,10 @@ public class ItemStack {
         return countold + actual;
     }
     
+    public void setCount(int count) {
+        this.count = Math.min(Math.max(count, 0), getMax());
+    }
+    
     public int getMax() {
         if (this == EMPTY) {
             return 0;

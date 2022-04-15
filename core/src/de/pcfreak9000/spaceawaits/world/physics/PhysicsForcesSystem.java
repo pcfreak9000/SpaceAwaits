@@ -24,7 +24,6 @@ public class PhysicsForcesSystem extends IteratingSystem {
             return;
         }
         comp.body.applyAccelerationPh(0, -9.81f);
-        
         //Problem 1: welche Fixture/Shape/Rectangle für buoyancy nehmen? Bedenke mehrere Fixtures haben nebeneffekte von zu viel drag etc...
         //Problem 2: Was ist mit Kreisen?
     }

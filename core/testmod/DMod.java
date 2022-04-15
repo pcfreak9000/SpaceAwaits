@@ -17,7 +17,9 @@ import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.item.loot.GuranteedInventoryContent;
+import de.pcfreak9000.spaceawaits.item.loot.LootTable;
+import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -95,11 +97,8 @@ public class DMod {
         water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);
         
-        gun.setTexture("gun_0.png");
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
         
-        repairGun.setTexture("gun_0.png");
-        repairGun.color().set(Color.GOLD);
         GameRegistry.ITEM_REGISTRY.register("repairGun", repairGun);
         
         tstoneTile.setTexture("stone.png");
@@ -121,7 +120,7 @@ public class DMod {
         GameRegistry.TILE_REGISTRY.register("bottom", bottom);
         
         Tile grasstile = new Tile();
-        grasstile.setDisplayName("Grass tile");
+        grasstile.setDisplayName("Grass");
         grasstile.setTexture("grass.png");
         //grasstile.setFilterColor(new Color(0.3f, 0.3f, 0.3f));
         GameRegistry.TILE_REGISTRY.register("grass", grasstile);
@@ -161,6 +160,13 @@ public class DMod {
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         
+        LootTable shipStarterTable = LootTable.getFor("shipspawn");
+        //shipStarterTable.addMin(0);
+        shipStarterTable.addMax(2);
+        shipStarterTable.add(new GuranteedInventoryContent(repairGun, 1, 1));
+        shipStarterTable.add(new WeightedRandomInventoryContent(gun, 2, 1, 1, false));
+        shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
+        
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;
@@ -185,9 +191,8 @@ public class DMod {
                         DamagedComponent dc = new DamagedComponent();
                         dc.damage = 1;
                         ship.add(dc);
-                        ItemStack stack = new ItemStack(repairGun, 1);
-                        stack.getOrCreateNBT().putByte("bar", (byte) 255);
-                        ship.getComponent(ComponentInventoryShip.class).invShip.setSlotContent(0, stack);
+                        LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
+                                ship.getComponent(ComponentInventoryShip.class).invShip);
                         world.spawnEntity(ship, false);
                     }
                     

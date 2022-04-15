@@ -33,6 +33,11 @@ public class ItemTile extends Item {
     }
     
     @Override
+    public String getDisplayName() {
+        return this.tile.getDisplayName();
+    }
+    
+    @Override
     public boolean onItemUse(Player player, ItemStack used, World world, int tilex, int tiley, float x, float y,
             TileLayer layer) {
         if (!used.isEmpty()) {

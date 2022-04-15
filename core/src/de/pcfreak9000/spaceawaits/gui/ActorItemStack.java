@@ -34,9 +34,7 @@ public class ActorItemStack extends Actor {
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {
                 if (itemstack.getNBT().hasKey("bar")) {//FIXME this stinks
-                    byte b = itemstack.getNBT().getByte("bar");
-                    int bar = Byte.toUnsignedInt(b);
-                    float fill = bar / 255f;
+                    float fill = itemstack.getNBT().getFloat("bar");
                     float max = getWidth() * 0.9f;
                     float pad = (getWidth() - max) * 0.5f;
                     batch.setColor(Color.RED);

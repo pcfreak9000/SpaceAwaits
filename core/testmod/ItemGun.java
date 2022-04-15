@@ -18,6 +18,8 @@ public class ItemGun extends Item {
     
     public ItemGun() {
         this.setMaxStackSize(1);
+        this.setDisplayName("Mining Laser");
+        this.setTexture("gun_0.png");
     }
     
     @Override

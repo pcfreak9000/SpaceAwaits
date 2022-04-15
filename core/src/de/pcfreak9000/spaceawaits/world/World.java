@@ -134,7 +134,7 @@ public abstract class World {
             unchunkProvider.get().addEntity(entity);
             ecsEngine.addEntity(entity);
         }
-//        DynamicAssetUtil.checkAndCreateAsset(entity);
+        //        DynamicAssetUtil.checkAndCreateAsset(entity);
         return true;
     }
     
@@ -153,7 +153,7 @@ public abstract class World {
         }
         unchunkProvider.get().removeEntity(entity);
         ecsEngine.removeEntity(entity);
-//        DynamicAssetUtil.checkAndDisposeAsset(entity);
+        //        DynamicAssetUtil.checkAndDisposeAsset(entity);
     }
     
     public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
@@ -222,6 +222,7 @@ public abstract class World {
         return this.eventBus;
     }
     
+    @Deprecated
     public Random getWorldRandom() {
         return worldRandom;
     }

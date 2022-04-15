@@ -16,7 +16,6 @@
 
 package de.omnikryptec.math;
 
-import java.util.Collection;
 import java.util.Random;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -39,7 +38,7 @@ public class MathUtil {
         return null;
     }
     
-    public static <T extends Weighted> T getWeightedRandom(final Random random, final Collection<T> ts) {
+    public static <T extends Weighted> T getWeightedRandom(final Random random, final Iterable<T> ts) {
         int sum = 0;
         for (final T t : ts) {
             sum += t.getWeight();
