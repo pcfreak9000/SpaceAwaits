@@ -1,3 +1,4 @@
+package mod;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Camera;
@@ -36,6 +37,7 @@ import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
+import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.WorldView;
@@ -44,6 +46,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
+import layerteststuff.TestBiomeGenerator;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 2 })
 public class DMod {
@@ -52,8 +55,8 @@ public class DMod {
     public static DMod instance;
     TextureProvider texture = TextureProvider.get("sdfsdf");
     TextureProvider planet = TextureProvider.get("planet.png");
-    Tile tstoneTile = new Tile();
-    Tile laser = new Tile() {
+    public Tile tstoneTile = new Tile();
+    public Tile laser = new Tile() {
         @Override
         public boolean hasTileEntity() {
             return true;
@@ -64,12 +67,12 @@ public class DMod {
             return new LaserTileEntity(world, gtx, gty);
         };
     };
-    Tile torch = new Tile();
-    Item gun = new ItemGun();
+    public Tile torch = new Tile();
+    public Item gun = new ItemGun();
     
-    Item repairGun = new ItemRepairGun();
+    public Item repairGun = new ItemRepairGun();
     
-    TileLiquid water = new TileLiquid();
+    public TileLiquid water = new TileLiquid();
     
     SpaceshipFactory fac = new SpaceshipFactory();
     
@@ -221,7 +224,7 @@ public class DMod {
                 });
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
-                p.setChunkGenerator(new TestChunkGenerator(genset.getSeed()));
+                p.setChunkGenerator(new BiomeChunkGenerator(new TestBiomeGenerator(genset.getSeed())));
                 return p;
             }
         });

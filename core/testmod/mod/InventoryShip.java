@@ -1,3 +1,4 @@
+package mod;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.IInventory;

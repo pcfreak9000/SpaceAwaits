@@ -1,3 +1,4 @@
+package mod;
 
 import de.pcfreak9000.spaceawaits.core.DynamicAsset;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;

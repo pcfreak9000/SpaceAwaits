@@ -1,15 +1,18 @@
+package mod;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.Slot;
 
-public class ContainerCrafter extends GuiInventory {
+public class ContainerInventoryShip extends GuiInventory {
     
-    private final int side;
+    private final InventoryShip invShip;
     
-    public ContainerCrafter(int side) {
-        this.side = side;
+    public ContainerInventoryShip(InventoryShip invShip) {
+        this.invShip = invShip;
     }
     
     @Override
@@ -20,11 +23,11 @@ public class ContainerCrafter extends GuiInventory {
         supertable.align(Align.center);
         Table subtable = new Table();
         subtable.align(Align.center);
-        for (int i = 0; i < side*side; i++) {
-            if (i % side == 0) {
-                subtable.row();
-            }
-            subtable.add(registerSlot(new Slot(player.getInventory(), i))).pad(0.5f);
+        Label label = new Label("Emergency Pack", CoreRes.SKIN.getSkin());
+        supertable.add(label).pad(1f);
+        supertable.row();
+        for (int i = 0; i < invShip.slots(); i++) {
+            subtable.add(registerSlot(new Slot(invShip, i))).pad(0.5f);
         }
         supertable.add(subtable).pad(10f);
         supertable.row();

@@ -1,3 +1,4 @@
+package mod;
 import java.util.Random;
 
 import com.badlogic.gdx.utils.Array;

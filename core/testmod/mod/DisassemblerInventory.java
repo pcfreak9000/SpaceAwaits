@@ -1,3 +1,4 @@
+package mod;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;

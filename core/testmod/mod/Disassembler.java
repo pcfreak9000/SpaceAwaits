@@ -1,3 +1,4 @@
+package mod;
 import com.badlogic.ashley.utils.ImmutableArray;
 
 import de.pcfreak9000.spaceawaits.comp.Composite;

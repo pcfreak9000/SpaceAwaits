@@ -1,3 +1,4 @@
+package mod;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;

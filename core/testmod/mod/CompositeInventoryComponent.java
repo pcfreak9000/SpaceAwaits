@@ -1,3 +1,4 @@
+package mod;
 import com.badlogic.ashley.core.Component;
 
 import de.pcfreak9000.nbt.NBTCompound;
