@@ -51,7 +51,7 @@ public class ItemRepairGun extends Item {
             if (nbt.getFloat("bar") <= 0f) {
                 stackUsed.changeNumber(-1);
             }
-            System.out.println(dc.damage);
+            //System.out.println(dc.damage);
             if (dc.damage <= 0) {
                 ent[0].remove(DamagedComponent.class);
             }
