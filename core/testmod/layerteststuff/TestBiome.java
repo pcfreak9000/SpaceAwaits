@@ -1,5 +1,7 @@
 package layerteststuff;
 
+import java.util.Random;
+
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
 import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
@@ -9,7 +11,10 @@ import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.world.TileChunkArea;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.TileInterface;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -55,7 +60,7 @@ public class TestBiome extends Biome implements HeightSupplier {
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, Chunk chunk, BiomeGenerator biomeGen) {
+    public void genTerrainTileAt(int tx, int ty, TileInterface chunk, BiomeGenerator biomeGen, Random rand) {
         checkSetSeed(biomeGen.getWorldSeed());
         int value = (int) biomeGen.interpolateAlongX(HeightInterpolatable.class, tx, ty);
         if (ty > value) {
@@ -75,22 +80,24 @@ public class TestBiome extends Biome implements HeightSupplier {
         }
         
         if (t == DMod.instance.tstoneTile) {
-            if (Math.random() < 0.001) {
+            if (rand.nextDouble() < 0.001) {
                 t = DMod.instance.laser;
             }
-            if (Math.random() < 0.002) {
+            if (rand.nextDouble() < 0.002) {
                 t = DMod.instance.torch;
             }
         }
         chunk.setTile(tx, ty, TileLayer.Front, t);
         chunk.setTile(tx, ty, TileLayer.Back, t);
-        if (Math.random() < 0.002) {
-            chunk.setTile(tx, ty, TileLayer.Front, GameRegistry.TILE_REGISTRY.get("water"));
-        }
     }
-    
+    //TODO: TileChunkArea is oof, seed creation for randoms
     @Override
-    public void decorate(Chunk chunk) {
+    public void populate(TileChunkArea area, BiomeGenerator biomeGen, World world, Random rand) {
+        if (rand.nextDouble() <= 0.5) {
+            int x = rand.nextInt(area.getWidth()) + area.getTileX();
+            int y = rand.nextInt(area.getHeight()) + area.getTileY();
+            area.setTile(x, y, TileLayer.Front, DMod.instance.torch);
+        }
     }
     
 }

@@ -38,7 +38,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Chunk implements NBTSerializable, Tickable {
+public class Chunk implements NBTSerializable, Tickable, TileInterface {
     
     public static final int CHUNK_SIZE = 64;
     
@@ -198,14 +198,17 @@ public class Chunk implements NBTSerializable, Tickable {
         }
     }
     
+    @Override
     public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getTileEntity();
     }
     
+    @Override
     public Tile getTile(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getTile();
     }
     
+    @Override
     public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getMetadata();
     }
@@ -217,6 +220,7 @@ public class Chunk implements NBTSerializable, Tickable {
     
     //Maybe save the set for later somehow?
     
+    @Override
     public Tile setTile(int tx, int ty, TileLayer layer, Tile t) {
         switch (layer) {
         case Back:

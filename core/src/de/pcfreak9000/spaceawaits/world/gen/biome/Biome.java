@@ -1,8 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.gen.biome;
 
+import java.util.Random;
+
 import com.badlogic.gdx.utils.ObjectMap;
 
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.TileChunkArea;
+import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.chunk.TileInterface;
 
 public abstract class Biome {
     
@@ -23,8 +27,7 @@ public abstract class Biome {
     //  Ores, Plants, etc
     //  Structures
     
-    public abstract void genTerrainTileAt(int tx, int ty, Chunk chunk, BiomeGenerator biomeGen);
+    public abstract void genTerrainTileAt(int tx, int ty, TileInterface tiles, BiomeGenerator biomeGen, Random rand);
     
-    //args: chunk? area?
-    public abstract void decorate(Chunk chunk);
+    public abstract void populate(TileChunkArea area, BiomeGenerator biomeGen, World world, Random rand);
 }
