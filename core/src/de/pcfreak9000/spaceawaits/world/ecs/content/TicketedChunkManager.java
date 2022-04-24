@@ -53,17 +53,17 @@ public class TicketedChunkManager extends EntitySystem {
             }
             IntCoords[] chunks = t.getLoadChunks();
             for (IntCoords cc : chunks) {
-                if (world.getBounds().inChunkBounds(cc.getX(), cc.getY())) {
+                if (world.getBounds().inBoundsChunk(cc.getX(), cc.getY())) {
                     chunksToUpdate.add(cc.createKey());
                 }
             }
         }
         //find bordering chunks. load them, but dont update them.
-        final int borderingChunkRad = 1;
+        final int borderingChunkRad = 2;//first outer ring is only generated, second outer ring is also populated (hopefully...), both aren't loaded. inner rings are populated and loaded
         for (IntCoordKey up : chunksToUpdate) {
             for (int i = -borderingChunkRad; i <= borderingChunkRad; i++) {
                 for (int j = -borderingChunkRad; j <= borderingChunkRad; j++) {
-                    if (world.getBounds().inChunkBounds(up.getX() + i, up.getY() + j) && (i != 0 || j != 0)) {
+                    if (world.getBounds().inBoundsChunk(up.getX() + i, up.getY() + j) && (i != 0 || j != 0)) {
                         IntCoordKey load = new IntCoordKey(up.getX() + i, up.getY() + j);
                         if (!chunksToUpdate.contains(load)) {
                             chunksToLoad.add(load);

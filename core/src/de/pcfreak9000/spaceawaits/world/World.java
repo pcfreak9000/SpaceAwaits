@@ -100,6 +100,19 @@ public abstract class World {
         countChunkActive--;
     }
     
+    public long getSeedForTile(int tx, int ty) {
+        long l = getSeed();
+        l += 8793457682347863416L;
+        l *= tx;
+        l += 8793457682347863416L;
+        l *= ty;
+        return l;
+    }
+    
+    public Random getRandomForTile(int tx, int ty) {
+        return new RandomXS128(getSeedForTile(tx, ty));
+    }
+    
     public void joinWorld(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
     }

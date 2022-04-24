@@ -11,14 +11,14 @@ import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.TileChunkArea;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.chunk.TileInterface;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import mod.DMod;
 
 public class TestBiome extends Biome implements HeightSupplier {
@@ -60,7 +60,7 @@ public class TestBiome extends Biome implements HeightSupplier {
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, TileInterface chunk, BiomeGenerator biomeGen, Random rand) {
+    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenerator biomeGen, Random rand) {
         checkSetSeed(biomeGen.getWorldSeed());
         int value = (int) biomeGen.interpolateAlongX(HeightInterpolatable.class, tx, ty);
         if (ty > value) {
@@ -90,13 +90,13 @@ public class TestBiome extends Biome implements HeightSupplier {
         chunk.setTile(tx, ty, TileLayer.Front, t);
         chunk.setTile(tx, ty, TileLayer.Back, t);
     }
-    //TODO: TileChunkArea is oof, seed creation for randoms
+    
     @Override
-    public void populate(TileChunkArea area, BiomeGenerator biomeGen, World world, Random rand) {
-        if (rand.nextDouble() <= 0.5) {
-            int x = rand.nextInt(area.getWidth()) + area.getTileX();
-            int y = rand.nextInt(area.getHeight()) + area.getTileY();
-            area.setTile(x, y, TileLayer.Front, DMod.instance.torch);
+    public void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand) {
+        if (rand.nextDouble() <= 0.05) {
+            int x = rand.nextInt(POPULATE_DIV) + tx;
+            int y = rand.nextInt(POPULATE_DIV) + ty;
+            tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
         }
     }
     

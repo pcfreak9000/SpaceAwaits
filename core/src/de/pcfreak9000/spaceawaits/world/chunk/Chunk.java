@@ -21,6 +21,7 @@ import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -38,7 +39,11 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Chunk implements NBTSerializable, Tickable, TileInterface {
+public class Chunk implements NBTSerializable, Tickable, ITileArea {
+    
+    public static enum ChunkGenStage {
+        Empty, Generated, Populated;
+    }
     
     public static final int CHUNK_SIZE = 64;
     
@@ -74,14 +79,12 @@ public class Chunk implements NBTSerializable, Tickable, TileInterface {
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
+    private Bounds chunkBounds;
+    
     private Engine addedToEngine;
     private TileSystem tileSystem;
     
     private ChunkGenStage genStage = ChunkGenStage.Empty;
-    
-    public static enum ChunkGenStage {
-        Empty, Generated, Populated;
-    }
     
     private final Entity chunkEntity;
     
@@ -91,6 +94,7 @@ public class Chunk implements NBTSerializable, Tickable, TileInterface {
         this.world = world;
         this.tx = rx * CHUNK_SIZE;
         this.ty = ry * CHUNK_SIZE;
+        findAndSetActualBounds();
         this.listeners = new ArrayList<>();
         this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
@@ -109,6 +113,11 @@ public class Chunk implements NBTSerializable, Tickable, TileInterface {
         this.tilesBckRender = new RenderTileStorage(RenderLayers.TILE_BACK, this, TileLayer.Back);
     }
     
+    private void findAndSetActualBounds() {
+        Bounds naive = new Bounds(tx, ty, CHUNK_SIZE, CHUNK_SIZE);
+        this.chunkBounds = Bounds.intersect(naive, world.getBounds());
+    }
+    
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
         for (ChunkChangeListener l : this.listeners) {
             l.onTileStateChange(this, state, newTile, oldTile, gtx, gty);
@@ -123,20 +132,24 @@ public class Chunk implements NBTSerializable, Tickable, TileInterface {
         if (genStage != ChunkGenStage.Empty) {
             throw new IllegalStateException();
         }
-        chunkGen.generateChunk(this);
         genStage = ChunkGenStage.Generated;
+        chunkGen.generateChunk(this);
     }
     
     public void populate(IChunkGenerator chunkGen) {
         if (genStage != ChunkGenStage.Generated) {
             throw new IllegalStateException();
         }
-        chunkGen.populateChunk(this, this.world);
         genStage = ChunkGenStage.Populated;
+        chunkGen.populateChunk(this, this.world);
     }
     
     public ChunkGenStage getGenStage() {
         return genStage;
+    }
+    
+    public Bounds getBounds() {
+        return this.chunkBounds;
     }
     
     public int getGlobalChunkX() {
@@ -283,9 +296,11 @@ public class Chunk implements NBTSerializable, Tickable, TileInterface {
         return oldTile;
     }
     
+    @Override
     public boolean inBounds(int gtx, int gty) {
-        return gtx >= this.tx && gtx < this.tx + CHUNK_SIZE && gty >= this.ty && gty < this.ty + CHUNK_SIZE
-                && this.world.getBounds().inBounds(gtx, gty);
+        //        return gtx >= this.tx && gtx < this.tx + CHUNK_SIZE && gty >= this.ty && gty < this.ty + CHUNK_SIZE
+        //                && this.world.getBounds().inBounds(gtx, gty);
+        return this.chunkBounds.inBounds(gtx, gty);
     }
     
     @Override

@@ -4,17 +4,17 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.RandomXS128;
 
-import de.pcfreak9000.spaceawaits.world.TileChunkArea;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class BiomeChunkGenerator implements IChunkGenerator {
     
     private BiomeGenerator biomeGenerator;
     private Random rand = new RandomXS128();
     
-    private static final int POPULATE_DIV = 16;
+    private static final int POPULATE_DIV = Biome.POPULATE_DIV;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
     public BiomeChunkGenerator(BiomeGenerator biomeGenerator) {
@@ -23,9 +23,9 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     
     private long getSeedForChunk(Chunk chunk) {
         long l = this.biomeGenerator.getWorldSeed();
-        l += 8793457682347863416L;
+        l += 6793451682347862416L;
         l *= chunk.getGlobalChunkX();
-        l += 8793457682347863416L;
+        l += 6793451682347862416L;
         l *= chunk.getGlobalChunkY();
         return l;
     }
@@ -49,6 +49,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     @Override
     public void populateChunk(Chunk chunk, World world) {
         rand.setSeed(getSeedForChunk(chunk));
+        TileSystem ts = world.getSystem(TileSystem.class);
         for (int i = 0; i < POPULATE_COUNT; i++) {
             for (int j = 0; j < POPULATE_COUNT; j++) {
                 int txs = chunk.getGlobalTileX() + i * POPULATE_DIV;
@@ -59,8 +60,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(sampletx, samplety);
-                TileChunkArea tca = new TileChunkArea(chunk, txs, tys, POPULATE_DIV, POPULATE_DIV);
-                biome.populate(tca, this.biomeGenerator, world, rand);
+                biome.populate(ts, world, biomeGenerator, txs, tys, rand);
             }
         }
     }

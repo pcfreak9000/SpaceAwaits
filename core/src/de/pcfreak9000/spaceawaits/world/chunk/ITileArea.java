@@ -5,7 +5,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
-public interface TileInterface {
+public interface ITileArea {
     
     boolean inBounds(int tx, int ty);
     

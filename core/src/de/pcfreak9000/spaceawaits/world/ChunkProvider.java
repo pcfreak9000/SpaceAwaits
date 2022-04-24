@@ -38,7 +38,7 @@ public class ChunkProvider implements IChunkProvider {
     
     public void requireChunk(int x, int y, boolean active, Object lock) {
         Objects.requireNonNull(lock);
-        if (!world.getBounds().inChunkBounds(x, y))
+        if (!world.getBounds().inBoundsChunk(x, y))
             return;
         IntCoordKey key = new IntCoordKey(x, y);
         ChunkData cd = chunks.get(key);
@@ -66,7 +66,7 @@ public class ChunkProvider implements IChunkProvider {
     
     public void releaseChunk(int x, int y, Object lock) {
         Objects.requireNonNull(lock);
-        if (!world.getBounds().inChunkBounds(x, y))
+        if (!world.getBounds().inBoundsChunk(x, y))
             return;
         IntCoordKey key = new IntCoordKey(x, y);
         ChunkData cd = chunks.get(key);
@@ -119,7 +119,7 @@ public class ChunkProvider implements IChunkProvider {
     
     @Override
     public Chunk getChunk(int x, int y) {
-        if (!world.getBounds().inChunkBounds(x, y))
+        if (!world.getBounds().inBoundsChunk(x, y))
             return null;
         if (cached != null) {
             if (cached.getGlobalChunkX() == x && cached.getGlobalChunkY() == y) {

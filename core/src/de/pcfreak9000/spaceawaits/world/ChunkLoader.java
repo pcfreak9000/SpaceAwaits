@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.util.Direction;
@@ -36,7 +35,7 @@ public class ChunkLoader implements IChunkLoader {
     //    
     @Override
     public Chunk loadChunk(IntCoordKey key) {
-        if (!world.getBounds().inChunkBounds(key.getX(), key.getY())) {
+        if (!world.getBounds().inBoundsChunk(key.getX(), key.getY())) {
             return null;
         }
         if (!this.loadedChunks.containsKey(key)) {
@@ -49,29 +48,30 @@ public class ChunkLoader implements IChunkLoader {
                 //chunkGen.generateChunk(c, this.world);
             }
             this.loadedChunks.put(key, c);
-            //now check if neighbouring chunks are loaded aren't populated but can be populated (shouldn't happen)
+            //now check if neighbouring chunks are loaded but aren't populated but can be populated
             for (Direction d : Direction.MOORE_NEIGHBOURS) {
                 int x = d.dx + key.getX();
                 int y = d.dy + key.getY();
                 checkAndPopulate(new IntCoordKey(x, y));
             }
-            //generate all neighbouring chunks if they dont exist so the current one can be populated
-            for (Direction d : Direction.MOORE_NEIGHBOURS) {
-                int x = d.dx + key.getX();
-                int y = d.dy + key.getY();
-                if (!world.getBounds().inChunkBounds(x, y)) {
-                    continue;
-                }
-                if (!save.hasChunk(x, y)) {
-                    Chunk neigh = new Chunk(x, y, world);
-                    neigh.generate(chunkGen);
-                    saveChunk(neigh);
-                }
-            }
+            //            //generate all neighbouring chunks if they dont exist so the current one can be populated
+            //            for (Direction d : Direction.MOORE_NEIGHBOURS) {
+            //                int x = d.dx + key.getX();
+            //                int y = d.dy + key.getY();
+            //                if (!world.getBounds().inBoundsChunk(x, y)) {
+            //                    continue;
+            //                }
+            //                if (!save.hasChunk(x, y)) {
+            //                    Chunk neigh = new Chunk(x, y, world);
+            //                    neigh.generate(chunkGen);
+            //                    saveChunk(neigh);
+            //                }
+            //            }
             //make sure every chunk returned by this method is also populated, might lead to weird bugs otherwise
-            if (c.getGenStage() == ChunkGenStage.Generated) {
-                c.populate(chunkGen);
-            }
+            //            if (c.getGenStage() == ChunkGenStage.Generated) {
+            //                c.populate(chunkGen);
+            //            }
+            checkAndPopulate(key);
             return c;
         }
         return loadedChunks.get(key);
@@ -84,7 +84,7 @@ public class ChunkLoader implements IChunkLoader {
             for (Direction d : Direction.MOORE_NEIGHBOURS) {
                 int x = d.dx + key.getX();
                 int y = d.dy + key.getY();
-                if (!world.getBounds().inChunkBounds(x, y)) {
+                if (!world.getBounds().inBoundsChunk(x, y)) {
                     continue;
                 }
                 if (!loadedChunks.containsKey(new IntCoordKey(x, y)) && !save.hasChunk(x, y)) {
@@ -93,7 +93,7 @@ public class ChunkLoader implements IChunkLoader {
             }
             if (around) {
                 c.populate(chunkGen);
-                Logger.getLogger(getClass()).warn("This logically shouldn't happen");
+                //Logger.getLogger(getClass()).warn("This logically shouldn't happen"); //Hmm.
             }
         }
     }
