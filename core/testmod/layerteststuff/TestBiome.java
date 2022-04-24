@@ -26,6 +26,7 @@ public class TestBiome extends Biome implements HeightSupplier {
         
         ModuleAutoCorrect source = new ModuleAutoCorrect(-1, 1);
         source.setSource(gen);
+        source.setSampleScale(Chunk.CHUNK_SIZE * 2);
         source.setSamples(10000);
         source.calculate2D();
         noise = source;
