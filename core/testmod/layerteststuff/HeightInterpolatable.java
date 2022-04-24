@@ -12,7 +12,7 @@ public class HeightInterpolatable implements BiomeInterpolatable {
     
     @Override
     public float get(int tx, int ty) {
-        return hs.get(tx, ty);
+        return hs.getHeight(tx, ty);
     }
     
 }

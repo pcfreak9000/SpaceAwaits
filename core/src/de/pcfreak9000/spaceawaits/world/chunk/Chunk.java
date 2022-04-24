@@ -29,6 +29,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
+import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
@@ -76,6 +77,12 @@ public class Chunk implements NBTSerializable, Tickable {
     private Engine addedToEngine;
     private TileSystem tileSystem;
     
+    private ChunkGenStage genStage = ChunkGenStage.Empty;
+    
+    public static enum ChunkGenStage {
+        Empty, Generated, Populated;
+    }
+    
     private final Entity chunkEntity;
     
     public Chunk(int rx, int ry, World world) {
@@ -110,6 +117,26 @@ public class Chunk implements NBTSerializable, Tickable {
     
     public void addListener(ChunkChangeListener listener) {
         this.listeners.add(listener);
+    }
+    
+    public void generate(IChunkGenerator chunkGen) {
+        if (genStage != ChunkGenStage.Empty) {
+            throw new IllegalStateException();
+        }
+        chunkGen.generateChunk(this);
+        genStage = ChunkGenStage.Generated;
+    }
+    
+    public void populate(IChunkGenerator chunkGen) {
+        if (genStage != ChunkGenStage.Generated) {
+            throw new IllegalStateException();
+        }
+        chunkGen.populateChunk(this, this.world);
+        genStage = ChunkGenStage.Populated;
+    }
+    
+    public ChunkGenStage getGenStage() {
+        return genStage;
     }
     
     public int getGlobalChunkX() {
@@ -328,6 +355,7 @@ public class Chunk implements NBTSerializable, Tickable {
     @Override
     public void readNBT(NBTTag tag) {
         NBTCompound nbtc = (NBTCompound) tag;
+        this.genStage = ChunkGenStage.values()[nbtc.getIntOrDefault("genStageIndex", 0)];
         NBTList entities = nbtc.getList("entities");
         NBTList tileList = nbtc.getList("tiles");
         NBTList tileEntities = nbtc.getList("tileEntities");
@@ -395,6 +423,7 @@ public class Chunk implements NBTSerializable, Tickable {
     @Override
     public NBTTag writeNBT() {
         NBTCompound chunkMaster = new NBTCompound();
+        chunkMaster.putInt("genStageIndex", this.genStage.ordinal());
         NBTList tileList = new NBTList(NBTType.String);
         NBTList entities = new NBTList(NBTType.Compound);
         NBTList tileEntities = new NBTList(NBTType.Compound);

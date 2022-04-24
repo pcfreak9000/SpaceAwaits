@@ -40,7 +40,7 @@ public class TestBiome extends Biome implements HeightSupplier {
     }
     
     @Override
-    public float get(int tx, int ty) {
+    public float getHeight(int tx, int ty) {
         return 400 + (int) Math.round(60 * noise.get(tx, 0.5));
     }
     

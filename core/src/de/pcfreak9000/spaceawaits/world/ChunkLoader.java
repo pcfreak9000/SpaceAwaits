@@ -5,8 +5,10 @@ import java.util.Map;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkLoader implements IChunkLoader {
@@ -42,15 +44,39 @@ public class ChunkLoader implements IChunkLoader {
                 readChunk(c);
                 chunkGen.regenerateChunk(c, this.world);
             } else {
-                chunkGen.generateChunk(c, this.world);
+                c.generate(chunkGen);
+                //chunkGen.generateChunk(c, this.world);
             }
-//            for (Entity e : c.getEntities()) {
-//                DynamicAssetUtil.checkAndCreateAsset(e);
-//            }
             this.loadedChunks.put(key, c);
+            for (Direction d : Direction.MOORE_NEIGHBOURS) {
+                int x = d.dx + key.getX();
+                int y = d.dy + key.getY();
+                checkAndPopulate(new IntCoordKey(x, y));
+            }
+            checkAndPopulate(key);
             return c;
         }
         return loadedChunks.get(key);
+    }
+    
+    private void checkAndPopulate(IntCoordKey key) {
+        Chunk c = this.loadedChunks.get(key);
+        if (c != null && c.getGenStage() == ChunkGenStage.Generated) {
+            boolean around = true;
+            for (Direction d : Direction.MOORE_NEIGHBOURS) {
+                int x = d.dx + key.getX();
+                int y = d.dy + key.getY();
+                if (!world.getBounds().inChunkBounds(x, y)) {
+                    continue;
+                }
+                if (!loadedChunks.containsKey(new IntCoordKey(x, y)) && !save.hasChunk(x, y)) {
+                    around = false;
+                }
+            }
+            if (around) {
+                c.populate(chunkGen);
+            }
+        }
     }
     
     private void readChunk(Chunk c) {

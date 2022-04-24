@@ -13,17 +13,21 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     }
     
     @Override
-    public void generateChunk(Chunk chunk, World world) {
+    public void generateChunk(Chunk chunk) {
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = i + chunk.getGlobalTileX();
                 int y = j + chunk.getGlobalTileY();
-                if (!world.getBounds().inBounds(x, y)) {
+                if (!chunk.inBounds(x, y)) {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(x, y);
                 biome.genTerrainTileAt(x, y, chunk, this.biomeGenerator);
             }
         }
+    }
+    
+    @Override
+    public void populateChunk(Chunk chunk, World world) {
     }
 }
