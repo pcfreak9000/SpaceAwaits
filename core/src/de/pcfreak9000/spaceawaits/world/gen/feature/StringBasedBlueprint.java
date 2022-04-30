@@ -19,17 +19,18 @@ public class StringBasedBlueprint implements Blueprint {
     private int height;
     private int width;
     
-    private Map<Character, Tile> tilemappings = new HashMap<>();
+    private Map<Character, Object> tilemappings = new HashMap<>();
+    private Map<Character, Object> tilemappingsBack = new HashMap<>();
     
     public void setFront(Object... objects) {
-        Data d = convert(objects);
+        Data d = convert(tilemappings, objects);
         front = d.chars;
         width = d.width;
         height = d.height;
     }
     
     public void setBack(Object... objects) {
-        Data d = convert(objects);
+        Data d = convert(tilemappingsBack, objects);
         back = d.chars;
         width = d.width;
         height = d.height;
@@ -41,7 +42,7 @@ public class StringBasedBlueprint implements Blueprint {
         private int height;
     }
     
-    private Data convert(Object... objects) {
+    private Data convert(Map<Character, Object> tilemappings, Object... objects) {
         Array<String> lines = new Array<>();
         char c = 0;
         for (Object o : objects) {
@@ -66,6 +67,13 @@ public class StringBasedBlueprint implements Blueprint {
                 }
                 Tile t = (Tile) o;
                 tilemappings.put(c, t);
+                c = 0;
+            } else if (o instanceof TilePlacer) {
+                if (c == 0) {
+                    throw new IllegalStateException();
+                }
+                TilePlacer tp = (TilePlacer) o;
+                tilemappings.put(c, tp);
                 c = 0;
             }
         }
@@ -111,6 +119,19 @@ public class StringBasedBlueprint implements Blueprint {
         return rx + (height - ry - 1) * width;
     }
     
+    private void placeTile(int tx, int ty, TileLayer layer, char ch, Random random, TileSystem tiles) {
+        Object o = (layer == TileLayer.Front ? tilemappings : tilemappingsBack).get(ch);
+        if (o instanceof Tile) {
+            Tile t = (Tile) o;
+            tiles.setTile(tx, ty, layer, t);
+        } else if (o instanceof TilePlacer) {
+            TilePlacer tp = (TilePlacer) o;
+            tp.place(tx, ty, layer, random, tiles);
+        } else {
+            throw new IllegalStateException(o + "");
+        }
+    }
+    
     @Override
     public void generate(TileSystem tiles, World world, int txs, int tys, int rxs, int rys, int width, int height,
             Random random) {
@@ -127,12 +148,10 @@ public class StringBasedBlueprint implements Blueprint {
                 int tx = txs + rx;
                 int ty = tys + ry;
                 if (frontchar != ' ') {
-                    Tile t = tilemappings.get(frontchar);
-                    tiles.setTile(tx, ty, TileLayer.Front, t);
+                    placeTile(tx, ty, TileLayer.Front, frontchar, random, tiles);
                 }
                 if (backchar != ' ') {
-                    Tile t = tilemappings.get(backchar);
-                    tiles.setTile(tx, ty, TileLayer.Back, t);
+                    placeTile(tx, ty, TileLayer.Back, backchar, random, tiles);
                 }
             }
         }

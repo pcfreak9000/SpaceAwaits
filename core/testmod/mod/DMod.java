@@ -74,9 +74,11 @@ public class DMod {
     
     public TileLiquid water = new TileLiquid();
     
+    public Tile storageDrawer = new TileStorageDrawer();
+    
     public Tile oldbricks = new Tile();
     public Tile grasstile = new Tile();
-
+    
     SpaceshipFactory fac = new SpaceshipFactory();
     
     @EventSubscription
@@ -102,6 +104,8 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);
+        
+        GameRegistry.TILE_REGISTRY.register("storageDrawer", storageDrawer);
         
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
         
@@ -176,6 +180,12 @@ public class DMod {
         shipStarterTable.add(new WeightedRandomInventoryContent(gun, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
+        LootTable housethingTable = LootTable.getFor("housething");
+        housethingTable.addMin(1);
+        housethingTable.addMax(3);
+        housethingTable.add(new WeightedRandomInventoryContent(gun, 10, 1, 1, false));
+        housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
+        housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;

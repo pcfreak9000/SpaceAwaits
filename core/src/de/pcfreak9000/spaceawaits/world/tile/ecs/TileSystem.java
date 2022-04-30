@@ -19,6 +19,7 @@ import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -34,7 +35,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 
-public class TileSystem extends EntitySystem {
+public class TileSystem extends EntitySystem implements ITileArea {
     
     private World world;
     private Random worldRandom;
@@ -93,6 +94,7 @@ public class TileSystem extends EntitySystem {
      * @param tile  the new Tile
      * @return the old tile or null if nothing changed (out of bounds or not loaded)
      */
+    @Override
     public Tile setTile(int tx, int ty, TileLayer layer, Tile tile) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
@@ -119,6 +121,7 @@ public class TileSystem extends EntitySystem {
         }
     }
     
+    @Override
     public Tile getTile(int tx, int ty, TileLayer layer) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
@@ -127,6 +130,7 @@ public class TileSystem extends EntitySystem {
         return Tile.NOTHING;
     }
     
+    @Override
     public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
@@ -143,6 +147,7 @@ public class TileSystem extends EntitySystem {
         return null;
     }
     
+    @Override
     public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
@@ -247,9 +252,9 @@ public class TileSystem extends EntitySystem {
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
-            setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
             tile.onTileBroken(tx, ty, layer, drops, world, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
+            setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
                     Entity e = ItemEntityFactory.setupItemEntity(s,
@@ -343,6 +348,11 @@ public class TileSystem extends EntitySystem {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public boolean inBounds(int tx, int ty) {
+        return world.getBounds().inBounds(tx, ty);
     }
     
 }

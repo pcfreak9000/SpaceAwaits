@@ -10,6 +10,7 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
+import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -18,10 +19,12 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
+import de.pcfreak9000.spaceawaits.world.gen.feature.TilePlacer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import mod.DMod;
+import mod.TileEntityStorageDrawer;
 
 public class TestBiome extends Biome implements HeightSupplier {
     private void genNoise() {
@@ -47,7 +50,7 @@ public class TestBiome extends Biome implements HeightSupplier {
     private static final String[] leet = { // 
             "# ### ### ###", //
             "#   #   #   #", //
-            "# ### ###   #", //
+            "# ### #X#   #", //
             "#   #   #   #", //
             "# ### ###   #", //
     };
@@ -56,8 +59,8 @@ public class TestBiome extends Biome implements HeightSupplier {
         genNoise();
         this.interpolators.put(HeightInterpolatable.class, new HeightInterpolatable(this));
         this.bp = new StringBasedBlueprint();
-        this.bp.setFront(leet, '#', DMod.instance.oldbricks);
-        this.bp.setBack(leet, '#', DMod.instance.oldbricks);
+        this.bp.setFront(leet, '#', DMod.instance.oldbricks, 'X', storageDrawer);
+        this.bp.setBack(leet, '#', DMod.instance.oldbricks, 'X', DMod.instance.oldbricks);
     }
     
     @Override
@@ -119,6 +122,16 @@ public class TestBiome extends Biome implements HeightSupplier {
                 return true;
             }
             return false;
+        }
+    };
+    
+    private TilePlacer storageDrawer = new TilePlacer() {
+        
+        @Override
+        public void place(int tx, int ty, TileLayer layer, Random random, ITileArea tiles) {
+            tiles.setTile(tx, ty, layer, DMod.instance.storageDrawer);
+            TileEntityStorageDrawer te = (TileEntityStorageDrawer) tiles.getTileEntity(tx, ty, layer);
+            LootTable.getFor("housething").generate(random, te);
         }
     };
     
