@@ -19,9 +19,10 @@ public class ContainerDisassembler extends GuiInventory {
     private CompositeInventory compInv;
     
     public ContainerDisassembler(Disassembler dis, CompositeInventory compInv) {
+        super(new DisassemblerInventory(dis));
+        this.dinv = (DisassemblerInventory) inventoryBackingMain;
         this.disassembler = dis;
         this.compInv = compInv;
-        this.dinv = new DisassemblerInventory(dis);
     }
     
     @Override

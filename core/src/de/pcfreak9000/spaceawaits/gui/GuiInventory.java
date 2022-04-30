@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -16,17 +18,38 @@ public class GuiInventory extends GuiOverlay {
     private Array<Slot> slots;
     //FollowMouseStack+ClickListener...
     private FollowMouseStack followmouse;
+    
+    protected IInventory inventoryBackingMain;
+    
+    public GuiInventory() {
+        this(null);
+    }
+    
+    public GuiInventory(IInventory invBackingMain) {
+        this.inventoryBackingMain = invBackingMain;
+    }
+    
     private ClickListener slotClickListener = new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             Slot clicked = (Slot) event.getListenerActor();
-            followmouse.setBounds(event.getStageX(), event.getStageY(), Slot.SIZE*0.9f, Slot.SIZE*0.9f);
+            followmouse.setBounds(event.getStageX(), event.getStageY(), Slot.SIZE * 0.9f, Slot.SIZE * 0.9f);
             ItemStack currentAttached = followmouse.getItemStack();
             if (currentAttached == null || currentAttached.isEmpty()) {
                 if (clicked.canTake()) {
-                    followmouse.setItemStack(clicked.getStack());
-                    followmouse.setSlotOrigin(clicked);
-                    InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
+                    if (inventoryBackingMain != null && InptMgr.isPressed(EnumInputIds.INV_MOD)) {
+                        ItemStack stack = InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
+                        IInventory target = clicked.inventoryBacking == player.getInventory() ? inventoryBackingMain
+                                : player.getInventory();
+                        ItemStack leftover = InvUtil.insert(target, stack);
+                        if (!ItemStack.isEmptyOrNull(leftover)) {
+                            InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, leftover);
+                        }
+                    } else {
+                        followmouse.setItemStack(clicked.getStack());
+                        followmouse.setSlotOrigin(clicked);
+                        InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
+                    }
                 }
             } else {
                 if (clicked.canPut()) {

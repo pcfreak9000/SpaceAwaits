@@ -1,4 +1,5 @@
 package mod;
+
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -12,6 +13,7 @@ public class ContainerInventoryShip extends GuiInventory {
     private final InventoryShip invShip;
     
     public ContainerInventoryShip(InventoryShip invShip) {
+        super(invShip);
         this.invShip = invShip;
     }
     

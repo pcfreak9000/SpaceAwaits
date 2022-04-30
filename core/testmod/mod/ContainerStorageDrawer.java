@@ -13,6 +13,7 @@ public class ContainerStorageDrawer extends GuiInventory {
     private final TileEntityStorageDrawer te;
     
     public ContainerStorageDrawer(TileEntityStorageDrawer te) {
+        super(te);
         this.te = te;
     }
     

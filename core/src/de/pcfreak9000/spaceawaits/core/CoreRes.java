@@ -19,7 +19,7 @@ public class CoreRes {
     
     public static enum EnumInputIds {
         Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
-        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud;
+        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud, INV_MOD;
     }
     
     public static final void init() {
@@ -42,6 +42,7 @@ public class CoreRes {
         InptMgr.register(EnumInputIds.LastChatMsg, Keys.UP, false);
         InptMgr.register(EnumInputIds.NextChatMsg, Keys.DOWN, false);
         InptMgr.register(EnumInputIds.HideHud, Keys.F1, false);
+        InptMgr.register(EnumInputIds.INV_MOD, Keys.SHIFT_LEFT, false);
     }
     
     static {
@@ -51,8 +52,6 @@ public class CoreRes {
         WHITE = new Texture(p);
         p.dispose();
     }
-    
-
     
     public static final BitmapFont FONT = new BitmapFont();//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();
