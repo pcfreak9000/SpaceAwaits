@@ -190,7 +190,7 @@ public class Tile {
         return itemTile;
     }
     
-    public void onTileBroken(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world,
+    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world,
             TileSystem tileSystem, Random random) {
         drops.add(new ItemStack(getItemTile(), 1));
     }

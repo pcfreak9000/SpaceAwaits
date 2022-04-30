@@ -19,7 +19,7 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
-import de.pcfreak9000.spaceawaits.world.gen.feature.TilePlacer;
+import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -125,7 +125,7 @@ public class TestBiome extends Biome implements HeightSupplier {
         }
     };
     
-    private TilePlacer storageDrawer = new TilePlacer() {
+    private ITilePlacer storageDrawer = new ITilePlacer() {
         
         @Override
         public void place(int tx, int ty, TileLayer layer, Random random, ITileArea tiles) {

@@ -252,7 +252,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
             Array<ItemStack> drops = new Array<>();
-            tile.onTileBroken(tx, ty, layer, drops, world, this, worldRandom);
+            tile.onTileBreak(tx, ty, layer, drops, world, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
             setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
             if (drops.size > 0) {

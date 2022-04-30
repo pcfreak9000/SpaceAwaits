@@ -68,11 +68,11 @@ public class StringBasedBlueprint implements Blueprint {
                 Tile t = (Tile) o;
                 tilemappings.put(c, t);
                 c = 0;
-            } else if (o instanceof TilePlacer) {
+            } else if (o instanceof ITilePlacer) {
                 if (c == 0) {
                     throw new IllegalStateException();
                 }
-                TilePlacer tp = (TilePlacer) o;
+                ITilePlacer tp = (ITilePlacer) o;
                 tilemappings.put(c, tp);
                 c = 0;
             }
@@ -124,8 +124,8 @@ public class StringBasedBlueprint implements Blueprint {
         if (o instanceof Tile) {
             Tile t = (Tile) o;
             tiles.setTile(tx, ty, layer, t);
-        } else if (o instanceof TilePlacer) {
-            TilePlacer tp = (TilePlacer) o;
+        } else if (o instanceof ITilePlacer) {
+            ITilePlacer tp = (ITilePlacer) o;
             tp.place(tx, ty, layer, random, tiles);
         } else {
             throw new IllegalStateException(o + "");
