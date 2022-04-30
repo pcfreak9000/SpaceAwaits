@@ -14,7 +14,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     private BiomeGenerator biomeGenerator;
     private Random rand = new RandomXS128();
     
-    private static final int POPULATE_DIV = Biome.POPULATE_DIV;
+    private static final int POPULATE_DIV = 16;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
     public BiomeChunkGenerator(BiomeGenerator biomeGenerator) {
@@ -60,7 +60,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(sampletx, samplety);
-                biome.populate(ts, world, biomeGenerator, txs, tys, rand);
+                biome.populate(ts, world, biomeGenerator, txs, tys, rand, POPULATE_DIV);
             }
         }
     }

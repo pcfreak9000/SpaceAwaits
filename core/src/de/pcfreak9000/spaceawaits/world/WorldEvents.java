@@ -46,4 +46,19 @@ public class WorldEvents {
         }
     }
     
+    public static class WMNBTWritingEvent extends WorldMetaNBTEvent {
+        
+        public WMNBTWritingEvent(NBTCompound nbt) {
+            super(nbt, Type.Writing);
+            
+        }
+    }
+    
+    public static class WMNBTReadingEvent extends WorldMetaNBTEvent {
+        
+        public WMNBTReadingEvent(NBTCompound nbt) {
+            super(nbt, Type.Reading);
+            
+        }
+    }
 }

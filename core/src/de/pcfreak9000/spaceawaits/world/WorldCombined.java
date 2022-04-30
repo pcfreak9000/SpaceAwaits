@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
-import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
@@ -39,14 +38,14 @@ public class WorldCombined extends World {
         ((ChunkLoader) chunkLoader).setSave(save);
         ((UnchunkProvider) unchunkProvider).setSave(save);
         ((UnchunkProvider) unchunkProvider).load();
-        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Reading));
+        this.getWorldBus().post(new WorldEvents.WMNBTReadingEvent(this.unchunkProvider.worldInfo()));
         if (worldProperties.autoWorldBorders()) {
             WorldUtil.createWorldBorders(this, getBounds().getWidth(), getBounds().getHeight());
         }
     }
     
     public void saveAll() {
-        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Writing));
+        this.getWorldBus().post(new WorldEvents.WMNBTWritingEvent(this.unchunkProvider.worldInfo()));
         ((ChunkProvider) chunkProvider).saveAll();
         ((UnchunkProvider) unchunkProvider).save();
     }

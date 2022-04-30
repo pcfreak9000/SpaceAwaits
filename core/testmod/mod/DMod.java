@@ -74,6 +74,9 @@ public class DMod {
     
     public TileLiquid water = new TileLiquid();
     
+    public Tile oldbricks = new Tile();
+    public Tile grasstile = new Tile();
+
     SpaceshipFactory fac = new SpaceshipFactory();
     
     @EventSubscription
@@ -104,6 +107,10 @@ public class DMod {
         
         GameRegistry.ITEM_REGISTRY.register("repairGun", repairGun);
         
+        oldbricks.setTexture("oldbricks.png");
+        oldbricks.setDisplayName("Old Bricks");
+        GameRegistry.TILE_REGISTRY.register("oldbricks", oldbricks);
+        
         tstoneTile.setTexture("stone.png");
         tstoneTile.setDisplayName("Stone");
         tstoneTile.setComposite(GameRegistry.COMPOSITE_MANAGER.getCompositeForName("Stonestuff"));
@@ -122,7 +129,6 @@ public class DMod {
         bottom.setDisplayName("Bedrock or something");
         GameRegistry.TILE_REGISTRY.register("bottom", bottom);
         
-        Tile grasstile = new Tile();
         grasstile.setDisplayName("Grass");
         grasstile.setTexture("grass.png");
         //grasstile.setFilterColor(new Color(0.3f, 0.3f, 0.3f));

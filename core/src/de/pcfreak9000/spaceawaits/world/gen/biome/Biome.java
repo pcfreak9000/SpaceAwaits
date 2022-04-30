@@ -10,8 +10,6 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class Biome {
     
-    public static final int POPULATE_DIV = 16;
-    
     protected final ObjectMap<Class<? extends BiomeInterpolatable>, BiomeInterpolatable> interpolators = new ObjectMap<>();
     
     public boolean hasInterpolatable(Class<? extends BiomeInterpolatable> clazz) {
@@ -31,5 +29,6 @@ public abstract class Biome {
     
     public abstract void genTerrainTileAt(int tx, int ty, ITileArea tiles, BiomeGenerator biomeGen, Random rand);
     
-    public abstract void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand);
+    public abstract void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand,
+            int populateDiv);
 }

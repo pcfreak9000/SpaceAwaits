@@ -16,6 +16,8 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -40,9 +42,22 @@ public class TestBiome extends Biome implements HeightSupplier {
     private Module noise;
     private SeededModule seeded;
     
+    private StringBasedBlueprint bp;
+    
+    private static final String[] leet = { // 
+            "# ### ### ###", //
+            "#   #   #   #", //
+            "# ### ###   #", //
+            "#   #   #   #", //
+            "# ### ###   #", //
+    };
+    
     public TestBiome() {
         genNoise();
         this.interpolators.put(HeightInterpolatable.class, new HeightInterpolatable(this));
+        this.bp = new StringBasedBlueprint();
+        this.bp.setFront(leet, '#', DMod.instance.oldbricks);
+        this.bp.setBack(leet, '#', DMod.instance.oldbricks);
     }
     
     @Override
@@ -91,12 +106,33 @@ public class TestBiome extends Biome implements HeightSupplier {
         chunk.setTile(tx, ty, TileLayer.Back, t);
     }
     
+    private FeatureGenerator fgen = new FeatureGenerator() {
+        
+        @Override
+        public boolean generate(TileSystem tiles, World world, int tx, int ty, Random rand, int area) {
+            if (tiles.getTile(tx, ty, TileLayer.Front) == DMod.instance.grasstile) {
+                tiles.setTile(tx, ty + 1, TileLayer.Front, DMod.instance.oldbricks);
+                tiles.setTile(tx, ty + 2, TileLayer.Front, DMod.instance.oldbricks);
+                tiles.setTile(tx, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
+                tiles.setTile(tx - 1, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
+                tiles.setTile(tx + 1, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
+                return true;
+            }
+            return false;
+        }
+    };
+    
     @Override
-    public void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand) {
-        if (rand.nextDouble() <= 0.05) {
-            int x = rand.nextInt(POPULATE_DIV) + tx;
-            int y = rand.nextInt(POPULATE_DIV) + ty;
-            tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
+    public void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand,
+            int area) {
+        for (int i = 0; i < 5; i++) {
+            int x = rand.nextInt(area) + tx;
+            int y = rand.nextInt(area) + ty;
+            if (tiles.getTile(x, y, TileLayer.Front) == DMod.instance.grasstile) {
+                //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
+                //fgen.generate(tiles, world, x, y, rand, area);
+                this.bp.generate(tiles, world, x, y, 0, 0, bp.getWidth(), bp.getHeight(), rand);
+            }
         }
     }
     
