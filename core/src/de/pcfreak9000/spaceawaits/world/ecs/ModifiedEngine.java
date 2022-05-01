@@ -59,11 +59,13 @@ public class ModifiedEngine extends Engine {
         }
         setUpdating(true);
         try {
+            InptMgr.setJustModeNormal(false);
             while (timeAccum >= stepsize) {
                 timeAccum -= stepsize;
                 updateCycleFor(stepsize, logicsystems);
-                InptMgr.clear();//Hmmm. Input is kinda cursed right now?
+                InptMgr.clear();
             }
+            InptMgr.setJustModeNormal(true);
             updateCycleFor(deltaTime, rendersystems);
         } finally {
             setUpdating(false);

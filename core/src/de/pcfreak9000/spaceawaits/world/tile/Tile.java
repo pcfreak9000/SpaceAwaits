@@ -229,6 +229,11 @@ public class Tile {
         return false;
     }
     
+    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+            int gty) {
+        return false;
+    }
+    
     public IContactListener getContactListener() {
         return null;
     }

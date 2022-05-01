@@ -73,6 +73,9 @@ public class ActivatorSystem extends EntitySystem {
         entitySet.clear();
         entityList.clear();
         Vector2 mouse = gameRend.getMouseWorldPos();
+        if (!gameRend.getCurrentView().getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
+            return;
+        }
         phys.get(getEngine()).queryAABB((fix, uc) -> {
             if (fix.testPoint(uc.in(mouse.x), uc.in(mouse.y))) {//really test point? or let the activators decide if they like something?
                 udh.set(fix.getUserData(), fix);
@@ -90,18 +93,20 @@ public class ActivatorSystem extends EntitySystem {
         for (Entity e : entities) {
             ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {
-                if (InptMgr.isPressed(a.getInputKey())) {
+                if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, world, e)) {
                         return;
                     }
                 }
             }
         }
+        //this could theoretically go into an Action as well (ActivationAction or something), but this way, the activated entity can have any key mapping to that activation 
+        //and isn't bound by the single key(combination) of the Action
         entityList.sort(COMP);
         for (Entity e : entityList) {
             ActivatorComponent ac = Components.ACTIVATOR.get(e);
             for (Activator a : ac.activators) {
-                if (InptMgr.isPressed(a.getInputKey())) {
+                if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, e, this.world, this.player.getPlayerEntity())) {
                         return;
                     }

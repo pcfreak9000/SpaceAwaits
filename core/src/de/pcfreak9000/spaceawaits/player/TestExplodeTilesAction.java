@@ -15,6 +15,11 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class TestExplodeTilesAction implements Action {
     
     @Override
+    public boolean isContinuous() {
+        return true;
+    }
+    
+    @Override
     public Object getInputKey() {
         return EnumInputIds.TestExplodeTiles;
     }

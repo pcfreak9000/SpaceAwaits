@@ -1,4 +1,5 @@
 package mod;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
@@ -63,7 +64,8 @@ public class SpaceshipFactory implements WorldEntityFactory {
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
             Player player = source.getComponent(PlayerInputComponent.class).player;
             if (entity.getComponent(DamagedComponent.class) != null) {
-                player.openContainer(new ContainerInventoryShip(entity.getComponent(ComponentInventoryShip.class).invShip));
+                player.openContainer(
+                        new ContainerInventoryShip(entity.getComponent(ComponentInventoryShip.class).invShip));
                 return true;
             }
             player.openContainer(new ContainerCrafter(4));
@@ -71,6 +73,11 @@ public class SpaceshipFactory implements WorldEntityFactory {
             //                    new ContainerDisassembler(entity.getComponent(DisassemblerComponent.class).disassembler,
             //                            entity.getComponent(CompositeInventoryComponent.class).compositeInv));
             return true;
+        }
+        
+        @Override
+        public boolean isContinuous() {
+            return false;
         }
         
         @Override

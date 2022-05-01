@@ -28,15 +28,16 @@ public class TileStorageDrawer extends Tile {
     }
     
     @Override
-    public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty) {
+    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+            int gty) {
         TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(gtx, gty, TileLayer.Front);
         player.openContainer(new ContainerStorageDrawer(te));
         return true;
     }
     
     @Override
-    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world,
-            TileSystem tileSystem, Random random) {
+    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
+            Random random) {
         super.onTileBreak(tx, ty, layer, drops, world, tileSystem, random);
         TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(tx, ty, TileLayer.Front);
         for (int i = 0; i < te.slots(); i++) {

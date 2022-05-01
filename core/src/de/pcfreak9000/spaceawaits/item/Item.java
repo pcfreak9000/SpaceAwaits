@@ -85,6 +85,11 @@ public class Item {
         return false;
     }
     
+    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y,
+            TileLayer layer) {
+        return false;
+    }
+    
     public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
         return false;
     }

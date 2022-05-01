@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class BreakAttackAction implements Action {
-
+    
     private final ITileBreaker br = new ITileBreaker() {
         
         @Override
@@ -40,6 +40,11 @@ public class BreakAttackAction implements Action {
             return true;
         }
     };
+    
+    @Override
+    public boolean isContinuous() {
+        return true;
+    }
     
     @Override
     public Object getInputKey() {

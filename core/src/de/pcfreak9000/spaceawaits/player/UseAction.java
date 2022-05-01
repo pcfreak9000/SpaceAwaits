@@ -15,6 +15,11 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class UseAction implements Action {
     
     @Override
+    public boolean isContinuous() {
+        return true;
+    }
+    
+    @Override
     public Object getInputKey() {
         return EnumInputIds.Use;
     }
@@ -35,7 +40,10 @@ public class UseAction implements Action {
             Tile clicked = tileSystem.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
             //onTileUse
             ItemStack cp = stack != null ? stack.cpy() : null;
-            used = clicked.onTileUse(player, world, tileSystem, cp, tx, ty);
+            if (InptMgr.isJustPressed(getInputKey())) {
+                used |= clicked.onTileJustUse(player, world, tileSystem, stack, tx, ty);
+            }
+            used |= clicked.onTileUse(player, world, tileSystem, cp, tx, ty);
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
         }
         
@@ -44,7 +52,10 @@ public class UseAction implements Action {
             //onItemUse
             if (stack != null && stack.getItem() != null) {
                 ItemStack cp = stack.cpy();
-                used = stack.getItem().onItemUse(player, cp, world, tx, ty, mousex, mousey, layer);//Hmmm... does the layer fit here?
+                if (InptMgr.isJustPressed(getInputKey())) {
+                    used |= stack.getItem().onItemJustUse(player, cp, world, ty, ty, mousex, mousey, layer);
+                }
+                used |= stack.getItem().onItemUse(player, cp, world, tx, ty, mousex, mousey, layer);//Hmmm... does the layer fit here?
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
         }

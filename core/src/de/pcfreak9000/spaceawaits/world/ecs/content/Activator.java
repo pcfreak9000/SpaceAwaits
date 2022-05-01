@@ -6,6 +6,8 @@ import de.pcfreak9000.spaceawaits.world.World;
 
 public interface Activator {
     
+    boolean isContinuous();
+    
     Object getInputKey();
     
     /**

@@ -11,6 +11,11 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 public class ConsoleAction implements Action {
     
     @Override
+    public boolean isContinuous() {
+        return false;
+    }
+    
+    @Override
     public Object getInputKey() {
         return EnumInputIds.Console;
     }

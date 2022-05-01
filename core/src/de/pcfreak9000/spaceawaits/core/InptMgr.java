@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import java.util.Objects;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -16,6 +17,11 @@ public class InptMgr {
     private static boolean locked;
     
     private static float scrolledX, scrolledY;
+    
+    private static boolean[] justPressedKeys = new boolean[Keys.MAX_KEYCODE + 1];
+    private static boolean[] justPressedButtons = new boolean[5];
+    
+    private static boolean justModeNormal = false;
     
     public static void init() {
         Gdx.input.setInputProcessor(myProc);
@@ -94,9 +100,19 @@ public class InptMgr {
         }
     }
     
+    public static void setJustModeNormal(boolean b) {
+        justModeNormal = b;
+    }
+    
     public static void clear() {
         scrolledX = 0;
         scrolledY = 0;
+        for (int i = 0; i < justPressedKeys.length; i++) {
+            justPressedKeys[i] = false;
+        }
+        for (int i = 0; i < justPressedButtons.length; i++) {
+            justPressedButtons[i] = false;
+        }
     }
     
     public static class ButtonKey {
@@ -118,9 +134,9 @@ public class InptMgr {
         
         public boolean isJustPressed() {
             if (isButton) {
-                return Gdx.input.isButtonJustPressed(code);
+                return justModeNormal ? Gdx.input.isButtonJustPressed(code) : justPressedButtons[code];
             } else {
-                return Gdx.input.isKeyJustPressed(code);
+                return justModeNormal ? Gdx.input.isKeyJustPressed(code) : justPressedKeys[code];
             }
         }
     }
@@ -129,6 +145,7 @@ public class InptMgr {
         
         @Override
         public boolean keyDown(int keycode) {
+            justPressedKeys[keycode] = true;
             return false;
         }
         
@@ -144,6 +161,7 @@ public class InptMgr {
         
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            justPressedButtons[button] = true;
             return false;
         }
         
