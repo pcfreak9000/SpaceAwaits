@@ -46,7 +46,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     private FrameBuffer refl;
     
     public RenderLiquidTransparentStrategy(GameRenderer rend, World world) {
-        super(Family.all(ChunkRenderComponent.class).get());
+        super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
         this.camera = this.rend.getCurrentView().getCamera();
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);

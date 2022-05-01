@@ -9,6 +9,7 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class RenderTileStorage {
@@ -27,14 +28,15 @@ public class RenderTileStorage {
         this.tilelayer = tilelayer;
     }
     
-    public void addTilePos(String rendererId, int tx, int ty) {
+    public void addTilePos(RenderMarkerComp rendererId, int tx, int ty) {
         long l = IntCoords.toLong(tx, ty);
         LongArray array = storage.get(rendererId);
         if (array == null) {
             array = new LongArray(false, 16);
             storage.put(rendererId, array);
             Entity e = new EntityImproved();
-            e.add(new RenderComponent(renderlayer, rendererId));
+            e.add(new RenderComponent(renderlayer, ""));
+            e.add(rendererId);
             ChunkRenderComponent crc = new ChunkRenderComponent();
             crc.chunk = this.chunk;
             crc.layer = this.tilelayer;
@@ -50,7 +52,7 @@ public class RenderTileStorage {
         array.add(l);
     }
     
-    public void removeTilePos(String rendererId, int tx, int ty) {
+    public void removeTilePos(RenderMarkerComp rendererId, int tx, int ty) {
         long l = IntCoords.toLong(tx, ty);
         LongArray array = storage.get(rendererId);
         if (array != null) {
@@ -70,7 +72,7 @@ public class RenderTileStorage {
     }
     
     //RenderStrategies should use ChunkRenderComponent for access
-    public LongArray getTilesPosFor(String rendererId) {
+    public LongArray getTilesPosFor(RenderMarkerComp rendererId) {
         return storage.get(rendererId);
     }
     

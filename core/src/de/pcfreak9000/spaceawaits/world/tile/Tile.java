@@ -17,6 +17,8 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Tile {
@@ -190,8 +192,8 @@ public class Tile {
         return itemTile;
     }
     
-    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world,
-            TileSystem tileSystem, Random random) {
+    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
+            Random random) {
         drops.add(new ItemStack(getItemTile(), 1));
     }
     
@@ -254,7 +256,7 @@ public class Tile {
         return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
     
-    public String getRendererId() {
-        return "tileDefault";
+    public RenderMarkerComp getRendererMarkerComp() {
+        return RenderTileDefaultMarkerComponent.INSTANCE;
     }
 }

@@ -253,8 +253,8 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         //old.onTileRemoved(tx, ty, TileLayer.Back, world);
         state.setTile(t);
         // if (!old.getRendererId().equals(t.getRendererId())) {
-        this.tilesBckRender.removeTilePos(old.getRendererId(), tx, ty);
-        this.tilesBckRender.addTilePos(t.getRendererId(), tx, ty);
+        this.tilesBckRender.removeTilePos(old.getRendererMarkerComp(), tx, ty);
+        this.tilesBckRender.addTilePos(t.getRendererMarkerComp(), tx, ty);
         // }
         //t.onTileSet(tx, ty, TileLayer.Back, world);
         return old;
@@ -280,8 +280,8 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         }
         state.setTile(t);
         //if (!oldTile.getRendererId().equals(t.getRendererId())) {
-        this.tilesRender.removeTilePos(oldTile.getRendererId(), tx, ty);
-        this.tilesRender.addTilePos(t.getRendererId(), tx, ty);
+        this.tilesRender.removeTilePos(oldTile.getRendererMarkerComp(), tx, ty);
+        this.tilesRender.addTilePos(t.getRendererMarkerComp(), tx, ty);
         //}
         if (t.hasTileEntity()) {
             TileEntity te = t.createTileEntity(this.world, tx, ty);

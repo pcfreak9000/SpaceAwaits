@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.MathUtils;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TileLiquid extends Tile {
@@ -19,8 +21,8 @@ public class TileLiquid extends Tile {
     private boolean flowUp = false;
     
     @Override
-    public String getRendererId() {
-        return "liquid";
+    public RenderMarkerComp getRendererMarkerComp() {
+        return RenderLiquidTransparentMarkerComponent.INSTANCE;
     }
     
     public float getMaxValue() {

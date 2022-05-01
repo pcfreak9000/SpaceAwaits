@@ -27,7 +27,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     private int count;
     
     public RenderTileDefaultStrategy(GameRenderer renderer) {
-        super(Family.all(ChunkRenderComponent.class).get());
+        super(Family.all(ChunkRenderComponent.class, RenderTileDefaultMarkerComponent.class).get());
         this.gameRenderer = renderer;
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
         this.camera = renderer.getCurrentView().getCamera();

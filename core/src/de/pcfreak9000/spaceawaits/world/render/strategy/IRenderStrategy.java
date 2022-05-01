@@ -10,6 +10,10 @@ public interface IRenderStrategy {
     default void end() {
     }
     
+    default boolean considerGui() {
+        return false;
+    }
+    
     void render(Entity e, float dt);
     
     Family getFamily();

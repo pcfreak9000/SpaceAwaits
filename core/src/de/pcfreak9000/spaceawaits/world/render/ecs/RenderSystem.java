@@ -1,7 +1,6 @@
 package de.pcfreak9000.spaceawaits.world.render.ecs;
 
 import java.util.Comparator;
-import java.util.Objects;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -40,10 +39,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         RenderComponent r1 = Components.RENDER.get(e1);
         RenderComponent r2 = Components.RENDER.get(e2);
         float maj = r1.layer - r2.layer;
-        if (maj == 0) {
-            int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
-            return min;
-        }
+        //        if (maj == 0) {
+        //            int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
+        //            return min;
+        //        }
         return (int) Math.signum(maj);
     };
     
@@ -143,31 +142,47 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
-        Objects.requireNonNull(rc.renderStratId);
-        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderStratId);
-        if (renderStrategy == null) {
-            throw new IllegalStateException("No such IRenderStrategy: " + rc.renderStratId);
+        for (IRenderStrategy r : this.renderStrategies.getAll()) {
+            if (r.getFamily().matches(entity)) {
+                rc.renderStrategies.add(r);
+                if (r instanceof EntityListener) {
+                    EntityListener el = (EntityListener) r;
+                    el.entityAdded(entity);
+                }
+            }
         }
-        boolean matches = renderStrategy.getFamily().matches(entity);
-        if (!matches) {
-            throw new IllegalStateException("Entity does not have the right components for the render strategy '"
-                    + rc.renderStratId + "': " + entity);
-        }
-        rc.renderStrategy = renderStrategy;
+        //        Objects.requireNonNull(rc.renderStratId);
+        //        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderStratId);
+        //        if (renderStrategy == null) {
+        //            throw new IllegalStateException("No such IRenderStrategy: " + rc.renderStratId);
+        //        }
+        //        boolean matches = renderStrategy.getFamily().matches(entity);
+        //        if (!matches) {
+        //            throw new IllegalStateException("Entity does not have the right components for the render strategy '"
+        //                    + rc.renderStratId + "': " + entity);
+        //        }
+        //        rc.renderStrategy = renderStrategy;
         this.entities.add(entity);
-        if (renderStrategy instanceof EntityListener) {
-            EntityListener el = (EntityListener) renderStrategy;
-            el.entityAdded(entity);
-        }
+        //        if (renderStrategy instanceof EntityListener) {
+        //            EntityListener el = (EntityListener) renderStrategy;
+        //            el.entityAdded(entity);
+        //        }
     }
     
     private void removeEntityPrep(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
-        IRenderStrategy dec = rc.renderStrategy;
-        if (dec instanceof EntityListener) {
-            EntityListener el = (EntityListener) dec;
-            el.entityRemoved(entity);
+        for (IRenderStrategy r : rc.renderStrategies) {
+            if (r instanceof EntityListener) {
+                EntityListener el = (EntityListener) r;
+                el.entityRemoved(entity);
+            }
         }
+        rc.renderStrategies.clear();
+        //        IRenderStrategy dec = rc.renderStrategy;
+        //        if (dec instanceof EntityListener) {
+        //            EntityListener el = (EntityListener) dec;
+        //            el.entityRemoved(entity);
+        //        }
     }
     
     @Override
@@ -183,29 +198,34 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
                 continue;
             }
-            IRenderStrategy dec = rc.renderStrategy;
             boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.layer >= BEGIN_LIGHT_LAYER;
-            if (dec != last || startLight) {
-                if (last != null) {
-                    last.end();
+            for (IRenderStrategy dec : rc.renderStrategies) {
+                if (dec.considerGui() && !renderer.showGui()) {
+                    continue;
                 }
-                if (startLight) {
-                    lightRenderer.enterLitScene();
+                //IRenderStrategy dec = rc.renderStrategy;
+                if (dec != last || startLight) {
+                    if (last != null) {
+                        last.end();
+                    }
+                    if (startLight) {
+                        lightRenderer.enterLitScene();
+                    }
+                    dec.begin();
+                    last = dec;
                 }
-                dec.begin();
-                last = dec;
+                if (lastLayer < END_LIGHT_LAYER && rc.layer >= END_LIGHT_LAYER) {
+                    if (last != null) {
+                        last.end();
+                    }
+                    lightRenderer.exitAndRenderLitScene();
+                    endedLight = true;
+                    if (last != null) {
+                        last.begin();
+                    }
+                }
+                dec.render(e, deltaTime);
             }
-            if (lastLayer < END_LIGHT_LAYER && rc.layer >= END_LIGHT_LAYER) {
-                if (last != null) {
-                    last.end();
-                }
-                lightRenderer.exitAndRenderLitScene();
-                endedLight = true;
-                if (last != null) {
-                    last.begin();
-                }
-            }
-            dec.render(e, deltaTime);
             lastLayer = rc.layer;
         }
         if (last != null) {
