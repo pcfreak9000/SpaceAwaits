@@ -25,6 +25,8 @@ public class ActorItemStack extends Actor {
         return this.itemstack;
     }
     
+    private static final float BAR_HEIGHT = 2f;
+    
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (itemstack != null && !itemstack.isEmpty()) {
@@ -38,9 +40,9 @@ public class ActorItemStack extends Actor {
                     float max = getWidth() * 0.9f;
                     float pad = (getWidth() - max) * 0.5f;
                     batch.setColor(Color.RED);
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), max, 2f);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), max, BAR_HEIGHT);
                     batch.setColor(Color.GREEN);
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * max, 2f);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * max, BAR_HEIGHT);
                 }
             }
             if (itemstack.getCount() > 1) {
