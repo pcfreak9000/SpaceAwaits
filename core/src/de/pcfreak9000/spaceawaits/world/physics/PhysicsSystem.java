@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
@@ -18,6 +19,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1f;
+    
+    private static final float QUERYXY_OFFSET = 0.01f;
     
     //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);
@@ -52,6 +55,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final RaycastCallbackEntityImpl raycastCallbackWr = new RaycastCallbackEntityImpl();
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
+    
+    private final UserDataHelper udh = new UserDataHelper();
     
     public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world) {
         super(Family.all(PhysicsComponent.class).get());
@@ -120,6 +125,27 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         queryImpl.callback = callback;
         this.box2dWorld.QueryAABB(queryImpl, x1, y1, x2, y2);
         queryImpl.callback = null;
+    }
+    
+    public void queryXY(float x, float y, IQueryCallback callback) {
+        queryAABB((fix, uc) -> {
+            if (fix.testPoint(uc.in(x), uc.in(y))) {
+                return callback.reportFixture(fix, uc);
+            }
+            return true;
+        }, x - QUERYXY_OFFSET, y - QUERYXY_OFFSET, x + QUERYXY_OFFSET, y + QUERYXY_OFFSET);
+    }
+    
+    public Array<Object> queryXY(IQueryFilter filter, float x, float y) {
+        Array<Object> results = new Array<>();
+        queryXY(x, y, (fix, uc) -> {
+            udh.set(fix.getUserData(), fix);
+            if (filter.accept(udh, uc)) {
+                results.add(udh.getUserDataRaw());
+            }
+            return true;
+        });
+        return results;
     }
     
     private void post(Entity entity) {

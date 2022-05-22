@@ -8,18 +8,18 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 public class DamagedComponent implements Component, NBTSerializable {
 
     //<=0: no damage, >0: damaged
-    public float damage;
+    public double damage;
     
     @Override
     public void readNBT(NBTTag tag) {
         NBTCompound nbtc = (NBTCompound) tag;
-        damage = nbtc.getFloat("damage");
+        damage = nbtc.getDouble("damage");
     }
     
     @Override
     public NBTTag writeNBT() {
         NBTCompound comp = new NBTCompound();//what a waste of space
-        comp.putFloat("damage", damage);
+        comp.putDouble("damage", damage);
         return comp;
     }
     

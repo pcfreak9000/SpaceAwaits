@@ -59,6 +59,7 @@ public class ContainerDisassembler extends GuiInventory {
             s = InvUtil.insert(this.player.getInventory(), s);
         }
         if (!ItemStack.isEmptyOrNull(s)) {
+            
             //TODO drop item?
         }
     }

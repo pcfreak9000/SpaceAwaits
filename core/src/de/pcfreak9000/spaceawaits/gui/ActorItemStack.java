@@ -35,14 +35,16 @@ public class ActorItemStack extends Actor {
             batch.setColor(i.color());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {
-                if (itemstack.getNBT().hasKey("bar")) {//FIXME this stinks
-                    float fill = itemstack.getNBT().getFloat("bar");
-                    float max = getWidth() * 0.9f;
-                    float pad = (getWidth() - max) * 0.5f;
+                if (itemstack.getNBT().hasKey("bar")) {
+                    int max = itemstack.getNBT().getInt("barMax");
+                    int cur = itemstack.getNBT().getInt("bar");
+                    float fill = cur / (float) max;
+                    float widthFull = getWidth() * 0.9f;
+                    float pad = (getWidth() - widthFull) * 0.5f;
                     batch.setColor(Color.RED);
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), max, BAR_HEIGHT);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), widthFull, BAR_HEIGHT);
                     batch.setColor(Color.GREEN);
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * max, BAR_HEIGHT);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * widthFull, BAR_HEIGHT);
                 }
             }
             if (itemstack.getCount() > 1) {

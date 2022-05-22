@@ -33,6 +33,15 @@ public class ItemStack {
         return stack == null || stack.isEmpty();
     }
     
+    public void dealDamageBarIndic(int dmgDealt, int max, boolean removeIfUsedUp) {
+        NBTCompound nbt = this.getOrCreateNBT();
+        nbt.putInt("barMax", max);
+        nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
+        if (removeIfUsedUp && nbt.getInt("bar") <= 0) {
+            this.changeNumber(-1);
+        }
+    }
+    
     public static ItemStack join(ItemStack stack0, ItemStack stack1) {
         if (ItemStack.isEmptyOrNull(stack1)) {
             return stack0;
@@ -159,8 +168,7 @@ public class ItemStack {
     
     @Override
     public String toString() {
-        return "ItemStack [item=" + (item == null ? "null" : GameRegistry.ITEM_REGISTRY.getId(item)) + ", count="
-                + count + ", hasNBT=" + hasNBT() + "]";//TODO move the item stuff into an item#toString?
+        return "ItemStack [item=" + Objects.toString(item) + ", count=" + count + ", hasNBT=" + hasNBT() + "]";
     }
     
 }
