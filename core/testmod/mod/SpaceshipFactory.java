@@ -15,7 +15,11 @@ import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Activator;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.RenderStatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent.StatData;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -55,6 +59,15 @@ public class SpaceshipFactory implements WorldEntityFactory {
         entity.add(disscomp);
         ComponentInventoryShip invshipcomp = new ComponentInventoryShip();
         entity.add(invshipcomp);
+        StatsComponent sc = new StatsComponent();
+        StatData sd = new StatData(1000, 1000);
+        sc.put("mechHealth", sd);
+        entity.add(sc);
+        RenderStatsComponent rsc = new RenderStatsComponent();
+        rsc.width = rec.width / 1.5f;
+        rsc.xOff = rec.width * ((1 - 1 / 1.5f) * 0.5f);
+        rsc.yOff = rec.height + 0.1f;
+        entity.add(rsc);
         return entity;
     }
     
@@ -63,7 +76,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
         @Override
         public boolean handle(float mousex, float mousey, Entity entity, World world, Entity source) {
             Player player = source.getComponent(PlayerInputComponent.class).player;
-            if (entity.getComponent(DamagedComponent.class) != null) {
+            if (!Components.STATS.get(entity).get("mechHealth").isMax()) {
                 player.openContainer(
                         new ContainerInventoryShip(entity.getComponent(ComponentInventoryShip.class).invShip));
                 return true;

@@ -30,6 +30,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
@@ -83,7 +84,6 @@ public class DMod {
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsDamagedComponent", DamagedComponent.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentInventoryShip",
                 ComponentInventoryShip.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsCompositeInventoryComponent",
@@ -207,9 +207,7 @@ public class DMod {
                         Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
                         Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
                         tc.position.set(s);
-                        DamagedComponent dc = new DamagedComponent();
-                        dc.damage = 1;
-                        ship.add(dc);
+                        Components.STATS.get(ship).get("mechHealth").current = 1;
                         LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
                                 ship.getComponent(ComponentInventoryShip.class).invShip);
                         world.spawnEntity(ship, false);

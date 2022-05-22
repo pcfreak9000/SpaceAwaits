@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
-import de.pcfreak9000.spaceawaits.world.ecs.content.HealthComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
 
 public class Hud {
     
@@ -45,7 +45,7 @@ public class Hud {
         healthbar = new ProgressBar(0, 1, 0.01f, false, CoreRes.SKIN.getSkin());
         healthbar.setAnimateInterpolation(Interpolation.fade);
         healthbar.setAnimateDuration(0.1f);
-       // table.add(healthbar).expandX().top().left().pad(15);
+        // table.add(healthbar).expandX().top().left().pad(15);
         table.add(createHotbarSlotsTable()).padTop(10).top().center();
         //table.add().expandX().top().right().pad(10).prefSize(healthbar.getPrefWidth(), healthbar.getPrefHeight());
         this.stage.clear();//For now, fixes a bug. also clears listeners
@@ -61,8 +61,8 @@ public class Hud {
     }
     
     public void actAndDraw(float dt) {
-        HealthComponent playerHealth = player.getPlayerEntity().getComponent(HealthComponent.class);
-        this.healthbar.setValue(playerHealth.currentHealth / playerHealth.maxHealth);
+        StatsComponent playerHealth = player.getPlayerEntity().getComponent(StatsComponent.class);
+        //this.healthbar.setValue(playerHealth.currentHealth / playerHealth.maxHealth);
         this.guiHelper.actAndDraw(stage, dt);
     }
     

@@ -74,7 +74,7 @@ public class PlayerInputSystem extends EntitySystem {
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
         if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
-            Components.HEALTH.get(entity).currentHealth -= backlayer ? -10 : 10;
+            Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
         if (onSolidGround) {
             if (up) {

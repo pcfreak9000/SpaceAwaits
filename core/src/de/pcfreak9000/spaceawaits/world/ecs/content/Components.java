@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.ComponentMapper;
 
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 public class Components {
     
     public static void registerComponents() {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsHealthComponent", HealthComponent.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsHealthComponent", StatsComponent.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsItemStackComp", ItemStackComponent.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsOnSolidGroundComponent",
                 OnSolidGroundComponent.class);
@@ -50,7 +50,7 @@ public class Components {
     public static final ComponentMapper<OnSolidGroundComponent> ON_SOLID_GROUND = ComponentMapper
             .getFor(OnSolidGroundComponent.class);
     
-    public static final ComponentMapper<HealthComponent> HEALTH = ComponentMapper.getFor(HealthComponent.class);//FIXME is this even used in core?
+    public static final ComponentMapper<StatsComponent> STATS = ComponentMapper.getFor(StatsComponent.class);//FIXME is this even used in core?
     
     public static final ComponentMapper<ItemStackComponent> ITEM_STACK = ComponentMapper
             .getFor(ItemStackComponent.class);
@@ -67,6 +67,9 @@ public class Components {
     
     public static final ComponentMapper<ChunkRenderComponent> RENDER_CHUNK = ComponentMapper
             .getFor(ChunkRenderComponent.class);
+    
+    public static final ComponentMapper<RenderStatsComponent> RENDER_STATS = ComponentMapper
+            .getFor(RenderStatsComponent.class);
     
     public static final ComponentMapper<SerializeEntityComponent> SERIALIZE_ENTITY = ComponentMapper
             .getFor(SerializeEntityComponent.class);

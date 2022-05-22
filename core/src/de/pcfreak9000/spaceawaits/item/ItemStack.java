@@ -33,7 +33,7 @@ public class ItemStack {
         return stack == null || stack.isEmpty();
     }
     
-    public void dealDamageBarIndic(int dmgDealt, int max, boolean removeIfUsedUp) {
+    public void dealDamageUpdateBar(int dmgDealt, int max, boolean removeIfUsedUp) {
         NBTCompound nbt = this.getOrCreateNBT();
         nbt.putInt("barMax", max);
         nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
