@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.gui;
 
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -27,6 +28,7 @@ public class GuiInventory extends GuiOverlay {
     
     public GuiInventory(IInventory invBackingMain) {
         this.inventoryBackingMain = invBackingMain;
+        this.slotClickListener.setButton(-1);
     }
     
     private ClickListener slotClickListener = new ClickListener() {
@@ -53,14 +55,23 @@ public class GuiInventory extends GuiOverlay {
                 }
             } else {
                 if (clicked.canPut()) {
-                    ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, currentAttached);//This could be handled better...
-                    if (leftover != null && leftover.getCount() == currentAttached.getCount()
-                            && clicked.inventoryBacking.isItemValidForSlot(clicked.slotIndex, leftover)) {
-                        followmouse.setItemStack(clicked.getStack());
-                        InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
-                        InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, leftover);
-                    } else {
-                        followmouse.setItemStack(leftover);
+                    if (event.getButton() == Buttons.LEFT) {
+                        ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex,
+                                currentAttached);//This could be handled better...
+                        if (leftover != null && leftover.getCount() == currentAttached.getCount()
+                                && clicked.inventoryBacking.isItemValidForSlot(clicked.slotIndex, leftover)) {
+                            followmouse.setItemStack(clicked.getStack());
+                            InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
+                            InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, leftover);
+                        } else {
+                            followmouse.setItemStack(leftover);
+                        }
+                    } else if (event.getButton() == Buttons.RIGHT) {
+                        ItemStack in = currentAttached.sub(1);
+                        ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex, in);//This could be handled better...
+                        if (!ItemStack.isEmptyOrNull(leftover)) {
+                            currentAttached.changeNumber(leftover.getCount());
+                        }
                     }
                 }
             }

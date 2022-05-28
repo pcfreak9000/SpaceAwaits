@@ -127,13 +127,25 @@ public class ItemStack {
         return getCount() >= MAX_STACKSIZE || getCount() >= getItem().getMaxStackSize();
     }
     
+    public ItemStack sub(int count) {
+        ItemStack stack = this.cpy();
+        int old = this.getCount();
+        this.changeNumber(-count);
+        int actDif = old - this.getCount();
+        stack.setCount(actDif);
+        if (stack.isEmpty() || actDif <= 0) {
+            return EMPTY;
+        }
+        return stack;
+    }
+    
     public int changeNumber(int change) {
         int countold = this.count;
         int dest = change + countold;
         int max = this.getMax();
         int actual = Math.min(Math.max(dest, 0), max);
         this.count = actual;
-        return countold + actual;
+        return countold + actual;//WTF is happening?
     }
     
     public void setCount(int count) {

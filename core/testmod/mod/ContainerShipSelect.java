@@ -53,7 +53,7 @@ public class ContainerShipSelect extends GuiOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                player.openContainer(new ContainerCrafter(3));
+                player.openContainer(new ContainerCrafter(6));
             }
         });
         table.add(crafterInv).pad(5);
