@@ -81,10 +81,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
                         new ContainerInventoryShip(entity.getComponent(ComponentInventoryShip.class).invShip));
                 return true;
             }
-            player.openContainer(new ContainerCrafter(4));
-            //            player.openContainer(
-            //                    new ContainerDisassembler(entity.getComponent(DisassemblerComponent.class).disassembler,
-            //                            entity.getComponent(CompositeInventoryComponent.class).compositeInv));
+            player.openContainer(new ContainerShipSelect(entity));
             return true;
         }
         

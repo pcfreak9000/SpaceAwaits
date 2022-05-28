@@ -57,7 +57,10 @@ public class GameRenderer extends ScreenAdapter {
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
             this.guiContainerCurrent = null;
-        } else if (!isGuiContainerOpen()) {
+        } else {// if (!isGuiContainerOpen())
+            if (isGuiContainerOpen()) {
+                setGuiCurrent(null);
+            }
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
             this.guiContainerCurrent.onOpened();
