@@ -24,6 +24,8 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
+    private static final boolean FREE_MOVEMENT = true;
+    
     private final GameRenderer worldRend;
     
     private Player player;
@@ -87,25 +89,43 @@ public class PlayerInputSystem extends EntitySystem {
         if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
             Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
-        if (onSolidGround) {
+        if (FREE_MOVEMENT) {
             if (up) {
-                vy += play.maxYv * 5;
-                
+                vy += play.maxXv;
             }
-            //kinda useless, use for sneaking/ladders instead?
             if (down) {
-                vy -= play.maxYv * 5;
+                vy -= play.maxXv;
             }
+            if (left) {
+                vx -= play.maxXv;
+            }
+            if (right) {
+                vx += play.maxXv;
+            }
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
+            pc.body.applyAccelerationW(vx * 12, vy * 12);
+            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 35, -pc.body.getLinearVelocityPh().y * 35);
+        } else {
+            if (onSolidGround) {
+                if (up) {
+                    vy += play.maxYv * 5;
+                    
+                }
+                //kinda useless, use for sneaking/ladders instead?
+                if (down) {
+                    vy -= play.maxYv * 5;
+                }
+            }
+            if (left) {
+                vx -= play.maxXv;
+            }
+            if (right) {
+                vx += play.maxXv;
+            }
+            PhysicsComponent pc = Components.PHYSICS.get(entity);
+            pc.body.applyAccelerationW(vx * 6, vy * 3);
+            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
         }
-        if (left) {
-            vx -= play.maxXv;
-        }
-        if (right) {
-            vx += play.maxXv;
-        }
-        PhysicsComponent pc = Components.PHYSICS.get(entity);
-        pc.body.applyAccelerationW(vx * 6, vy * 3);
-        pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
         int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
         player.getInventory().setSelectedSlot(hotbarChecked);
     }

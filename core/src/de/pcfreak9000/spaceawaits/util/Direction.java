@@ -4,7 +4,7 @@ public enum Direction {
     Up(0, 1), Down(0, -1), Left(-1, 0), Right(1, 0), UpLeft(-1, 1), UpRight(1, 1), DownLeft(-1, -1), DownRight(1, -1),
     Zero(0, 0);
     
-    public static final Direction[] MOORE_NEIGHBOURS = Direction.values();
+    public static final Direction[] MOORE_NEIGHBOURS = { Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight };
     public static final Direction[] VONNEUMANN_NEIGHBOURS = { Up, Down, Left, Right };
     
     public final int dx;
@@ -33,6 +33,8 @@ public enum Direction {
             return DownRight;
         case UpRight:
             return DownLeft;
+        case Zero:
+            return Zero;
         default:
             return null;
         }
@@ -56,6 +58,8 @@ public enum Direction {
             return DownLeft;
         case UpRight:
             return UpLeft;
+        case Zero:
+            return Zero;
         default:
             return null;
         }
@@ -79,6 +83,8 @@ public enum Direction {
             return UpRight;
         case UpRight:
             return DownRight;
+        case Zero:
+            return Zero;
         default:
             return null;
         }
