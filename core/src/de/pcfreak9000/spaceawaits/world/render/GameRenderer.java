@@ -52,6 +52,7 @@ public class GameRenderer extends ScreenAdapter {
     //Always takes a new GuiContainer. Is that the way to go?
     public void setGuiCurrent(GuiOverlay guicont) {
         if (guicont == null && isGuiContainerOpen()) {
+            SpaceAwaits.BUS.post(new RendererEvents.CloseGuiOverlay(this.guiContainerCurrent));
             //Possibly closing logic first
             this.guiContainerCurrent.onClosed();
             this.guiContainerCurrent.dispose();
@@ -64,6 +65,7 @@ public class GameRenderer extends ScreenAdapter {
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
             this.guiContainerCurrent.onOpened();
+            SpaceAwaits.BUS.post(new RendererEvents.OpenGuiOverlay(guicont));
             //Possibly opening logic
         }
     }

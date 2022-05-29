@@ -46,7 +46,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
         pc.factory = new SpaceshipBodyFactory();//AABBBodyFactory.builder().dimensions(rec.width, rec.height).create();//new AABBBodyFactory(200, 100);
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
-        entity.add(new RenderComponent(RenderLayers.ENTITY, "entity"));
+        entity.add(new RenderComponent(RenderLayers.ENTITY));
         ActivatorComponent ac = new ActivatorComponent();
         ac.layer = RenderLayers.ENTITY;
         ac.activators.add(tt);

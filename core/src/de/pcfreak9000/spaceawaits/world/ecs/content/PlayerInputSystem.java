@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
@@ -38,6 +39,16 @@ public class PlayerInputSystem extends EntitySystem {
     @EventSubscription
     public void joined(WorldEvents.PlayerJoinedEvent ev) {
         this.player = ev.player;
+    }
+    
+    @EventSubscription
+    private void tsEntityHide(RendererEvents.OpenGuiOverlay ev) {
+        Components.RENDER.get(tileSelectorEntity).enabled = false;
+    }
+    
+    @EventSubscription
+    private void tsEntityShow(RendererEvents.CloseGuiOverlay ev) {
+        Components.RENDER.get(tileSelectorEntity).enabled = true;
     }
     
     @Override

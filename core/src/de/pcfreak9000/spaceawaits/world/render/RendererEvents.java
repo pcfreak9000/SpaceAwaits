@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.render;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 
 public class RendererEvents {
     
@@ -21,6 +22,23 @@ public class RendererEvents {
         
         public UpdateAnimationEvent(float dt) {
             this.dt = dt;
+        }
+    }
+    
+    public static class OpenGuiOverlay extends Event {
+        public final GuiOverlay guiOverlay;
+        
+        public OpenGuiOverlay(GuiOverlay guiOverlay) {
+            this.guiOverlay = guiOverlay;
+        }
+        
+    }
+    
+    public static class CloseGuiOverlay extends Event {
+        public final GuiOverlay guiOverlay;
+        
+        public CloseGuiOverlay(GuiOverlay guiOverlay) {
+            this.guiOverlay = guiOverlay;
         }
     }
 }
