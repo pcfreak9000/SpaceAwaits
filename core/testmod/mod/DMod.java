@@ -71,6 +71,8 @@ public class DMod {
     public Tile torch = new Tile();
     public Item gun = new ItemGun();
     
+    public Item medkitsimple = new ItemMedkitSimple();
+    
     public Item repairGun = new ItemRepairGun();
     
     public TileLiquid water = new TileLiquid();
@@ -156,6 +158,8 @@ public class DMod {
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
         
+        GameRegistry.ITEM_REGISTRY.register("medkitsimple", medkitsimple);
+        
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
                     @Override
@@ -177,6 +181,7 @@ public class DMod {
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
         shipStarterTable.add(new GuaranteedInventoryContent(repairGun, 1, 1));
+        shipStarterTable.add(new GuaranteedInventoryContent(medkitsimple, 1, 2));
         shipStarterTable.add(new WeightedRandomInventoryContent(gun, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
