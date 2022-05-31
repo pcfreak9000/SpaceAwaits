@@ -48,26 +48,6 @@ public class ChunkLoader implements IChunkLoader {
             return null;
         }
         Chunk chunk = loadChunkActual(key);
-//        if (chunk.getGenStage() == ChunkGenStage.Generated) {
-//            Array<Chunk> tmparray = new Array<>();
-//            for (Direction d : Direction.MOORE_NEIGHBOURS) {
-//                int x = d.dx + key.getX();
-//                int y = d.dy + key.getY();
-//                if (!world.getBounds().inBoundsChunk(x, y)) {
-//                    continue;
-//                }
-//                IntCoordKey nk = new IntCoordKey(x, y);
-//                if (!loadedChunks.containsKey(nk)) {
-//                    tmparray.add(loadChunkActual(nk));
-//                }
-//            }
-//            chunk.populate(chunkGen);
-//            for (Chunk c : tmparray) {
-//                saveChunk(c);
-//                IntCoordKey gurke = new IntCoordKey(c.getGlobalChunkX(), c.getGlobalChunkY());
-//                this.loadedChunks.remove(gurke);
-//            }
-//        }
         return chunk;
     }
     

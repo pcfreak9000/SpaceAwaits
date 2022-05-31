@@ -19,13 +19,10 @@ public class TicketedChunkManager extends EntitySystem {
     
     private Set<ITicket> tickets;
     
-    private Set<IntCoordKey> chunksPrev;
     private Set<IntCoordKey> chunksToUpdate = new LinkedHashSet<>();
-    private Set<IntCoordKey> chunksToLoad = new LinkedHashSet<>();
     
     public TicketedChunkManager(World world, ChunkProvider chunkprovider) {
         this.tickets = new LinkedHashSet<>();
-        this.chunksPrev = new LinkedHashSet<>();
         this.world = world;
         this.chunkProvider = chunkprovider;
     }
@@ -41,7 +38,6 @@ public class TicketedChunkManager extends EntitySystem {
     @Override
     public void update(float dt) {
         chunksToUpdate.clear();
-        chunksToLoad.clear();
         Iterator<ITicket> it = tickets.iterator();
         while (it.hasNext()) {
             ITicket t = it.next();
@@ -58,40 +54,11 @@ public class TicketedChunkManager extends EntitySystem {
                 }
             }
         }
-        //find bordering chunks. load them, but dont update them.
-        final int borderingChunkRad = 2;//first outer ring is only generated, second outer ring is also populated (hopefully...), both aren't loaded. inner rings are populated and loaded
-        for (IntCoordKey up : chunksToUpdate) {
-            for (int i = -borderingChunkRad; i <= borderingChunkRad; i++) {
-                for (int j = -borderingChunkRad; j <= borderingChunkRad; j++) {
-                    if (world.getBounds().inBoundsChunk(up.getX() + i, up.getY() + j) && (i != 0 || j != 0)) {
-                        IntCoordKey load = new IntCoordKey(up.getX() + i, up.getY() + j);
-                        if (!chunksToUpdate.contains(load)) {
-                            chunksToLoad.add(load);
-                        }
-                    }
-                }
-            }
-        }
-        //Find chunks which aren't needed anymore and unload them
-        for (IntCoordKey k : chunksPrev) {
-            if (!chunksToUpdate.contains(k)) {
-                if (!chunksToLoad.contains(k)) {
-               //     this.chunkProvider.releaseChunk(k.getX(), k.getY(), this);
-                }
-            }
-        }
-        //load bordering chunks
-        for (IntCoordKey k : chunksToLoad) {
-           // this.chunkProvider.requireChunk(k.getX(), k.getY(), false, this);
-        }
-        //load and activate chunks to update
+        //load and activate chunks to update. chunks not needed are handled by the ChunkProvider. 
+        //"Bordering" chunks aren't needed, chunks are loaded if needed, but usually only in the in-active state. 
         for (IntCoordKey k : chunksToUpdate) {
             this.chunkProvider.getChunk(k.getX(), k.getY(), true);
-            //this.chunkProvider.requireChunk(k.getX(), k.getY(), true, this);
         }
-        chunksPrev.clear();
-        chunksPrev.addAll(chunksToLoad);
-        chunksPrev.addAll(chunksToUpdate);
     }
     
 }
