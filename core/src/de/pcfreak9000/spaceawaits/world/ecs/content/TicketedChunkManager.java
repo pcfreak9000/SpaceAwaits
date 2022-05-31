@@ -76,17 +76,18 @@ public class TicketedChunkManager extends EntitySystem {
         for (IntCoordKey k : chunksPrev) {
             if (!chunksToUpdate.contains(k)) {
                 if (!chunksToLoad.contains(k)) {
-                    this.chunkProvider.releaseChunk(k.getX(), k.getY(), this);
+               //     this.chunkProvider.releaseChunk(k.getX(), k.getY(), this);
                 }
             }
         }
         //load bordering chunks
         for (IntCoordKey k : chunksToLoad) {
-            this.chunkProvider.requireChunk(k.getX(), k.getY(), false, this);
+           // this.chunkProvider.requireChunk(k.getX(), k.getY(), false, this);
         }
         //load and activate chunks to update
         for (IntCoordKey k : chunksToUpdate) {
-            this.chunkProvider.requireChunk(k.getX(), k.getY(), true, this);
+            this.chunkProvider.getChunk(k.getX(), k.getY(), true);
+            //this.chunkProvider.requireChunk(k.getX(), k.getY(), true, this);
         }
         chunksPrev.clear();
         chunksPrev.addAll(chunksToLoad);

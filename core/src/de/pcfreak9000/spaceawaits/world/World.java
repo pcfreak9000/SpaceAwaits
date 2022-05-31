@@ -192,7 +192,7 @@ public abstract class World {
     public void unloadAll() {
         this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Writing));
         ((ChunkProvider) chunkProvider).saveAll();
-        ((ChunkProvider) chunkProvider).releaseAll();
+        ((ChunkProvider) chunkProvider).unloadAll();
         this.unchunkProvider.unload();
         ecsEngine.removeAllEntities();
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);

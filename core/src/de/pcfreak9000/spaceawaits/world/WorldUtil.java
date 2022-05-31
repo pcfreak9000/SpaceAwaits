@@ -49,7 +49,7 @@ public class WorldUtil {
                 int ch = Chunk.toGlobalChunkf(y + entHeight);
                 for (int j = cx; j <= cw; j++) {
                     for (int k = cy; k <= ch; k++) {
-                        chunkProvider.requireChunk(j, k, true, lock);
+                       // chunkProvider.requireChunk(j, k, true, lock);
                     }
                 }
                 if (!ts.checkSolidOccupation(x, y, entWidth, entHeight)) {
@@ -60,7 +60,7 @@ public class WorldUtil {
                             ch = Chunk.toGlobalChunkf(y + entHeight);
                             for (int j = cx; j <= cw; j++) {
                                 for (int k = cy; k <= ch; k++) {
-                                    chunkProvider.requireChunk(j, k, true, lock);
+                                 //   chunkProvider.requireChunk(j, k, true, lock);
                                 }
                             }
                             if (ts.checkSolidOccupation(x, y, entWidth, entHeight)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
@@ -70,15 +70,15 @@ public class WorldUtil {
                         }
                     }
                     //can spawn here, so do that
-                    chunkProvider.releaseLock(lock);
+                 //   chunkProvider.releaseLock(lock);
                     return new Vector2(x, y);
                 }
-                if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
-                    chunkProvider.releaseLock(lock);
-                }
+               // if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
+             //       chunkProvider.releaseLock(lock);
+             //   }
             }
         }
-        chunkProvider.releaseLock(lock);
+        //chunkProvider.releaseLock(lock);
         //no spawn was found so just pick a random location and forcefully blow a hole into the ground or something?
         return null;
     }

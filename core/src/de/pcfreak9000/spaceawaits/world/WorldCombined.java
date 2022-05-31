@@ -57,7 +57,7 @@ public class WorldCombined extends World {
     
     @Override
     protected IChunkProvider createChunkProvider(WorldPrimer primer) {
-        return new ChunkProvider(this, chunkLoader);
+        return new ChunkProvider(this, chunkLoader, primer.getChunkGenerator());
     }
     
     @Override
