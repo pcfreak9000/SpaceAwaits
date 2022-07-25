@@ -231,6 +231,10 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         return this.tiles.get(tx, ty);
     }
     
+    TileState getTileStateSafe(int tx, int ty) {
+        return inBounds(tx, ty) ? getTileState(tx, ty) : null;
+    }
+    
     //Maybe save the set for later somehow?
     
     @Override

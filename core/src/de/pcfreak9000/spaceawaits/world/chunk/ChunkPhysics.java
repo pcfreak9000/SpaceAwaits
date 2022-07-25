@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -42,7 +43,8 @@ public class ChunkPhysics implements BodyFactory {
                 Tile right = i + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x + 1, y, TileLayer.Front);
                 Tile left = i - 1 < 0 ? null : chunk.getTile(x - 1, y, TileLayer.Front);
                 if ((top == null || !isSolidAndFilling(top)) || (bot == null || !isSolidAndFilling(bot))
-                        || (right == null || !isSolidAndFilling(right)) || (left == null || !isSolidAndFilling(left))) {
+                        || (right == null || !isSolidAndFilling(right)) || (left == null || !isSolidAndFilling(left))
+                        || t.hasCustomHitbox()) {
                     if (t.isSolid()) {
                         createFixture(t, x, y);
                     }
@@ -105,54 +107,37 @@ public class ChunkPhysics implements BodyFactory {
                 return;
             }
             if (isSolidAndFilling(oldTile) != isSolidAndFilling(newTile)) {
-                if (!newTile.isSolid() && body != null) { //oldstate was solid, newstate isn't
+                if (!newTile.isSolid()) { //oldstate was solid, newstate isn't
                     if (state.getFixture() != null) { //the fixture is null if oldstate was surrounded by solid tiles
                         destroyFixture(state);
                     }
-                    int x = gtx;
-                    int y = gty;
-                    int topy = y + 1;
-                    int boty = y - 1;
-                    int rightx = x + 1;
-                    int leftx = x - 1;
-                    TileState top = chunk.inBounds(x, topy) ? chunk.getTileState(x, topy) : null;
-                    TileState bot = chunk.inBounds(x, boty) ? chunk.getTileState(x, boty) : null;
-                    TileState right = chunk.inBounds(rightx, y) ? chunk.getTileState(rightx, y) : null;
-                    TileState left = chunk.inBounds(leftx, y) ? chunk.getTileState(leftx, y) : null;
-                    if (top != null && top.getTile().isSolid() && top.getFixture() == null) {
-                        createFixture(top.getTile(), x, topy);
-                    }
-                    if (bot != null && bot.getTile().isSolid() && bot.getFixture() == null) {
-                        createFixture(bot.getTile(), x, boty);
-                    }
-                    if (right != null && right.getTile().isSolid() && right.getFixture() == null) {
-                        createFixture(right.getTile(), rightx, y);
-                    }
-                    if (left != null && left.getTile().isSolid() && left.getFixture() == null) {
-                        createFixture(left.getTile(), leftx, y);
+                    for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+                        int x = gtx + d.dx;
+                        int y = gty + d.dy;
+                        TileState ts = chunk.getTileStateSafe(x, y);
+                        if (ts != null && ts.getTile().isSolid() && ts.getFixture() == null) {
+                            createFixture(ts.getTile(), x, y);
+                        }
                     }
                 } else { //newstate is solid, oldstate wasn't
-                    int x = gtx;
-                    int y = gty;
-                    int topy = y + 1;
-                    int boty = y - 1;
-                    int rightx = x + 1;
-                    int leftx = x - 1;
-                    TileState top = chunk.inBounds(x, topy) ? chunk.getTileState(x, topy) : null;
-                    TileState bot = chunk.inBounds(x, boty) ? chunk.getTileState(x, boty) : null;
-                    TileState right = chunk.inBounds(rightx, y) ? chunk.getTileState(rightx, y) : null;
-                    TileState left = chunk.inBounds(leftx, y) ? chunk.getTileState(leftx, y) : null;
-                    if ((top == null || !isSolidAndFilling(top.getTile()))
-                            || (bot == null || !isSolidAndFilling(bot.getTile()))
-                            || (right == null || !isSolidAndFilling(right.getTile()))
-                            || (left == null || !isSolidAndFilling(left.getTile())) || newTile.hasCustomHitbox()) {
-                        createFixture(newTile, x, y);
+                    boolean createFix = newTile.hasCustomHitbox();
+                    for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+                        if (createFix) {
+                            break;
+                        }
+                        int x = gtx + d.dx;
+                        int y = gty + d.dy;
+                        TileState ts = chunk.getTileStateSafe(x, y);
+                        createFix |= (ts == null || !isSolidAndFilling(ts.getTile()));
                     }
-                    //check if the neighbouring fixtures can be removed, this depends on the neighbours neighbours
-                    checkDestroy(top, x, topy);
-                    checkDestroy(bot, x, boty);
-                    checkDestroy(right, rightx, y);
-                    checkDestroy(left, leftx, y);
+                    if (createFix) {
+                        createFixture(newTile, gtx, gty);
+                        for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+                            int x = gtx + d.dx;
+                            int y = gty + d.dy;
+                            checkDestroy(chunk.getTileStateSafe(x, y), x, y);
+                        }
+                    }
                 }
             } else {
                 //new and old are both solid and filling or both not solid and filling. The fixture is retained if both are solid and filling. 
