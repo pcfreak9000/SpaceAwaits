@@ -13,6 +13,9 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class StringBasedBlueprint implements Blueprint {
     
+    public static final char UNCHANGED = ' ';
+    public static final char REMOVE = '$';
+    
     private char[] front;
     private char[] back;
     
@@ -58,7 +61,7 @@ public class StringBasedBlueprint implements Blueprint {
                 if (c != 0) {
                     throw new IllegalStateException();
                 }
-                if (c != ' ') {
+                if (c != UNCHANGED && c != REMOVE) {
                     c = (char) o;
                 }
             } else if (o instanceof Tile) {
@@ -90,7 +93,7 @@ public class StringBasedBlueprint implements Blueprint {
         int ind = 0;
         for (String s : lines) {
             for (char ca : s.toCharArray()) {
-                if (ca != ' ' && !tilemappings.containsKey(ca)) {
+                if (ca != UNCHANGED && ca != REMOVE && !tilemappings.containsKey(ca)) {
                     throw new IllegalStateException();
                 }
                 chara[ind] = ca;
@@ -147,11 +150,15 @@ public class StringBasedBlueprint implements Blueprint {
                 char backchar = back[index];
                 int tx = txs + rx;
                 int ty = tys + ry;
-                if (frontchar != ' ') {
+                if (frontchar != UNCHANGED && frontchar != REMOVE) {
                     placeTile(tx, ty, TileLayer.Front, frontchar, random, tiles);
+                } else if (frontchar == REMOVE) {
+                    tiles.removeTile(tx, ty, TileLayer.Front);
                 }
-                if (backchar != ' ') {
+                if (backchar != UNCHANGED && backchar != REMOVE) {
                     placeTile(tx, ty, TileLayer.Back, backchar, random, tiles);
+                } else if (backchar == REMOVE) {
+                    tiles.removeTile(tx, ty, TileLayer.Back);
                 }
             }
         }

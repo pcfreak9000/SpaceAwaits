@@ -4,11 +4,15 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class WorldUtil {
@@ -31,6 +35,24 @@ public class WorldUtil {
         return e;
     }
     
+    public static void simImpact(ITileArea tiles, float x, float y, float radius, float velx, float vely,
+            float density) {
+        float mass = radius * radius * radius * 4 / 3.0f * Mathf.PI * density;
+        float velAbs = (float) Math.sqrt(Mathf.square(velx) + Mathf.square(vely));
+        int ix = Tile.toGlobalTile(x);
+        int iy = Tile.toGlobalTile(y);
+        int irad = Mathf.ceili(radius);
+        for (int i = -irad; i < irad; i++) {
+            for (int j = -irad; j < irad; j++) {
+                if (Mathf.square(i) + Mathf.square(j) < Mathf.square(irad)) {
+                    int tex = ix + i;
+                    int tey = iy + j;
+                    tiles.setTile(tex, tey, TileLayer.Front, Tile.NOTHING);//Hmmmm.
+                }
+            }
+        }
+    }
+    
     //TODO refine spawning system
     public static Vector2 findSpawnpoint(World world, float entWidth, float entHeight, float spawnX, float spawnY,
             float spawnWidth, float spawnHeight) {
@@ -49,7 +71,7 @@ public class WorldUtil {
                 int ch = Chunk.toGlobalChunkf(y + entHeight);
                 for (int j = cx; j <= cw; j++) {
                     for (int k = cy; k <= ch; k++) {
-                       // chunkProvider.requireChunk(j, k, true, lock);
+                        // chunkProvider.requireChunk(j, k, true, lock);
                     }
                 }
                 if (!ts.checkSolidOccupation(x, y, entWidth, entHeight)) {
@@ -60,7 +82,7 @@ public class WorldUtil {
                             ch = Chunk.toGlobalChunkf(y + entHeight);
                             for (int j = cx; j <= cw; j++) {
                                 for (int k = cy; k <= ch; k++) {
-                                 //   chunkProvider.requireChunk(j, k, true, lock);
+                                    //   chunkProvider.requireChunk(j, k, true, lock);
                                 }
                             }
                             if (ts.checkSolidOccupation(x, y, entWidth, entHeight)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
@@ -70,12 +92,12 @@ public class WorldUtil {
                         }
                     }
                     //can spawn here, so do that
-                 //   chunkProvider.releaseLock(lock);
+                    //   chunkProvider.releaseLock(lock);
                     return new Vector2(x, y);
                 }
-               // if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
-             //       chunkProvider.releaseLock(lock);
-             //   }
+                // if (chunkProvider.getLoadedChunkCountLock(lock) > 13) {
+                //       chunkProvider.releaseLock(lock);
+                //   }
             }
         }
         //chunkProvider.releaseLock(lock);

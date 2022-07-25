@@ -49,7 +49,7 @@ public class Background implements WorldEntityFactory {
         e.add(pc);
         e.add(tex);
         e.add(new WorldGlobalComponent());
-        e.add(new RenderComponent(-1000, "entity"));
+        e.add(new RenderComponent(-1000));
         return e;
     }
 }

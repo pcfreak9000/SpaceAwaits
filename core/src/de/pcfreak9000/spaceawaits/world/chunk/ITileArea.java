@@ -16,4 +16,8 @@ public interface ITileArea {
     IMetadata getMetadata(int tx, int ty, TileLayer layer);
     
     Tile setTile(int tx, int ty, TileLayer layer, Tile t);
+    
+    default Tile removeTile(int tx, int ty, TileLayer layer) {
+        throw new UnsupportedOperationException();
+    }
 }

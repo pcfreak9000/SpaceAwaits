@@ -48,11 +48,11 @@ public class TestBiome extends Biome implements HeightSupplier {
     private StringBasedBlueprint bp;
     
     private static final String[] leet = { // 
-            "# ### ### ###", //
-            "#   #   #   #", //
-            "# ### #X#   #", //
-            "#   #   #   #", //
-            "# ### ###   #", //
+            "#$###$###$###", //
+            "#$$$#$$$#$$$#", //
+            "#$###$#X#$$$#", //
+            "#$$$#$$$#$$$#", //
+            "#$###$###$$$#", //
     };
     
     public TestBiome() {
@@ -81,14 +81,16 @@ public class TestBiome extends Biome implements HeightSupplier {
     public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenerator biomeGen, Random rand) {
         checkSetSeed(biomeGen.getWorldSeed());
         int value = (int) biomeGen.interpolateAlongX(HeightInterpolatable.class, tx, ty);
-        if (ty > value) {
+        if (ty > value + 1) {
             return;
         }
         Tile t;
         if (ty == 0) {
             t = GameRegistry.TILE_REGISTRY.get("bottom");
         } else {
-            if (ty == value) {
+            if (ty == value + 1 && rand.nextDouble() < 0.1) {
+                t = GameRegistry.TILE_REGISTRY.get("looseRocks");
+            } else if (ty == value) {
                 t = GameRegistry.TILE_REGISTRY.get("grass");
             } else if (ty >= value - 3) {
                 t = GameRegistry.TILE_REGISTRY.get("dirt");

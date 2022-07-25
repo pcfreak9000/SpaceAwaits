@@ -250,6 +250,14 @@ public class Tile {
         return null;
     }
     
+    public boolean hasCustomHitbox() {
+        return false;
+    }
+    
+    public float[] getCustomHitbox() {
+        return null;
+    }
+    
     @Override
     public String toString() {
         return "Tile [textureProvider=" + textureProvider + ", canBreak=" + canBreak + ", opaque=" + opaque + ", solid="

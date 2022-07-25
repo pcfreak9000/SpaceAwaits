@@ -108,6 +108,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         return null;
     }
     
+    @Override
     public Tile removeTile(int tx, int ty, TileLayer layer) {
         return setTile(tx, ty, layer, this.world.getWorldProperties().getTileDefault(tx, ty, layer));
     }
@@ -254,7 +255,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             Array<ItemStack> drops = new Array<>();
             tile.onTileBreak(tx, ty, layer, drops, world, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
-            setTile(tx, ty, layer, world.getWorldProperties().getTileDefault(tx, ty, layer));
+            removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
                     Entity e = ItemEntityFactory.setupItemEntity(s,

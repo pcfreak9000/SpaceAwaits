@@ -31,7 +31,7 @@ public class FallingEntityFactory implements WorldEntityFactory {
         pc.factory = AABBBodyFactory.builder().dimensions(200 / 16, 100 / 16).create();//new AABBBodyFactory(200, 100);
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
-        entity.add(new RenderComponent(RenderLayers.ENTITY, "entity"));
+        entity.add(new RenderComponent(RenderLayers.ENTITY));
         return entity;
     }
 }

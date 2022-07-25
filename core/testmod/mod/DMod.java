@@ -47,6 +47,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import layerteststuff.TestBiomeGenerator;
 
 @Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 2 })
@@ -128,6 +129,22 @@ public class DMod {
         ironTile.setTexture("ore_iron.png");
         // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
+        
+        Tile looseRocks = new Tile() {
+            @Override
+            public boolean hasCustomHitbox() {
+                return true;
+            }
+            
+            @Override
+            public float[] getCustomHitbox() {
+                return new float[] { 0, 0, /**/ 1, 0, /**/1, 0.3f, /**/0, 0.3f };
+            }
+        };
+        looseRocks.setDisplayName("Loose Rocks");
+        looseRocks.setTexture("looseRocks.png");
+        looseRocks.setSolid(true);
+        GameRegistry.TILE_REGISTRY.register("looseRocks", looseRocks);
         
         Tile bottom = new Tile();
         bottom.setCanBreak(false);
@@ -212,6 +229,7 @@ public class DMod {
                         Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
                         Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
                         tc.position.set(s);
+                        WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
                         Components.STATS.get(ship).get("mechHealth").current = 1;
                         LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
                                 ship.getComponent(ComponentInventoryShip.class).invShip);

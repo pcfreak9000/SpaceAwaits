@@ -41,8 +41,8 @@ public class ChunkPhysics implements BodyFactory {
                 Tile bot = j - 1 < 0 ? null : chunk.getTile(x, y - 1, TileLayer.Front);
                 Tile right = i + 1 >= Chunk.CHUNK_SIZE ? null : chunk.getTile(x + 1, y, TileLayer.Front);
                 Tile left = i - 1 < 0 ? null : chunk.getTile(x - 1, y, TileLayer.Front);
-                if ((top == null || !top.isSolid()) || (bot == null || !bot.isSolid())
-                        || (right == null || !right.isSolid()) || (left == null || !left.isSolid())) {
+                if ((top == null || !isSolidAndFilling(top)) || (bot == null || !isSolidAndFilling(bot))
+                        || (right == null || !isSolidAndFilling(right)) || (left == null || !isSolidAndFilling(left))) {
                     if (t.isSolid()) {
                         createFixture(t, x, y);
                     }
@@ -73,12 +73,28 @@ public class ChunkPhysics implements BodyFactory {
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
         fd.restitution = tile.getBouncyness();
-        shape.setAsBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), new Vector2(
-                METER_CONV.in((gtx - chunk.getGlobalTileX())), METER_CONV.in((gty - chunk.getGlobalTileY()))), 0);
+        if (!tile.hasCustomHitbox()) {
+            shape.setAsBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), new Vector2(
+                    METER_CONV.in((gtx - chunk.getGlobalTileX())), METER_CONV.in((gty - chunk.getGlobalTileY()))), 0);
+        } else {
+            float[] custom = tile.getCustomHitbox();
+            for (int i = 0; i < custom.length; i++) {
+                if (i % 2 == 0) {//x comp
+                    custom[i] = METER_CONV.in(gtx - chunk.getGlobalTileX() + custom[i] - 0.5f);
+                } else {//y comp
+                    custom[i] = METER_CONV.in(gty - chunk.getGlobalTileY() + custom[i] - 0.5f);
+                }
+            }
+            shape.set(custom);
+        }
         Fixture fix = body.createFixture(fd);
         chunk.getTileState(gtx, gty).setFixture(fix);
         shape.dispose();
         fix.setUserData(tile);//Enough for now
+    }
+    
+    public boolean isSolidAndFilling(Tile t) {
+        return t.isSolid() && !t.hasCustomHitbox();
     }
     
     private final class ListenerClass implements ChunkChangeListener {
@@ -88,7 +104,7 @@ public class ChunkPhysics implements BodyFactory {
                 //The chunk hasn't been added to the simulation yet
                 return;
             }
-            if (oldTile.isSolid() != newTile.isSolid()) {
+            if (isSolidAndFilling(oldTile) != isSolidAndFilling(newTile)) {
                 if (!newTile.isSolid() && body != null) { //oldstate was solid, newstate isn't
                     if (state.getFixture() != null) { //the fixture is null if oldstate was surrounded by solid tiles
                         destroyFixture(state);
@@ -126,9 +142,10 @@ public class ChunkPhysics implements BodyFactory {
                     TileState bot = chunk.inBounds(x, boty) ? chunk.getTileState(x, boty) : null;
                     TileState right = chunk.inBounds(rightx, y) ? chunk.getTileState(rightx, y) : null;
                     TileState left = chunk.inBounds(leftx, y) ? chunk.getTileState(leftx, y) : null;
-                    if ((top == null || !top.getTile().isSolid()) || (bot == null || !bot.getTile().isSolid())
-                            || (right == null || !right.getTile().isSolid())
-                            || (left == null || !left.getTile().isSolid())) {
+                    if ((top == null || !isSolidAndFilling(top.getTile()))
+                            || (bot == null || !isSolidAndFilling(bot.getTile()))
+                            || (right == null || !isSolidAndFilling(right.getTile()))
+                            || (left == null || !isSolidAndFilling(left.getTile())) || newTile.hasCustomHitbox()) {
                         createFixture(newTile, x, y);
                     }
                     //check if the neighbouring fixtures can be removed, this depends on the neighbours neighbours
@@ -138,12 +155,18 @@ public class ChunkPhysics implements BodyFactory {
                     checkDestroy(left, leftx, y);
                 }
             } else {
-                //new and old are both solid or both not solid. The fixture is retained if any.
+                //new and old are both solid and filling or both not solid and filling. The fixture is retained if both are solid and filling. 
                 //The restitution might have to change
-                if (oldTile.isSolid() && state.getFixture() != null) {
-                    //                    newstate.setFixture(state.getFixture());
-                    //                    oldstate.setFixture(null);//Doesn't seem necessary but whatever
+                boolean normalTileFilled = isSolidAndFilling(oldTile) && isSolidAndFilling(newTile);
+                if (normalTileFilled && state.getFixture() != null) {
                     state.getFixture().setRestitution(newTile.getBouncyness());
+                } else if (!normalTileFilled) {//deal with custom hitboxes. In this case doesn't change the state of surrounding fixtures, so this is relatively simple.
+                    if (state.getFixture() != null) {
+                        destroyFixture(state);
+                    }
+                    if (newTile.hasCustomHitbox()) {
+                        createFixture(newTile, gtx, gty);
+                    }
                 }
             }
         }
@@ -158,8 +181,8 @@ public class ChunkPhysics implements BodyFactory {
                 Tile top = chunk.inBounds(tx, topty) ? chunk.getTile(tx, topty, TileLayer.Front) : null;
                 Tile right = chunk.inBounds(righttx, ty) ? chunk.getTile(righttx, ty, TileLayer.Front) : null;
                 Tile left = chunk.inBounds(lefttx, ty) ? chunk.getTile(lefttx, ty, TileLayer.Front) : null;
-                if ((top != null && top.isSolid()) && (right != null && right.isSolid())
-                        && (left != null && left.isSolid()) && (bot != null && bot.isSolid())) {
+                if ((top != null && isSolidAndFilling(top)) && (right != null && isSolidAndFilling(right))
+                        && (left != null && isSolidAndFilling(left)) && (bot != null && isSolidAndFilling(bot))) {
                     destroyFixture(state);
                 }
             }
