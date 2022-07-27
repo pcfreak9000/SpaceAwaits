@@ -2,6 +2,7 @@ package layerteststuff;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Entity;
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
 import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
@@ -15,6 +16,8 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
@@ -88,8 +91,12 @@ public class TestBiome extends Biome implements HeightSupplier {
         if (ty == 0) {
             t = GameRegistry.TILE_REGISTRY.get("bottom");
         } else {
-            if (ty == value + 1 && rand.nextDouble() < 0.1) {
-                t = GameRegistry.TILE_REGISTRY.get("looseRocks");
+            if (ty == value + 1) {
+                if (rand.nextDouble() < 0.1) {
+                    t = GameRegistry.TILE_REGISTRY.get("looseRocks");
+                } else {
+                    return;
+                }
             } else if (ty == value) {
                 t = GameRegistry.TILE_REGISTRY.get("grass");
             } else if (ty >= value - 3) {
@@ -140,13 +147,17 @@ public class TestBiome extends Biome implements HeightSupplier {
     @Override
     public void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand,
             int area) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 50; i++) {
             int x = rand.nextInt(area) + tx;
             int y = rand.nextInt(area) + ty;
             if (tiles.getTile(x, y, TileLayer.Front) == DMod.instance.grasstile) {
                 //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
                 //fgen.generate(tiles, world, x, y, rand, area);
-                this.bp.generate(tiles, world, x, y, 0, 0, bp.getWidth(), bp.getHeight(), rand);
+                //this.bp.generate(tiles, world, x, y, 0, 0, bp.getWidth(), bp.getHeight(), rand);
+                Entity tree = DMod.instance.treeFac.createEntity();
+                TransformComponent tc = Components.TRANSFORM.get(tree);
+                tc.position.set(x - 0.5f, y + 1);
+                world.spawnEntity(tree, false);
             }
         }
     }

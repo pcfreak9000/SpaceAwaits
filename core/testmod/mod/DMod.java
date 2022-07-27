@@ -83,7 +83,15 @@ public class DMod {
     public Tile oldbricks = new Tile();
     public Tile grasstile = new Tile();
     
-    SpaceshipFactory fac = new SpaceshipFactory();
+    public SpaceshipFactory fac = new SpaceshipFactory();
+    public TreeFactory treeFac = new TreeFactory();
+    
+    //TODO ALLGEMEIN:
+    //Bäume mit dicker Hitbox
+    //Bäume untergraben -> BodyType dynamic setzen
+    //Tiles die abgebaut werden informieren auch entities die mit den nachbarn überlappen wenn die bestimmte components haben
+    //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
+    //random tick system, random tick system für entities
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
@@ -99,6 +107,8 @@ public class DMod {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
         GameRegistry.WORLD_ENTITY_REGISTRY.register("spac", fac);
+        GameRegistry.WORLD_ENTITY_REGISTRY.register("tree", treeFac);
+        
         water.setTexture("stone.png");
         water.setSolid(false);
         water.setCanBreak(false);
