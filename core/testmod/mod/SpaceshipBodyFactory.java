@@ -9,22 +9,14 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
 public class SpaceshipBodyFactory implements BodyFactory {
     
-    private static final Vector2 WH = new Vector2(159 / 32f, 79 / 32f);
+    private static final Vector2 WH = new Vector2(159 / 32f, 72 / 32f);
     
-    private static final Vector2[] bounds = { new Vector2(21, 75), new Vector2(158, 75), new Vector2(156f, 58f),
-            new Vector2(107, 19), new Vector2(39, 0), new Vector2(1, 6), new Vector2(1, 63) };
-    
-    static {
-        for (Vector2 v : bounds) {
-            v.y = 79 - v.y;
-            v.scl(1 / 32f);
-            v.x = METER_CONV.in(v.x);
-            v.y = METER_CONV.in(v.y);
-        }
-    }
+    private static final float[] bounds = UnitConversion.texelToPhysicsspace(METER_CONV, 32f, 72,
+            new float[] { 21, 72, /**/ 158, 72, /**/ 156f, 58f, /**/107, 19, /**/39, 0, /**/1, 6, /**/1, 63 });
     
     @Override
     public Body createBody(World world) {
