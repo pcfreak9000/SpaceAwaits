@@ -212,7 +212,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             }
             if (!ents.isEmpty()) {
                 for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-                    if (!checkSolidOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f)) {//This doesn't account for possible item mergers...
+                    if (!phys.get(getEngine()).checkRectOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f)) {//This doesn't account for possible item mergers...
                         reloc = d;
                         break;
                     }
@@ -348,26 +348,6 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 res.add(getTile(i, j, layer));
             }
         }
-    }
-    
-    public boolean checkSolidOccupation(float x, float y, float w, float h) {
-        int ix = Mathf.floori(x);
-        int iy = Mathf.floori(y);
-        int iw = Mathf.ceili(x + w);
-        int ih = Mathf.ceili(y + h);
-        for (int i = ix; i < iw; i++) {
-            for (int j = iy; j < ih; j++) {
-                Tile t = getTile(i, j, TileLayer.Front);
-                if (t.isSolid()) {
-                    return true;
-                }
-            }
-        }
-        //first asking for tiles will load chunks if they arent loaded, physics doesnt load chunks itself
-        if (phys.get(getEngine()).checkRectEntityOccupation(x, y, x + w, y + h)) {
-            return true;
-        }
-        return false;
     }
     
     @Override

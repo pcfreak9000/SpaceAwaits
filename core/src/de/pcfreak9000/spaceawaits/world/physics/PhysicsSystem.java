@@ -12,12 +12,17 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
@@ -61,10 +66,13 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final RaycastCallbackEntityImpl raycastCallbackWr = new RaycastCallbackEntityImpl();
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
+    
     private final Array<Entity> tmpAddedPhysicsEntities = new Array<>(false, 10);
     private boolean currentlyEnsuringEntityPhysicsPresence = false;
     
     private final UserDataHelper udh = new UserDataHelper();
+    
+    private final SystemCache<TileSystem> tiles = new SystemCache<>(TileSystem.class);
     
     private final IChunkProvider chunkProvider;
     private final de.pcfreak9000.spaceawaits.world.World world;
@@ -120,9 +128,29 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     public void raycastEntities(float x1, float y1, float x2, float y2, IRaycastEntityCallback callback) {
-        raycastCallbackWr.callb = callback;
+        raycastCallbackWr.callb = callback;//Might trigger multiple times for one entity with multiple fixtures
         raycast(x1, y1, x2, y2, raycastCallbackWr);
         raycastCallbackWr.callb = null;
+    }
+    
+    public boolean checkRectOccupation(float x, float y, float w, float h) {
+        int ix = Mathf.floori(x);
+        int iy = Mathf.floori(y);
+        int iw = Mathf.ceili(x + w);
+        int ih = Mathf.ceili(y + h);
+        for (int i = ix; i < iw; i++) {
+            for (int j = iy; j < ih; j++) {
+                Tile t = tiles.get(getEngine()).getTile(i, j, TileLayer.Front);
+                if (t.isSolid()) {
+                    return true;
+                }
+            }
+        }
+        //first asking for tiles will load chunks if they arent loaded, physics doesnt load chunks itself
+        if (checkRectEntityOccupation(x, y, x + w, y + h)) {
+            return true;
+        }
+        return false;
     }
     
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {

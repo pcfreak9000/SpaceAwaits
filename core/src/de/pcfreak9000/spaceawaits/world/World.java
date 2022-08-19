@@ -22,7 +22,7 @@ import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
+import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 
 public abstract class World {
     
@@ -125,7 +125,7 @@ public abstract class World {
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
             //getSystem... oof
-            if (ecsEngine.getSystem(TileSystem.class).checkSolidOccupation(t.position.x + wh.x / 4,
+            if (ecsEngine.getSystem(PhysicsSystem.class).checkRectOccupation(t.position.x + wh.x / 4,
                     t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
                 return false;
             }
