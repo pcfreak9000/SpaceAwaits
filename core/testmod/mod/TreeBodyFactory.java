@@ -1,0 +1,56 @@
+package mod;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+
+import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+
+public class TreeBodyFactory implements BodyFactory {
+    
+    private static final Vector2 WH = new Vector2(50 / 32f, 222 / 32f);
+    
+    private static final float[] bounds = UnitConversion.texelToPhysicsspace(METER_CONV, 32f, 222, new float[] { 12,
+            221, /**/ 34, 221, /**/ 29, 165, /**/ 49, 156, /**/ 45, 14, /**/ 11, 1, /**/ 3, 136, /**/ 21, 165 });//<- not convex, but anyways
+    
+    //this isnt used
+    @Override
+    public Body createBody(World world) {
+        return null;
+    }
+    
+    @Override
+    public Body createBody(World world, Entity entity) {
+        BodyDef bd = new BodyDef();
+        boolean loose = entity.getComponent(TreeStateComponent.class).loose;
+        bd.fixedRotation = true;
+        bd.type = loose ? BodyType.DynamicBody : BodyType.StaticBody;
+        bd.position.set(METER_CONV.in(0), METER_CONV.in(0));
+        FixtureDef fd = new FixtureDef();
+        PolygonShape polyshape = new PolygonShape();
+        polyshape.set(bounds);
+        fd.shape = polyshape;
+        fd.density = 1;
+        fd.isSensor = !loose;
+        Body b = world.createBody(bd);
+        b.createFixture(fd);
+        return b;
+    }
+    
+    @Override
+    public Vector2 bodyOffset() {
+        return Vector2.Zero;
+    }
+    
+    @Override
+    public Vector2 boundingBoxWidthAndHeight() {
+        return WH;
+    }
+    
+}

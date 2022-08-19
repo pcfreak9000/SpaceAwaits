@@ -4,12 +4,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 
 public class ModifiedEngine extends Engine {
+    
+    public static final int FLAG_ADDED = 1337;
+    public static final int FLAG_NOTHING = 0;
     
     private Object compOpHandler;
     private Method compOpProcessMethod;
@@ -28,6 +32,31 @@ public class ModifiedEngine extends Engine {
     public ModifiedEngine(float stepsize) {
         setupReflectionStuff();
         this.stepsize = stepsize;
+    }
+    
+    @Override
+    public Entity createEntity() {
+        return new EntityImproved();
+    }
+    
+    @Override
+    public void addEntity(Entity entity) {
+        super.addEntity(entity);
+        entity.flags = FLAG_ADDED;
+    }
+    
+    @Override
+    public void removeEntity(Entity entity) {
+        super.removeEntity(entity);
+        entity.flags = FLAG_NOTHING;
+    }
+    
+    @Override
+    public void removeAllEntities() {
+        for (Entity e : getEntities()) {
+            e.flags = FLAG_NOTHING;
+        }
+        super.removeAllEntities();
     }
     
     @Override

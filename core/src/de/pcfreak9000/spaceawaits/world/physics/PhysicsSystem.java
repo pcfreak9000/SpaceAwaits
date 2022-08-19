@@ -12,10 +12,16 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.world.IChunkProvider;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 
 public class PhysicsSystem extends IteratingSystem implements EntityListener {
+    
+    private static final Logger LOGGER = Logger.getLogger(PhysicsSystem.class);
     
     private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1f;
@@ -55,11 +61,18 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final RaycastCallbackEntityImpl raycastCallbackWr = new RaycastCallbackEntityImpl();
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
+    private final Array<Entity> tmpAddedPhysicsEntities = new Array<>(false, 10);
+    private boolean currentlyEnsuringEntityPhysicsPresence = false;
     
     private final UserDataHelper udh = new UserDataHelper();
     
-    public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world) {
+    private final IChunkProvider chunkProvider;
+    private final de.pcfreak9000.spaceawaits.world.World world;
+    
+    public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world, IChunkProvider chProv) {
         super(Family.all(PhysicsComponent.class).get());
+        this.chunkProvider = chProv;
+        this.world = world;
         this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(true);
         this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
@@ -94,7 +107,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         }
     }
     
-    public void raycast(IRaycastFixtureCallback callback, float x1, float y1, float x2, float y2) {
+    public void raycast(float x1, float y1, float x2, float y2, IRaycastFixtureCallback callback) {
+        ensureChunksAABB(x1, y1, x2, y2);
         x1 = METER_CONV.in(x1);
         y1 = METER_CONV.in(y1);
         x2 = METER_CONV.in(x2);
@@ -102,22 +116,24 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         raycastImpl.callback = callback;
         this.box2dWorld.rayCast(raycastImpl, x1, y1, x2, y2);
         raycastImpl.callback = null;
+        unensureChunks();
     }
     
-    public void raycastEntities(IRaycastEntityCallback callback, float x1, float y1, float x2, float y2) {
+    public void raycastEntities(float x1, float y1, float x2, float y2, IRaycastEntityCallback callback) {
         raycastCallbackWr.callb = callback;
-        raycast(raycastCallbackWr, x1, y1, x2, y2);
+        raycast(x1, y1, x2, y2, raycastCallbackWr);
         raycastCallbackWr.callb = null;
     }
     
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
         entCheck.ud.clear();
-        queryAABB(entCheck, x1, y1, x2, y2);
+        queryAABB(x1, y1, x2, y2, entCheck);
         boolean b = entCheck.ud.isEntity();
         return b;
     }
     
-    public void queryAABB(IQueryCallback callback, float x1, float y1, float x2, float y2) {
+    public void queryAABB(float x1, float y1, float x2, float y2, IQueryCallback callback) {
+        ensureChunksAABB(x1, y1, x2, y2);
         x1 = METER_CONV.in(x1);
         y1 = METER_CONV.in(y1);
         x2 = METER_CONV.in(x2);
@@ -125,20 +141,21 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         queryImpl.callback = callback;
         this.box2dWorld.QueryAABB(queryImpl, x1, y1, x2, y2);
         queryImpl.callback = null;
+        unensureChunks();
     }
     
-    public void queryXY(float x, float y, IQueryCallback callback) {
-        queryAABB((fix, uc) -> {
+    public void queryXYc(float x, float y, IQueryCallback callback) {
+        queryAABB(x - QUERYXY_OFFSET, y - QUERYXY_OFFSET, x + QUERYXY_OFFSET, y + QUERYXY_OFFSET, (fix, uc) -> {
             if (fix.testPoint(uc.in(x), uc.in(y))) {
                 return callback.reportFixture(fix, uc);
             }
             return true;
-        }, x - QUERYXY_OFFSET, y - QUERYXY_OFFSET, x + QUERYXY_OFFSET, y + QUERYXY_OFFSET);
+        });
     }
     
-    public Array<Object> queryXY(IQueryFilter filter, float x, float y) {
+    public Array<Object> queryXY(float x, float y, IQueryFilter filter) {
         Array<Object> results = new Array<>();
-        queryXY(x, y, (fix, uc) -> {
+        queryXYc(x, y, (fix, uc) -> {
             udh.set(fix.getUserData(), fix);
             if (filter.accept(udh, uc)) {
                 results.add(udh.getUserDataRaw());
@@ -160,7 +177,10 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
-        pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld));
+        if (pc.body != null) {
+            LOGGER.error("Body of just added entity isn't null: " + entity);
+        }
+        pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld, entity));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
         pc.body.getBody().setAngularVelocity(pc.rotVel);
         if (pc.body.getBody().getUserData() == null) {
@@ -178,6 +198,56 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
         pc.factory.destroyBody(pc.body.getBody(), box2dWorld);
         pc.body = null;
+    }
+    
+    private void unensureChunks() {
+        while (tmpAddedPhysicsEntities.size > 0) {
+            //TODx make sure not to remove entities which were legally added inbetween (shouldnt happen, but who knows)
+            entityRemoved(tmpAddedPhysicsEntities.pop());
+        }
+        currentlyEnsuringEntityPhysicsPresence = false;
+    }
+    
+    private void ensureChunksAABB(float x1, float y1, float x2, float y2) {
+        if (chunkProvider == null) {
+            return;
+        }
+        if (currentlyEnsuringEntityPhysicsPresence) {
+            LOGGER.warn("Already ensuring physics presence of some entities, this might lead to weird bugs");
+        }
+        currentlyEnsuringEntityPhysicsPresence = true;
+        int cx1 = Chunk.toGlobalChunkf(x1);
+        int cy1 = Chunk.toGlobalChunkf(y1);
+        int cx2 = Chunk.toGlobalChunkf(x2);
+        int cy2 = Chunk.toGlobalChunkf(y2);
+        if (cx1 > cx2) {
+            int t = cx2;
+            cx2 = cx1;
+            cx1 = t;
+        }
+        if (cy1 > cy2) {
+            int t = cy2;
+            cy2 = cy1;
+            cy1 = t;
+        }
+        for (int i = cx1 - 1; i <= cx2 + 1; i++) {
+            for (int j = cy1 - 1; j <= cy2 + 1; j++) {
+                if (world.getBounds().inBoundsChunk(i, j)) {
+                    Chunk c = chunkProvider.getChunk(i, j);
+                    if (!c.isActive()) {
+                        for (Entity e : c.getEntities()) {
+                            if (getFamily().matches(e)) {
+                                if (e.flags != ModifiedEngine.FLAG_ADDED) {
+                                    entityAdded(e);
+                                    syncBodyToTransform(e);
+                                    tmpAddedPhysicsEntities.add(e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private static final class QueryCallbackBox2DImpl implements QueryCallback {

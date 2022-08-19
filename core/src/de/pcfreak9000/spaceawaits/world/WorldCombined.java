@@ -9,6 +9,7 @@ import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
@@ -72,8 +73,9 @@ public class WorldCombined extends World {
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
+        ecs.addSystem(new BreakingSystem(this));
         ecs.addSystem(new PhysicsForcesSystem(this));
-        PhysicsSystem phsys = new PhysicsSystem(this);
+        PhysicsSystem phsys = new PhysicsSystem(this, chunkProvider);
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
         ecs.addSystem(new CameraSystem(this));

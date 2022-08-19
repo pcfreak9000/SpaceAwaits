@@ -25,6 +25,14 @@ public class Components {
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsPhysics", PhysicsComponent.class);
     }
     
+    public static final ComponentMapper<OnNeighbourChangeComponent> NEIGHGOUR_CHANGED = ComponentMapper
+            .getFor(OnNeighbourChangeComponent.class);
+    
+    public static final ComponentMapper<BreakableComponent> BREAKABLE = ComponentMapper
+            .getFor(BreakableComponent.class);
+    
+    public static final ComponentMapper<BreakingComponent> BREAKING = ComponentMapper.getFor(BreakingComponent.class);
+    
     public static final ComponentMapper<TransformComponent> TRANSFORM = ComponentMapper
             .getFor(TransformComponent.class);
     

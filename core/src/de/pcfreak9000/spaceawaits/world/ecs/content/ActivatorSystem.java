@@ -76,7 +76,7 @@ public class ActivatorSystem extends EntitySystem {
         if (!gameRend.getCurrentView().getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }
-        phys.get(getEngine()).queryAABB((fix, uc) -> {
+        phys.get(getEngine()).queryAABB(mouse.x - 0.01f, mouse.y - 0.01f, mouse.x + 0.01f, mouse.y + 0.01f, (fix, uc) -> {
             if (fix.testPoint(uc.in(mouse.x), uc.in(mouse.y))) {//really test point? or let the activators decide if they like something?
                 udh.set(fix.getUserData(), fix);
                 if (udh.isEntity()) {
@@ -89,7 +89,7 @@ public class ActivatorSystem extends EntitySystem {
                 }
             }
             return true;
-        }, mouse.x - 0.01f, mouse.y - 0.01f, mouse.x + 0.01f, mouse.y + 0.01f);
+        });
         for (Entity e : entities) {
             ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {

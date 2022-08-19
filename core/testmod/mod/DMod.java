@@ -30,6 +30,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
@@ -76,6 +77,8 @@ public class DMod {
     
     public Item repairGun = new ItemRepairGun();
     
+    public Item primitiveAxe = new ItemPrimitiveAxe();
+    
     public TileLiquid water = new TileLiquid();
     
     public Tile storageDrawer = new TileStorageDrawer();
@@ -99,6 +102,9 @@ public class DMod {
                 ComponentInventoryShip.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsCompositeInventoryComponent",
                 CompositeInventoryComponent.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentAxeHarvestableComponent",
+                BreakableComponent.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentTreeState", TreeStateComponent.class);
         
         GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
         GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
@@ -123,6 +129,8 @@ public class DMod {
         GameRegistry.ITEM_REGISTRY.register("gun", gun);
         
         GameRegistry.ITEM_REGISTRY.register("repairGun", repairGun);
+        
+        GameRegistry.ITEM_REGISTRY.register("primitiveAxe", primitiveAxe);
         
         oldbricks.setTexture("oldbricks.png");
         oldbricks.setDisplayName("Old Bricks");

@@ -57,7 +57,7 @@ public class ChunkProvider implements IChunkProvider {
             return null;
         if (cached != null) {
             if (cached.getGlobalChunkX() == x && cached.getGlobalChunkY() == y) {
-                return cached;
+                return cached;//FIXME check if cache is active if active!!
             }
         }
         IntCoordKey key = new IntCoordKey(x, y);

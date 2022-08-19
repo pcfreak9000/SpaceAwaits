@@ -98,14 +98,18 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         this.listeners = new ArrayList<>();
         this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
+        
         this.tileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
+        
         this.entities = new ArrayList<>();
         this.immutableEntities = Collections.unmodifiableList(this.entities);
         this.tickablesForRemoval = new ArrayDeque<>();
         this.chunkEntity = new EntityImproved();
         this.chunkEntity.flags = 1;
+        
         this.chunkEntity.add(new TickComponent(this));
+        
         PhysicsComponent pc = new PhysicsComponent();
         pc.factory = new ChunkPhysics(this);
         this.chunkEntity.add(pc);

@@ -12,4 +12,5 @@ public class EntityImproved extends Entity {
         b.append(this.getComponents().toString());
         return b.toString();
     }
+    
 }

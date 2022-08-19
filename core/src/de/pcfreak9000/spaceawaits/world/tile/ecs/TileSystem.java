@@ -56,7 +56,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     private Entity createInfoEntity() {
         Entity e = new EntityImproved();
         e.add(new BreakingTilesComponent(this.breakingTiles));
-        e.add(new RenderComponent(RenderLayers.TILE_EFFECT, "break"));
+        e.add(new RenderComponent(RenderLayers.TILE_EFFECT));
         return e;
     }
     
@@ -119,6 +119,17 @@ public class TileSystem extends EntitySystem implements ITileArea {
             int i = tx + d.dx;
             int j = ty + d.dy;
             getTile(i, j, layer).onNeighbourChange(world, this, i, j, tile, old, tx, ty, layer);
+            phys.get(getEngine()).queryAABB(i, j, i + 1, j + 1, (fix, conv) -> {
+                ud.set(fix.getUserData(), fix);
+                if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!
+                    Entity e = ud.getEntity();
+                    if (Components.NEIGHGOUR_CHANGED.has(e)) {
+                        Components.NEIGHGOUR_CHANGED.get(e).onNeighbourTileChange.onNeighbourTileChange(world, this, e,
+                                tile, old, tx, ty, layer);
+                    }
+                }
+                return true;
+            });
         }
     }
     
@@ -181,7 +192,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         Direction reloc = null;
         if (tile.isSolid() && layer == TileLayer.Front) {
             boolean[] blocking = new boolean[1];
-            phys.get(getEngine()).queryAABB((fix, conv) -> {
+            phys.get(getEngine()).queryAABB(tx, ty, tx + 1f, ty + 1f, (fix, conv) -> {
                 if (fix.isSensor()) {
                     return true;
                 }
@@ -195,7 +206,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
                     }
                 }
                 return true;
-            }, tx, ty, tx + 1f, ty + 1f);
+            });
             if (blocking[0]) {
                 return null;
             }
@@ -226,12 +237,15 @@ public class TileSystem extends EntitySystem implements ITileArea {
     public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
         //TODO allow null tilebreaker?
         //First check if this is allowed
+        //Tile specific checks:
         if (layer == TileLayer.Back) {
             Tile front = getTile(tx, ty, TileLayer.Front);
             if (front.isSolid()) {
                 return -1f;
             }
         }
+        //******************
+        //Check breakable/breaker compatibility:
         Tile tile = getTile(tx, ty, layer);
         if (!tile.canBreak() && !breaker.ignoreTileCanBreak()) {
             return -1f;
@@ -243,6 +257,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (!breaker.canBreak(tx, ty, layer, tile, world, this)) {
             return -1f;
         }
+        //********************************
+        //break stuff:
         long l = IntCoords.toLong(tx, ty);
         BreakTileProgress t = breakingTiles.get(l);
         if (t == null || t.getLayer() != layer) {
@@ -252,6 +268,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
         float speedActual = breaker.getSpeed() / tile.getHardness();
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
+            //********************************+
+            //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
             tile.onTileBreak(tx, ty, layer, drops, world, this, worldRandom);
             breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
@@ -260,12 +278,13 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 for (ItemStack s : drops) {
                     Entity e = ItemEntityFactory.setupItemEntity(s,
                             tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
-                            ty + worldRandom.nextFloat() / 2F - Item.WORLD_SIZE / 2);
+                            ty + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2);
                     world.spawnEntity(e, false);
                 }
                 drops.clear();
             }
             return 1f;
+            //*************************
         }
         return Mathf.clamp(t.getProgress(), 0, 1f);
     }
