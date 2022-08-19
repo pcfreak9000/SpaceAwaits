@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TileStorageDrawer extends Tile {
@@ -23,8 +23,13 @@ public class TileStorageDrawer extends Tile {
     }
     
     @Override
-    public TileEntity createTileEntity(World world, int gtx, int gty) {
+    public ITileEntity createTileEntity(World world, int gtx, int gty) {
         return new TileEntityStorageDrawer();
+    }
+    
+    @Override
+    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+        return layer == TileLayer.Front;
     }
     
     @Override

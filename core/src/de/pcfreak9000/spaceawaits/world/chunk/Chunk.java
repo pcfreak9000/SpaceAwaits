@@ -36,7 +36,7 @@ import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Chunk implements NBTSerializable, Tickable, ITileArea {
@@ -65,7 +65,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     
     private final TileStorage tiles;
     private final TileStorage tilesBackground;
-    private final List<TileEntity> tileEntities;
+    private final List<ITileEntity> iTileEntities;
     private final List<Tickable> tickables;
     private final List<Entity> entities;
     private final List<Entity> immutableEntities;
@@ -99,7 +99,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
         
-        this.tileEntities = new ArrayList<>();
+        this.iTileEntities = new ArrayList<>();
         this.tickables = new ArrayList<>();
         
         this.entities = new ArrayList<>();
@@ -216,7 +216,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     }
     
     @Override
-    public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
+    public ITileEntity getTileEntity(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getTileEntity();
     }
     
@@ -275,7 +275,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         Tile oldTile = state.getTile();
         //oldTile.onTileRemoved(tx, ty, TileLayer.Front, world);
         if (state.getTileEntity() != null) {
-            this.tileEntities.remove(state.getTileEntity());
+            this.iTileEntities.remove(state.getTileEntity());
             if (state.getTileEntity() instanceof Tickable) {
                 Tickable oldTickable = (Tickable) state.getTileEntity();
                 if (this.ticking) {
@@ -292,8 +292,8 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         this.tilesRender.addTilePos(t.getRendererMarkerComp(), tx, ty);
         //}
         if (t.hasTileEntity()) {
-            TileEntity te = t.createTileEntity(this.world, tx, ty);
-            this.tileEntities.add(te);
+            ITileEntity te = t.createTileEntity(this.world, tx, ty);
+            this.iTileEntities.add(te);
             state.setTileEntity(te);
             if (te instanceof Tickable) {
                 this.tickables.add((Tickable) te);
@@ -465,7 +465,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
                 tileList.addString(id);
                 Tile t = st.getTile();
                 if (t.hasTileEntity()) {
-                    TileEntity e = st.getTileEntity();
+                    ITileEntity e = st.getTileEntity();
                     if (e instanceof NBTSerializable) {
                         NBTSerializable seri = (NBTSerializable) e;
                         NBTTag tag = seri.writeNBT();

@@ -221,7 +221,7 @@ public class Tile {
         return false;
     }
     
-    public TileEntity createTileEntity(World world, int gtx, int gty) {
+    public ITileEntity createTileEntity(World world, int gtx, int gty) {
         return null;
     }
     

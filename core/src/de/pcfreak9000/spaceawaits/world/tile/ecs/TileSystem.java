@@ -33,7 +33,7 @@ import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
 public class TileSystem extends EntitySystem implements ITileArea {
     
@@ -160,7 +160,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     }
     
     @Override
-    public TileEntity getTileEntity(int tx, int ty, TileLayer layer) {
+    public ITileEntity getTileEntity(int tx, int ty, TileLayer layer) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
             return c.getTileEntity(tx, ty, layer);

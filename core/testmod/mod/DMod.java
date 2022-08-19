@@ -46,7 +46,7 @@ import de.pcfreak9000.spaceawaits.world.render.WorldView;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import layerteststuff.TestBiomeGenerator;
@@ -66,7 +66,7 @@ public class DMod {
         }
         
         @Override
-        public TileEntity createTileEntity(World world, int gtx, int gty) {
+        public ITileEntity createTileEntity(World world, int gtx, int gty) {
             return new LaserTileEntity(world, gtx, gty);
         };
     };

@@ -6,14 +6,14 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
 public class TileState {
     
     private Tile type;
     
     private Fixture fixture;
-    private TileEntity tileEntity = null;
+    private ITileEntity iTileEntity = null;
     private IMetadata metadata = null;
     
     TileState() {
@@ -40,12 +40,12 @@ public class TileState {
         return this.type;
     }
     
-    void setTileEntity(TileEntity te) {
-        this.tileEntity = te;
+    void setTileEntity(ITileEntity te) {
+        this.iTileEntity = te;
     }
     
-    public TileEntity getTileEntity() {
-        return tileEntity;
+    public ITileEntity getTileEntity() {
+        return iTileEntity;
     }
     
     Fixture getFixture() {
@@ -58,7 +58,7 @@ public class TileState {
     
     @Override
     public String toString() {
-        return "TileState [type=" + type + ", fixture=" + fixture + ", tileEntity=" + tileEntity + "]";
+        return "TileState [type=" + type + ", fixture=" + fixture + ", tileEntity=" + iTileEntity + "]";
     }
     
 }

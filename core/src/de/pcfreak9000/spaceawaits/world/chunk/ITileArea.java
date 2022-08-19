@@ -3,13 +3,13 @@ package de.pcfreak9000.spaceawaits.world.chunk;
 import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
 public interface ITileArea {
     
     boolean inBounds(int tx, int ty);
     
-    TileEntity getTileEntity(int tx, int ty, TileLayer layer);
+    ITileEntity getTileEntity(int tx, int ty, TileLayer layer);
     
     Tile getTile(int tx, int ty, TileLayer layer);
     

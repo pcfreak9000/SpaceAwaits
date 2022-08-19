@@ -5,9 +5,9 @@ import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
-import de.pcfreak9000.spaceawaits.world.tile.TileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
-public class TileEntityStorageDrawer extends TileEntity implements IInventory, NBTSerializable {
+public class TileEntityStorageDrawer implements IInventory, NBTSerializable, ITileEntity {
     private final ItemStack[] stacks = new ItemStack[9 * 3];
     
     @Override
