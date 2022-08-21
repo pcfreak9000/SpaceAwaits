@@ -8,7 +8,7 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
 public class PhysicsComponent implements Component, NBTSerializable {
     
-
+    public boolean considerSensorsAsBlocking = false;
     public BodyWrapper body;
     public BodyFactory factory;
     

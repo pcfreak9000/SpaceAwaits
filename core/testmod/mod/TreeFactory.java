@@ -45,7 +45,7 @@ public class TreeFactory implements WorldEntityFactory {
         TransformComponent tc = new TransformComponent();
         entity.add(tc);
         PhysicsComponent pc = new PhysicsComponent();
-        
+        pc.considerSensorsAsBlocking = true;
         pc.factory = new TreeBodyFactory();
         entity.add(new TreeStateComponent());
         entity.add(pc);

@@ -156,7 +156,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
         entCheck.ud.clear();
         queryAABB(x1, y1, x2, y2, entCheck);
-        boolean b = entCheck.ud.isEntity();
+        boolean b = entCheck.blocking;
         return b;
     }
     
@@ -321,13 +321,17 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         
         public final UserDataHelper ud = new UserDataHelper();
         
+        public boolean blocking;
+        
         @Override
         public boolean reportFixture(Fixture fix, UnitConversion conv) {
-            if (fix.isSensor()) {
-                return true;
-            }
             ud.set(fix.getUserData(), fix);
-            return !ud.isEntity();
+            if (ud.isEntity() && fix.isSensor()) {
+                blocking = Components.PHYSICS.get(ud.getEntity()).considerSensorsAsBlocking;
+            } else {
+                blocking = ud.isEntity();
+            }
+            return !blocking;
         }
         
     }

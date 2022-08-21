@@ -183,10 +183,12 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (tile.isSolid() && layer == TileLayer.Front) {
             boolean[] blocking = new boolean[1];
             phys.get(getEngine()).queryAABB(tx, ty, tx + 1f, ty + 1f, (fix, conv) -> {
-                if (fix.isSensor()) {
-                    return true;
-                }
                 ud.set(fix.getUserData(), fix);
+                if (fix.isSensor()) {
+                    if (!ud.isEntity() || !Components.PHYSICS.get(ud.getEntity()).considerSensorsAsBlocking) {
+                        return true;
+                    }
+                }
                 if (ud.isEntity()) {
                     if (Components.ITEM_STACK.has(ud.getEntity())) {//Maybe exchange for some MakesWayForTileComponent? Might get complicated for entities bigger than a Tile
                         ents.add(ud.getEntity());

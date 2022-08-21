@@ -59,7 +59,7 @@ public class DMod {
     TextureProvider texture = TextureProvider.get("sdfsdf");
     TextureProvider planet = TextureProvider.get("planet.png");
     public Tile tstoneTile = new Tile();
-    public Tile laser = new Tile() {
+    public Tile laser = new Tile() {//FIXME laser does weird stuff? position and stuff
         @Override
         public boolean hasTileEntity() {
             return true;
@@ -149,6 +149,16 @@ public class DMod {
         GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
         
         Tile looseRocks = new Tile() {
+            @Override
+            public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+                    Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+                if (ngty == gty - 1 && ngtx == gtx) {
+                    if (!newNeighbour.isSolid()) {
+                        //drop item
+                    }
+                }
+            }
+            
             @Override
             public boolean hasCustomHitbox() {
                 return true;
