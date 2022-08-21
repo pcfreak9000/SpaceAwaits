@@ -113,13 +113,13 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
             int gtx = IntCoords.xOfLong(l);
             int gty = IntCoords.yOfLong(l);
             TileLiquid tile = (TileLiquid) crc.chunk.getTile(gtx, gty, crc.layer);
-            LiquidState s = (LiquidState) crc.chunk.getMetadata(gtx, gty, crc.layer);
+            LiquidState s = (LiquidState) crc.chunk.getTileEntity(gtx, gty, crc.layer);
             float height = s.getLiquid() / tile.getMaxValue();
             Tile tileAbove = tiles.getTile(gtx, gty + 1, crc.layer);
             boolean inBetween = false;
             float topHeight = height;
             if (tileAbove == tile) {
-                LiquidState ns = (LiquidState) tiles.getMetadata(gtx, gty + 1, crc.layer);
+                LiquidState ns = (LiquidState) tiles.getTileEntity(gtx, gty + 1, crc.layer);
                 if (!ns.isEmpty()) {
                     topHeight = ns.getLiquid() / tile.getMaxValue();
                     topHeight = MathUtils.clamp(topHeight, 0, 1);

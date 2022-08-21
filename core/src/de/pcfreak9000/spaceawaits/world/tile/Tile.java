@@ -221,7 +221,7 @@ public class Tile {
         return false;
     }
     
-    public ITileEntity createTileEntity(World world, int gtx, int gty) {
+    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
         return null;
     }
     
@@ -240,14 +240,6 @@ public class Tile {
     
     public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
             Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
-    }
-    
-    public boolean hasMetadata() {
-        return false;
-    }
-    
-    public IMetadata createMetadata() {
-        return null;
     }
     
     public boolean hasCustomHitbox() {

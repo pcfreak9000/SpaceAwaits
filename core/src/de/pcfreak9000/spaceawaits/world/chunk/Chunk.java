@@ -1,19 +1,16 @@
 package de.pcfreak9000.spaceawaits.world.chunk;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
-import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
@@ -32,11 +29,10 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Chunk implements NBTSerializable, Tickable, ITileArea {
@@ -65,8 +61,6 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     
     private final TileStorage tiles;
     private final TileStorage tilesBackground;
-    private final List<ITileEntity> iTileEntities;
-    private final List<Tickable> tickables;
     private final List<Entity> entities;
     private final List<Entity> immutableEntities;
     
@@ -76,8 +70,6 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     private final List<ChunkChangeListener> listeners;
     
     private OrderedSet<NextTickTile> tickTiles = new OrderedSet<>();
-    private final Queue<Tickable> tickablesForRemoval;
-    private boolean ticking = false;
     
     private Bounds chunkBounds;
     
@@ -96,15 +88,11 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         this.ty = ry * CHUNK_SIZE;
         findAndSetActualBounds();
         this.listeners = new ArrayList<>();
-        this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
-        this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty);
-        
-        this.iTileEntities = new ArrayList<>();
-        this.tickables = new ArrayList<>();
+        this.tiles = new TileStorage(world, CHUNK_SIZE, this.tx, this.ty, TileLayer.Front);
+        this.tilesBackground = new TileStorage(world, CHUNK_SIZE, this.tx, this.ty, TileLayer.Back);
         
         this.entities = new ArrayList<>();
         this.immutableEntities = Collections.unmodifiableList(this.entities);
-        this.tickablesForRemoval = new ArrayDeque<>();
         this.chunkEntity = new EntityImproved();
         this.chunkEntity.flags = 1;
         
@@ -122,9 +110,9 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         this.chunkBounds = Bounds.intersect(naive, world.getBounds());
     }
     
-    private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
+    private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty, TileLayer layer) {
         for (ChunkChangeListener l : this.listeners) {
-            l.onTileStateChange(this, state, newTile, oldTile, gtx, gty);
+            l.onTileStateChange(this, state, newTile, oldTile, gtx, gty, layer);
         }
     }
     
@@ -215,6 +203,17 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         }
     }
     
+    private RenderTileStorage getRenderStorageForLayer(TileLayer layer) {
+        switch (layer) {
+        case Back:
+            return tilesBckRender;
+        case Front:
+            return tilesRender;
+        default:
+            throw new IllegalArgumentException(Objects.toString(layer));
+        }
+    }
+    
     @Override
     public ITileEntity getTileEntity(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getTileEntity();
@@ -223,11 +222,6 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     @Override
     public Tile getTile(int tx, int ty, TileLayer layer) {
         return this.getStorageForLayer(layer).get(tx, ty).getTile();
-    }
-    
-    @Override
-    public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
-        return this.getStorageForLayer(layer).get(tx, ty).getMetadata();
     }
     
     //Not the best solution, but TileState visibility is a problem anyways
@@ -243,101 +237,46 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     
     @Override
     public Tile setTile(int tx, int ty, TileLayer layer, Tile t) {
-        switch (layer) {
-        case Back:
-            return this.setTileBack(t, tx, ty);
-        case Front:
-            return this.setTile(t, tx, ty);
-        default:
-            throw new IllegalArgumentException(Objects.toString(layer));
-        }
-    }
-    
-    private Tile setTileBack(Tile t, int tx, int ty) {
         Objects.requireNonNull(t);
         GameRegistry.TILE_REGISTRY.checkRegistered(t);
-        TileState state = this.tilesBackground.get(tx, ty);
-        Tile old = state.getTile();
-        //old.onTileRemoved(tx, ty, TileLayer.Back, world);
-        state.setTile(t);
-        // if (!old.getRendererId().equals(t.getRendererId())) {
-        this.tilesBckRender.removeTilePos(old.getRendererMarkerComp(), tx, ty);
-        this.tilesBckRender.addTilePos(t.getRendererMarkerComp(), tx, ty);
-        // }
-        //t.onTileSet(tx, ty, TileLayer.Back, world);
-        return old;
-    }
-    
-    private Tile setTile(Tile t, int tx, int ty) {
-        Objects.requireNonNull(t);
-        GameRegistry.TILE_REGISTRY.checkRegistered(t);
-        TileState state = this.tiles.get(tx, ty);
+        TileStorage storage = getStorageForLayer(layer);
+        RenderTileStorage renderStorage = getRenderStorageForLayer(layer);
+        
+        TileState state = storage.get(tx, ty);
         Tile oldTile = state.getTile();
-        //oldTile.onTileRemoved(tx, ty, TileLayer.Front, world);
-        if (state.getTileEntity() != null) {
-            this.iTileEntities.remove(state.getTileEntity());
-            if (state.getTileEntity() instanceof Tickable) {
-                Tickable oldTickable = (Tickable) state.getTileEntity();
-                if (this.ticking) {
-                    this.tickablesForRemoval.add(oldTickable);
-                } else {
-                    this.tickables.remove(oldTickable);
-                }
-            }
-            state.setTileEntity(null);
-        }
-        state.setTile(t);
-        //if (!oldTile.getRendererId().equals(t.getRendererId())) {
-        this.tilesRender.removeTilePos(oldTile.getRendererMarkerComp(), tx, ty);
-        this.tilesRender.addTilePos(t.getRendererMarkerComp(), tx, ty);
-        //}
-        if (t.hasTileEntity()) {
-            ITileEntity te = t.createTileEntity(this.world, tx, ty);
-            this.iTileEntities.add(te);
-            state.setTileEntity(te);
-            if (te instanceof Tickable) {
-                this.tickables.add((Tickable) te);
-            }
-        }
-        //t.onTileSet(tx, ty, TileLayer.Front, world);
-        notifyListeners(state, t, oldTile, tx, ty);
+        
+        storage.set(t, tx, ty);
+        
+        renderStorage.removeTilePos(oldTile.getRendererMarkerComp(), tx, ty);
+        renderStorage.addTilePos(t.getRendererMarkerComp(), tx, ty);
+        
+        notifyListeners(state, t, oldTile, tx, ty, layer);
         return oldTile;
     }
     
     @Override
     public boolean inBounds(int gtx, int gty) {
-        //        return gtx >= this.tx && gtx < this.tx + CHUNK_SIZE && gty >= this.ty && gty < this.ty + CHUNK_SIZE
-        //                && this.world.getBounds().inBounds(gtx, gty);
         return this.chunkBounds.inBounds(gtx, gty);
     }
     
     @Override
     public void tick(float time, long tick) {
-        this.ticking = true;
-        this.tickables.forEach((t) -> t.tick(time, tick));
+        this.tiles.tick(time, tick);
+        this.tilesBackground.tick(time, tick);
         this.tickTiles(tick);
-        this.ticking = false;
-        while (!this.tickablesForRemoval.isEmpty()) {
-            this.tickables.remove(this.tickablesForRemoval.poll());
-        }
     }
     
     private void tickTiles(long ticks) {
         Iterator<NextTickTile> it = tickTiles.iterator();
-        int ahyes = 0;
         while (it.hasNext()) {
             NextTickTile k = it.next();
             if (ticks >= k.getTick()) {
-                ahyes++;
                 it.remove();
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
                     t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, this.tileSystem, ticks);
                 }
             }
-        }
-        if (ahyes > 0) {
-            //System.out.println(ahyes);
         }
     }
     
@@ -386,7 +325,6 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
         NBTList entities = nbtc.getList("entities");
         NBTList tileList = nbtc.getList("tiles");
         NBTList tileEntities = nbtc.getList("tileEntities");
-        NBTList tileMeta = nbtc.getList("tileMeta");
         NBTList ticklist = nbtc.getList("tileTicks");
         int cx = getGlobalTileX();
         int cy = getGlobalTileY();
@@ -396,11 +334,11 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
             //Foreground tiles
             String id = tileList.getString(i);
             Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
-            setTile(t, cx + x, cy + y);
+            setTile(cx + x, cy + y, TileLayer.Front, t);
             //Background tiles
             String idB = tileList.getString(i + 1);
             Tile tB = GameRegistry.TILE_REGISTRY.getOrDefault(idB, Tile.NOTHING);
-            setTileBack(tB, cx + x, cy + y);
+            setTile(cx + x, cy + y, TileLayer.Back, tB);
         }
         for (NBTTag tet : tileEntities.getContent()) {
             NBTCompound comp = (NBTCompound) tet;
@@ -412,23 +350,7 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
                     NBTSerializable seri = (NBTSerializable) state.getTileEntity();
                     NBTTag tedata = comp.get("data");
                     seri.readNBT(tedata);
-                }
-            }
-        }
-        for (NBTTag tet : tileMeta.getContent()) {
-            NBTCompound comp = (NBTCompound) tet;
-            byte x = comp.getByte("x");
-            byte y = comp.getByte("y");
-            byte z = comp.getByte("z");
-            TileLayer layer = z == 0 ? TileLayer.Back : TileLayer.Front;
-            IMetadata meta = getMetadata(cx + x, cy + y, layer);
-            if (meta instanceof NBTSerializable) {
-                NBTSerializable se = (NBTSerializable) meta;
-                se.readNBT(comp.get("tag"));
-            } else {
-                Logger.getLogger(Chunk.class)
-                        .warn("Found metadata which was saved but isn't serializable. It will not be loaded. "
-                                + Objects.toString(meta));
+                } //FIXME tileentities on the back layer arent saved/loaded
             }
         }
         for (NBTTag tet : ticklist.getContent()) {
@@ -476,33 +398,9 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
                         tileEntities.add(einfo);
                     }
                 }
-                if (t.hasMetadata()) {
-                    if (st.getMetadata() instanceof NBTSerializable) {
-                        NBTSerializable meta = (NBTSerializable) st.getMetadata();
-                        NBTTag tag = meta.writeNBT();
-                        NBTCompound metainfo = new NBTCompound();
-                        metainfo.putByte("x", (byte) i);
-                        metainfo.putByte("y", (byte) j);
-                        metainfo.putByte("z", (byte) 1);
-                        metainfo.put("tag", tag);
-                        tileMeta.add(metainfo);
-                    }
-                }
                 TileState bst = this.tilesBackground.get(cx + i, cy + j);
                 String bid = GameRegistry.TILE_REGISTRY.getId(bst.getTile());
                 tileList.addString(bid);
-                if (bst.getTile().hasMetadata()) {
-                    if (bst.getMetadata() instanceof NBTSerializable) {
-                        NBTSerializable meta = (NBTSerializable) bst.getMetadata();
-                        NBTTag tag = meta.writeNBT();
-                        NBTCompound metainfo = new NBTCompound();
-                        metainfo.putByte("x", (byte) i);
-                        metainfo.putByte("y", (byte) j);
-                        metainfo.putByte("z", (byte) 0);
-                        metainfo.put("tag", tag);
-                        tileMeta.add(metainfo);
-                    }
-                }
             }
         }
         for (NextTickTile ntt : tickTiles) {

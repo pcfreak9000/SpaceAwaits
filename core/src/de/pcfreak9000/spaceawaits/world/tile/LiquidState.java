@@ -4,7 +4,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
-public class LiquidState implements IMetadata, NBTSerializable {
+public class LiquidState implements NBTSerializable, ITileEntity {
     
     //This is useful, makes sure there isn't any small amounts of liquid laying around
     public static final float MIN_LIQUID = 0.001f;
@@ -30,13 +30,6 @@ public class LiquidState implements IMetadata, NBTSerializable {
     
     public boolean isEmpty() {
         return this.liquidNew <= MIN_LIQUID;
-    }
-    
-    @Override
-    public void reset() {
-        this.lasttick = -1;
-        this.liquid = 0;
-        this.liquidNew = 0;
     }
     
     @Override

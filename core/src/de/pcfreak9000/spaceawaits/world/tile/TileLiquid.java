@@ -67,19 +67,19 @@ public class TileLiquid extends Tile {
     }
     
     @Override
-    public boolean hasMetadata() {
+    public boolean hasTileEntity() {
         return true;
     }
     
     @Override
-    public IMetadata createMetadata() {
+    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
         return new LiquidState();
     }
     
     @Override
     public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem ts) {
         super.onTilePlaced(tx, ty, layer, world, ts);
-        LiquidState liquid = (LiquidState) ts.getMetadata(tx, ty, layer);
+        LiquidState liquid = (LiquidState) ts.getTileEntity(tx, ty, layer);
         liquid.addLiquid(getMaxValue());
     }
     
@@ -104,7 +104,7 @@ public class TileLiquid extends Tile {
     @Override
     public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem ts, long tick) {
         super.updateTick(tx, ty, layer, world, ts, tick);
-        LiquidState liquiddata = (LiquidState) ts.getMetadata(tx, ty, layer);
+        LiquidState liquiddata = (LiquidState) ts.getTileEntity(tx, ty, layer);
         liquiddata.updateLiquid(tick);
         float myLiquid = liquiddata.getLiquid();
         final float oldliquid = myLiquid;
@@ -122,7 +122,7 @@ public class TileLiquid extends Tile {
                     LiquidState neighdata = null;
                     float neLiquid = 0;
                     if (ne == this) {
-                        neighdata = (LiquidState) ts.getMetadata(i, j, layer);
+                        neighdata = (LiquidState) ts.getTileEntity(i, j, layer);
                         neighdata.updateLiquid(tick);
                         neLiquid = neighdata.getLiquid();
                     }
@@ -130,7 +130,7 @@ public class TileLiquid extends Tile {
                     if (flow > flowMin) {
                         if (ne != this) {
                             ts.setTile(i, j, layer, this);
-                            neighdata = (LiquidState) ts.getMetadata(i, j, layer);
+                            neighdata = (LiquidState) ts.getTileEntity(i, j, layer);
                         }
                         flow = MathUtils.clamp(flow, 0, myLiquid);
                         myLiquid -= flow;

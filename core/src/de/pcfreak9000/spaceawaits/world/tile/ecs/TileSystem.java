@@ -29,11 +29,10 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
-import de.pcfreak9000.spaceawaits.world.tile.IMetadata;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
 public class TileSystem extends EntitySystem implements ITileArea {
     
@@ -140,15 +139,6 @@ public class TileSystem extends EntitySystem implements ITileArea {
             return c.getTile(tx, ty, layer);
         }
         return Tile.NOTHING;
-    }
-    
-    @Override
-    public IMetadata getMetadata(int tx, int ty, TileLayer layer) {
-        Chunk c = getChunkForTile(tx, ty);
-        if (c != null) {
-            return c.getMetadata(tx, ty, layer);
-        }
-        return null;
     }
     
     private Chunk getChunkForTile(int tx, int ty) {

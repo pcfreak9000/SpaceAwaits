@@ -23,7 +23,7 @@ public class TileStorageDrawer extends Tile {
     }
     
     @Override
-    public ITileEntity createTileEntity(World world, int gtx, int gty) {
+    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
         return new TileEntityStorageDrawer();
     }
     

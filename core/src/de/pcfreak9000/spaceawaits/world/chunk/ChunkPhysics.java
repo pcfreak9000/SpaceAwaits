@@ -101,7 +101,11 @@ public class ChunkPhysics implements BodyFactory {
     
     private final class ListenerClass implements ChunkChangeListener {
         @Override
-        public void onTileStateChange(Chunk chunk, TileState state, Tile newTile, Tile oldTile, int gtx, int gty) {
+        public void onTileStateChange(Chunk chunk, TileState state, Tile newTile, Tile oldTile, int gtx, int gty,
+                TileLayer tilelayer) {
+            if (tilelayer == TileLayer.Back) {
+                return;
+            }
             if (body == null) {
                 //The chunk hasn't been added to the simulation yet
                 return;
