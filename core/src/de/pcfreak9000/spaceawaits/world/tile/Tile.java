@@ -192,9 +192,13 @@ public class Tile {
         return itemTile;
     }
     
+    public Item getItemDropped() {
+        return getItemTile();
+    }
+    
     public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
             Random random) {
-        drops.add(new ItemStack(getItemTile(), 1));
+        drops.add(new ItemStack(getItemDropped(), 1));
     }
     
     public void onTileRemoved(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {

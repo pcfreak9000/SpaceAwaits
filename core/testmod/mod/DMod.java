@@ -18,6 +18,8 @@ import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
@@ -73,6 +75,8 @@ public class DMod {
     public Tile torch = new Tile();
     public Item gun = new ItemGun();
     
+    public Item stick = new Item();
+    
     public Item medkitsimple = new ItemMedkitSimple();
     
     public Item repairGun = new ItemRepairGun();
@@ -88,6 +92,8 @@ public class DMod {
     
     public SpaceshipFactory fac = new SpaceshipFactory();
     public TreeFactory treeFac = new TreeFactory();
+    
+    public Tile wood = new Tile();
     
     //TODO ALLGEMEIN:
     //Bäume mit dicker Hitbox
@@ -136,6 +142,15 @@ public class DMod {
         oldbricks.setDisplayName("Old Bricks");
         GameRegistry.TILE_REGISTRY.register("oldbricks", oldbricks);
         
+        stick.setTexture("stick.png");
+        stick.setDisplayName("Stick");
+        GameRegistry.ITEM_REGISTRY.register("stick", stick);
+        
+        wood.setTexture("oldbricks.png");
+        wood.setDisplayName("Wood");
+        wood.color().set(Color.BROWN);
+        GameRegistry.TILE_REGISTRY.register("wood", wood);
+        
         tstoneTile.setTexture("stone.png");
         tstoneTile.setDisplayName("Stone");
         tstoneTile.setComposite(GameRegistry.COMPOSITE_MANAGER.getCompositeForName("Stonestuff"));
@@ -154,9 +169,17 @@ public class DMod {
                     Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
                 if (ngty == gty - 1 && ngtx == gtx) {
                     if (!newNeighbour.isSolid()) {
+                        tileSystem.removeTile(gtx, gty, layer);
                         //drop item
+                        Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(getItemTile(), 1), gtx, gty);
+                        world.spawnEntity(e, false);
                     }
                 }
+            }
+            
+            @Override
+            public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+                return tileSystem.getTile(tx, ty - 1, layer).isSolid();
             }
             
             @Override
@@ -245,23 +268,25 @@ public class DMod {
                 this.CAPS.add(GeneratorCapabilitiesBase.LVL_ENTRY);
             }
             
+            private Vector2 spawn = null;
+            
             @Override
             public WorldPrimer setupWorld(GeneratorSettings genset) {
                 WorldPrimer p = new WorldPrimer(this);
                 p.setWorldGenerator(new IWorldGenerator() {
-                    
                     @Override
                     public void generate(World world) {
                         Entity ship = DMod.instance.fac.createEntity();
                         TransformComponent tc = ship.getComponent(TransformComponent.class);
                         Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
                         Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
+                        spawn = s;
                         tc.position.set(s);
-                        WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
+                        //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
                         Components.STATS.get(ship).get("mechHealth").current = 1;
                         LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
                                 ship.getComponent(ComponentInventoryShip.class).invShip);
-                        world.spawnEntity(ship, false);
+                        //world.spawnEntity(ship, false);
                     }
                     
                     @Override
@@ -284,7 +309,8 @@ public class DMod {
                         Vector2 dim = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                                 .boundingBoxWidthAndHeight();
                         Rectangle rect = getSpawnArea(player);
-                        return WorldUtil.findSpawnpoint(world, dim.x, dim.y, rect.x, rect.y, rect.width, rect.height);
+                        return spawn;
+                        //return WorldUtil.findSpawnpoint(world, dim.x, dim.y, rect.x, rect.y, rect.width, rect.height);
                     }
                 });
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
@@ -297,7 +323,7 @@ public class DMod {
     
     private Entity testFogEntity() {
         Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(50, "fog");
+        RenderComponent rc = new RenderComponent(50);
         RenderFogComponent rfc = new RenderFogComponent();
         TransformComponent tc = new TransformComponent();
         tc.position.set(2497, 512);

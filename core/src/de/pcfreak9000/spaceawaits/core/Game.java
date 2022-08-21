@@ -8,6 +8,7 @@ import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.MathUtil;
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -26,6 +27,8 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldSetup.GeneratorCapabilitiesBase
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class Game {
+    
+    private static final Logger LOGGER = Logger.getLogger(Game.class);
     
     //switch worlds etc
     
@@ -67,6 +70,7 @@ public class Game {
     
     public void joinWorld(String uuid) {
         try {
+            LOGGER.infof("Setting up world for joining...");
             IWorldSave save = this.mySave.getWorld(uuid);
             WorldMeta meta = save.getWorldMeta();
             String genId = meta.getWorldGeneratorUsed();
@@ -82,6 +86,7 @@ public class Game {
             //worldPrimer.getWorldGenerator().generate(world);
             this.uuidPlayerLocation = uuid;
             if (newLocation) {
+                LOGGER.info("Looking for a spawnpoint...");
                 Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
                 Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
                 playerpos.x = spawnpoint.x;
@@ -90,6 +95,7 @@ public class Game {
                 osgc.lastContactX = spawnpoint.x;
                 osgc.lastContactY = spawnpoint.y;
             }
+            LOGGER.info("Joining world...");
             world.joinWorld(player);
             this.gameRenderer.setWorldView();
             this.gameRenderer.getWorldView().setWorld(world);
@@ -99,6 +105,7 @@ public class Game {
     }
     
     public String createWorld(String name, WorldSetup generator, long seed) {
+        LOGGER.infof("Creating world...");
         WorldPrimer worldPrimer = generator.setupWorld(new GeneratorSettings(seed, fresh));
         fresh = false;
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()

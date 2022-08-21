@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.RandomTickSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
@@ -84,6 +85,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
         ecs.addSystem(new TickCounterSystem(this));
+        ecs.addSystem(new RandomTickSystem(worldRandom, this));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         new DynamicAssetListener().register(engine);

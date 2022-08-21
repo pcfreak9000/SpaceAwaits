@@ -25,6 +25,9 @@ public class Components {
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsPhysics", PhysicsComponent.class);
     }
     
+    public static final ComponentMapper<RandomTickComponent> RANDOM_TICK = ComponentMapper
+            .getFor(RandomTickComponent.class);
+    
     public static final ComponentMapper<OnNeighbourChangeComponent> NEIGHGOUR_CHANGED = ComponentMapper
             .getFor(OnNeighbourChangeComponent.class);
     

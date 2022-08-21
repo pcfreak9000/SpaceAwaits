@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -18,6 +20,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent.OnNeighbourTileChange;
+import de.pcfreak9000.spaceawaits.world.ecs.content.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -58,8 +61,24 @@ public class TreeFactory implements WorldEntityFactory {
         BreakableComponent bc = new BreakableComponent();
         bc.entityBroken = (world, ent) -> {
             world.despawnEntity(ent);
+            TransformComponent tcc = Components.TRANSFORM.get(entity);
+            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.wood.getItemDropped(), 1),
+                    tcc.position.x, tcc.position.y);
+            world.spawnEntity(e, false);
         };
         entity.add(bc);
+        RandomTickComponent rtc = new RandomTickComponent();
+        rtc.setRequired(Components.TRANSFORM);//Hmm
+        rtc.tickable = (world) -> {
+            TransformComponent tcc = Components.TRANSFORM.get(entity);
+            //PhysicsComponent pcc = Components.PHYSICS.get(entity);
+            float f0 = world.getWorldRandom().nextFloat();
+            float f1 = world.getWorldRandom().nextFloat();
+            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.stick, 1),
+                    tcc.position.x + f0 * 1.5f, tcc.position.y + 2 + f1 * 3);
+            world.spawnEntity(e, false);
+        };
+        entity.add(rtc);
         OnNeighbourChangeComponent oncc = new OnNeighbourChangeComponent();
         oncc.onNeighbourTileChange = new OnNeighbourTileChange() {
             

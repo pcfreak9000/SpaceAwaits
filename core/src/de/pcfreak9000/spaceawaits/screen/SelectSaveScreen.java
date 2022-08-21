@@ -71,6 +71,9 @@ public class SelectSaveScreen extends MenuScreen {
                     protected void result(Object object) {
                         if (object != null) {
                             String name = nameField.getText();
+                            if (name.isBlank()) {
+                                return;
+                            }
                             String seeds = seedField.getText();
                             try {
                                 SpaceAwaits.getSpaceAwaits().getGameManager().createAndLoadGame(name,

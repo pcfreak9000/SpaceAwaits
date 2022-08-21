@@ -156,7 +156,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
         entCheck.ud.clear();
         queryAABB(x1, y1, x2, y2, entCheck);
-        boolean b = entCheck.blocking;
+        boolean b = entCheck.blocking;//TODO maybe consider an on/off for this, sometimes sensors aren't blocking...
         return b;
     }
     
