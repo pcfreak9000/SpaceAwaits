@@ -172,7 +172,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         unensureChunks();
     }
     
-    public void queryXY(float x, float y, IQueryCallback callback) {
+    public void queryXYc(float x, float y, IQueryCallback callback) {
         queryAABB(x - QUERYXY_OFFSET, y - QUERYXY_OFFSET, x + QUERYXY_OFFSET, y + QUERYXY_OFFSET, (fix, uc) -> {
             if (fix.testPoint(uc.in(x), uc.in(y))) {
                 return callback.reportFixture(fix, uc);
@@ -183,7 +183,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     public Array<Object> queryXY(float x, float y, IQueryFilter filter) {
         Array<Object> results = new Array<>();
-        queryXY(x, y, (IQueryCallback) (fix, uc) -> {
+        queryXYc(x, y, (fix, uc) -> {
             udh.set(fix.getUserData(), fix);
             if (filter.accept(udh, uc)) {
                 results.add(udh.getUserDataRaw());
