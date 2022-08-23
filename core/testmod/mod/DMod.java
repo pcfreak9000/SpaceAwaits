@@ -17,6 +17,7 @@ import de.pcfreak9000.spaceawaits.composer.ComposedTextureProvider;
 import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -96,11 +97,11 @@ public class DMod {
     public Tile wood = new Tile();
     
     //TODO ALLGEMEIN:
-    //Bäume mit dicker Hitbox
-    //Bäume untergraben -> BodyType dynamic setzen
-    //Tiles die abgebaut werden informieren auch entities die mit den nachbarn überlappen wenn die bestimmte components haben
+    //erledigt Bäume mit dicker Hitbox
+    //erledigt (mehr oder weniger) Bäume untergraben -> BodyType dynamic setzen
+    //erledigt Tiles die abgebaut werden informieren auch entities die mit den nachbarn überlappen wenn die bestimmte components haben
     //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
-    //random tick system, random tick system für entities
+    //random tick system, erledigt (mehr oder weniger) random tick system für entities
     
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
@@ -244,6 +245,8 @@ public class DMod {
         b2.h = 1;
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
+        CraftingManager.instance().addSimpleRecipe(new ItemStack(primitiveAxe, 1), new ItemStack(stick, 2),
+                new ItemStack(looseRocks.getItemDropped(), 1));
         
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);

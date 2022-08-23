@@ -9,6 +9,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class InptMgr {
+    public static final long DOUBLECLICK_DURATION_MS = 300;
     
     private static ObjectMap<Object, ButtonKey[]> mappings = new ObjectMap<>();
     

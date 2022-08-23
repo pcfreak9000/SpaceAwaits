@@ -75,6 +75,27 @@ public class InvUtil {
         ar.shrink();
         return ar;
     }
+    
+    public static boolean removeItemCount(IInventory inv, ItemStack rem) {
+        for (int i = 0; i < inv.slots(); i++) {
+            ItemStack content = inv.getStack(i);
+            if (ItemStack.isItemEqual(rem, content) && content.getCount() >= rem.getCount()) {
+                content.changeNumber(-rem.getCount());
+                inv.setSlotContent(i, content);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean containsItemCount(IInventory inv, ItemStack item) {
+        for (int i = 0; i < inv.slots(); i++) {
+            if (ItemStack.isItemEqual(item, inv.getStack(i)) && inv.getStack(i).getCount() >= item.getCount()) {
+                return true;
+            }
+        }
+        return false;
+    }
     //    public static void sort(IInventory inv, int begIncl, int endExcl) {
     //        //does nothing right now
     //    }

@@ -8,7 +8,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
-
+@Deprecated
 public class CompositeInventory implements NBTSerializable {
     
     private ObjectFloatMap<Composite> storage = new ObjectFloatMap<>();

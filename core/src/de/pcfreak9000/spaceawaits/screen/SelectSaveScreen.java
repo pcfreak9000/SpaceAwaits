@@ -19,12 +19,11 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
 
 public class SelectSaveScreen extends MenuScreen {
-    
-    private static final long DOUBLECLICK_DURATION_MS = 300;
     
     private static final class SaveMetaUi {
         private final SaveMeta meta;
@@ -190,7 +189,7 @@ public class SelectSaveScreen extends MenuScreen {
                 long current = System.currentTimeMillis();
                 long dif = current - last;
                 SaveMetaUi selected = savesList.getSelected();
-                if (dif < DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
+                if (dif < InptMgr.DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     try {
                         SpaceAwaits.getSpaceAwaits().getGameManager().loadGame(selected.meta.getNameOnDisk(), false);
                         g.setGameScreen();

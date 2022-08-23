@@ -1,5 +1,5 @@
 package de.pcfreak9000.spaceawaits.comp;
-
+@Deprecated
 public class CompositeData {
     public final float amount;
     public final Composite composite;

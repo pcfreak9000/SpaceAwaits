@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.comp;
 
 import com.badlogic.ashley.utils.ImmutableArray;
-
+@Deprecated
 public class Composite {
     
     private String id;

@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.comp;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-
+@Deprecated
 public class CompositeManager {
     
     private final Builder builder = new Builder();

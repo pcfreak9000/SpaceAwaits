@@ -22,6 +22,9 @@ public class ItemStack {
     public static final ItemStack EMPTY = new ItemStack();
     
     public static boolean isItemEqual(ItemStack s1, ItemStack s2) {
+        if (isEmptyOrNull(s1) || isEmptyOrNull(s2)) {
+            return false;
+        }
         return s1.getItem() == s2.getItem();
     }
     
