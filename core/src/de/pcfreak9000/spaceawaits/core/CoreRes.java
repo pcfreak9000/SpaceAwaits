@@ -61,6 +61,8 @@ public class CoreRes {
     
     public static final Texture WHITE;
     
+    public static final TextureProvider ITEM_HIGHLIGHT = TextureProvider.get("itemhighlight.png");
+    
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
     public static final TextureProvider HUMAN = TextureProvider.get("Astronaut.png");
     
