@@ -69,7 +69,7 @@ public class ContainerInventoryPlayer extends GuiInventory {
         list.addListener(listListener);
         ScrollPane pane = new ScrollPane(list);
         stage.setScrollFocus(pane);
-        crafting.add(pane).maxHeight(4 * Slot.SIZE + 2 * 0.5f + 10);
+        crafting.add(pane).maxHeight(4 * Slot.SIZE + 2 * 0.5f + 10).maxWidth(5 * 30);
         supertable.add(crafting);
         stage.addActor(supertable);
     }
