@@ -18,8 +18,8 @@ public class ItemTile extends Item {
     }
     
     @Override
-    public Color color() {
-        return this.tile.color();
+    public Color getColor() {
+        return this.tile.getColor();
     }
     
     @Override

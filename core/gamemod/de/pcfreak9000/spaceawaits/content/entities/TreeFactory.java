@@ -1,4 +1,4 @@
-package mod;
+package de.pcfreak9000.spaceawaits.content.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
@@ -6,6 +6,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
+import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
+import de.pcfreak9000.spaceawaits.content.items.Items;
+import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -59,11 +62,12 @@ public class TreeFactory implements WorldEntityFactory {
         //ac.activators.add(tt);
         entity.add(ac);
         BreakableComponent bc = new BreakableComponent();
+        bc.setRequired(Components.TRANSFORM);
         bc.entityBroken = (world, ent) -> {
             world.despawnEntity(ent);
             TransformComponent tcc = Components.TRANSFORM.get(entity);
-            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.wood.getItemDropped(), 1),
-                    tcc.position.x, tcc.position.y);
+            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(Tiles.WOOD.getItemDropped(), 1), tcc.position.x,
+                    tcc.position.y);
             world.spawnEntity(e, false);
         };
         entity.add(bc);
@@ -74,26 +78,33 @@ public class TreeFactory implements WorldEntityFactory {
             //PhysicsComponent pcc = Components.PHYSICS.get(entity);
             float f0 = world.getWorldRandom().nextFloat();
             float f1 = world.getWorldRandom().nextFloat();
-            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(DMod.instance.stick, 1),
-                    tcc.position.x + f0 * 1.5f, tcc.position.y + 2 + f1 * 3);
+            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(Items.TWIG, 1), tcc.position.x + f0 * 1.5f,
+                    tcc.position.y + 2 + f1 * 3);
             world.spawnEntity(e, false);
         };
         entity.add(rtc);
         OnNeighbourChangeComponent oncc = new OnNeighbourChangeComponent();
+        oncc.setRequired(Components.PHYSICS, Components.TRANSFORM);
         oncc.onNeighbourTileChange = new OnNeighbourTileChange() {
             
             @Override
             public void onNeighbourTileChange(World world, TileSystem tileSystem, Entity entity, Tile newNeighbour,
                     Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+                if (layer == TileLayer.Back) {
+                    return;
+                }
                 TransformComponent tc = Components.TRANSFORM.get(entity);
-                if (!newNeighbour.isSolid()) {
-                    if (tc.position.y > ngty) {
-                        entity.getComponent(TreeStateComponent.class).loose = true;
-                        Body b = Components.PHYSICS.get(entity).body.getBody();
-                        b.setType(BodyType.DynamicBody);
-                        for (Fixture f : b.getFixtureList()) {
-                            f.setSensor(false);
+                if (tc.position.y > ngty) {
+                    for (int i = 0; i < 2; i++) {
+                        if (tileSystem.getTile(Tile.toGlobalTile(tc.position.x) + i, ngty, layer).isSolid()) {
+                            return;
                         }
+                    }
+                    entity.getComponent(TreeStateComponent.class).loose = true;
+                    Body b = Components.PHYSICS.get(entity).body.getBody();
+                    b.setType(BodyType.DynamicBody);
+                    for (Fixture f : b.getFixtureList()) {
+                        f.setSensor(false);
                     }
                 }
             }

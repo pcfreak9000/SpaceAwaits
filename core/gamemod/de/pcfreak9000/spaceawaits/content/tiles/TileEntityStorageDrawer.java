@@ -1,4 +1,4 @@
-package mod;
+package de.pcfreak9000.spaceawaits.content.tiles;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;

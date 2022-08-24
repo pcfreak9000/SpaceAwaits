@@ -11,8 +11,10 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
+import de.pcfreak9000.spaceawaits.content.entities.Entities;
+import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
+import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
@@ -27,7 +29,6 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import mod.DMod;
-import mod.TileEntityStorageDrawer;
 
 public class TestBiome extends Biome implements HeightSupplier {
     private void genNoise() {
@@ -62,8 +63,8 @@ public class TestBiome extends Biome implements HeightSupplier {
         genNoise();
         this.interpolators.put(HeightInterpolatable.class, new HeightInterpolatable(this));
         this.bp = new StringBasedBlueprint();
-        this.bp.setFront(leet, '#', DMod.instance.oldbricks, 'X', storageDrawer);
-        this.bp.setBack(leet, '#', DMod.instance.oldbricks, 'X', DMod.instance.oldbricks);
+        this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
+        this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
     }
     
     @Override
@@ -89,24 +90,24 @@ public class TestBiome extends Biome implements HeightSupplier {
         }
         Tile t;
         if (ty == 0) {
-            t = GameRegistry.TILE_REGISTRY.get("bottom");
+            t = Tiles.BEDROCK;
         } else {
             if (ty == value + 1) {
                 if (rand.nextDouble() < 0.1) {
-                    t = GameRegistry.TILE_REGISTRY.get("looseRocks");
+                    t = Tiles.LOOSEROCKS;
                 } else {
                     return;
                 }
             } else if (ty == value) {
-                t = GameRegistry.TILE_REGISTRY.get("grass");
+                t = Tiles.GRASS;
             } else if (ty >= value - 3) {
-                t = GameRegistry.TILE_REGISTRY.get("dirt");
+                t = Tiles.DIRT;
             } else {
-                t = GameRegistry.TILE_REGISTRY.get("stone");
+                t = Tiles.STONE;
             }
         }
         
-        if (t == DMod.instance.tstoneTile) {
+        if (t == Tiles.STONE) {
             if (rand.nextDouble() < 0.001) {
                 t = DMod.instance.laser;
             }
@@ -122,12 +123,12 @@ public class TestBiome extends Biome implements HeightSupplier {
         
         @Override
         public boolean generate(TileSystem tiles, World world, int tx, int ty, Random rand, int area) {
-            if (tiles.getTile(tx, ty, TileLayer.Front) == DMod.instance.grasstile) {
-                tiles.setTile(tx, ty + 1, TileLayer.Front, DMod.instance.oldbricks);
-                tiles.setTile(tx, ty + 2, TileLayer.Front, DMod.instance.oldbricks);
-                tiles.setTile(tx, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
-                tiles.setTile(tx - 1, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
-                tiles.setTile(tx + 1, ty + 3, TileLayer.Front, DMod.instance.oldbricks);
+            if (tiles.getTile(tx, ty, TileLayer.Front) == Tiles.BRICKS_OLD) {
+                tiles.setTile(tx, ty + 1, TileLayer.Front, Tiles.BRICKS_OLD);
+                tiles.setTile(tx, ty + 2, TileLayer.Front, Tiles.BRICKS_OLD);
+                tiles.setTile(tx, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
+                tiles.setTile(tx - 1, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
+                tiles.setTile(tx + 1, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
                 return true;
             }
             return false;
@@ -138,7 +139,7 @@ public class TestBiome extends Biome implements HeightSupplier {
         
         @Override
         public void place(int tx, int ty, TileLayer layer, Random random, ITileArea tiles) {
-            tiles.setTile(tx, ty, layer, DMod.instance.storageDrawer);
+            tiles.setTile(tx, ty, layer, Tiles.STORAGE_DRAWER);
             TileEntityStorageDrawer te = (TileEntityStorageDrawer) tiles.getTileEntity(tx, ty, layer);
             LootTable.getFor("housething").generate(random, te);
         }
@@ -150,11 +151,11 @@ public class TestBiome extends Biome implements HeightSupplier {
         for (int i = 0; i < 50; i++) {
             int x = rand.nextInt(area) + tx;
             int y = rand.nextInt(area) + ty;
-            if (tiles.getTile(x, y, TileLayer.Front) == DMod.instance.grasstile) {
+            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS) {
                 //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
                 //fgen.generate(tiles, world, x, y, rand, area);
                 //this.bp.generate(tiles, world, x, y, 0, 0, bp.getWidth(), bp.getHeight(), rand);
-                Entity tree = DMod.instance.treeFac.createEntity();
+                Entity tree = Entities.TREE.createEntity();
                 TransformComponent tc = Components.TRANSFORM.get(tree);
                 tc.position.set(x - 0.5f, y + 1);
                 world.spawnEntity(tree, false);

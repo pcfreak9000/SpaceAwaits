@@ -73,7 +73,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
             if (!isVisible(tile)) {
                 continue;
             }
-            backgroundColor.set(tile.color());
+            backgroundColor.set(tile.getColor());
             if (layer == TileLayer.Back) {
                 backgroundColor.mul(Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, Tile.BACKGROUND_FACTOR, 1);
             }
@@ -86,7 +86,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     }
     
     private boolean isVisible(Tile t) {
-        return t.color().a > 0;
+        return t.getColor().a > 0;
     }
     
     private void addTile(Tile t, int gtx, int gty, SpriteCache c, Chunk chunk, TileLayer layer) {

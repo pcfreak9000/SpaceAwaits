@@ -32,7 +32,7 @@ public class ActorItemStack extends Actor {
         if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();
             ITextureProvider t = i.getTextureProvider();
-            batch.setColor(i.color());
+            batch.setColor(i.getColor());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {
                 if (itemstack.getNBT().hasKey("bar")) {

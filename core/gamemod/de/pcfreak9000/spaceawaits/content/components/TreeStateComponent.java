@@ -1,4 +1,4 @@
-package mod;
+package de.pcfreak9000.spaceawaits.content.components;
 
 import com.badlogic.ashley.core.Component;
 

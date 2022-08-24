@@ -47,7 +47,7 @@ public class Tile {
         NOTHING.setOpaque(false);
         NOTHING.setTexture(null);
         NOTHING.setSolid(false);
-        NOTHING.color().set(0, 0, 0, 0);
+        NOTHING.setColor(Color.CLEAR);
         GameRegistry.TILE_REGISTRY.register("empty", NOTHING);
     }
     
@@ -59,7 +59,7 @@ public class Tile {
     //private boolean canBeReplaced = false;
     //private boolean indestructible = false;
     
-    private final Color color = new Color(1, 1, 1, 1);
+    private Color color = Color.WHITE;
     
     private Color lightColor;
     private float lighttransmission = 0.8f;
@@ -75,21 +75,24 @@ public class Tile {
     
     private Composite composite;
     
-    public void setTexture(String name) {
+    public Tile setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
+        return this;
     }
     
-    public void setTextureProvider(ITextureProvider prov) {
+    public Tile setTextureProvider(ITextureProvider prov) {
         Objects.requireNonNull(prov);
         this.textureProvider = prov;
+        return this;
     }
     
     public String getDisplayName() {
         return displayName;
     }
     
-    public void setDisplayName(String displayName) {
+    public Tile setDisplayName(String displayName) {
         this.displayName = displayName;
+        return this;
     }
     
     public void setBouncyness(float b) {
@@ -100,8 +103,9 @@ public class Tile {
         return this.bouncyness;
     }
     
-    public void setCanBreak(boolean b) {
+    public Tile setCanBreak(boolean b) {
         this.canBreak = b;
+        return this;
     }
     
     public boolean canBreak() {
@@ -136,7 +140,12 @@ public class Tile {
         return this.lightColor != null && (this.lightColor.r > 0 || this.lightColor.g > 0 || this.lightColor.b > 0);
     }
     
-    public Color color() {
+    public Tile setColor(Color color) {
+        this.color = color;
+        return this;
+    }
+    
+    public Color getColor() {
         return this.color;
     }
     
@@ -144,8 +153,9 @@ public class Tile {
         return this.lighttransmission;
     }
     
-    public void setLightTransmission(float f) {
+    public Tile setLightTransmission(float f) {
         this.lighttransmission = f;
+        return this;
     }
     
     public float getMaterialLevel() {

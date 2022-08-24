@@ -23,6 +23,7 @@ public class Components {
                 OnSolidGroundComponent.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsTransform", TransformComponent.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsPhysics", PhysicsComponent.class);
+        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentBreakable", BreakableComponent.class);
     }
     
     public static final ComponentMapper<RandomTickComponent> RANDOM_TICK = ComponentMapper

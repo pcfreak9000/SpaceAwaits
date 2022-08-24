@@ -1,46 +1,42 @@
-package mod;
-
+package de.pcfreak9000.spaceawaits.content.items;
 import java.util.Random;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class ItemPrimitiveAxe extends Item {
+public class ItemMininglaser extends Item {
     
-    public ItemPrimitiveAxe() {
+    public ItemMininglaser() {
         this.setMaxStackSize(1);
-        this.setDisplayName("Primitive Axe");
-        this.setTexture("shitty_axe.png");
+        this.setDisplayName("Mining Laser");
+        this.setTexture("gun_0.png");
     }
     
     @Override
     public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
-        PhysicsSystem phys = world.getSystem(PhysicsSystem.class);
-        Array<Object> ent = phys.queryXY(x, y,
-                (udh, uc) -> udh.isEntity() && Components.BREAKABLE.has(udh.getEntity()));
-        if (ent.size > 0) {
-            Entity entity = (Entity) ent.get(0);
-            BreakingComponent bc = Components.BREAKING.get(entity);
-            if (bc == null) {
-                bc = new BreakingComponent();
-                entity.add(bc);
+        TransformComponent tc = Components.TRANSFORM.get(player.getPlayerEntity());
+        world.getSystem(TileSystem.class).raycastTiles(new IRaycastTileCallback() {
+            
+            @Override
+            public boolean reportRayTile(Tile tile, int tx, int ty) {
+                if (tile != Tile.NOTHING && tile.isSolid()) {
+                    world.getSystem(TileSystem.class).breakTile(tx, ty, TileLayer.Front, tilebreaker);
+                }
+                return tile == Tile.NOTHING || !tile.isSolid();
             }
-            bc.addProgress += 1f;
-            return true;
-        }
-        return false;
+        }, tc.position.x + 1, tc.position.y + 2, x, y, TileLayer.Front);
+        return true;
     }
     
     private final ITileBreaker tilebreaker = new ITileBreaker() {

@@ -23,6 +23,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
@@ -123,8 +124,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!
                     Entity e = ud.getEntity();
                     if (Components.NEIGHGOUR_CHANGED.has(e)) {
-                        Components.NEIGHGOUR_CHANGED.get(e).onNeighbourTileChange.onNeighbourTileChange(world, this, e,
-                                tile, old, tx, ty, layer);
+                        OnNeighbourChangeComponent oncc = Components.NEIGHGOUR_CHANGED.get(e);
+                        if (oncc.validate(e)) {
+                            oncc.onNeighbourTileChange.onNeighbourTileChange(world, this, e, tile, old, tx, ty, layer);
+                        }
                     }
                 }
                 return true;

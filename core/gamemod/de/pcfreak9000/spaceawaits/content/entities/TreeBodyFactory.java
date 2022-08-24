@@ -1,4 +1,4 @@
-package mod;
+package de.pcfreak9000.spaceawaits.content.entities;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 

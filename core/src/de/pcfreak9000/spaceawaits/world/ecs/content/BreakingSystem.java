@@ -26,7 +26,10 @@ public class BreakingSystem extends IteratingSystem {
         bc.addProgress = 0;
         if (bc.progress >= 1f) {
             entity.remove(BreakingComponent.class);
-            Components.BREAKABLE.get(entity).entityBroken.onEntityBroken(this.world, entity);
+            BreakableComponent breakable = Components.BREAKABLE.get(entity);
+            if (breakable.validate(entity)) {
+                breakable.entityBroken.onEntityBroken(this.world, entity);
+            }
         }
     }
 }

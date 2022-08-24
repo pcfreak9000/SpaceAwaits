@@ -74,9 +74,9 @@ public class SpaceAwaits extends Game {
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
+        LOGGER.info("Init...");
         CoreRes.init();
         Components.registerComponents();
-        LOGGER.info("Init...");
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
         BUS.post(new CoreEvents.QueueResourcesEvent(assetManager));

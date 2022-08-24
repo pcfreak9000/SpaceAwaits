@@ -46,7 +46,7 @@ public class RenderItemStrategy implements IRenderStrategy {
         ItemStackComponent ic = Components.ITEM_STACK.get(e);
         ItemStack stack = ic.stack;
         if (stack != null && !stack.isEmpty()) {
-            batch.setColor(stack.getItem().color());
+            batch.setColor(stack.getItem().getColor());
             if (stack.getCount() == 1) {
                 batch.draw(stack.getItem().getTextureProvider().getRegion(), tc.position.x, tc.position.y,
                         Item.WORLD_SIZE, Item.WORLD_SIZE);

@@ -15,11 +15,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.composer.ComposedTextureProvider;
 import de.pcfreak9000.spaceawaits.composer.Composer;
+import de.pcfreak9000.spaceawaits.content.items.Items;
+import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
-import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
@@ -33,7 +33,6 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
@@ -51,17 +50,15 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import layerteststuff.TestBiomeGenerator;
 
-@Mod(id = "SpaceAwaits-Dummy-Mod", name = "Kek", version = { 0, 0, 2 })
+@Mod(id = "SpaceAwaits-Experimental", name = "Space Awaits Experimental Additions", version = { 0, 0, 2 })
 public class DMod {
     
     @Instance
     public static DMod instance;
     TextureProvider texture = TextureProvider.get("sdfsdf");
     TextureProvider planet = TextureProvider.get("planet.png");
-    public Tile tstoneTile = new Tile();
     public Tile laser = new Tile() {//FIXME laser does weird stuff? position and stuff
         @Override
         public boolean hasTileEntity() {
@@ -74,27 +71,10 @@ public class DMod {
         };
     };
     public Tile torch = new Tile();
-    public Item gun = new ItemGun();
-    
-    public Item stick = new Item();
-    
-    public Item medkitsimple = new ItemMedkitSimple();
-    
-    public Item repairGun = new ItemRepairGun();
-    
-    public Item primitiveAxe = new ItemPrimitiveAxe();
     
     public TileLiquid water = new TileLiquid();
     
-    public Tile storageDrawer = new TileStorageDrawer();
-    
-    public Tile oldbricks = new Tile();
-    public Tile grasstile = new Tile();
-    
     public SpaceshipFactory fac = new SpaceshipFactory();
-    public TreeFactory treeFac = new TreeFactory();
-    
-    public Tile wood = new Tile();
     
     //TODO ALLGEMEIN:
     //erledigt Bäume mit dicker Hitbox
@@ -109,9 +89,6 @@ public class DMod {
                 ComponentInventoryShip.class);
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsCompositeInventoryComponent",
                 CompositeInventoryComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentAxeHarvestableComponent",
-                BreakableComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentTreeState", TreeStateComponent.class);
         
         GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
         GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
@@ -120,101 +97,21 @@ public class DMod {
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
         GameRegistry.WORLD_ENTITY_REGISTRY.register("spac", fac);
-        GameRegistry.WORLD_ENTITY_REGISTRY.register("tree", treeFac);
         
         water.setTexture("stone.png");
         water.setSolid(false);
         water.setCanBreak(false);
         water.setLightTransmission(0.9f);
-        water.color().set(0, 100 / 255f, 1, 0.1f);//0.75f
+        water.setColor(new Color(0, 100 / 255f, 1, 0.1f));//0.75f
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.TILE_REGISTRY.register("water", water);
-        
-        GameRegistry.TILE_REGISTRY.register("storageDrawer", storageDrawer);
-        
-        GameRegistry.ITEM_REGISTRY.register("gun", gun);
-        
-        GameRegistry.ITEM_REGISTRY.register("repairGun", repairGun);
-        
-        GameRegistry.ITEM_REGISTRY.register("primitiveAxe", primitiveAxe);
-        
-        oldbricks.setTexture("oldbricks.png");
-        oldbricks.setDisplayName("Old Bricks");
-        GameRegistry.TILE_REGISTRY.register("oldbricks", oldbricks);
-        
-        stick.setTexture("stick.png");
-        stick.setDisplayName("Stick");
-        GameRegistry.ITEM_REGISTRY.register("stick", stick);
-        
-        wood.setTexture("oldbricks.png");
-        wood.setDisplayName("Wood");
-        wood.color().set(Color.BROWN);
-        GameRegistry.TILE_REGISTRY.register("wood", wood);
-        
-        tstoneTile.setTexture("stone.png");
-        tstoneTile.setDisplayName("Stone");
-        tstoneTile.setComposite(GameRegistry.COMPOSITE_MANAGER.getCompositeForName("Stonestuff"));
-        GameRegistry.TILE_REGISTRY.register("stone", tstoneTile);
-        tstoneTile.setLightTransmission(0.6f);
         
         Tile ironTile = new Tile();
         ironTile.setDisplayName("Iron Ore");
         ironTile.setTexture("ore_iron.png");
         // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
-        
-        Tile looseRocks = new Tile() {
-            @Override
-            public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-                    Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
-                if (ngty == gty - 1 && ngtx == gtx) {
-                    if (!newNeighbour.isSolid()) {
-                        tileSystem.removeTile(gtx, gty, layer);
-                        //drop item
-                        Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(getItemTile(), 1), gtx, gty);
-                        world.spawnEntity(e, false);
-                    }
-                }
-            }
-            
-            @Override
-            public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
-                return tileSystem.getTile(tx, ty - 1, layer).isSolid();
-            }
-            
-            @Override
-            public boolean hasCustomHitbox() {
-                return true;
-            }
-            
-            @Override
-            public float[] getCustomHitbox() {
-                return new float[] { 0, 0, /**/ 1, 0, /**/1, 0.3f, /**/0, 0.3f };
-            }
-        };
-        looseRocks.setDisplayName("Loose Rocks");
-        looseRocks.setTexture("looseRocks.png");
-        looseRocks.setSolid(true);
-        GameRegistry.TILE_REGISTRY.register("looseRocks", looseRocks);
-        
-        Tile bottom = new Tile();
-        bottom.setCanBreak(false);
-        bottom.setTexture("stone_dark.png");
-        bottom.setDisplayName("Bedrock or something");
-        GameRegistry.TILE_REGISTRY.register("bottom", bottom);
-        
-        grasstile.setDisplayName("Grass");
-        grasstile.setTexture("grass.png");
-        //grasstile.setFilterColor(new Color(0.3f, 0.3f, 0.3f));
-        GameRegistry.TILE_REGISTRY.register("grass", grasstile);
-        
-        Tile dirttile = new Tile();
-        dirttile.setDisplayName("Dirt");
-        dirttile.setTexture("dirt.png");
-        //dirttile.setBouncyness(1);
-        //dirttile.setFilterColor(new Color(1, 0, 0, 1));
-        GameRegistry.TILE_REGISTRY.register("dirt", dirttile);
         
         torch.setLightColor(Color.WHITE);
         torch.setDisplayName("torch");
@@ -223,11 +120,9 @@ public class DMod {
         
         laser.setTexture("dirt.png");
         laser.setDisplayName("Laser");
-        laser.color().set(1, 0, 0, 1);
+        laser.setColor(Color.RED);
         laser.setLightColor(new Color(1, 0, 0, 1));
         GameRegistry.TILE_REGISTRY.register("laser", laser);
-        
-        GameRegistry.ITEM_REGISTRY.register("medkitsimple", medkitsimple);
         
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
@@ -245,21 +140,26 @@ public class DMod {
         b2.h = 1;
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
-        CraftingManager.instance().addSimpleRecipe(new ItemStack(primitiveAxe, 1), new ItemStack(stick, 2),
-                new ItemStack(looseRocks.getItemDropped(), 1));
+        
+    }
+    
+    @EventSubscription
+    public void postinit(CoreEvents.PostInitEvent ev) {
+        CraftingManager.instance().addSimpleRecipe(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
+                new ItemStack(Tiles.LOOSEROCKS.getItemDropped(), 1));
         
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
-        shipStarterTable.add(new GuaranteedInventoryContent(repairGun, 1, 1));
-        shipStarterTable.add(new GuaranteedInventoryContent(medkitsimple, 1, 2));
-        shipStarterTable.add(new WeightedRandomInventoryContent(gun, 2, 1, 1, false));
+        shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
+        shipStarterTable.add(new GuaranteedInventoryContent(Items.MEDKIT_SIMPLE, 1, 2));
+        shipStarterTable.add(new WeightedRandomInventoryContent(Items.MININGLASER, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
         LootTable housethingTable = LootTable.getFor("housething");
         housethingTable.addMin(1);
         housethingTable.addMax(3);
-        housethingTable.add(new WeightedRandomInventoryContent(gun, 10, 1, 1, false));
+        housethingTable.add(new WeightedRandomInventoryContent(Items.MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
@@ -296,7 +196,8 @@ public class DMod {
                     public void onLoading(World world) {
                         world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(),
                                 false);
-                        world.spawnEntity(b2.createEntity(), false);
+                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(),
+                                false);
                         world.spawnEntity(testFogEntity(), false);
                     }
                 });

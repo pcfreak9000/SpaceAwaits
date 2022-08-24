@@ -26,18 +26,20 @@ public class Item {
     
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
     
-    private Color color = new Color(1, 1, 1, 1);
+    private Color color = Color.WHITE;
     private String displayName = "";
     
     private Composite composite;
     
-    public void setTexture(String name) {
+    public Item setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
+        return this;
     }
     
-    public void setTextureProvider(ITextureProvider prov) {
+    public Item setTextureProvider(ITextureProvider prov) {
         Objects.requireNonNull(prov);
         this.textureProvider = prov;
+        return this;
     }
     
     public int getMaxStackSize() {
@@ -48,12 +50,18 @@ public class Item {
         this.maxstacksize = i;
     }
     
-    public Color color() {
-        return this.color;
+    public Item setColor(Color color) {
+        this.color = color;
+        return this;
     }
     
-    public void setDisplayName(String name) {
+    public Color getColor() {
+        return color;
+    }
+    
+    public Item setDisplayName(String name) {
         this.displayName = name;
+        return this;
     }
     
     public String getDisplayName() {
