@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.world.physics;
 import com.badlogic.gdx.math.Vector2;
 
 public class UnitConversion {
-    
+    //Works only for single fixtures?
     public static float[] texelToPhysicsspace(UnitConversion uc, float pixelPerTile, float height, float[] vert) {
         for (int i = 0; i < vert.length; i++) {
             if (i % 2 == 1) {

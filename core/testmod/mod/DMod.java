@@ -77,12 +77,12 @@ public class DMod {
     public SpaceshipFactory fac = new SpaceshipFactory();
     
     //TODO ALLGEMEIN:
-    //erledigt Bäume mit dicker Hitbox
-    //erledigt (mehr oder weniger) Bäume untergraben -> BodyType dynamic setzen
-    //erledigt Tiles die abgebaut werden informieren auch entities die mit den nachbarn überlappen wenn die bestimmte components haben
     //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
     //random tick system, erledigt (mehr oder weniger) random tick system für entities
-    
+    //wasser + kleine hitboxen
+    //terrain gen
+    //STEINTYPEN!?? + textur?
+    //baum animation, abreiß animation (-> klassen durchgucken die dinge nur bei gedrückt tun)
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentInventoryShip",
