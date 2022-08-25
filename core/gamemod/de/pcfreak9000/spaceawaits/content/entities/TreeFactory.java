@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
+import de.pcfreak9000.spaceawaits.content.components.Components;
 import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
@@ -20,7 +21,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent.OnNeighbourTileChange;
 import de.pcfreak9000.spaceawaits.world.ecs.content.RandomTickComponent;
@@ -72,9 +72,12 @@ public class TreeFactory implements WorldEntityFactory {
         };
         entity.add(bc);
         RandomTickComponent rtc = new RandomTickComponent();
-        rtc.setRequired(Components.TRANSFORM);//Hmm
-        rtc.tickable = (world) -> {
-            TransformComponent tcc = Components.TRANSFORM.get(entity);
+        rtc.setRequired(Components.TRANSFORM, Components.TREESTATE);//Hmm
+        rtc.tickable = (world, ent) -> {
+            if (Components.TREESTATE.get(ent).loose) {
+                return;
+            }
+            TransformComponent tcc = Components.TRANSFORM.get(ent);
             //PhysicsComponent pcc = Components.PHYSICS.get(entity);
             float f0 = world.getWorldRandom().nextFloat();
             float f1 = world.getWorldRandom().nextFloat();

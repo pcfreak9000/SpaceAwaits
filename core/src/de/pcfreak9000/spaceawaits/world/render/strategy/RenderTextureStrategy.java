@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -40,12 +41,9 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     @Override
     public void render(Entity entity, float deltaTime) {
         RenderTextureComponent rec = Components.RENDER_TEXTURE.get(entity);
-        Vector2 p = Components.TRANSFORM.get(entity).position;
-        float wh = 0.5f * rec.width;
-        float hh = 0.5f * rec.height;
-        float mx = p.x + wh;
-        float my = p.y + hh;
-        if (!cam.frustum.boundsInFrustum(mx, my, 0, wh, hh, 0)) {
+        TransformComponent tc = Components.TRANSFORM.get(entity);
+        Vector2 p = tc.position;
+        if (!cam.frustum.sphereInFrustum(p.x, p.y, 0, Math.max(rec.width, rec.height))) {
             return;
         }
         if (rec.color != null) {
@@ -53,6 +51,7 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
         } else {
             b.setColor(Color.WHITE);
         }
-        b.draw(rec.texture.getRegion(), p.x, p.y, rec.width, rec.height);
+        b.draw(rec.texture.getRegion(), p.x, p.y, tc.originx, tc.originy, rec.width, rec.height, 1, 1,
+                MathUtils.radiansToDegrees * tc.rotation);
     }
 }

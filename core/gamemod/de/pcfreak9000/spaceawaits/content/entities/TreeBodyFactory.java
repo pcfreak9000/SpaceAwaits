@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
+import de.pcfreak9000.spaceawaits.content.components.Components;
 import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
@@ -29,15 +29,15 @@ public class TreeBodyFactory implements BodyFactory {
     @Override
     public Body createBody(World world, Entity entity) {
         BodyDef bd = new BodyDef();
-        boolean loose = entity.getComponent(TreeStateComponent.class).loose;
-        bd.fixedRotation = true;
+        boolean loose = Components.TREESTATE.get(entity).loose;
+        bd.fixedRotation = false;
         bd.type = loose ? BodyType.DynamicBody : BodyType.StaticBody;
         bd.position.set(METER_CONV.in(0), METER_CONV.in(0));
         FixtureDef fd = new FixtureDef();
         PolygonShape polyshape = new PolygonShape();
         polyshape.set(bounds);
         fd.shape = polyshape;
-        fd.density = 1;
+        fd.density = 10f;
         fd.isSensor = !loose;
         Body b = world.createBody(bd);
         b.createFixture(fd);

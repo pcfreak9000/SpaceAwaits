@@ -24,7 +24,7 @@ public class RandomTickSystem extends IntervalIteratingSystem {
         if (tickRandom.nextDouble() < 0.01) {
             RandomTickComponent rtc = Components.RANDOM_TICK.get(entity);
             if (rtc.validate(entity)) {
-                Components.RANDOM_TICK.get(entity).tickable.tick(world);
+                Components.RANDOM_TICK.get(entity).tickable.tick(world, entity);
             }
         }
     }

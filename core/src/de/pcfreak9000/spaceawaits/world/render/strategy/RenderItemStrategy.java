@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world.render.strategy;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -37,26 +38,31 @@ public class RenderItemStrategy implements IRenderStrategy {
     public RenderItemStrategy(GameRenderer renderer) {
         this.render = renderer;
         this.batch = this.render.getSpriteBatch();
+        this.cam = renderer.getCurrentView().getCamera();
     }
     
     private GameRenderer render;
     private SpriteBatch batch;
     
+    private Camera cam;
+    private float mod = 0;
+    
     @Override
     public void begin() {
+        mod = MathUtils.sin(render.getRenderTime() * 3) * 0.045f + 0.0225f;//This might still be called multiple times per frame...
         batch.begin();
     }
     
-    private float time = 0;
-    
     @Override
     public void render(Entity e, float dt) {
-        time += dt;
         TransformComponent tc = Components.TRANSFORM.get(e);
+        if (!cam.frustum.boundsInFrustum(tc.position.x - Item.WORLD_SIZE * 0.5f, tc.position.y - Item.WORLD_SIZE * 0.5f,
+                0, Item.WORLD_SIZE, Item.WORLD_SIZE, 0)) {
+            return;
+        } //TODO move frustum checks somewhere else and reuse code?
         ItemStackComponent ic = Components.ITEM_STACK.get(e);
         ItemStack stack = ic.stack;
         if (stack != null && !stack.isEmpty()) {
-            float mod = MathUtils.sin(time * 0.02f) * 0.04f + 0.02f;//FIXME this is updated per item??
             if (stack.getCount() == 1) {
                 batch.setColor(stack.getItem().getColor());
                 batch.draw(stack.getItem().getTextureProvider().getRegion(), tc.position.x - mod, tc.position.y - mod,
