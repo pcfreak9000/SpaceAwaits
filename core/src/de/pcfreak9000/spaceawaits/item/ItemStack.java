@@ -6,6 +6,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**
  * a Stack of {@link Item}s <br>
@@ -101,6 +102,10 @@ public class ItemStack {
     public ItemStack(final Item item, final int count) {
         this.item = Objects.requireNonNull(item);
         this.count = count;
+    }
+    
+    public ItemStack(final Tile tile, final int count) {
+        this(tile.getItemTile(), count);
     }
     
     public ItemStack cpy() {

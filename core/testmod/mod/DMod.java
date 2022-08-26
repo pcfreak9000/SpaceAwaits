@@ -146,7 +146,11 @@ public class DMod {
     @EventSubscription
     public void postinit(CoreEvents.PostInitEvent ev) {
         CraftingManager.instance().addSimpleRecipe(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
-                new ItemStack(Tiles.LOOSEROCKS.getItemDropped(), 1));
+                new ItemStack(Items.LOOSEROCK, 2));
+        CraftingManager.instance().addSimpleRecipe(new ItemStack(Items.PICKAXE_PRIMITIVE, 1),
+                new ItemStack(Items.TWIG, 2), new ItemStack(Items.LOOSEROCK, 3));
+        CraftingManager.instance().addSimpleRecipe(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1),
+                new ItemStack(Tiles.WOOD, 4));
         
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);

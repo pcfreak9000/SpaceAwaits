@@ -2,6 +2,8 @@ package de.pcfreak9000.spaceawaits.content.tiles;
 
 import com.badlogic.ashley.core.Entity;
 
+import de.pcfreak9000.spaceawaits.content.items.Items;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -26,6 +28,16 @@ public class TileLooseRocks extends Tile {
                 world.spawnEntity(e, false);
             }
         }
+    }
+    
+    @Override
+    public Item getItemDropped() {
+        return Items.LOOSEROCK;
+    }
+    
+    @Override
+    public int getDroppedQuantity() {
+        return 2;
     }
     
     @Override
