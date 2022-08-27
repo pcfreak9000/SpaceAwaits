@@ -24,11 +24,11 @@ public class ItemRepairGun extends Item {
     }
     
     @Override
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y,
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         PhysicsSystem phys = world.getSystem(PhysicsSystem.class);
         Array<Object> ent = phys.queryXY(x, y, (udh, uc) -> udh.isEntity() && Components.STATS.has(udh.getEntity())
-                        && Components.STATS.get(udh.getEntity()).has("mechHealth"));
+                && Components.STATS.get(udh.getEntity()).has("mechHealth"));
         if (ent.size > 0) {
             Entity entity = (Entity) ent.get(0);
             StatsComponent sc = Components.STATS.get(entity);

@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.tile.ecs;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
@@ -230,7 +231,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     }
     
     public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
-        //TODO allow null tilebreaker?
+        Objects.requireNonNull(breaker);
         //First check if this is allowed
         //Tile specific checks:
         if (layer == TileLayer.Back) {
@@ -242,14 +243,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
         //******************
         //Check breakable/breaker compatibility:
         Tile tile = getTile(tx, ty, layer);
-        if (!tile.canBreak() && !breaker.ignoreTileCanBreak()) {
+        if (tile == Tile.NOTHING) {
             return -1f;
         }
-        if (tile.getMaterialLevel() > breaker.getMaterialLevel()
-                && breaker.getMaterialLevel() != Float.POSITIVE_INFINITY) {
-            return -1f;
-        }
-        if (!breaker.canBreak(tx, ty, layer, tile, world, this)) {
+        if (!breaker.canBreak(world, tile, tx, ty, layer)) {
             return -1f;
         }
         //********************************
@@ -260,14 +257,14 @@ public class TileSystem extends EntitySystem implements ITileArea {
             t = new BreakTileProgress(tx, ty, layer);
             breakingTiles.put(l, t);
         }
-        float speedActual = breaker.getSpeed() / tile.getHardness();
+        float speedActual = breaker.breakIt(world, tile, tx, ty, layer, t.getProgress());
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
-            tile.onTileBreak(tx, ty, layer, drops, world, this, worldRandom);
-            breaker.onTileBreak(tx, ty, layer, tile, world, this, drops, worldRandom);
+            tile.onBreak(world, tx, ty, layer, drops, worldRandom);
+            breaker.onBreak(world, tile, tx, ty, layer, drops, worldRandom);
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
@@ -284,8 +281,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
         return Mathf.clamp(t.getProgress(), 0, 1f);
     }
     
-    public void raycastTiles(IRaycastTileCallback tileCallback, float x1, float y1, float x2, float y2,
-            TileLayer layer) {
+    public void raycastTiles(float x1, float y1, float x2, float y2, TileLayer layer,
+            IRaycastTileCallback tileCallback) {
         /*
          * Based on the video "Super Fast Ray Casting in Tiled Worlds using DDA" by
          * javidx9 (2021, https://www.youtube.com/watch?v=NbSee-XM7WA).

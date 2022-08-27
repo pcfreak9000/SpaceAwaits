@@ -83,6 +83,9 @@ public class ItemStack {
         String id = c.getString("id");
         stack.count = Short.toUnsignedInt(c.getShort("c"));//Hopefully works with conversion... now it does. Dumbass forgot max stacksize is 128 and thats problematic for a signed byte
         stack.item = GameRegistry.ITEM_REGISTRY.get(id);
+        if (stack.item == null) {
+            return EMPTY;
+        }
         if (c.hasKey("nbt")) {
             stack.nbt = c.getCompound("nbt");
         }

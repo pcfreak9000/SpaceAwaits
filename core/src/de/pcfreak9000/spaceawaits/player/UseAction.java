@@ -53,9 +53,9 @@ public class UseAction implements Action {
             if (stack != null && stack.getItem() != null) {
                 ItemStack cp = stack.cpy();
                 if (InptMgr.isJustPressed(getInputKey())) {
-                    used |= stack.getItem().onItemJustUse(player, cp, world, ty, ty, mousex, mousey, layer);
+                    used |= stack.getItem().onItemJustUse(player, cp, world, mousex, mousey, ty, ty, layer);
                 }
-                used |= stack.getItem().onItemUse(player, cp, world, tx, ty, mousex, mousey, layer);//Hmmm... does the layer fit here?
+                used |= stack.getItem().onItemUse(player, cp, world, mousex, mousey, tx, ty, layer);//Hmmm... does the layer fit here?
                 player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             }
         }

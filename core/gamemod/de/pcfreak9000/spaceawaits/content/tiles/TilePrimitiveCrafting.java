@@ -32,9 +32,8 @@ public class TilePrimitiveCrafting extends Tile {
     }
     
     @Override
-    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
-            Random random) {
-        super.onTileBreak(tx, ty, layer, drops, world, tileSystem, random);
+    public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
+        super.onBreak(world, tx, ty, layer, drops, random);
         //Close gui if open, drop current contents?
     }
     

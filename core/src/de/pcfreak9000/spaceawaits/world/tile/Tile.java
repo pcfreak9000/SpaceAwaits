@@ -15,13 +15,14 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.world.Breakable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Tile {
+public class Tile implements Breakable {
     
     public static enum TileLayer {
         Front, Back;
@@ -108,6 +109,7 @@ public class Tile {
         return this;
     }
     
+    @Override
     public boolean canBreak() {
         return this.canBreak;
     }
@@ -158,6 +160,7 @@ public class Tile {
         return this;
     }
     
+    @Override
     public float getMaterialLevel() {
         return materialLevel;
     }
@@ -166,6 +169,7 @@ public class Tile {
         this.materialLevel = materialLevel;
     }
     
+    @Override
     public float getHardness() {
         return hardness;
     }
@@ -210,8 +214,8 @@ public class Tile {
         return 1;
     }
     
-    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
-            Random random) {
+    @Override
+    public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
         drops.add(new ItemStack(getItemDropped(), getDroppedQuantity()));
     }
     

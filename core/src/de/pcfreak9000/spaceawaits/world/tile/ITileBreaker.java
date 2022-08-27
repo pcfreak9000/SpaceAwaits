@@ -5,23 +5,17 @@ import java.util.Random;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.Breakable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public interface ITileBreaker {
     
-    //TODO possibly move this into canBreak
-    float getMaterialLevel();
+    float breakIt(World world, Breakable breakable, int tx, int ty, TileLayer layer, float progressCurrent);
     
-    float getSpeed();
+    boolean canBreak(World world, Breakable breakable, int tx, int ty, TileLayer layer);
     
-    default boolean ignoreTileCanBreak() {
-        return false;
-    }
+    void onBreak(World world, Breakable breakable, int tx, int ty, TileLayer layer, Array<ItemStack> drops,
+            Random random);
     
-    boolean canBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem);
-    
-    void onTileBreak(int tx, int ty, TileLayer layer, Tile tile, World world, TileSystem tileSystem,
-            Array<ItemStack> drops, Random random);
 }

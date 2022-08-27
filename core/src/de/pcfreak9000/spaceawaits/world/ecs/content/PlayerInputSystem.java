@@ -109,7 +109,6 @@ public class PlayerInputSystem extends EntitySystem {
             if (onSolidGround) {
                 if (up) {
                     vy += play.maxYv * 5;
-                    
                 }
             }
             //kinda useless, use for sneaking/ladders instead?

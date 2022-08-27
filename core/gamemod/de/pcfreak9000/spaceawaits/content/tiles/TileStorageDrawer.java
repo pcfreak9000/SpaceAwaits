@@ -42,10 +42,10 @@ public class TileStorageDrawer extends Tile {
     }
     
     @Override
-    public void onTileBreak(int tx, int ty, TileLayer layer, Array<ItemStack> drops, World world, TileSystem tileSystem,
-            Random random) {
-        super.onTileBreak(tx, ty, layer, drops, world, tileSystem, random);
-        TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(tx, ty, TileLayer.Front);
+    public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
+        super.onBreak(world, tx, ty, layer, drops, random);
+        TileEntityStorageDrawer te = (TileEntityStorageDrawer) world.getSystem(TileSystem.class).getTileEntity(tx, ty,
+                TileLayer.Front);
         for (int i = 0; i < te.slots(); i++) {
             drops.add(te.getStack(i));
         }

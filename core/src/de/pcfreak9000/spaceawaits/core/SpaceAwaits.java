@@ -24,7 +24,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
-    public static final boolean DEBUG_CAMERA = true;
+    public static final boolean DEBUG_CAMERA = false;
     
     public static final String NAME = "Space Awaits";
     public static final String VERSION = "pre-Alpha-0";
@@ -37,7 +37,7 @@ public class SpaceAwaits extends Game {
     
     private static SpaceAwaits singleton;
     
-    private static Logger LOGGER = Logger.getLogger(SpaceAwaits.class);
+    private static final Logger LOGGER = Logger.getLogger(SpaceAwaits.class);
     
     public static SpaceAwaits getSpaceAwaits() {
         return singleton;

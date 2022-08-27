@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
@@ -23,6 +24,7 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
 
 public abstract class World {
     
@@ -115,6 +117,21 @@ public abstract class World {
     
     public void joinWorld(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
+    }
+    
+    public boolean breakEntity(ITileBreaker breaker, Entity entity) {
+        if (!Components.BREAKABLE.has(entity)) {
+            return false;
+        }
+        BreakingComponent bc = Components.BREAKING.get(entity);
+        if (bc == null) {
+            bc = new BreakingComponent();//Maybe pool breakingcomponent?
+            entity.add(bc);
+        }
+        bc.breaker = breaker;//what if multiple breakers?
+        Breakable breakable = Components.BREAKABLE.get(entity).breakable;
+        bc.addProgress += breaker.breakIt(this, breakable, 0, 0, null, bc.getProgress());
+        return true;
     }
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {

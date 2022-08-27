@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.item;
 
 import java.util.Objects;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
 import de.pcfreak9000.spaceawaits.comp.Composite;
@@ -11,6 +12,7 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 /**
  * represents an Item
@@ -89,17 +91,32 @@ public class Item {
      * @param tiley
      * @return whether this item has actually been used
      */
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x, float y,
+    public boolean onItemUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         return false;
     }
     
-    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, int tilex, int tiley, float x,
-            float y, TileLayer layer) {
+    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex,
+            int tiley, TileLayer layer) {
         return false;
     }
     
-    public boolean onItemAttack(Player player, ItemStack stackUsed, World world, int tx, int ty, float x, float y) {
+    public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
+            int tx, int ty, TileLayer layer) {
+        return false;
+    }
+    
+    public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, World world, float x, float y,
+            Entity entity) {
+        return false;
+    }
+    
+    public boolean isSpecialBreakAttack() {
+        return false;
+    }
+    
+    public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, World world, float x, float y, int tx,
+            int ty, TileLayer layer) {
         return false;
     }
     

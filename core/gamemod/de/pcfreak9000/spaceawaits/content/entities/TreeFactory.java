@@ -1,10 +1,13 @@
 package de.pcfreak9000.spaceawaits.content.entities;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.content.components.Components;
 import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
@@ -14,6 +17,7 @@ import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
+import de.pcfreak9000.spaceawaits.world.Breakable;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
@@ -63,12 +67,27 @@ public class TreeFactory implements WorldEntityFactory {
         entity.add(ac);
         BreakableComponent bc = new BreakableComponent();
         bc.setRequired(Components.TRANSFORM);
-        bc.entityBroken = (world, ent) -> {
-            world.despawnEntity(ent);
-            TransformComponent tcc = Components.TRANSFORM.get(entity);
-            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(Tiles.WOOD.getItemDropped(), 1), tcc.position.x,
-                    tcc.position.y);
-            world.spawnEntity(e, false);
+        bc.breakable = new Breakable() {
+            
+            @Override
+            public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
+                drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 1));
+            }
+            
+            @Override
+            public float getMaterialLevel() {
+                return 0;
+            }
+            
+            @Override
+            public float getHardness() {
+                return 1f;
+            }
+            
+            @Override
+            public boolean canBreak() {
+                return true;
+            }
         };
         entity.add(bc);
         RandomTickComponent rtc = new RandomTickComponent();
