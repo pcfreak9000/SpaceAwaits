@@ -14,7 +14,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -31,21 +31,20 @@ public class BreakAttackAction implements Action {
         return 0;
     };
     
-    private final ITileBreaker br = new ITileBreaker() {
+    private final IBreaker br = new IBreaker() {
         
         @Override
-        public float breakIt(World world, Breakable breakable, int tx, int ty, TileLayer layer, float f) {
+        public float breakIt(World world, Breakable breakable, float f) {
             return 1f / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(World world, Breakable breakable, int tx, int ty, TileLayer layer) {
+        public boolean canBreak(World world, Breakable breakable) {
             return true;
         }
         
         @Override
-        public void onBreak(World world, Breakable breakable, int tx, int ty, TileLayer layer, Array<ItemStack> drops,
-                Random random) {
+        public void onBreak(World world, Breakable breakable, Array<ItemStack> drops, Random random) {
         }
         
     };

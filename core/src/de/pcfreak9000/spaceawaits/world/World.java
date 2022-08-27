@@ -24,7 +24,7 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public abstract class World {
     
@@ -119,8 +119,12 @@ public abstract class World {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     
-    public boolean breakEntity(ITileBreaker breaker, Entity entity) {
+    public boolean breakEntity(IBreaker breaker, Entity entity) {
         if (!Components.BREAKABLE.has(entity)) {
+            return false;
+        }
+        Breakable breakable = Components.BREAKABLE.get(entity).breakable;
+        if (!breakable.canBreak()) {
             return false;
         }
         BreakingComponent bc = Components.BREAKING.get(entity);
@@ -129,8 +133,7 @@ public abstract class World {
             entity.add(bc);
         }
         bc.breaker = breaker;//what if multiple breakers?
-        Breakable breakable = Components.BREAKABLE.get(entity).breakable;
-        bc.addProgress += breaker.breakIt(this, breakable, 0, 0, null, bc.getProgress());
+        bc.addProgress += breaker.breakIt(this, breakable, bc.getProgress());
         return true;
     }
     

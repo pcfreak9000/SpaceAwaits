@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.Breakable;
+import de.pcfreak9000.spaceawaits.world.BreakableEntity;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
@@ -67,10 +67,10 @@ public class TreeFactory implements WorldEntityFactory {
         entity.add(ac);
         BreakableComponent bc = new BreakableComponent();
         bc.setRequired(Components.TRANSFORM);
-        bc.breakable = new Breakable() {
+        bc.breakable = new BreakableEntity() {
             
             @Override
-            public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
+            public void onBreak(World world, Array<ItemStack> drops, Random random, Entity entity) {
                 drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 1));
             }
             

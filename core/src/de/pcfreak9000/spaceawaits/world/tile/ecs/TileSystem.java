@@ -31,7 +31,7 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
-import de.pcfreak9000.spaceawaits.world.tile.ITileBreaker;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -230,24 +230,27 @@ public class TileSystem extends EntitySystem implements ITileArea {
         return ret;
     }
     
-    public float breakTile(int tx, int ty, TileLayer layer, ITileBreaker breaker) {
+    public boolean breakTile(int tx, int ty, TileLayer layer, IBreaker breaker) {
         Objects.requireNonNull(breaker);
         //First check if this is allowed
         //Tile specific checks:
         if (layer == TileLayer.Back) {
             Tile front = getTile(tx, ty, TileLayer.Front);
             if (front.isSolid()) {
-                return -1f;
+                return false;
             }
         }
         //******************
         //Check breakable/breaker compatibility:
         Tile tile = getTile(tx, ty, layer);
         if (tile == Tile.NOTHING) {
-            return -1f;
+            return false;
         }
-        if (!breaker.canBreak(world, tile, tx, ty, layer)) {
-            return -1f;
+        if (!tile.canBreak()) {
+            return false;
+        }
+        if (!breaker.canBreak(world, tile)) {
+            return false;
         }
         //********************************
         //break stuff:
@@ -257,14 +260,14 @@ public class TileSystem extends EntitySystem implements ITileArea {
             t = new BreakTileProgress(tx, ty, layer);
             breakingTiles.put(l, t);
         }
-        float speedActual = breaker.breakIt(world, tile, tx, ty, layer, t.getProgress());
+        float speedActual = breaker.breakIt(world, tile, t.getProgress());
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= 1f) {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
-            tile.onBreak(world, tx, ty, layer, drops, worldRandom);
-            breaker.onBreak(world, tile, tx, ty, layer, drops, worldRandom);
+            tile.onBreak(world, drops, worldRandom, this, tx, ty, layer);
+            breaker.onBreak(world, tile, drops, worldRandom);
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
@@ -275,10 +278,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 }
                 drops.clear();
             }
-            return 1f;
+            return true;
             //*************************
         }
-        return Mathf.clamp(t.getProgress(), 0, 1f);
+        return true;
     }
     
     public void raycastTiles(float x1, float y1, float x2, float y2, TileLayer layer,

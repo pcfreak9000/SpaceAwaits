@@ -54,7 +54,6 @@ public class Tile implements Breakable {
     
     private ITextureProvider textureProvider;
     
-    private boolean canBreak = true;
     private boolean opaque = true;
     private boolean solid = true;
     //private boolean canBeReplaced = false;
@@ -67,6 +66,7 @@ public class Tile implements Breakable {
     
     private float bouncyness = 0f;
     
+    private boolean canBreak = true;
     private float materialLevel = 0f;
     private float hardness = 1f;
     
@@ -214,8 +214,8 @@ public class Tile implements Breakable {
         return 1;
     }
     
-    @Override
-    public void onBreak(World world, int tx, int ty, TileLayer layer, Array<ItemStack> drops, Random random) {
+    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
+            TileLayer layer) {
         drops.add(new ItemStack(getItemDropped(), getDroppedQuantity()));
     }
     

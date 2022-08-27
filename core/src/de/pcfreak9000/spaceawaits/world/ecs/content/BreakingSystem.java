@@ -37,9 +37,9 @@ public class BreakingSystem extends IteratingSystem {
             Array<ItemStack> drops = new Array<>();
             Random worldRandom = world.getWorldRandom();
             if (validated) {
-                breakableComponent.breakable.onBreak(world, 0, 0, null, drops, worldRandom);
+                breakableComponent.breakable.onBreak(world, drops, worldRandom, entity);
             }
-            bc.breaker.onBreak(world, breakableComponent.breakable, 0, 0, null, drops, worldRandom);
+            bc.breaker.onBreak(world, breakableComponent.breakable, drops, worldRandom);
             world.despawnEntity(entity);
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
