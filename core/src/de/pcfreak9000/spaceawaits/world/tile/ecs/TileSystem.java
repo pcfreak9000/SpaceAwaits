@@ -7,6 +7,7 @@ import java.util.Random;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
@@ -230,27 +231,27 @@ public class TileSystem extends EntitySystem implements ITileArea {
         return ret;
     }
     
-    public boolean breakTile(int tx, int ty, TileLayer layer, IBreaker breaker) {
+    public float breakTile(int tx, int ty, TileLayer layer, IBreaker breaker) {
         Objects.requireNonNull(breaker);
         //First check if this is allowed
         //Tile specific checks:
         if (layer == TileLayer.Back) {
             Tile front = getTile(tx, ty, TileLayer.Front);
             if (front.isSolid()) {
-                return false;
+                return IBreaker.ABORTED_BREAKING;
             }
         }
         //******************
         //Check breakable/breaker compatibility:
         Tile tile = getTile(tx, ty, layer);
         if (tile == Tile.NOTHING) {
-            return false;
+            return IBreaker.ABORTED_BREAKING;
         }
         if (!tile.canBreak()) {
-            return false;
+            return IBreaker.ABORTED_BREAKING;
         }
         if (!breaker.canBreak(world, tile)) {
-            return false;
+            return IBreaker.ABORTED_BREAKING;
         }
         //********************************
         //break stuff:
@@ -262,7 +263,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         }
         float speedActual = breaker.breakIt(world, tile, t.getProgress());
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
-        if (t.getProgress() >= 1f) {
+        if (t.getProgress() >= IBreaker.FINISHED_BREAKING) {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
@@ -278,10 +279,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 }
                 drops.clear();
             }
-            return true;
+            return IBreaker.FINISHED_BREAKING;
             //*************************
         }
-        return true;
+        return MathUtils.clamp(t.getProgress(), 0, 1);
     }
     
     public void raycastTiles(float x1, float y1, float x2, float y2, TileLayer layer,

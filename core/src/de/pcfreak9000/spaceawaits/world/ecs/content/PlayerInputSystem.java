@@ -146,7 +146,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Entity createTileSelectorEntity() {
         Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD, "entity");
+        RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD);
         rc.considerAsGui = true;
         e.add(rc);
         RenderTextureComponent tex = new RenderTextureComponent();

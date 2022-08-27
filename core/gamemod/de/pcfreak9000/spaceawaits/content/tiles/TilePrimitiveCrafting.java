@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.content.ContainerCrafter;
+import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -15,6 +16,8 @@ public class TilePrimitiveCrafting extends Tile {
     public TilePrimitiveCrafting() {
         this.setDisplayName("Primitive Workbench");
         this.setTexture("primitive_crafting.png");
+        this.setMaterialLevel(1f);
+        this.setRequiredTool(Tools.AXE);
     }
     
     @Override
@@ -32,7 +35,8 @@ public class TilePrimitiveCrafting extends Tile {
     }
     
     @Override
-    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty, TileLayer layer) {
+    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
+            TileLayer layer) {
         super.onBreak(world, drops, random, tiles, tx, ty, layer);
         //Close gui if open, drop current contents?
     }

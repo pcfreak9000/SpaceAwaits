@@ -5,17 +5,22 @@ import java.util.Random;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
@@ -119,22 +124,47 @@ public abstract class World {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     
-    public boolean breakEntity(IBreaker breaker, Entity entity) {
+    public float breakEntity(IBreaker breaker, Entity entity) {
         if (!Components.BREAKABLE.has(entity)) {
-            return false;
+            return IBreaker.ABORTED_BREAKING;
         }
-        Breakable breakable = Components.BREAKABLE.get(entity).breakable;
-        if (!breakable.canBreak()) {
-            return false;
+        Destructible destr = Components.BREAKABLE.get(entity).destructable;
+        if (!destr.canBreak()) {
+            return IBreaker.ABORTED_BREAKING;
+        }
+        if (!breaker.canBreak(this, destr)) {
+            return IBreaker.ABORTED_BREAKING;
         }
         BreakingComponent bc = Components.BREAKING.get(entity);
         if (bc == null) {
             bc = new BreakingComponent();//Maybe pool breakingcomponent?
             entity.add(bc);
         }
-        bc.breaker = breaker;//what if multiple breakers?
-        bc.addProgress += breaker.breakIt(this, breakable, bc.getProgress());
-        return true;
+        float speedActual = breaker.breakIt(this, destr, bc.progress);
+        bc.last = bc.progress;
+        bc.progress += speedActual * STEPLENGTH_SECONDS;
+        if (bc.progress >= IBreaker.FINISHED_BREAKING) {
+            entity.remove(BreakingComponent.class);
+            BreakableComponent breakableComponent = Components.BREAKABLE.get(entity);
+            boolean validated = breakableComponent.validate(entity);
+            Array<ItemStack> drops = new Array<>();
+            if (validated) {
+                breakableComponent.breakable.onBreak(this, drops, worldRandom, entity);
+            }
+            breaker.onBreak(this, breakableComponent.destructable, drops, worldRandom);
+            this.despawnEntity(entity);
+            if (drops.size > 0) {
+                TransformComponent tc = Components.TRANSFORM.get(entity);
+                for (ItemStack s : drops) {
+                    Entity e = ItemEntityFactory.setupItemEntity(s, tc.position.x + worldRandom.nextFloat() / 2f,
+                            tc.position.y + worldRandom.nextFloat() / 2f);
+                    this.spawnEntity(e, false);
+                }
+                drops.clear();
+            }
+            return IBreaker.FINISHED_BREAKING;
+        }
+        return MathUtils.clamp(bc.progress, 0, 1);
     }
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {

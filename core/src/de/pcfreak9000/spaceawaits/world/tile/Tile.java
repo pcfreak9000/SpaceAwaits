@@ -15,14 +15,14 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
-import de.pcfreak9000.spaceawaits.world.Breakable;
+import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Tile implements Breakable {
+public class Tile extends Destructible {
     
     public static enum TileLayer {
         Front, Back;
@@ -43,12 +43,12 @@ public class Tile implements Breakable {
     
     static {
         NOTHING.setBouncyness(0);
-        NOTHING.setCanBreak(false);
         NOTHING.setLightColor(null);
         NOTHING.setOpaque(false);
         NOTHING.setTexture(null);
         NOTHING.setSolid(false);
         NOTHING.setColor(Color.CLEAR);
+        NOTHING.setCanBreak(false);
         GameRegistry.TILE_REGISTRY.register("empty", NOTHING);
     }
     
@@ -65,10 +65,6 @@ public class Tile implements Breakable {
     private float lighttransmission = 0.8f;
     
     private float bouncyness = 0f;
-    
-    private boolean canBreak = true;
-    private float materialLevel = 0f;
-    private float hardness = 1f;
     
     private String displayName;
     
@@ -102,16 +98,6 @@ public class Tile implements Breakable {
     
     public float getBouncyness() {
         return this.bouncyness;
-    }
-    
-    public Tile setCanBreak(boolean b) {
-        this.canBreak = b;
-        return this;
-    }
-    
-    @Override
-    public boolean canBreak() {
-        return this.canBreak;
     }
     
     public void setOpaque(boolean b) {
@@ -158,24 +144,6 @@ public class Tile implements Breakable {
     public Tile setLightTransmission(float f) {
         this.lighttransmission = f;
         return this;
-    }
-    
-    @Override
-    public float getMaterialLevel() {
-        return materialLevel;
-    }
-    
-    public void setMaterialLevel(float materialLevel) {
-        this.materialLevel = materialLevel;
-    }
-    
-    @Override
-    public float getHardness() {
-        return hardness;
-    }
-    
-    public void setHardness(float hardness) {
-        this.hardness = hardness;
     }
     
     public Composite getComposite() {
@@ -272,18 +240,37 @@ public class Tile implements Breakable {
         return null;
     }
     
-    @Override
-    public String toString() {
-        return "Tile [textureProvider=" + textureProvider + ", canBreak=" + canBreak + ", opaque=" + opaque + ", solid="
-                + solid + ", color=" + color + ", lightColor=" + lightColor + ", lighttransmission=" + lighttransmission
-                + ", bouncyness=" + bouncyness + "]";
-    }
-    
     public ITextureProvider getTextureProvider() {
         return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
     }
     
     public RenderMarkerComp getRendererMarkerComp() {
         return RenderTileDefaultMarkerComponent.INSTANCE;
+    }
+    
+    /**** Inherited stuff, changed for easier chaining ****/
+    
+    @Override
+    public Tile setCanBreak(boolean canBreak) {
+        super.setCanBreak(canBreak);
+        return this;
+    }
+    
+    @Override
+    public Tile setHardness(float hardness) {
+        super.setHardness(hardness);
+        return this;
+    }
+    
+    @Override
+    public Tile setMaterialLevel(float materialLevel) {
+        super.setMaterialLevel(materialLevel);
+        return this;
+    }
+    
+    @Override
+    public Tile setRequiredTool(String tool) {
+        super.setRequiredTool(tool);
+        return this;
     }
 }

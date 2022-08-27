@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.content.components.Components;
 import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
@@ -48,8 +49,8 @@ public class TreeFactory implements WorldEntityFactory {
         rec.texture = tex;
         rec.color = Color.WHITE;
         
-        rec.width = 50 / 32f;
-        rec.height = 222 / 32f;
+        rec.width = 50 / 16f;
+        rec.height = 222 / 16f;
         
         entity.add(rec);
         TransformComponent tc = new TransformComponent();
@@ -67,6 +68,7 @@ public class TreeFactory implements WorldEntityFactory {
         entity.add(ac);
         BreakableComponent bc = new BreakableComponent();
         bc.setRequired(Components.TRANSFORM);
+        bc.destructable.setMaterialLevel(1f).setRequiredTool(Tools.AXE);
         bc.breakable = new BreakableEntity() {
             
             @Override
@@ -74,20 +76,6 @@ public class TreeFactory implements WorldEntityFactory {
                 drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 1));
             }
             
-            @Override
-            public float getMaterialLevel() {
-                return 0;
-            }
-            
-            @Override
-            public float getHardness() {
-                return 1f;
-            }
-            
-            @Override
-            public boolean canBreak() {
-                return true;
-            }
         };
         entity.add(bc);
         RandomTickComponent rtc = new RandomTickComponent();

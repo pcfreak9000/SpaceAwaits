@@ -74,7 +74,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
-        ecs.addSystem(new BreakingSystem(this));
+        ecs.addSystem(new BreakingSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystem phsys = new PhysicsSystem(this, chunkProvider);
         ecs.addSystem(phsys);

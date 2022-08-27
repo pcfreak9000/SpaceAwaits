@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.Breakable;
+import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -34,17 +34,17 @@ public class BreakAttackAction implements Action {
     private final IBreaker br = new IBreaker() {
         
         @Override
-        public float breakIt(World world, Breakable breakable, float f) {
+        public float breakIt(World world, Destructible breakable, float f) {
             return 1f / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(World world, Breakable breakable) {
-            return true;
+        public boolean canBreak(World world, Destructible breakable) {
+            return breakable.getMaterialLevel() == 0.0f;
         }
         
         @Override
-        public void onBreak(World world, Breakable breakable, Array<ItemStack> drops, Random random) {
+        public void onBreak(World world, Destructible breakable, Array<ItemStack> drops, Random random) {
         }
         
     };
@@ -63,6 +63,9 @@ public class BreakAttackAction implements Action {
     public boolean handle(float mousex, float mousey, World world, Entity source) {
         TileSystem tiles = world.getSystem(TileSystem.class);
         Player player = Components.PLAYER_INPUT.get(source).player;
+        if (!player.isInReach(mousex, mousey)) {
+            return false;
+        }
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         int tx = Tile.toGlobalTile(mousex);
@@ -70,8 +73,8 @@ public class BreakAttackAction implements Action {
         ItemStack stack = player.getInventory().getSelectedStack();
         boolean used = false;
         //find the entity that got hit
-        Array<Object> ent = world.getSystem(PhysicsSystem.class).queryXY(mousex, mousey,
-                (udh, uc) -> udh.isEntity() && udh.getEntity() != source);//Can't hit yourself...
+        Array<Object> ent = world.getSystem(PhysicsSystem.class).queryXY(mousex, mousey, (udh, uc) -> udh.isEntity()
+                && udh.getEntity() != source && !Components.ITEM_STACK.has(udh.getEntity()));//Can't hit yourself or items...
         //What if there is an entity but without a body?? the tile behind it would be broken, might not be nice
         ent.sort(ENTITY_COMPARATOR);
         if (!ItemStack.isEmptyOrNull(stack)) {
@@ -96,8 +99,8 @@ public class BreakAttackAction implements Action {
             if (!ent.isEmpty()) {
                 Entity first = (Entity) ent.get(0);
                 //checks are done by breakEntity, thats sufficient in this case
-                boolean localUsed = world.breakEntity(br, first);
-                if (!localUsed) {
+                float prog = world.breakEntity(br, first);
+                if (prog == -1f) {
                     //default attack here?
                 }
             } else {

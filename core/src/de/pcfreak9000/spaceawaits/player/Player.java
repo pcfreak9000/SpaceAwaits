@@ -1,13 +1,16 @@
 package de.pcfreak9000.spaceawaits.player;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Vector2;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.gui.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 /**
@@ -45,6 +48,14 @@ public class Player implements NBTSerializable {
     
     public InventoryPlayer getInventory() {
         return this.inventory;
+    }
+    
+    //have reach component???
+    public boolean isInReach(float x, float y) {
+        Vector2 pos = Components.TRANSFORM.get(getPlayerEntity()).position;
+        float xdif = x - pos.x;
+        float ydif = y - pos.y;
+        return Mathf.square(xdif) + Mathf.square(ydif) < Mathf.square(10);
     }
     
     public void openContainer(GuiOverlay container) {

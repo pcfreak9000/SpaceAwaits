@@ -15,9 +15,9 @@ import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
 public class TreeBodyFactory implements BodyFactory {
     
-    private static final Vector2 WH = new Vector2(50 / 32f, 222 / 32f);
+    private static final Vector2 WH = new Vector2(50 / 16f, 222 / 16f);
     
-    private static final float[] bounds = UnitConversion.texelToPhysicsspace(METER_CONV, 32f, 222, new float[] { 12,
+    private static final float[] bounds = UnitConversion.texelToPhysicsspace(METER_CONV, 16f, 222, new float[] { 12,
             221, /**/ 34, 221, /**/ 29, 165, /**/ 49, 156, /**/ 45, 14, /**/ 11, 1, /**/ 3, 136, /**/ 21, 165 });//<- not convex, but anyways
     
     //this isnt used

@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.Breakable;
+import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
@@ -51,17 +51,17 @@ public class ItemMininglaser extends Item {
     private final IBreaker tilebreaker = new IBreaker() {
         
         @Override
-        public float breakIt(World world, Breakable breakable, float f) {
+        public float breakIt(World world, Destructible breakable, float f) {
             return 15 / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(World world, Breakable breakable) {
+        public boolean canBreak(World world, Destructible breakable) {
             return true;
         }
         
         @Override
-        public void onBreak(World world, Breakable breakable, Array<ItemStack> drops, Random random) {
+        public void onBreak(World world, Destructible breakable, Array<ItemStack> drops, Random random) {
         }
         
     };
