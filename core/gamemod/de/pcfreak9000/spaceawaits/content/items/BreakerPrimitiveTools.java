@@ -11,15 +11,14 @@ import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public class BreakerPrimitiveTools implements IBreaker {
     
-    public static final BreakerPrimitiveTools INSTANCE = new BreakerPrimitiveTools();
+    private String tool;
     
-    private String currentTool;
-    
-    private BreakerPrimitiveTools() {
+    public BreakerPrimitiveTools(String tool) {
+        this.tool = tool;
     }
     
     public void setTool(String tool) {
-        this.currentTool = tool;
+        this.tool = tool;
     }
     
     @Override
@@ -29,7 +28,7 @@ public class BreakerPrimitiveTools implements IBreaker {
     
     @Override
     public boolean canBreak(World world, Destructible breakable) {
-        return breakable.getMaterialLevel() <= 1.0f && currentTool == breakable.getRequiredTool();
+        return breakable.getMaterialLevel() <= 1.0f && tool == breakable.getRequiredTool();
     }
     
     @Override

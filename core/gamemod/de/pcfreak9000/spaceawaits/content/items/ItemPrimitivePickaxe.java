@@ -10,6 +10,8 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class ItemPrimitivePickaxe extends Item {
     
+    private final BreakerPrimitiveTools breaker = new BreakerPrimitiveTools(Tools.PICKAXE);
+    
     public ItemPrimitivePickaxe() {
         this.setMaxStackSize(1);
         this.setDisplayName("Primitive Pickaxe");
@@ -19,8 +21,7 @@ public class ItemPrimitivePickaxe extends Item {
     @Override
     public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
             int tx, int ty, TileLayer layer) {
-        BreakerPrimitiveTools.INSTANCE.setTool("pickaxe");
-        float f = tiles.breakTile(tx, ty, layer, BreakerPrimitiveTools.INSTANCE);
+        float f = tiles.breakTile(tx, ty, layer, breaker);
         return Tools.handleUsageBreaker(f, stackUsed, 20);
     }
     

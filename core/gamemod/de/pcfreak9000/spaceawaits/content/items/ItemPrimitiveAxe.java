@@ -12,6 +12,8 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class ItemPrimitiveAxe extends Item {
     
+    private final BreakerPrimitiveTools breaker = new BreakerPrimitiveTools(Tools.AXE);
+    
     public ItemPrimitiveAxe() {
         this.setMaxStackSize(1);
         this.setDisplayName("Primitive Axe");
@@ -21,16 +23,14 @@ public class ItemPrimitiveAxe extends Item {
     @Override
     public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, World world, float x, float y,
             Entity entity) {
-        BreakerPrimitiveTools.INSTANCE.setTool("axe");
-        float f = world.breakEntity(BreakerPrimitiveTools.INSTANCE, entity);
+        float f = world.breakEntity(breaker, entity);
         return Tools.handleUsageBreaker(f, stackUsed, 20);
     }
     
     @Override
     public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
             int tx, int ty, TileLayer layer) {
-        BreakerPrimitiveTools.INSTANCE.setTool("axe");
-        float f = tiles.breakTile(tx, ty, layer, BreakerPrimitiveTools.INSTANCE);
+        float f = tiles.breakTile(tx, ty, layer, breaker);
         return Tools.handleUsageBreaker(f, stackUsed, 20);
     }
     

@@ -144,6 +144,7 @@ public class PlayerInputSystem extends EntitySystem {
         return select % 9;
     }
     
+    //TODO Have a dedicated system for context clues and the tileselectorentity?
     private Entity createTileSelectorEntity() {
         Entity e = new EntityImproved();
         RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD);
