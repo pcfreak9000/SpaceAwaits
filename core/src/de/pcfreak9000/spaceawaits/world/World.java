@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
@@ -156,9 +155,7 @@ public abstract class World {
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
                 for (ItemStack s : drops) {
-                    Entity e = ItemEntityFactory.setupItemEntity(s, tc.position.x + worldRandom.nextFloat() / 2f,
-                            tc.position.y + worldRandom.nextFloat() / 2f);
-                    this.spawnEntity(e, false);
+                    ItemStack.dropRandomInTile(this, s, tc.position.x, tc.position.y);
                 }
                 drops.clear();
             }

@@ -1,10 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
-import com.badlogic.ashley.core.Entity;
-
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -24,8 +21,7 @@ public class TileLooseRocks extends Tile {
             if (!newNeighbour.isSolid()) {
                 tileSystem.removeTile(gtx, gty, layer);
                 //drop item
-                Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(getItemTile(), 1), gtx, gty);
-                world.spawnEntity(e, false);
+                ItemStack.drop(world, new ItemStack(getItemTile(), 1), gtx, gty);
             }
         }
     }

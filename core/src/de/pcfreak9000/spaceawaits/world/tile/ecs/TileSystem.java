@@ -12,8 +12,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
@@ -272,10 +270,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
-                    Entity e = ItemEntityFactory.setupItemEntity(s,
-                            tx + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2,
-                            ty + worldRandom.nextFloat() / 2f - Item.WORLD_SIZE / 2);
-                    world.spawnEntity(e, false);
+                    ItemStack.dropRandomInTile(world, s, tx, ty);
                 }
                 drops.clear();
             }

@@ -2,10 +2,13 @@ package de.pcfreak9000.spaceawaits.item;
 
 import java.util.Objects;
 
+import com.badlogic.ashley.core.Entity;
+
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**
@@ -21,6 +24,17 @@ public class ItemStack {
     public static final int MAX_STACKSIZE = 999;
     
     public static final ItemStack EMPTY = new ItemStack();
+    
+    public static void dropRandomInTile(World world, ItemStack stack, float x, float y) {
+        x = x + world.getWorldRandom().nextFloat() * 0.9f;
+        y = y + world.getWorldRandom().nextFloat() * 0.9f;
+        drop(world, stack, x, y);
+    }
+    
+    public static void drop(World world, ItemStack stack, float x, float y) {
+        Entity e = ItemEntityFactory.setupItemEntity(stack, x - Item.WORLD_SIZE / 2.1f, y - Item.WORLD_SIZE / 2.1f);
+        world.spawnEntity(e, false);
+    }
     
     public static boolean isItemEqual(ItemStack s1, ItemStack s2) {
         if (isEmptyOrNull(s1) || isEmptyOrNull(s2)) {

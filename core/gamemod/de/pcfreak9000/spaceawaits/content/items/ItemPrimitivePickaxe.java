@@ -10,6 +10,8 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class ItemPrimitivePickaxe extends Item {
     
+    private static final float RANGE = 5;
+    private static final int MAX_USES = 20;
     private final BreakerPrimitiveTools breaker = new BreakerPrimitiveTools(Tools.PICKAXE);
     
     public ItemPrimitivePickaxe() {
@@ -19,10 +21,15 @@ public class ItemPrimitivePickaxe extends Item {
     }
     
     @Override
+    public float getMaxRangeBreakAttack(Player player, ItemStack stack) {
+        return RANGE;
+    }
+    
+    @Override
     public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
             int tx, int ty, TileLayer layer) {
         float f = tiles.breakTile(tx, ty, layer, breaker);
-        return Tools.handleUsageBreaker(f, stackUsed, 20);
+        return Tools.handleUsageBreaker(f, stackUsed, MAX_USES);
     }
     
 }

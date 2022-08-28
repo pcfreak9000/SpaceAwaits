@@ -10,7 +10,6 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
-import mod.ContainerStorageDrawer;
 
 public class TileStorageDrawer extends Tile {
     public TileStorageDrawer() {

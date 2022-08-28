@@ -122,9 +122,7 @@ public class GuiInventory extends GuiOverlay {
             }
             if (!ItemStack.isEmptyOrNull(stuff)) {
                 stuff = InvUtil.insert(player.getInventory(), stuff);
-            }
-            if (!ItemStack.isEmptyOrNull(stuff)) {
-                //TODO: drop itemstack?
+                player.dropWhenPossible(stuff);
             }
             followmouse.setItemStack(null);
         }

@@ -63,9 +63,6 @@ public class BreakAttackAction implements Action {
     public boolean handle(float mousex, float mousey, World world, Entity source) {
         TileSystem tiles = world.getSystem(TileSystem.class);
         Player player = Components.PLAYER_INPUT.get(source).player;
-        if (!player.isInReach(mousex, mousey)) {
-            return false;
-        }
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         int tx = Tile.toGlobalTile(mousex);
@@ -77,7 +74,8 @@ public class BreakAttackAction implements Action {
                 && udh.getEntity() != source && !Components.ITEM_STACK.has(udh.getEntity()));//Can't hit yourself or items...
         //What if there is an entity but without a body?? the tile behind it would be broken, might not be nice
         ent.sort(ENTITY_COMPARATOR);
-        if (!ItemStack.isEmptyOrNull(stack)) {
+        if (!ItemStack.isEmptyOrNull(stack)
+                && player.isInReachFromHand(mousex, mousey, stack.getItem().getMaxRangeBreakAttack(player, stack))) {
             ItemStack cp = stack.cpy();
             if (stack.getItem().isSpecialBreakAttack()) {
                 used = stack.getItem().onItemSpecialBreakAttack(player, cp, world, mousex, mousey, tx, ty, layer);
@@ -95,19 +93,22 @@ public class BreakAttackAction implements Action {
             }
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
         }
+        if (!player.isInReachFromHand(mousex, mousey, 10)) {//TODO default reach?
+            return false;
+        }
         if (!used) {
             if (!ent.isEmpty()) {
                 Entity first = (Entity) ent.get(0);
                 //checks are done by breakEntity, thats sufficient in this case
                 float prog = world.breakEntity(br, first);
-                if (prog == -1f) {
+                if (prog == IBreaker.ABORTED_BREAKING) {
                     //default attack here?
                 }
             } else {
                 //checks are done by breakTile, thats sufficient in this case
                 tiles.breakTile(tx, ty, layer, br);
             }
-            //TODO also technically this uses stuff????
+            //also technically this uses stuff???? but this is default behaviour, and maybe some none-default behaviour awaits
         }
         return used;
     }

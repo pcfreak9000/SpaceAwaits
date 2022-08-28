@@ -38,6 +38,11 @@ public class ItemTile extends Item {
     }
     
     @Override
+    public float getMaxRangeUse(Player player, ItemStack stackUsed) {
+        return 10;//TODO range stuff again??? here use player.getBuildingRange(stack) or something??
+    }
+    
+    @Override
     public boolean onItemUse(Player player, ItemStack used, World world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         if (!used.isEmpty()) {

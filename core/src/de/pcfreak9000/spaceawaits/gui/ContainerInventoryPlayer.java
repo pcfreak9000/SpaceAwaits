@@ -56,9 +56,7 @@ public class ContainerInventoryPlayer extends GuiInventory {
                     if (lastS.simpleRecipe.matches(player.getInventory())) {
                         ItemStack is = lastS.simpleRecipe.craft(player.getInventory());
                         ItemStack leftover = InvUtil.insert(player.getInventory(), is);
-                        if (!ItemStack.isEmptyOrNull(leftover)) {
-                            //TODO drop leftovers
-                        }
+                        player.dropWhenPossible(leftover);
                     }
                 } else {
                     last = current;

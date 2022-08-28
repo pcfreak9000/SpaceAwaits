@@ -44,7 +44,8 @@ public class ContainerCrafter extends GuiInventory {
         for (int i = 0; i < inv.slots(); i++) {
             ItemStack stack = inv.removeStack(i);
             if (!ItemStack.isEmptyOrNull(stack)) {
-                InvUtil.insert(player.getInventory(), stack);
+                ItemStack leftover = InvUtil.insert(player.getInventory(), stack);
+                player.dropWhenPossible(leftover);
             }
         }
     }

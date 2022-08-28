@@ -15,7 +15,6 @@ import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
-import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.BreakableEntity;
@@ -88,9 +87,8 @@ public class TreeFactory implements WorldEntityFactory {
             //PhysicsComponent pcc = Components.PHYSICS.get(entity);
             float f0 = world.getWorldRandom().nextFloat();
             float f1 = world.getWorldRandom().nextFloat();
-            Entity e = ItemEntityFactory.setupItemEntity(new ItemStack(Items.TWIG, 1), tcc.position.x + f0 * 1.5f,
+            ItemStack.drop(world, new ItemStack(Items.TWIG, 1), tcc.position.x + f0 * 1.5f,
                     tcc.position.y + 2 + f1 * 3);
-            world.spawnEntity(e, false);
         };
         entity.add(rtc);
         OnNeighbourChangeComponent oncc = new OnNeighbourChangeComponent();

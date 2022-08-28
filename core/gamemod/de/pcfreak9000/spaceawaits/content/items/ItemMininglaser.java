@@ -31,6 +31,11 @@ public class ItemMininglaser extends Item {
     }
     
     @Override
+    public float getMaxRangeBreakAttack(Player player, ItemStack stackUsed) {
+        return Float.POSITIVE_INFINITY;
+    }
+    
+    @Override
     public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, World world, float x, float y, int tx,
             int ty, TileLayer layer) {
         TransformComponent tc = Components.TRANSFORM.get(player.getPlayerEntity());

@@ -36,7 +36,8 @@ public class UseAction implements Action {
         boolean used = false;
         ItemStack stack = player.getInventory().getSelectedStack();
         TileSystem tileSystem = world.getSystem(TileSystem.class);
-        if (!used) {//Move to activator in chunk entity? -> chunk isnt filled with fixtures but they are used for detection, so no (for now)
+        //TODO default range? or something depending on the tile? or something depending on the item as well?
+        if (!used && player.isInReachFromHand(mousex, mousey, 10)) {//Move to activator in chunk entity? -> chunk isnt filled with fixtures but they are used for detection, so no (for now)
             Tile clicked = tileSystem.getTile(tx, ty, TileLayer.Front);//Only allow using the front layer... (afaik backlayer doesnt support tile entities?)
             //onTileUse
             ItemStack cp = stack != null ? stack.cpy() : null;
@@ -47,8 +48,8 @@ public class UseAction implements Action {
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
         }
         
-        if (!used && player.getInventory().getSelectedStack() != null
-                && !player.getInventory().getSelectedStack().isEmpty()) {
+        if (!used && !ItemStack.isEmptyOrNull(stack)
+                && player.isInReachFromHand(mousex, mousey, stack.getItem().getMaxRangeUse(player, stack))) {
             //onItemUse
             if (stack != null && stack.getItem() != null) {
                 ItemStack cp = stack.cpy();

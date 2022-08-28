@@ -6,11 +6,13 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -30,11 +32,14 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Player player;
     
+    private World world;
+    
     private Entity tileSelectorEntity;
     
     public PlayerInputSystem(World world, GameRenderer renderer) {
         this.worldRend = renderer;
         this.tileSelectorEntity = createTileSelectorEntity();
+        this.world = world;
         world.getWorldBus().register(this);
     }
     
@@ -70,11 +75,16 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
+        Entity entity = this.player.getPlayerEntity();
+        Vector2 pos = Components.TRANSFORM.get(entity).position;
+        for (ItemStack s : player.getDroppingQueue()) {
+            ItemStack.drop(world, s, pos.x, pos.y);
+        }
+        player.getDroppingQueue().clear();
         if (worldRend.isGuiContainerOpen()) {
             return;
         }
         
-        Entity entity = this.player.getPlayerEntity();
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
         float vx = 0;
