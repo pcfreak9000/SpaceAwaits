@@ -39,7 +39,7 @@ public class ItemTile extends Item {
     
     @Override
     public float getMaxRangeUse(Player player, ItemStack stackUsed) {
-        return 10;//TODO range stuff again??? here use player.getBuildingRange(stack) or something??
+        return player.getReach();
     }
     
     @Override

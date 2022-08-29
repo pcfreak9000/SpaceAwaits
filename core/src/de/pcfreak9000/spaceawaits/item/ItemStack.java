@@ -23,18 +23,12 @@ public class ItemStack {
     
     public static final int MAX_STACKSIZE = 999;
     
-    public static final ItemStack EMPTY = new ItemStack();
-    
-    public static void dropRandomInTile(World world, ItemStack stack, float x, float y) {
-        x = x + world.getWorldRandom().nextFloat() * 0.9f;
-        y = y + world.getWorldRandom().nextFloat() * 0.9f;
-        drop(world, stack, x, y);
-    }
-    
-    public static void drop(World world, ItemStack stack, float x, float y) {
-        Entity e = ItemEntityFactory.setupItemEntity(stack, x - Item.WORLD_SIZE / 2.1f, y - Item.WORLD_SIZE / 2.1f);
-        world.spawnEntity(e, false);
-    }
+    public static final ItemStack EMPTY = new ItemStack() {
+        @Override
+        public void drop(World world, float x, float y) {
+            return;
+        }
+    };
     
     public static boolean isItemEqual(ItemStack s1, ItemStack s2) {
         if (isEmptyOrNull(s1) || isEmptyOrNull(s2)) {
@@ -49,15 +43,6 @@ public class ItemStack {
     
     public static boolean isEmptyOrNull(ItemStack stack) {
         return stack == null || stack.isEmpty();
-    }
-    
-    public void dealDamageUpdateBar(int dmgDealt, int max, boolean removeIfUsedUp) {
-        NBTCompound nbt = this.getOrCreateNBT();
-        nbt.putInt("barMax", max);
-        nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
-        if (removeIfUsedUp && nbt.getInt("bar") <= 0) {
-            this.changeNumber(-1);
-        }
     }
     
     public static ItemStack join(ItemStack stack0, ItemStack stack1) {
@@ -201,6 +186,26 @@ public class ItemStack {
     
     public void setNBT(NBTCompound nbt) {
         this.nbt = nbt;
+    }
+    
+    public void dealDamageUpdateBar(int dmgDealt, int max, boolean removeIfUsedUp) {
+        NBTCompound nbt = this.getOrCreateNBT();
+        nbt.putInt("barMax", max);
+        nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
+        if (removeIfUsedUp && nbt.getInt("bar") <= 0) {
+            this.changeNumber(-1);
+        }
+    }
+    
+    public void dropRandomInTile(World world, float x, float y) {
+        x = x + world.getWorldRandom().nextFloat() * 0.9f;
+        y = y + world.getWorldRandom().nextFloat() * 0.9f;
+        drop(world, x, y);
+    }
+    
+    public void drop(World world, float x, float y) {
+        Entity e = ItemEntityFactory.setupItemEntity(this, x - Item.WORLD_SIZE / 2.1f, y - Item.WORLD_SIZE / 2.1f);
+        world.spawnEntity(e, false);
     }
     
     @Override

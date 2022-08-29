@@ -155,7 +155,7 @@ public abstract class World {
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
                 for (ItemStack s : drops) {
-                    ItemStack.dropRandomInTile(this, s, tc.position.x, tc.position.y);
+                    s.dropRandomInTile(this, tc.position.x, tc.position.y);
                 }
                 drops.clear();
             }

@@ -87,8 +87,8 @@ public class TreeFactory implements WorldEntityFactory {
             //PhysicsComponent pcc = Components.PHYSICS.get(entity);
             float f0 = world.getWorldRandom().nextFloat();
             float f1 = world.getWorldRandom().nextFloat();
-            ItemStack.drop(world, new ItemStack(Items.TWIG, 1), tcc.position.x + f0 * 1.5f,
-                    tcc.position.y + 2 + f1 * 3);
+            ItemStack toDrop = new ItemStack(Items.TWIG, 1);
+            toDrop.drop(world, tcc.position.x + f0 * 1.5f, tcc.position.y + 2 + f1 * 3);
         };
         entity.add(rtc);
         OnNeighbourChangeComponent oncc = new OnNeighbourChangeComponent();

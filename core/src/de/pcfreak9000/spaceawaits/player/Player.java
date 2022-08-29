@@ -56,6 +56,10 @@ public class Player implements NBTSerializable {
         return this.toDrop;
     }
     
+    public float getReach() {
+        return 10;
+    }
+    
     //have reach component??? maybe move this into hand component or so? and then as parameter have an entity?
     public boolean isInReachFromHand(float x, float y, float range) {
         Vector2 pos = Components.TRANSFORM.get(getPlayerEntity()).position;//Hmm. Entity stuff here? oof

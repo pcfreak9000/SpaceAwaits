@@ -78,7 +78,7 @@ public class PlayerInputSystem extends EntitySystem {
         Entity entity = this.player.getPlayerEntity();
         Vector2 pos = Components.TRANSFORM.get(entity).position;
         for (ItemStack s : player.getDroppingQueue()) {
-            ItemStack.drop(world, s, pos.x, pos.y);
+            s.drop(world, pos.x, pos.y);
         }
         player.getDroppingQueue().clear();
         if (worldRend.isGuiContainerOpen()) {

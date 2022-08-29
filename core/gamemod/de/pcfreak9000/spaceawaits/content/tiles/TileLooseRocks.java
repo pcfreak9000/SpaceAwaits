@@ -20,8 +20,8 @@ public class TileLooseRocks extends Tile {
         if (ngty == gty - 1 && ngtx == gtx) {
             if (!newNeighbour.isSolid()) {
                 tileSystem.removeTile(gtx, gty, layer);
-                //drop item
-                ItemStack.drop(world, new ItemStack(getItemTile(), 1), gtx, gty);
+                ItemStack toDrop = new ItemStack(getItemTile(), 1);
+                toDrop.drop(world, gtx, gty);
             }
         }
     }

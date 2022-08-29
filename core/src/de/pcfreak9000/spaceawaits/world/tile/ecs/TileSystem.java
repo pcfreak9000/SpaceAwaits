@@ -270,7 +270,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {
-                    ItemStack.dropRandomInTile(world, s, tx, ty);
+                    s.dropRandomInTile(world, tx, ty);
                 }
                 drops.clear();
             }

@@ -123,6 +123,10 @@ public class Item {
         return 0;
     }
     
+    public float getReach(Player player, ItemStack stack) {
+        return player.getReach();
+    }
+    
     public boolean isSpecialBreakAttack() {
         return false;
     }
