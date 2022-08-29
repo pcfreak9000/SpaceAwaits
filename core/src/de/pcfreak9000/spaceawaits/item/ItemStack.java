@@ -101,9 +101,17 @@ public class ItemStack {
         this.item = null;
     }
     
+    public ItemStack(Item item) {
+        this(item, 1);
+    }
+    
     public ItemStack(final Item item, final int count) {
         this.item = Objects.requireNonNull(item);
         this.count = count;
+    }
+    
+    public ItemStack(Tile tile) {
+        this(tile, 1);
     }
     
     public ItemStack(final Tile tile, final int count) {
