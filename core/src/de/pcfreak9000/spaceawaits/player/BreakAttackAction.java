@@ -59,6 +59,8 @@ public class BreakAttackAction implements Action {
         return EnumInputIds.BreakAttack;
     }
     
+    private ItemStack current;
+    
     @Override
     public boolean handle(float mousex, float mousey, World world, Entity source) {
         TileSystem tiles = world.getSystem(TileSystem.class);
@@ -92,6 +94,7 @@ public class BreakAttackAction implements Action {
                 }
             }
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
+            current = cp;
         }
         if (!player.isInReachFromHand(mousex, mousey,
                 (ItemStack.isEmptyOrNull(stack) ? player.getReach() : stack.getItem().getReach(player, stack)))) {
@@ -114,4 +117,15 @@ public class BreakAttackAction implements Action {
         return used;
     }
     
+    @Override
+    public boolean handleRelease(float mousex, float mousey, World world, Entity source) {
+        Player player = Components.PLAYER_INPUT.get(source).player;
+        ItemStack selected = player.getInventory().getSelectedStack();
+        if (!ItemStack.isEmptyOrNull(current) && ItemStack.isItemEqual(current, selected)) {
+            //Check for reach or nah?
+            //Have seperate entity and tile in item methods for release ?
+        }
+        current = null;
+        return false;
+    }
 }

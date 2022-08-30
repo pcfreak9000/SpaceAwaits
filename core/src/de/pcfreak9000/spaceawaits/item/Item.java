@@ -114,7 +114,6 @@ public class Item {
     //Forward break attack stuff only if target is inside max range
     //what about context, like what is being targeted, etc??? also for rendering purposes of highlighting possible actions maybe? 
     //-> item vs tile
-    //different maxrange for use vs breakattack?
     public float getMaxRangeBreakAttack(Player player, ItemStack stackUsed) {
         return 0;
     }

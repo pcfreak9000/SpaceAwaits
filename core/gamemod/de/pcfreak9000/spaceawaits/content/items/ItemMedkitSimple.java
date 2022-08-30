@@ -19,7 +19,10 @@ public class ItemMedkitSimple extends Item {
         setDisplayName("Simple Medkit");
         setTexture("medkit.png");
     }
-    
+    @Override
+    public float getMaxRangeUse(Player player, ItemStack stackUsed) {
+        return 5;
+    }
     @Override
     public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex,
             int tiley, TileLayer layer) {

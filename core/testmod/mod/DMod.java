@@ -151,7 +151,8 @@ public class DMod {
                 new ItemStack(Items.TWIG, 2), new ItemStack(Items.LOOSEROCK, 3));
         CraftingManager.instance().addSimpleRecipe(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1),
                 new ItemStack(Tiles.WOOD, 4));
-        
+        CraftingManager.instance().addR(new ItemStack(Items.AXE_PRIMITIVE), "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S',
+                Items.TWIG);
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
@@ -193,7 +194,7 @@ public class DMod {
                         Components.STATS.get(ship).get("mechHealth").current = 1;
                         LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
                                 ship.getComponent(ComponentInventoryShip.class).invShip);
-                        //world.spawnEntity(ship, false);
+                        world.spawnEntity(ship, false);
                     }
                     
                     @Override

@@ -24,6 +24,7 @@ public class ContainerCrafter extends GuiInventory {
         Table supertable = new Table();
         supertable.setFillParent(true);
         supertable.align(Align.center);
+        Table some = new Table();
         Table subtable = new Table();
         subtable.align(Align.center);
         for (int i = 0; i < inv.slots(); i++) {
@@ -32,7 +33,9 @@ public class ContainerCrafter extends GuiInventory {
             }
             subtable.add(registerSlot(new Slot(inv, i))).pad(0.5f);
         }
-        supertable.add(subtable).pad(10f);
+        some.add(subtable).pad(30f);
+        some.add(registerSlot(new Slot(inv.getResultInventory(), 0)));
+        supertable.add(some).pad(10f);
         supertable.row();
         supertable.add(createPlayerInventoryTable());
         stage.addActor(supertable);

@@ -11,4 +11,8 @@ public interface Action {
     Object getInputKey();
     
     boolean handle(float mousex, float mousey, World world, Entity source);
+    
+    default boolean handleRelease(float x, float y, World world, Entity e) {
+        return false;
+    }
 }

@@ -20,4 +20,8 @@ public interface Activator {
      * @return
      */
     boolean handle(float mousex, float mousey, Entity entity, World world, Entity source);
+    
+    //    default boolean handleRelease(float x, float y, Entity e, World world, Entity playerEntity) {
+    //        return false;
+    //    }
 }

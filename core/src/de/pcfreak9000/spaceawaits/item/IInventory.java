@@ -30,7 +30,11 @@ public interface IInventory {
      * @param index slot
      * @return previous content in the given slot or null if none
      */
-    ItemStack removeStack(int index);
+    default ItemStack removeStack(int index) {
+        ItemStack stack = getStack(index);
+        setSlotContent(index, null);
+        return stack;
+    }
     
     /**
      * Sets the content of the specified slot. Discards any previous content.

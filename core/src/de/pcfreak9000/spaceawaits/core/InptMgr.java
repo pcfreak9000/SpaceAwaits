@@ -22,6 +22,9 @@ public class InptMgr {
     private static boolean[] justPressedKeys = new boolean[Keys.MAX_KEYCODE + 1];
     private static boolean[] justPressedButtons = new boolean[5];
     
+    private static boolean[] justReleasedKeys = new boolean[Keys.MAX_KEYCODE + 1];
+    private static boolean[] justReleasedButtons = new boolean[5];
+    
     private static boolean justModeNormal = false;
     
     public static void init() {
@@ -63,6 +66,21 @@ public class InptMgr {
         if (s != null) {
             for (int i = 0; i < s.length; i++) {
                 if (s[i].isJustPressed()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public static boolean isJustReleased(Object id) {
+        if (locked) {
+            return false;
+        }
+        ButtonKey[] s = mappings.get(id);
+        if (s != null) {
+            for (int i = 0; i < s.length; i++) {
+                if (s[i].isJustReleased()) {
                     return true;
                 }
             }
@@ -114,6 +132,12 @@ public class InptMgr {
         for (int i = 0; i < justPressedButtons.length; i++) {
             justPressedButtons[i] = false;
         }
+        for (int i = 0; i < justReleasedKeys.length; i++) {
+            justReleasedKeys[i] = false;
+        }
+        for (int i = 0; i < justReleasedButtons.length; i++) {
+            justReleasedButtons[i] = false;
+        }
     }
     
     public static class ButtonKey {
@@ -140,6 +164,14 @@ public class InptMgr {
                 return justModeNormal ? Gdx.input.isKeyJustPressed(code) : justPressedKeys[code];
             }
         }
+        
+        public boolean isJustReleased() {
+            if (isButton) {
+                return justReleasedButtons[code];
+            } else {
+                return justReleasedKeys[code];
+            }
+        }
     }
     
     private static class InptProc implements InputProcessor {
@@ -152,6 +184,7 @@ public class InptMgr {
         
         @Override
         public boolean keyUp(int keycode) {
+            justReleasedKeys[keycode] = true;
             return false;
         }
         
@@ -168,6 +201,7 @@ public class InptMgr {
         
         @Override
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            justReleasedButtons[button] = true;
             return false;
         }
         

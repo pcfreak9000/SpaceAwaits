@@ -1,13 +1,28 @@
 package de.pcfreak9000.spaceawaits.content;
 
+import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
+import de.pcfreak9000.spaceawaits.crafting.InventoryCraftingResult;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class InventoryCrafting implements IInventory {
     private final ItemStack[] stacks;
+    private final int size;
+    
+    private IInventory craftingresult;
     
     public InventoryCrafting(int side) {
         this.stacks = new ItemStack[side * side];
+        this.size = side;
+        this.craftingresult = new InventoryCraftingResult();
+    }
+    
+    public IInventory getResultInventory() {
+        return this.craftingresult;
+    }
+    
+    public ItemStack getStackInXY(int x, int y) {
+        return getStack(x + y * size);
     }
     
     @Override
@@ -21,15 +36,9 @@ public class InventoryCrafting implements IInventory {
     }
     
     @Override
-    public ItemStack removeStack(int index) {
-        ItemStack s = stacks[index];
-        stacks[index] = null;
-        return s;
-    }
-    
-    @Override
     public void setSlotContent(int index, ItemStack stack) {
         stacks[index] = stack;
+        craftingresult.setSlotContent(0, CraftingManager.instance().tryCraft(this));
     }
     
     @Override

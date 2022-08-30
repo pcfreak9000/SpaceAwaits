@@ -24,6 +24,11 @@ public class ItemRepairGun extends Item {
     }
     
     @Override
+    public float getMaxRangeUse(Player player, ItemStack stackUsed) {
+        return 15;
+    }
+    
+    @Override
     public boolean onItemUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         PhysicsSystem phys = world.getSystem(PhysicsSystem.class);
