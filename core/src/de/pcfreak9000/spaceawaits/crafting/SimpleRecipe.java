@@ -30,10 +30,10 @@ public class SimpleRecipe implements IRecipe {
     }
     
     @Override
-    public ItemStack craft(IInventory inventory) {
+    public ItemStack getCraftingResult(IInventory inventory) {
         for (ItemStack in : inputs) {
             InvUtil.removeItemCount(inventory, in);
-        }
+        } //Ugh
         return result.cpy();
     }
     

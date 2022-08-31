@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.items;
+package mod;
 
 import java.util.Random;
 

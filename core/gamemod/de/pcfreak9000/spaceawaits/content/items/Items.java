@@ -11,7 +11,6 @@ public class Items {
     public static final Item TWIG = new Item();
     public static final Item LOOSEROCK = new Item();
     public static final Item REPAIRGUN = new ItemRepairGun();
-    public static final Item MININGLASER = new ItemMininglaser();
     
     public static void registerItems() {
         //@formatter:off
@@ -21,7 +20,6 @@ public class Items {
         GameRegistry.ITEM_REGISTRY.register("twig", TWIG.setTexture("stick.png").setDisplayName("Twig"));
         GameRegistry.ITEM_REGISTRY.register("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
         GameRegistry.ITEM_REGISTRY.register("repairgun", REPAIRGUN);
-        GameRegistry.ITEM_REGISTRY.register("mininglaser", MININGLASER);
         //@formatter:on
     }
     

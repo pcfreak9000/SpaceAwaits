@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.crafting;
 
 import com.badlogic.gdx.utils.Array;
 
-import de.pcfreak9000.spaceawaits.content.InventoryCrafting;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class CraftingManager {
@@ -20,14 +19,14 @@ public class CraftingManager {
         simpleRecipes.add(new SimpleRecipe(result, inputs));
     }
     
-    public void addR(ItemStack r, Object... o) {
-        this.shapedRecipes.add(new ShapedRecipe(r, o));
+    public void addShapedRecipe(ShapedRecipe sr) {
+        this.shapedRecipes.add(sr);
     }
     
-    public ItemStack tryCraft(InventoryCrafting inventoryCrafting) {
+    public IRecipe findMatchingRecipe(InventoryCrafting inventoryCrafting) {
         for (ShapedRecipe s : shapedRecipes) {
             if (s.matches(inventoryCrafting)) {
-                return s.craft(inventoryCrafting);
+                return s;
             }
         }
         return null;

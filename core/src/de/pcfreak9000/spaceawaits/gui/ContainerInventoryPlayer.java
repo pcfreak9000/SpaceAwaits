@@ -54,7 +54,7 @@ public class ContainerInventoryPlayer extends GuiInventory {
                 RecipeUI selected = list.getSelected();
                 if (dif < InptMgr.DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     if (lastS.simpleRecipe.matches(player.getInventory())) {
-                        ItemStack is = lastS.simpleRecipe.craft(player.getInventory());
+                        ItemStack is = lastS.simpleRecipe.getCraftingResult(player.getInventory());
                         ItemStack leftover = InvUtil.insert(player.getInventory(), is);
                         player.dropWhenPossible(leftover);
                     }

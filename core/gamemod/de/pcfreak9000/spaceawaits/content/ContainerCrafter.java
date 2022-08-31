@@ -3,7 +3,9 @@ package de.pcfreak9000.spaceawaits.content;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import de.pcfreak9000.spaceawaits.crafting.InventoryCrafting;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
+import de.pcfreak9000.spaceawaits.gui.ResultSlot;
 import de.pcfreak9000.spaceawaits.gui.Slot;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -34,7 +36,7 @@ public class ContainerCrafter extends GuiInventory {
             subtable.add(registerSlot(new Slot(inv, i))).pad(0.5f);
         }
         some.add(subtable).pad(30f);
-        some.add(registerSlot(new Slot(inv.getResultInventory(), 0)));
+        some.add(registerSlot(new ResultSlot(inv.getResultInventory(), 0)));
         supertable.add(some).pad(10f);
         supertable.row();
         supertable.add(createPlayerInventoryTable());

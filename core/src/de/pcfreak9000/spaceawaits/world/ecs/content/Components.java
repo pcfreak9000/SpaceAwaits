@@ -62,7 +62,7 @@ public class Components {
     public static final ComponentMapper<OnSolidGroundComponent> ON_SOLID_GROUND = ComponentMapper
             .getFor(OnSolidGroundComponent.class);
     
-    public static final ComponentMapper<StatsComponent> STATS = ComponentMapper.getFor(StatsComponent.class);//FIXME is this even used in core?
+    public static final ComponentMapper<StatsComponent> STATS = ComponentMapper.getFor(StatsComponent.class);//FIXMEx is this even used in core? well, yes, (just) for rendering, but makes sense as stats are pretty general
     
     public static final ComponentMapper<ItemStackComponent> ITEM_STACK = ComponentMapper
             .getFor(ItemStackComponent.class);

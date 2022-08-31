@@ -22,7 +22,11 @@ public interface IInventory {
      * @param index slot
      * @return content in the given slot or null if none
      */
-    ItemStack getStack(int index);
+    ItemStack getStack(int index);//dOnT mOdIfY... this kinda sucks
+    
+    default ItemStackReadable getStackR(int index) {
+        return new ItemStackReadable(getStack(index), this, index);
+    }
     
     /**
      * Removes the contents of the specified slot and returns them.
@@ -30,10 +34,24 @@ public interface IInventory {
      * @param index slot
      * @return previous content in the given slot or null if none
      */
+    @Deprecated
     default ItemStack removeStack(int index) {
         ItemStack stack = getStack(index);
         setSlotContent(index, null);
         return stack;
+    }
+    
+    default ItemStack decrStackSize(int slot, int remov) {
+        ItemStack stack = getStack(slot);
+        if (ItemStack.isEmptyOrNull(stack)) {
+            return null;
+        }
+        ItemStack ret = stack.sub(remov);
+        if (ItemStack.isEmptyOrNull(stack)) {
+            stack = null;
+        }
+        setSlotContent(slot, stack);
+        return ret;
     }
     
     /**

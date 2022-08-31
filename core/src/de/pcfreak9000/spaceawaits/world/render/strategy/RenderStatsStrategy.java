@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.RenderStatsComponent;
@@ -48,6 +49,7 @@ public class RenderStatsStrategy extends AbstractRenderStrategy {
         float y = statsy;
         for (StatData st : hc.statDatas.values()) {
             float ratio = st.current / st.max;
+            ratio = Mathf.clamp(ratio, 0, 1);
             batch.setColor(Color.RED);
             batch.draw(CoreRes.WHITE, x, y, rsc.width, 0.2f);
             if (ratio > 0.01f) {

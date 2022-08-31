@@ -7,7 +7,9 @@ public interface IRecipe {
        
     boolean matches(IInventory inventory);
     
-    ItemStack craft(IInventory inventory);
+    //When the crafting actually happens
+    ItemStack getCraftingResult(IInventory inventory);
     
+    //For information purposes about this recipe
     ItemStack getResult();
 }

@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class ItemRepairGun extends Item {
+    private static final int MAX_USES = 2000;
     
     public ItemRepairGun() {
         setMaxStackSize(1);
@@ -40,7 +41,7 @@ public class ItemRepairGun extends Item {
             StatData s = sc.get("mechHealth");
             if (!s.isMax()) {
                 s.add(5);
-                stackUsed.dealDamageUpdateBar(1, 2000, true);
+                stackUsed.dealDamageUpdateBar(1, MAX_USES, true);
                 return true;
             }
         }

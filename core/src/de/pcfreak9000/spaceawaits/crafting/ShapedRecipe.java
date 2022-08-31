@@ -3,9 +3,7 @@ package de.pcfreak9000.spaceawaits.crafting;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.pcfreak9000.spaceawaits.content.InventoryCrafting;
 import de.pcfreak9000.spaceawaits.item.IInventory;
-import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -15,6 +13,14 @@ public class ShapedRecipe implements IRecipe {
     private ItemStack result;
     private Object[] inputs;
     private int width, height;
+    
+    public ShapedRecipe(Item result, Object... recipe) {
+        this(new ItemStack(result), recipe);
+    }
+    
+    public ShapedRecipe(Tile result, Object... recipe) {
+        this(new ItemStack(result), recipe);
+    }
     
     public ShapedRecipe(ItemStack result, Object... recipe) {
         this.result = result;
@@ -60,11 +66,12 @@ public class ShapedRecipe implements IRecipe {
         if (!(inventory instanceof InventoryCrafting)) {
             return false;
         }
-        int CRAFT_GRID_WIDTH = 3;
-        int CRAFT_GRID_HEIGHT = 3;
-        for (int x = 0; x <= CRAFT_GRID_WIDTH - width; x++) {
-            for (int y = 0; y <= CRAFT_GRID_HEIGHT - height; y++) {
-                if (checkMatch((InventoryCrafting) inventory, x, y)) {
+        InventoryCrafting ic = (InventoryCrafting) inventory;
+        int craftgridWidth = ic.getSideSize();
+        int craftgridHeight = ic.getSideSize();
+        for (int x = 0; x <= craftgridWidth - width; x++) {
+            for (int y = 0; y <= craftgridHeight - height; y++) {
+                if (checkMatch(ic, x, y)) {
                     return true;
                 }
             }
@@ -92,10 +99,7 @@ public class ShapedRecipe implements IRecipe {
     }
     
     @Override
-    public ItemStack craft(IInventory inventory) {
-        for (Object in : inputs) {
-            InvUtil.removeItemCount(inventory, (ItemStack) in);
-        }
+    public ItemStack getCraftingResult(IInventory inventory) {
         return result.cpy();
     }
     

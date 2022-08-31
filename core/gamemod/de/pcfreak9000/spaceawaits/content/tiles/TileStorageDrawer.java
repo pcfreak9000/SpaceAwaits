@@ -46,7 +46,7 @@ public class TileStorageDrawer extends Tile {
         super.onBreak(world, drops, random, tiles, tx, ty, layer);
         TileEntityStorageDrawer te = (TileEntityStorageDrawer) tiles.getTileEntity(tx, ty, TileLayer.Front);
         for (int i = 0; i < te.slots(); i++) {
-            drops.add(te.getStack(i));
+            drops.add(te.removeStack(i));
         }
     }
 }

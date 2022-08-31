@@ -20,6 +20,8 @@ import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
+import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
@@ -75,6 +77,7 @@ public class DMod {
     public TileLiquid water = new TileLiquid();
     
     public SpaceshipFactory fac = new SpaceshipFactory();
+    public static final Item MININGLASER = new ItemMininglaser();
     
     //TODO ALLGEMEIN:
     //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
@@ -140,6 +143,7 @@ public class DMod {
         b2.h = 1;
         GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
+        GameRegistry.ITEM_REGISTRY.register("mininglaser", MININGLASER);
         
     }
     
@@ -151,20 +155,20 @@ public class DMod {
                 new ItemStack(Items.TWIG, 2), new ItemStack(Items.LOOSEROCK, 3));
         CraftingManager.instance().addSimpleRecipe(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1),
                 new ItemStack(Tiles.WOOD, 4));
-        CraftingManager.instance().addR(new ItemStack(Items.AXE_PRIMITIVE), "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S',
-                Items.TWIG);
+        CraftingManager.instance().addShapedRecipe(
+                new ShapedRecipe(Items.AXE_PRIMITIVE, "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S', Items.TWIG));
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
         shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
         shipStarterTable.add(new GuaranteedInventoryContent(Items.MEDKIT_SIMPLE, 1, 2));
-        shipStarterTable.add(new WeightedRandomInventoryContent(Items.MININGLASER, 2, 1, 1, false));
+        shipStarterTable.add(new WeightedRandomInventoryContent(MININGLASER, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
         LootTable housethingTable = LootTable.getFor("housething");
         housethingTable.addMin(1);
         housethingTable.addMax(3);
-        housethingTable.add(new WeightedRandomInventoryContent(Items.MININGLASER, 10, 1, 1, false));
+        housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
         GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
