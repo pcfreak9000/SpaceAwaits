@@ -1,7 +1,6 @@
 package de.pcfreak9000.spaceawaits.mod;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -11,15 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.reflections.Reflections;
 
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
 /**
  * loads mods.
@@ -31,19 +33,19 @@ public class Modloader {
     
     public static final String THIS_INSTANCE_ID = "this";
     
-    private static class ModClassFileHolder {
-        private final File file;
-        private final Class<?> modclass;
-        
-        private ModClassFileHolder(final Class<?> clazz, final File file) {
-            this.file = file;
-            this.modclass = clazz;
-        }
-    }
+    //    private static class ModClassFileHolder {
+    //        private final File file;
+    //        private final Class<?> modclass;
+    //        
+    //        private ModClassFileHolder(final Class<?> clazz, final File file) {
+    //            this.file = file;
+    //            this.modclass = clazz;
+    //        }
+    //    }
     
-    private static final Comparator<ModClassFileHolder> COMP = (o1, o2) -> {
-        final Mod m1 = o1.modclass.getAnnotation(Mod.class);
-        final Mod m2 = o2.modclass.getAnnotation(Mod.class);
+    private static final Comparator<Class<?>> COMP = (o1, o2) -> {
+        final Mod m1 = o1.getAnnotation(Mod.class);
+        final Mod m2 = o2.getAnnotation(Mod.class);
         final int vt = m1.id().compareToIgnoreCase(m2.id());
         if (vt != 0) {
             return vt;
@@ -62,9 +64,11 @@ public class Modloader {
     private static final Pattern ZIP_JAR_PATTERN = Pattern.compile("(.+).(zip|jar)$");
     private static final Logger LOGGER = Logger.getLogger(Modloader.class);
     
-    private final List<ModClassFileHolder> modClasses = new ArrayList<>();
+    private final List<Class<?>> modClasses = new ArrayList<>();
     private final List<ModContainer> modList = new ArrayList<>();
     private final List<ModContainer> readOnlyModList = Collections.unmodifiableList(this.modList);
+    
+    private Set<Class<?>> classesWithSerialize = new LinkedHashSet<>();
     
     private URLClassLoader modClassLoader;
     
@@ -88,9 +92,9 @@ public class Modloader {
         LOGGER.info("Instantiating mods...");
         //        LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingEvent("Constructing mods", true));
         int i = 0;
-        for (final ModClassFileHolder th : this.modClasses) {
+        for (final Class<?> modClass : this.modClasses) {
             i++;
-            final Class<?> modClass = th.modclass;
+            //final Class<?> modClass = th.modclass;
             //            LoadingScreen.LOADING_STAGE_BUS.post(new LoadingScreen.LoadingSubEvent(
             //                    modClass.getAnnotation(Mod.class).name(), i, this.modClasses.size()));
             Object instance = null;
@@ -111,15 +115,14 @@ public class Modloader {
                 e.printStackTrace();
                 continue;
             } catch (final LinkageError e) {
-                LOGGER.error("Incompatible Mod: " + th.modclass);
+                LOGGER.error("Incompatible Mod: " + modClass);
                 continue;
             }
             if (modClass.getAnnotation(Mod.class).id().equals(THIS_INSTANCE_ID)) {
                 LOGGER.error("The String \"" + THIS_INSTANCE_ID + "\" can not be used as Mod-ID: " + modClass);
                 continue;
             }
-            final ModContainer container = new ModContainer(modClass, modClass.getAnnotation(Mod.class), instance,
-                    th.file);
+            final ModContainer container = new ModContainer(modClass, modClass.getAnnotation(Mod.class), instance);
             if (this.modList.contains(container)) {
                 LOGGER.info("Skipping already loaded mod: " + container.getMod().id() + " (version "
                         + Arrays.toString(container.getMod().version()) + ")");
@@ -219,42 +222,46 @@ public class Modloader {
             }
         }
         modClassLoader = new URLClassLoader(urlarray);
-        for (int i = 0; i < candidates.size(); i++) {
-            JarFile jarfile = null;
-            try {
-                jarfile = new JarFile(candidates.get(i));
-                //                LoadingScreen.LOADING_STAGE_BUS
-                //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
-                for (final JarEntry entry : Collections.list(jarfile.entries())) {
-                    if (entry.getName().toLowerCase().endsWith(".class")) {
-                        Class<?> clazz = null;
-                        try {
-                            clazz = modClassLoader.loadClass(entry.getName().replace("/", ".").replace(".class", ""));
-                        } catch (final ClassNotFoundException e) {
-                            LOGGER.error("ClassNotFoundException: " + entry.getName());
-                            continue;
-                        } catch (final LinkageError e) {
-                            LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
-                            continue;
-                        }
-                        if (clazz.isAnnotationPresent(Mod.class)) {
-                            this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
-                        }
-                    }
-                }
-            } catch (final IOException e) {
-                LOGGER.warn("Could not read mod container: " + candidates.get(i));
-                continue;
-            } finally {
-                if (jarfile != null) {
-                    try {
-                        jarfile.close();
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+        Reflections refl = new Reflections(modClassLoader);
+        Set<Class<?>> mods = refl.getTypesAnnotatedWith(Mod.class);
+        this.modClasses.addAll(mods);
+        this.classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
+        //        for (int i = 0; i < candidates.size(); i++) {
+        //            JarFile jarfile = null;
+        //            try {
+        //                jarfile = new JarFile(candidates.get(i));
+        //                //                LoadingScreen.LOADING_STAGE_BUS
+        //                //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
+        //                for (final JarEntry entry : Collections.list(jarfile.entries())) {
+        //                    if (entry.getName().toLowerCase().endsWith(".class")) {
+        //                        Class<?> clazz = null;
+        //                        try {
+        //                            clazz = modClassLoader.loadClass(entry.getName().replace("/", ".").replace(".class", ""));
+        //                        } catch (final ClassNotFoundException e) {
+        //                            LOGGER.error("ClassNotFoundException: " + entry.getName());
+        //                            continue;
+        //                        } catch (final LinkageError e) {
+        //                            LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
+        //                            continue;
+        //                        }
+        //                        if (clazz.isAnnotationPresent(Mod.class)) {
+        //                            this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
+        //                        }
+        //                    }
+        //                }
+        //            } catch (final IOException e) {
+        //                LOGGER.warn("Could not read mod container: " + candidates.get(i));
+        //                continue;
+        //            } finally {
+        //                if (jarfile != null) {
+        //                    try {
+        //                        jarfile.close();
+        //                    } catch (final IOException e) {
+        //                        e.printStackTrace();
+        //                    }
+        //                }
+        //            }
+        //        }
         this.modClasses.sort(COMP);
         LOGGER.infof("Found %d mod candidate(s)!", this.modClasses.size());
     }
@@ -266,6 +273,10 @@ public class Modloader {
     //            e.printStackTrace();
     //        }
     //    }
+    
+    public Set<Class<?>> getModClassesWithSerialize() {
+        return Collections.unmodifiableSet(classesWithSerialize);
+    }
     
     private void discover(final List<File> files, final File f) {
         if (f.isDirectory()) {

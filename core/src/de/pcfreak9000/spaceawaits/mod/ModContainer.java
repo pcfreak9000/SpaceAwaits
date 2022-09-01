@@ -1,7 +1,5 @@
 package de.pcfreak9000.spaceawaits.mod;
 
-import java.io.File;
-
 /**
  * contains a mod
  *
@@ -11,15 +9,13 @@ import java.io.File;
 public class ModContainer {
     
     private final Mod mod;
-    private final File file;
     private final Class<?> mainclass;
     private final Object instance;
     
-    public ModContainer(final Class<?> mc, final Mod mod, final Object instance, File file) {
+    public ModContainer(final Class<?> mc, final Mod mod, final Object instance) {
         this.mainclass = mc;
         this.mod = mod;
         this.instance = instance;
-        this.file = file;
     }
     
     public Mod getMod() {
@@ -32,10 +28,6 @@ public class ModContainer {
     
     public Class<?> getModClass() {
         return this.mainclass;
-    }
-    
-    public File getFile() {
-        return file;
     }
     
     @Override

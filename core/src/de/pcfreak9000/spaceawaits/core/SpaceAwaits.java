@@ -1,5 +1,14 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.reflections.Reflections;
+
+import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,6 +27,7 @@ import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -50,6 +60,13 @@ public class SpaceAwaits extends Game {
     
     private ScreenManager screenManager;
     
+    private Set<Class<?>> classesWithSerialize = new LinkedHashSet<>();
+    private Set<Class<?>> classesWithSerializeIm = Collections.unmodifiableSet(classesWithSerialize);
+    private Set<Class<? extends Component>> componentsWithSerialize = new LinkedHashSet<>();
+    private Set<Class<? extends Component>> componentsWithSerializeIm = Collections
+            .unmodifiableSet(componentsWithSerialize);
+    private Map<String, Class<? extends Component>> componentsByKey = new HashMap<>();
+    
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
             throw new IllegalStateException("singleton violation");
@@ -74,6 +91,7 @@ public class SpaceAwaits extends Game {
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
+        doReflectionStuff();
         LOGGER.info("Init...");
         CoreRes.init();
         Components.registerComponents();
@@ -135,6 +153,30 @@ public class SpaceAwaits extends Game {
         this.assetManager.dispose();
         CoreRes.dispose();
         LOGGER.info("Exit.");
+    }
+    
+    private void doReflectionStuff() {
+        Reflections refl = new Reflections("de.pcfreak9000.spaceawaits");
+        classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
+        classesWithSerialize.addAll(this.modloader.getModClassesWithSerialize());
+        for (Class<?> c : classesWithSerialize) {
+            if (Component.class.isAssignableFrom(c)) {
+                componentsWithSerialize.add((Class<? extends Component>) c);
+                componentsByKey.put(c.getAnnotation(NBTSerialize.class).key(), (Class<? extends Component>) c);
+            }
+        }
+    }
+    
+    public Set<Class<?>> getClassesWithSerialize() {
+        return classesWithSerializeIm;
+    }
+    
+    public Set<Class<? extends Component>> getComponentsWithSerialize() {
+        return componentsWithSerializeIm;
+    }
+    
+    public Class<? extends Component> getComponentByKey(String key) {
+        return componentsByKey.get(key);
     }
     
     private AssetManager createAssetmanager() {

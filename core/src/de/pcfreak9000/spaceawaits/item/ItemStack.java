@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -60,25 +59,24 @@ public class ItemStack {
         return stack0;
     }
     
-    public static NBTTag writeNBT(ItemStack stack) {
-        NBTCompound c = new NBTCompound();
+    public static void writeNBT(ItemStack stack, NBTCompound target) {
         if (stack != EMPTY) {
-            c.putShort("c", (short) stack.getCount());
+            target.putShort("c", (short) stack.getCount());
             String id = GameRegistry.ITEM_REGISTRY.getId(stack.getItem());
-            c.putString("id", id);
+            target.putString("id", id);
             if (stack.nbt != null && !stack.nbt.isEmpty()) {
-                c.putCompound("nbt", stack.nbt);
+                target.putCompound("nbt", stack.nbt);
             }
+        } else {
+            target.putBooleanAsByte("ie", true);
         }
-        return c;
     }
     
-    public static ItemStack readNBT(NBTTag tag) {
-        if (((NBTCompound) tag).isEmpty()) {
+    public static ItemStack readNBT(NBTCompound c) {
+        if (c.getBooleanFromByteOrDefault("ie", false)) {
             return EMPTY;
         }
         ItemStack stack = new ItemStack();
-        NBTCompound c = (NBTCompound) tag;
         String id = c.getString("id");
         stack.count = Short.toUnsignedInt(c.getShort("c"));//Hopefully works with conversion... now it does. Dumbass forgot max stacksize is 128 and thats problematic for a signed byte
         stack.item = GameRegistry.ITEM_REGISTRY.get(id);
