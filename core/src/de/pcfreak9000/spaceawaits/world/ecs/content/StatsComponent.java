@@ -10,7 +10,9 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
+@NBTSerialize(key = "spaceawaitsStatComponent")
 public class StatsComponent implements NBTSerializable, Component {
     
     public static final class StatData {

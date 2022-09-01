@@ -3,27 +3,27 @@ package de.pcfreak9000.spaceawaits.world.ecs.content;
 import com.badlogic.ashley.core.Component;
 
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
 @NBTSerialize(key = "spaceawaitsItemstackComp")
-public class ItemStackComponent implements Component, INBTSerializable {
+public class ItemStackComponent implements Component, NBTSerializable {
     
     public ItemStack stack;
     
     @Override
-    public void readNBT(NBTCompound tag) {
+    public void readNBT(NBTTag tag) {
         this.stack = ItemStack.readNBT(tag);
     }
     
     @Override
-    public void writeNBT(NBTCompound nbt) {
+    public NBTTag writeNBT() {
         if (stack == null) {
             Logger.getLogger(getClass()).warn("Null itemstack detected, writing empty itemstack");
-            ItemStack.writeNBT(ItemStack.EMPTY, nbt);
+            return ItemStack.writeNBT(ItemStack.EMPTY);
         }
-        ItemStack.writeNBT(stack, nbt);
+        return ItemStack.writeNBT(stack);
     }
 }

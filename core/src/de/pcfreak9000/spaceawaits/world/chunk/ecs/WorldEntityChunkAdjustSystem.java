@@ -13,14 +13,14 @@ public class WorldEntityChunkAdjustSystem extends IteratingSystem {
     private World world;
     
     public WorldEntityChunkAdjustSystem(World world) {
-        super(Family.all(ChunkMarkerComponent.class, TransformComponent.class).get());
+        super(Family.all(ChunkComponent.class, TransformComponent.class).get());
         this.world = world;
     }
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         TransformComponent tc = Components.TRANSFORM.get(entity);
-        ChunkMarkerComponent mwec = Components.CHUNK_MARKER.get(entity);
+        ChunkComponent mwec = Components.CHUNK.get(entity);
         this.world.adjustChunk(entity, mwec, tc);
     }
 }

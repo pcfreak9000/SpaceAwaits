@@ -38,8 +38,6 @@ public class GameRegistry<T> {
     
     public static final GameRegistry<Item> ITEM_REGISTRY = new GameRegistry<>();
     
-    public static final WorldComponentRegistry WORLD_COMPONENT_REGISTRY = new WorldComponentRegistry();
-    
     protected final Logger LOGGER = Logger.getLogger(getClass());
     
     protected final HashMap<String, T> registered = new HashMap<>();

@@ -2,31 +2,18 @@ package de.pcfreak9000.spaceawaits.world.ecs.content;
 
 import com.badlogic.ashley.core.Component;
 
-import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
-public class OnSolidGroundComponent implements Component, NBTSerializable {
+@NBTSerialize(key = "spaceawaitsOnSolidGroundComponent")
+public class OnSolidGroundComponent implements Component {
     
-
     public int solidGroundContacts;
+    
+    @NBTSerialize(key = "lcx")
     public float lastContactX;
+    
+    @NBTSerialize(key = "lcy")
     public float lastContactY;
-    
-    @Override
-    public void readNBT(NBTTag tag) {
-        NBTCompound n = (NBTCompound) tag;
-        lastContactX = n.getFloat("lastContactX");
-        lastContactY = n.getFloat("lastContactY");
-    }
-    
-    @Override
-    public NBTTag writeNBT() {
-        NBTCompound n = new NBTCompound();
-        n.putFloat("lastContactX", lastContactX);
-        n.putFloat("lastContactY", lastContactY);
-        return n;
-    }
     
     public boolean isOnSolidGround() {
         return solidGroundContacts > 0;

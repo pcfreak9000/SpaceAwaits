@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
@@ -199,8 +199,8 @@ public abstract class World {
     }
     
     public void despawnEntity(Entity entity) {
-        if (Components.CHUNK_MARKER.has(entity)) {
-            Chunk c = Components.CHUNK_MARKER.get(entity).currentChunk;
+        if (Components.CHUNK.has(entity)) {
+            Chunk c = Components.CHUNK.get(entity).currentChunk;
             if (c != null) {
                 c.removeEntity(entity);
             }
@@ -216,7 +216,7 @@ public abstract class World {
         //        DynamicAssetUtil.checkAndDisposeAsset(entity);
     }
     
-    public void adjustChunk(Entity e, ChunkMarkerComponent c, TransformComponent t) {
+    public void adjustChunk(Entity e, ChunkComponent c, TransformComponent t) {
         int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
         int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
         if (c.currentChunk == null) {

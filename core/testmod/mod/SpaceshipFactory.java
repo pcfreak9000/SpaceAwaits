@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Activator;
@@ -33,7 +33,7 @@ public class SpaceshipFactory implements WorldEntityFactory {
     public Entity createEntity() {
         Entity entity = new EntityImproved();
         entity.flags = 1029384756;
-        entity.add(new ChunkMarkerComponent());
+        entity.add(new ChunkComponent());
         RenderTextureComponent rec = new RenderTextureComponent();
         rec.texture = tex;
         rec.color = Color.WHITE;

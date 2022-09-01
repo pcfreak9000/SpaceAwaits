@@ -2,9 +2,8 @@ package de.pcfreak9000.spaceawaits.world.ecs.content;
 
 import com.badlogic.ashley.core.ComponentMapper;
 
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
@@ -15,15 +14,10 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
 public class Components {
-    
+    @Deprecated
     public static void registerComponents() {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsHealthComponent", StatsComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsItemStackComp", ItemStackComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsOnSolidGroundComponent",
-                OnSolidGroundComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsTransform", TransformComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsPhysics", PhysicsComponent.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentBreakable", BreakableComponent.class);
+        
+        //What? Why? ????: GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsBreakable", BreakableComponent.class);
     }
     
     public static final ComponentMapper<RandomTickComponent> RANDOM_TICK = ComponentMapper
@@ -45,13 +39,16 @@ public class Components {
     
     public static final ComponentMapper<ActionComponent> ACTION = ComponentMapper.getFor(ActionComponent.class);
     
-    public static final ComponentMapper<ChunkMarkerComponent> CHUNK_MARKER = ComponentMapper
-            .getFor(ChunkMarkerComponent.class);//Rename to CHUNK_POSITION? or something like that?
+    /*** Mutually exclusive ***/
     
-    public static final ComponentMapper<PhysicsComponent> PHYSICS = ComponentMapper.getFor(PhysicsComponent.class);
+    public static final ComponentMapper<ChunkComponent> CHUNK = ComponentMapper.getFor(ChunkComponent.class);
     
     public static final ComponentMapper<WorldGlobalComponent> GLOBAL_MARKER = ComponentMapper
             .getFor(WorldGlobalComponent.class);
+    
+    /**************************/
+    
+    public static final ComponentMapper<PhysicsComponent> PHYSICS = ComponentMapper.getFor(PhysicsComponent.class);
     
     public static final ComponentMapper<FollowMouseComponent> FOLLOW_MOUSE = ComponentMapper
             .getFor(FollowMouseComponent.class);

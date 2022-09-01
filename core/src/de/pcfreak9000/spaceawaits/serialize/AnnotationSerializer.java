@@ -25,8 +25,11 @@ public class AnnotationSerializer {
         if (ser instanceof INBTSerializable) {
             INBTSerializable hehe = (INBTSerializable) ser;
             hehe.writeNBT(mycompound);
+        } else if (ser instanceof NBTSerializable) {
+            NBTSerializable hehe2 = (NBTSerializable) ser;
+            mycompound.put("c", hehe2.writeNBT());
         }
-        parent.putCompound(classan.key(), mycompound);
+        parent.put(classan.key(), mycompound);
     }
     
     public static void deserialize(NBTCompound parent, Object ser) {
@@ -43,6 +46,9 @@ public class AnnotationSerializer {
         if (ser instanceof INBTSerializable) {
             INBTSerializable hehe = (INBTSerializable) ser;
             hehe.readNBT(mycompound);
+        } else if (ser instanceof NBTSerializable) {
+            NBTSerializable hehe2 = (NBTSerializable) ser;
+            hehe2.readNBT(mycompound.get("c"));
         }
     }
     
@@ -51,11 +57,11 @@ public class AnnotationSerializer {
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
-                if (!f.getType().isPrimitive()) {
-                    throw new IllegalStateException("Cant serialize complex types");
-                }
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
+                }
+                if (!f.getType().isPrimitive()) {
+                    throw new IllegalStateException("Cant serialize complex types");
                 }
                 String key = prefix + an.key();
                 Class<?> type = f.getType();
@@ -84,16 +90,18 @@ public class AnnotationSerializer {
         }
     }
     
+    //TODO if the Fields type is Serializable just serialize that?? and deserialization???
+    
     private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser, String prefix) {
         Field[] fields = ser.getClass().getFields();
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
-                if (!f.getType().isPrimitive()) {
-                    throw new IllegalStateException("Cant serialize complex types");
-                }
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
+                }
+                if (!f.getType().isPrimitive()) {
+                    throw new IllegalStateException("Cant serialize complex types");
                 }
                 String key = prefix + an.key();
                 Class<?> type = f.getType();

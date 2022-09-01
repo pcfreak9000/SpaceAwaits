@@ -22,7 +22,7 @@ import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -288,8 +288,8 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     }
     
     public void addEntity(Entity e) {
-        if (Components.CHUNK_MARKER.has(e)) {
-            ChunkMarkerComponent mw = Components.CHUNK_MARKER.get(e);
+        if (Components.CHUNK.has(e)) {
+            ChunkComponent mw = Components.CHUNK.get(e);
             if (mw.currentChunk != null) {
                 throw new IllegalStateException();
             }
@@ -299,8 +299,8 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     }
     
     public void removeEntity(Entity e) {
-        if (Components.CHUNK_MARKER.has(e)) {
-            ChunkMarkerComponent mw = Components.CHUNK_MARKER.get(e);
+        if (Components.CHUNK.has(e)) {
+            ChunkComponent mw = Components.CHUNK.get(e);
             if (mw.currentChunk == null) {
                 throw new IllegalStateException();
             }

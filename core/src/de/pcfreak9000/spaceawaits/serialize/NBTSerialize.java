@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target({ FIELD, TYPE })
 public @interface NBTSerialize {
+    
+    //TODO option to not write if its the default??
+    
     String key();
     
     long dLong() default 0;

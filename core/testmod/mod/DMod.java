@@ -88,11 +88,6 @@ public class DMod {
     //baum animation, abreiß animation (-> klassen durchgucken die dinge nur bei gedrückt tun)
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsComponentInventoryShip",
-                ComponentInventoryShip.class);
-        GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsCompositeInventoryComponent",
-                CompositeInventoryComponent.class);
-        
         GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
         GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
         GameRegistry.COMPOSITE_MANAGER.create(1, "Stonestuff").add(10f, "Proton").add(10f, "Electron").build();

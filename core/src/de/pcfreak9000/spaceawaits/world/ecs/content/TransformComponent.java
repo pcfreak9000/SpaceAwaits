@@ -6,7 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
+@NBTSerialize(key = "spaceawaitsTransform")
 public class TransformComponent implements Component, NBTSerializable {
     
     public final Vector2 position;

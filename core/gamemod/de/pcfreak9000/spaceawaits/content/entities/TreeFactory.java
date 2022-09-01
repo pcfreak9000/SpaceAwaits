@@ -20,7 +20,7 @@ import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.BreakableEntity;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkMarkerComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
@@ -43,7 +43,7 @@ public class TreeFactory implements WorldEntityFactory {
     @Override
     public Entity createEntity() {
         Entity entity = new EntityImproved();
-        entity.add(new ChunkMarkerComponent());
+        entity.add(new ChunkComponent());
         RenderTextureComponent rec = new RenderTextureComponent();
         rec.texture = tex;
         rec.color = Color.WHITE;
