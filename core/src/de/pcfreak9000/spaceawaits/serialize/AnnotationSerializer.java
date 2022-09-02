@@ -87,19 +87,40 @@ public class AnnotationSerializer {
                 Class<?> type = f.getType();
                 try {
                     if (type == Integer.TYPE) {
-                        nbt.putIntegerSmart(key, f.getInt(ser));
+                        int innt = f.getInt(ser);
+                        if (innt != an.dInt() || an.disableDefaults()) {
+                            nbt.putIntegerSmart(key, innt);
+                        }
                     } else if (type == Long.TYPE) {
-                        nbt.putIntegerSmart(key, f.getLong(ser));
+                        long loong = f.getLong(ser);
+                        if (loong != an.dLong() || an.disableDefaults()) {
+                            nbt.putIntegerSmart(key, loong);
+                        }
                     } else if (type == Short.TYPE) {
-                        nbt.putIntegerSmart(key, f.getShort(ser));
+                        short shortt = f.getShort(ser);
+                        if (shortt != an.dShort() || an.disableDefaults()) {
+                            nbt.putIntegerSmart(key, shortt);
+                        }
                     } else if (type == Byte.TYPE) {
-                        nbt.putIntegerSmart(key, f.getByte(ser));
+                        byte bytt = f.getByte(ser);
+                        if (bytt != an.dByte() || an.disableDefaults()) {
+                            nbt.putIntegerSmart(key, bytt);
+                        }
                     } else if (type == Boolean.TYPE) {
-                        nbt.putBooleanAsByte(key, f.getBoolean(ser));
+                        boolean bool = f.getBoolean(ser);
+                        if (bool != an.dBool() || an.disableDefaults()) {
+                            nbt.putBooleanAsByte(key, bool);
+                        }
                     } else if (type == Float.TYPE) {
-                        nbt.putFloat(key, f.getFloat(ser));
+                        float floot = f.getFloat(ser);
+                        if (floot != an.dFloat() || an.disableDefaults()) {
+                            nbt.putFloat(key, floot);
+                        }
                     } else if (type == Double.TYPE) {
-                        nbt.putDouble(key, f.getDouble(ser));
+                        double dooble = f.getDouble(ser);
+                        if (dooble != an.dDouble() || an.disableDefaults()) {
+                            nbt.putDouble(key, dooble);
+                        }
                     } else {
                         throw new IllegalArgumentException("Type not supported: " + type);
                     }
@@ -138,19 +159,33 @@ public class AnnotationSerializer {
                 Class<?> type = f.getType();
                 try {
                     if (type == Integer.TYPE) {
-                        f.setInt(ser, (int) nbt.getIntegerSmartOrDefault(key, an.dInt()));
+                        long innt = an.disableDefaults() ? nbt.getIntegerSmart(key)
+                                : nbt.getIntegerSmartOrDefault(key, an.dInt());
+                        f.setInt(ser, (int) innt);
                     } else if (type == Long.TYPE) {
-                        f.setLong(ser, nbt.getIntegerSmartOrDefault(key, an.dLong()));
+                        long loong = an.disableDefaults() ? nbt.getIntegerSmart(key)
+                                : nbt.getIntegerSmartOrDefault(key, an.dLong());
+                        f.setLong(ser, loong);
                     } else if (type == Short.TYPE) {
-                        f.setShort(ser, (short) nbt.getIntegerSmartOrDefault(key, an.dShort()));
+                        long shortt = an.disableDefaults() ? nbt.getIntegerSmart(key)
+                                : nbt.getIntegerSmartOrDefault(key, an.dShort());
+                        f.setShort(ser, (short) shortt);
                     } else if (type == Byte.TYPE) {
-                        f.setByte(ser, (byte) nbt.getIntegerSmartOrDefault(key, an.dByte()));
+                        long bytt = an.disableDefaults() ? nbt.getIntegerSmart(key)
+                                : nbt.getIntegerSmartOrDefault(key, an.dByte());
+                        f.setByte(ser, (byte) bytt);
                     } else if (type == Boolean.TYPE) {
-                        f.setBoolean(ser, nbt.getBooleanFromByteOrDefault(key, an.dBool()));
+                        boolean bool = an.disableDefaults() ? nbt.getBooleanFromByte(key)
+                                : nbt.getBooleanFromByteOrDefault(key, an.dBool());
+                        f.setBoolean(ser, bool);
                     } else if (type == Float.TYPE) {
-                        f.setFloat(ser, nbt.getFloatOrDefault(key, an.dFloat()));
+                        float floot = an.disableDefaults() ? nbt.getFloat(key)
+                                : nbt.getFloatOrDefault(key, an.dFloat());
+                        f.setFloat(ser, floot);
                     } else if (type == Double.TYPE) {
-                        f.setDouble(ser, nbt.getDoubleOrDefault(key, an.dDouble()));
+                        double dooble = an.disableDefaults() ? nbt.getDouble(key)
+                                : nbt.getDoubleOrDefault(key, an.dDouble());
+                        f.setDouble(ser, dooble);
                     } else {
                         throw new IllegalArgumentException("Type not supported: " + type);
                     }
