@@ -3,12 +3,11 @@ package de.pcfreak9000.spaceawaits.player;
 import java.util.Arrays;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 
-public class InventoryPlayer implements IInventory, NBTSerializable {
+public class InventoryPlayer implements IInventory, INBTSerializable {
     
     private ItemStack[] stacks = new ItemStack[9 * 4];
     private int selected;
@@ -56,25 +55,22 @@ public class InventoryPlayer implements IInventory, NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
-        NBTCompound c = (NBTCompound) tag;
+    public void readNBT(NBTCompound c) {
         for (int i = 0; i < stacks.length; i++) {
             if (c.hasKey("h" + i)) {
-                stacks[i] = ItemStack.readNBT(c.get("h" + i));
+                stacks[i] = ItemStack.readNBT(c.getCompound("h" + i));
             }
         }
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound c = new NBTCompound();
+    public void writeNBT(NBTCompound c) {
         for (int i = 0; i < stacks.length; i++) {
             ItemStack st = stacks[i];
             if (st != null && !st.isEmpty()) {
-                c.put("h" + i, ItemStack.writeNBT(st));
+                c.put("h" + i, ItemStack.writeNBT(st, new NBTCompound()));
             }
         }
-        return c;
     }
     
     @Override

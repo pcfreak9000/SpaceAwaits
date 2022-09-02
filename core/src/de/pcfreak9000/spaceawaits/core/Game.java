@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
@@ -135,14 +136,14 @@ public class Game {
     private void readPlayer() {
         if (this.mySave.hasPlayer()) {
             NBTCompound savestate = mySave.readPlayerNBT();
-            this.player.readNBT(savestate.get("player"));
+            this.player.readNBT(savestate.getCompound("player"));
             this.uuidPlayerLocation = savestate.getString("currentLocation");
         }
     }
     
     private void writePlayer() {
         NBTCompound comp = new NBTCompound();
-        comp.put("player", this.player.writeNBT());
+        comp.put("player", INBTSerializable.writeNBT(player));
         comp.putString("currentLocation", uuidPlayerLocation);
         mySave.writePlayerNBT(comp);
     }

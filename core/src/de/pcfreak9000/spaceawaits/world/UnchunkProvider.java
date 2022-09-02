@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 
@@ -31,7 +32,7 @@ public class UnchunkProvider implements IUnchunkProvider {
         data = new SerializableEntityList();
         if (save.hasGlobal()) {
             NBTCompound nbt = save.readGlobal();
-            data.readNBT(nbt.get("entities"));
+            data.readNBT(nbt.getCompound("entities"));
             this.nbt = nbt.getCompound("dat");
             worldGen.onLoading(world);
         } else {
@@ -48,7 +49,7 @@ public class UnchunkProvider implements IUnchunkProvider {
     public void save() {
         if (data != null) {
             NBTCompound nbt = new NBTCompound();
-            nbt.put("entities", data.writeNBT());
+            nbt.put("entities", INBTSerializable.writeNBT(data));
             nbt.put("dat", this.nbt);
             save.writeGlobal(nbt);
         }

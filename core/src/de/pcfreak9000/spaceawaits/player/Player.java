@@ -6,12 +6,11 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.spaceawaits.gui.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
@@ -22,7 +21,7 @@ import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
  * @author pcfreak9000
  *
  */
-public class Player implements NBTSerializable {
+public class Player implements INBTSerializable {
     
     private final Entity playerEntity;
     
@@ -78,18 +77,15 @@ public class Player implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag compound) {
-        NBTCompound pc = (NBTCompound) compound;
+    public void readNBT(NBTCompound pc) {
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
-        this.inventory.readNBT(pc.get("inventory"));
+        this.inventory.readNBT(pc.getCompound("inventory"));
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound pc = new NBTCompound();
+    public void writeNBT(NBTCompound pc) {
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
-        pc.put("inventory", this.inventory.writeNBT());
-        return pc;
+        pc.put("inventory", INBTSerializable.writeNBT(inventory));
     }
     
 }

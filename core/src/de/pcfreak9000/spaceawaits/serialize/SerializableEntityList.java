@@ -8,7 +8,7 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 
-public class SerializableEntityList implements NBTSerializable {
+public class SerializableEntityList implements INBTSerializable {
     
     private Array<Entity> entities;
     
@@ -29,8 +29,8 @@ public class SerializableEntityList implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
-        NBTList entities = (NBTList) tag;
+    public void readNBT(NBTCompound tag) {
+        NBTList entities = tag.getList("ents");
         if (entities.getEntryType() != NBTType.Compound) {
             throw new IllegalArgumentException("Entity list is not a compound list");
         }
@@ -43,7 +43,7 @@ public class SerializableEntityList implements NBTSerializable {
     }
     
     @Override
-    public NBTTag writeNBT() {
+    public void writeNBT(NBTCompound tag) {
         NBTList entities = new NBTList(NBTType.Compound);
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {
@@ -51,6 +51,6 @@ public class SerializableEntityList implements NBTSerializable {
                 entities.addCompound(nbt);
             }
         }
-        return entities;
+        tag.putList("ents", entities);
     }
 }

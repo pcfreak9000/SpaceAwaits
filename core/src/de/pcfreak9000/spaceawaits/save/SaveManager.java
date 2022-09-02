@@ -9,6 +9,7 @@ import java.util.List;
 import de.pcfreak9000.nbt.CompressedNbtReader;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.TagReader;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.Util;
 
 public class SaveManager implements ISaveManager {
@@ -110,7 +111,7 @@ public class SaveManager implements ISaveManager {
     private void writeSaveMetaFor(File save, SaveMeta meta) {
         File metaFile = new File(save, "meta.dat");
         try {
-            TagReader.toCompressedBinaryNBTFile(metaFile, meta.writeNBT());
+            TagReader.toCompressedBinaryNBTFile(metaFile, INBTSerializable.writeNBT(meta));
         } catch (IOException e) {
             e.printStackTrace();
         }

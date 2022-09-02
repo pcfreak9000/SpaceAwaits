@@ -1,11 +1,10 @@
 package de.pcfreak9000.spaceawaits.save;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 
-public class WorldMeta implements NBTSerializable {
+public class WorldMeta implements INBTSerializable {
     
     public static Builder builder() {
         return new Builder();
@@ -46,9 +45,8 @@ public class WorldMeta implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
+    public void readNBT(NBTCompound comp) {
         //No defaults because this is crucial information and can't really be defaulted
-        NBTCompound comp = (NBTCompound) tag;
         displayName = (comp.getString("displayName"));
         worldSeed = (comp.getLong("worldSeed"));
         worldGeneratorUsed = (comp.getString("worldGeneratorUsed"));
@@ -58,15 +56,13 @@ public class WorldMeta implements NBTSerializable {
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound comp = new NBTCompound();
+    public void writeNBT(NBTCompound comp) {
         comp.putString("displayName", displayName);
         comp.putLong("worldSeed", worldSeed);
         comp.putString("worldGeneratorUsed", worldGeneratorUsed);
         comp.putInt("width", width);
         comp.putInt("height", height);
         comp.putLong("created", created);
-        return comp;
     }
     
     public static final class Builder {

@@ -15,6 +15,8 @@ public @interface NBTSerialize {
     
     String key();
     
+    boolean disableDefaults() default false;
+    
     long dLong() default 0;
     
     int dInt() default 0;

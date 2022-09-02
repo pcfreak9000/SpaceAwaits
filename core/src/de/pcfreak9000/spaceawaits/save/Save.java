@@ -11,6 +11,7 @@ import java.util.Random;
 import de.pcfreak9000.nbt.CompressedNbtReader;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.TagReader;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 
 public class Save implements ISave {
     
@@ -121,7 +122,7 @@ public class Save implements ISave {
     private void writeWorldMetaFor(File world, WorldMeta meta) {
         File metaFile = new File(world, "meta.dat");
         try {
-            TagReader.toCompressedBinaryNBTFile(metaFile, meta.writeNBT());
+            TagReader.toCompressedBinaryNBTFile(metaFile, INBTSerializable.writeNBT(meta));
         } catch (IOException e) {
             e.printStackTrace();
         }

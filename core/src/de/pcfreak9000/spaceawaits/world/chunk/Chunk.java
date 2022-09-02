@@ -331,7 +331,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         tilesBackground.deserialize(dict, nbtc.getCompound("tilesBack"), this);
         for (NBTTag tet : ticklist.getContent()) {
             NextTickTile ntt = new NextTickTile(0, 0, null, null, -1);
-            ntt.readNBT(tet);
+            ntt.readNBT((NBTCompound) tet);
             this.tickTiles.add(ntt);
         }
         for (NBTTag t : entities.getContent()) {
@@ -347,7 +347,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         NBTList entities = new NBTList(NBTType.Compound);
         NBTList tileticks = new NBTList(NBTType.Compound);
         for (NextTickTile ntt : tickTiles) {
-            tileticks.add(ntt.writeNBT());
+            tileticks.add(INBTSerializable.writeNBT(ntt));
         }
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {

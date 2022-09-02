@@ -4,12 +4,11 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
 @NBTSerialize(key = "spaceawaitsTransform")
-public class TransformComponent implements Component, NBTSerializable {
+public class TransformComponent implements Component, INBTSerializable {
     
     public final Vector2 position;
     public float rotation;
@@ -22,8 +21,7 @@ public class TransformComponent implements Component, NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag compound) {
-        NBTCompound comp = (NBTCompound) compound;
+    public void readNBT(NBTCompound comp) {
         this.position.set(comp.getFloat("x"), comp.getFloat("y"));
         if (comp.hasKey("r")) {
             this.rotation = comp.getFloat("r");
@@ -33,8 +31,7 @@ public class TransformComponent implements Component, NBTSerializable {
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound comp = new NBTCompound();
+    public void writeNBT(NBTCompound comp) {
         comp.putFloat("x", position.x);
         comp.putFloat("y", position.y);
         if (rotation != 0) {
@@ -42,6 +39,5 @@ public class TransformComponent implements Component, NBTSerializable {
             comp.putFloat("rx", originx);
             comp.putFloat("ry", originy);
         }
-        return comp;
     }
 }

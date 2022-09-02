@@ -1,16 +1,19 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
-import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
-public class LiquidState implements NBTSerializable, ITileEntity {
+public class LiquidState implements ITileEntity {
     
     //This is useful, makes sure there isn't any small amounts of liquid laying around
     public static final float MIN_LIQUID = 0.001f;
     
+    @NBTSerialize(key = "lt")
     private long lasttick;
+    
+    @NBTSerialize(key = "l")
     private float liquid;
+    
+    @NBTSerialize(key = "ln")
     public float liquidNew;
     
     public void addLiquid(float amount) {
@@ -32,22 +35,4 @@ public class LiquidState implements NBTSerializable, ITileEntity {
         return this.liquidNew <= MIN_LIQUID;
     }
     
-    @Override
-    public void readNBT(NBTTag tag) {
-        NBTCompound comp = (NBTCompound) tag;
-        this.lasttick = comp.getLong("lasttick");
-        this.liquid = comp.getFloat("liquid");
-        this.liquidNew = comp.getFloat("liquidNew");
-        //this.settled = comp.getByte("settled") == 1;
-    }
-    
-    @Override
-    public NBTTag writeNBT() {
-        NBTCompound comp = new NBTCompound();
-        comp.putLong("lasttick", lasttick);
-        comp.putFloat("liquid", liquid);
-        comp.putFloat("liquidNew", liquidNew);
-        //comp.putByte("settled", settled ? (byte) 1 : (byte) 0);
-        return comp;
-    }
 }

@@ -1,10 +1,9 @@
 package de.pcfreak9000.spaceawaits.save;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 
-public class SaveMeta implements NBTSerializable {
+public class SaveMeta implements INBTSerializable {
     
     private String displayName;
     private long created;
@@ -46,9 +45,8 @@ public class SaveMeta implements NBTSerializable {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
+    public void readNBT(NBTCompound compound) {
         //No defaults because this is crucial information and can't really be defaulted
-        NBTCompound compound = (NBTCompound) tag;
         String displayName = compound.getString("displayName");
         long created = compound.getLong("created");
         long masterSeed = compound.getLong("mseed");
@@ -58,11 +56,9 @@ public class SaveMeta implements NBTSerializable {
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound comp = new NBTCompound();
+    public void writeNBT(NBTCompound comp) {
         comp.putString("displayName", displayName);
         comp.putLong("created", created);
         comp.putLong("mseed", masterSeed);
-        return comp;
     }
 }

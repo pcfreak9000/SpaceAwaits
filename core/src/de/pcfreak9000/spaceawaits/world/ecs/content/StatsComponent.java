@@ -9,11 +9,11 @@ import com.badlogic.ashley.core.Component;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
-@NBTSerialize(key = "spaceawaitsStatComponent")
-public class StatsComponent implements NBTSerializable, Component {
+@NBTSerialize(key = "spaceawaitsStats")
+public class StatsComponent implements INBTSerializable, Component {
     
     public static final class StatData {
         public float current;
@@ -56,8 +56,7 @@ public class StatsComponent implements NBTSerializable, Component {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
-        NBTCompound c = (NBTCompound) tag;
+    public void readNBT(NBTCompound c) {
         for (Entry<String, NBTTag> e : c.entrySet()) {
             String k = e.getKey();
             String s = e.getKey().substring(0, e.getKey().length() - 1);
@@ -76,13 +75,11 @@ public class StatsComponent implements NBTSerializable, Component {
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound c = new NBTCompound();
+    public void writeNBT(NBTCompound c) {
         for (Entry<String, StatData> e : statDatas.entrySet()) {
             c.putFloat(e.getKey() + "c", e.getValue().current);
             c.putFloat(e.getKey() + "m", e.getValue().max);
         }
-        return c;
     }
     
 }

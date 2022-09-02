@@ -1,8 +1,7 @@
 package mod;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
@@ -10,8 +9,9 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class LaserTileEntity implements Tickable, NBTSerializable, ITileEntity {
+public class LaserTileEntity implements Tickable, ITileEntity {
     
+    @NBTSerialize(key = "progress")
     private float progress = 0;
     
     private World world;
@@ -38,14 +38,4 @@ public class LaserTileEntity implements Tickable, NBTSerializable, ITileEntity {
         }
     }
     
-    @Override
-    public void readNBT(NBTTag tag) {
-        NBTTag.FloatEntry e = (NBTTag.FloatEntry) tag;
-        this.progress = e.getFloat();
-    }
-    
-    @Override
-    public NBTTag writeNBT() {
-        return new NBTTag.FloatEntry(progress);
-    }
 }
