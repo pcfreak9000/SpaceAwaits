@@ -16,8 +16,10 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.save.ChunkDict;
+import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
+import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.NextTickTile;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
@@ -35,7 +37,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Chunk implements NBTSerializable, Tickable, ITileArea {
+public class Chunk implements INBTSerializable, Tickable, ITileArea {
     
     public static enum ChunkGenStage {
         Empty, Generated, Populated;
@@ -319,47 +321,18 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     }
     
     @Override
-    public void readNBT(NBTTag tag) {
-        NBTCompound nbtc = (NBTCompound) tag;
+    public void readNBT(NBTCompound nbtc) {
         this.genStage = ChunkGenStage.values()[nbtc.getIntOrDefault("genStageIndex", 0)];
         NBTList entities = nbtc.getList("entities");
-        NBTList tileList = nbtc.getList("tiles");
-        NBTList tileEntities = nbtc.getList("tileEntities");
         NBTList ticklist = nbtc.getList("tileTicks");
-        int cx = getGlobalTileX();
-        int cy = getGlobalTileY();
-        for (int i = 0; i < tileList.size(); i += 2) {
-            int x = (i / 2) / CHUNK_SIZE;
-            int y = (i / 2) % CHUNK_SIZE;
-            //Foreground tiles
-            String id = tileList.getString(i);
-            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
-            setTile(cx + x, cy + y, TileLayer.Front, t);
-            //Background tiles
-            String idB = tileList.getString(i + 1);
-            Tile tB = GameRegistry.TILE_REGISTRY.getOrDefault(idB, Tile.NOTHING);
-            setTile(cx + x, cy + y, TileLayer.Back, tB);
-        }
-        for (NBTTag tet : tileEntities.getContent()) {
-            NBTCompound comp = (NBTCompound) tet;
-            byte x = comp.getByte("x");
-            byte y = comp.getByte("y");
-            TileState state = this.tiles.get(cx + x, cy + y);
-            if (state.getTile().hasTileEntity()) {//Possibly check if the tileentitytype matches, in the future the default tile could change etc...
-                if (state.getTileEntity() instanceof NBTSerializable) {
-                    NBTSerializable seri = (NBTSerializable) state.getTileEntity();
-                    NBTTag tedata = comp.get("data");
-                    seri.readNBT(tedata);
-                } //FIXME tileentities on the back layer arent saved/loaded
-            }
-        }
+        ChunkDict dict = new ChunkDict();
+        AnnotationSerializer.deserialize(dict, nbtc.getCompound("dict"));
+        tiles.deserialize(dict, nbtc.getCompound("tilesFront"), this);
+        tilesBackground.deserialize(dict, nbtc.getCompound("tilesBack"), this);
         for (NBTTag tet : ticklist.getContent()) {
             NextTickTile ntt = new NextTickTile(0, 0, null, null, -1);
             ntt.readNBT(tet);
             this.tickTiles.add(ntt);
-        }
-        if (entities.getEntryType() != NBTType.Compound) {
-            throw new IllegalArgumentException("Entity list is not a compound list");
         }
         for (NBTTag t : entities.getContent()) {
             Entity e = EntitySerializer.deserializeEntity((NBTCompound) t);
@@ -370,54 +343,25 @@ public class Chunk implements NBTSerializable, Tickable, ITileArea {
     }
     
     @Override
-    public NBTTag writeNBT() {
-        NBTCompound chunkMaster = new NBTCompound();
-        chunkMaster.putInt("genStageIndex", this.genStage.ordinal());
-        NBTList tileList = new NBTList(NBTType.String);
+    public void writeNBT(NBTCompound chunkMaster) {
         NBTList entities = new NBTList(NBTType.Compound);
-        NBTList tileEntities = new NBTList(NBTType.Compound);
-        NBTList tileMeta = new NBTList(NBTType.Compound);
         NBTList tileticks = new NBTList(NBTType.Compound);
-        int cx = getGlobalTileX();
-        int cy = getGlobalTileY();
-        for (int i = 0; i < CHUNK_SIZE; i++) {
-            for (int j = 0; j < CHUNK_SIZE; j++) {
-                TileState st = this.tiles.get(cx + i, cy + j);
-                String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
-                tileList.addString(id);
-                Tile t = st.getTile();
-                if (t.hasTileEntity()) {
-                    ITileEntity e = st.getTileEntity();
-                    if (e instanceof NBTSerializable) {
-                        NBTSerializable seri = (NBTSerializable) e;
-                        NBTTag tag = seri.writeNBT();
-                        NBTCompound einfo = new NBTCompound();
-                        einfo.putByte("x", (byte) i);
-                        einfo.putByte("y", (byte) j);
-                        einfo.put("data", tag);
-                        tileEntities.add(einfo);
-                    }
-                }
-                TileState bst = this.tilesBackground.get(cx + i, cy + j);
-                String bid = GameRegistry.TILE_REGISTRY.getId(bst.getTile());
-                tileList.addString(bid);
-            }
-        }
         for (NextTickTile ntt : tickTiles) {
             tileticks.add(ntt.writeNBT());
         }
-        chunkMaster.putList("tiles", tileList);
-        chunkMaster.putList("tileEntities", tileEntities);
-        chunkMaster.putList("tileMeta", tileMeta);
-        chunkMaster.putList("tileTicks", tileticks);
         for (Entity e : this.entities) {
             if (EntitySerializer.isSerializable(e)) {
                 NBTCompound nbt = EntitySerializer.serializeEntity(e);
                 entities.add(nbt);
             }
         }
+        chunkMaster.putInt("genStageIndex", this.genStage.ordinal());
+        ChunkDict dict = new ChunkDict();
+        chunkMaster.putCompound("tilesFront", this.tiles.serialize(dict));
+        chunkMaster.putCompound("tilesBack", tilesBackground.serialize(dict));
+        chunkMaster.putList("tileTicks", tileticks);
         chunkMaster.putList("entities", entities);
-        return chunkMaster;
+        chunkMaster.putCompound("dict", AnnotationSerializer.serialize(dict));
     }
     
 }

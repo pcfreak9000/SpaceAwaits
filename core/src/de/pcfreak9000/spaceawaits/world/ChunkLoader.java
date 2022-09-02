@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
@@ -53,12 +54,12 @@ public class ChunkLoader implements IChunkLoader {
     
     private void readChunk(Chunk c) {
         NBTCompound nbtc = save.readChunk(c.getGlobalChunkX(), c.getGlobalChunkY());
-        c.readNBT(nbtc);
+        AnnotationSerializer.deserialize(c, nbtc);
     }
     
     @Override
     public void saveChunk(Chunk c) {
-        NBTCompound nbtc = (NBTCompound) c.writeNBT();
+        NBTCompound nbtc = AnnotationSerializer.serialize(c);
         if (nbtc != null) {
             save.writeChunk(c.getGlobalChunkX(), c.getGlobalChunkY(), nbtc);
         }

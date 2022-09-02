@@ -1,27 +1,22 @@
 package de.pcfreak9000.spaceawaits.serialize;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 
 public class AnnotationSerializer {
     private static final NBTCompound EMPTY_NONNULL = new NBTCompound();
+    private static final Logger LOGGER = Logger.getLogger(AnnotationSerializer.class);
     
     public static boolean canAnnotationSerialize(Object ser) {
         return ser.getClass().isAnnotationPresent(NBTSerialize.class);
     }
     
-    public static void serialize(NBTCompound parent, Object ser) {
-        NBTSerialize classan = ser.getClass().getAnnotation(NBTSerialize.class);
-        if (classan == null) {
-            throw new IllegalArgumentException();
-        }
-        if (classan.key().isBlank()) {
-            throw new IllegalStateException("Blank keys are not allowed");
-        }
-        //String prefix = classan.key();
+    public static NBTCompound serialize(Object ser) {
         NBTCompound mycompound = new NBTCompound();
-        serializeAnnotatedFields(mycompound, ser, "");
+        serializeAnnotatedFields(mycompound, ser);
         if (ser instanceof INBTSerializable) {
             INBTSerializable hehe = (INBTSerializable) ser;
             hehe.writeNBT(mycompound);
@@ -29,10 +24,10 @@ public class AnnotationSerializer {
             NBTSerializable hehe2 = (NBTSerializable) ser;
             mycompound.put("c", hehe2.writeNBT());
         }
-        parent.put(classan.key(), mycompound);
+        return mycompound;
     }
     
-    public static void deserialize(NBTCompound parent, Object ser) {
+    public static void serializeInto(NBTCompound parent, Object ser) {
         NBTSerialize classan = ser.getClass().getAnnotation(NBTSerialize.class);
         if (classan == null) {
             throw new IllegalArgumentException();
@@ -40,9 +35,11 @@ public class AnnotationSerializer {
         if (classan.key().isBlank()) {
             throw new IllegalStateException("Blank keys are not allowed");
         }
-        //String prefix = classan.key();
-        NBTCompound mycompound = parent.getCompoundOrDefault(classan.key(), EMPTY_NONNULL);
-        deserializeAnnotatedFields(mycompound, ser, "");
+        parent.put(classan.key(), serialize(ser));
+    }
+    
+    public static void deserialize(Object ser, NBTCompound mycompound) {
+        deserializeAnnotatedFields(mycompound, ser);
         if (ser instanceof INBTSerializable) {
             INBTSerializable hehe = (INBTSerializable) ser;
             hehe.readNBT(mycompound);
@@ -52,18 +49,41 @@ public class AnnotationSerializer {
         }
     }
     
-    private static void serializeAnnotatedFields(NBTCompound nbt, Object ser, String prefix) {
+    public static void deserializeFrom(NBTCompound parent, Object ser) {
+        NBTSerialize classan = ser.getClass().getAnnotation(NBTSerialize.class);
+        if (classan == null) {
+            throw new IllegalArgumentException();
+        }
+        if (classan.key().isBlank()) {
+            throw new IllegalStateException("Blank keys are not allowed");
+        }
+        NBTCompound mycompound = parent.getCompoundOrDefault(classan.key(), EMPTY_NONNULL);
+        deserialize(ser, mycompound);
+    }
+    
+    private static void serializeAnnotatedFields(NBTCompound nbt, Object ser) {
         Field[] fields = ser.getClass().getFields();
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
+                if (Modifier.isStatic(f.getModifiers())) {
+                    LOGGER.warn("Static fields are not serialized: " + f);
+                    continue;
+                }
+                try {
+                    f.setAccessible(true);
+                } catch (Exception e) {
+                    LOGGER.warn("Couldn't set accessible: " + f);
+                    e.printStackTrace();
+                    continue;
+                }
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
                 }
                 if (!f.getType().isPrimitive()) {
                     throw new IllegalStateException("Cant serialize complex types");
                 }
-                String key = prefix + an.key();
+                String key = an.key();
                 Class<?> type = f.getType();
                 try {
                     if (type == Integer.TYPE) {
@@ -91,19 +111,30 @@ public class AnnotationSerializer {
     }
     
     //TODO if the Fields type is Serializable just serialize that?? and deserialization???
-    
-    private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser, String prefix) {
+    //TODO enums can be saved as ints/ids, strings can be saved
+    private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser) {
         Field[] fields = ser.getClass().getFields();
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
+                if (Modifier.isStatic(f.getModifiers())) {
+                    LOGGER.warn("Static fields are not serialized: " + f);
+                    continue;
+                }
+                try {
+                    f.setAccessible(true);
+                } catch (Exception e) {
+                    LOGGER.warn("Couldn't set accessible: " + f);
+                    e.printStackTrace();
+                    continue;
+                }
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
                 }
                 if (!f.getType().isPrimitive()) {
                     throw new IllegalStateException("Cant serialize complex types");
                 }
-                String key = prefix + an.key();
+                String key = an.key();
                 Class<?> type = f.getType();
                 try {
                     if (type == Integer.TYPE) {

@@ -5,6 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+import com.badlogic.gdx.utils.IntArray;
+
+import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTList;
+import de.pcfreak9000.nbt.NBTTag;
+import de.pcfreak9000.nbt.NBTType;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.save.ChunkDict;
+import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
@@ -15,6 +24,7 @@ public class TileStorage implements Tickable {
     
     private final World world;
     
+    private int size;
     private TileState[][] tileArray;
     private int tx;
     private int ty;
@@ -31,6 +41,7 @@ public class TileStorage implements Tickable {
         this.ty = ty;
         this.world = world;
         this.layer = layer;
+        this.size = size;
         this.tileArray = new TileState[size][size];
         this.tickablesForRemoval = new ArrayDeque<>();
         this.tickables = new ArrayList<>();
@@ -78,6 +89,67 @@ public class TileStorage implements Tickable {
             }
         }
         return state;
+    }
+    
+    public void deserialize(ChunkDict dict, NBTCompound in, Chunk chunk) {
+        NBTList tileList = in.getList("tiles");
+        for (int i = 0; i < tileList.size(); i++) {
+            int x = (i) / size;
+            int y = (i) % size;
+            int idN = (int) tileList.getNumberAutocast(i);
+            String id = dict.getStringFrom(idN);
+            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
+            chunk.setTile(tx + x, ty + y, layer, t);
+        }
+        NBTList tileEntities = in.getList("tileEntities");
+        for (NBTTag tet : tileEntities.getContent()) {
+            NBTCompound comp = (NBTCompound) tet;
+            int x = (int) comp.getIntegerSmart("x");
+            int y = (int) comp.getIntegerSmart("y");
+            TileState state = tileArray[x][y];
+            if (state.getTile().hasTileEntity()) {//Possibly check if the tileentitytype matches, in the future the default tile could change etc...
+                AnnotationSerializer.deserialize(state.getTileEntity(), comp);
+            }
+        }
+    }
+    
+    public NBTCompound serialize(ChunkDict dict) {
+        NBTList tileEntities = new NBTList(NBTType.Compound);
+        IntArray array = new IntArray(size * size);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                TileState st = tileArray[i][j];
+                String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
+                int idN = dict.getIdFor(id);
+                array.add(idN);
+                if (st.getTile().hasTileEntity()) {
+                    ITileEntity te = st.getTileEntity();
+                    NBTCompound tecomp = AnnotationSerializer.serialize(te);
+                    if (!tecomp.isEmpty()) {
+                        tecomp.putIntegerSmart("x", i);
+                        tecomp.putIntegerSmart("y", j);
+                        tileEntities.addCompound(tecomp);
+                    }
+                }
+            }
+        }
+        int max = dict.getMax();
+        NBTType type = null;
+        if (max <= Byte.MAX_VALUE) {
+            type = NBTType.Byte;
+        } else if (max <= Short.MAX_VALUE) {
+            type = NBTType.Short;
+        } else {
+            type = NBTType.Int;
+        }
+        NBTList list = new NBTList(type);
+        for (int i : array.items) {
+            list.addNumberAutocast(i);
+        }
+        NBTCompound tilestorageMaster = new NBTCompound();
+        tilestorageMaster.putList("tiles", list);
+        tilestorageMaster.putList("tileEntities", tileEntities);
+        return tilestorageMaster;
     }
     
 }

@@ -77,7 +77,7 @@ public class EntitySerializer {
     public static void serializeComponents(Iterable<Component> components, NBTCompound comp) {
         for (Component c : components) {
             if (AnnotationSerializer.canAnnotationSerialize(c)) {
-                AnnotationSerializer.serialize(comp, c);
+                AnnotationSerializer.serializeInto(comp, c);
             }
         }
     }
@@ -98,7 +98,7 @@ public class EntitySerializer {
         }
         for (Component c : ent.getComponents()) {
             if (AnnotationSerializer.canAnnotationSerialize(c)) {
-                AnnotationSerializer.deserialize(comp, c);
+                AnnotationSerializer.deserializeFrom(comp, c);
             }
         }
     }
