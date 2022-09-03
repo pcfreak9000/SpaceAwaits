@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import com.badlogic.gdx.utils.IntArray;
-
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
+import de.pcfreak9000.nbt.NBTSmartIntList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -113,15 +112,19 @@ public class TileStorage implements Tickable {
         }
     }
     
+    double d = 0;
+    double c = 0;
+    
     public NBTCompound serialize(ChunkDict dict) {
         NBTList tileEntities = new NBTList(NBTType.Compound);
-        IntArray array = new IntArray(size * size);
+        NBTSmartIntList list = new NBTSmartIntList();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 TileState st = tileArray[i][j];
                 String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
                 int idN = dict.getIdFor(id);
-                array.add(idN);
+                //array.add(idN);
+                list.addSmartInt(idN);
                 if (st.getTile().hasTileEntity()) {
                     ITileEntity te = st.getTileEntity();
                     NBTCompound tecomp = AnnotationSerializer.serialize(te);
@@ -132,19 +135,6 @@ public class TileStorage implements Tickable {
                     }
                 }
             }
-        }
-        int max = dict.getMax();
-        NBTType type = null;
-        if (max <= Byte.MAX_VALUE) {
-            type = NBTType.Byte;
-        } else if (max <= Short.MAX_VALUE) {
-            type = NBTType.Short;
-        } else {
-            type = NBTType.Int;
-        }
-        NBTList list = new NBTList(type);
-        for (int i : array.items) {
-            list.addNumberAutocast(i);
         }
         NBTCompound tilestorageMaster = new NBTCompound();
         tilestorageMaster.putList("tiles", list);

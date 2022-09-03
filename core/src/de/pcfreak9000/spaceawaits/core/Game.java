@@ -125,6 +125,7 @@ public class Game {
         this.gameRenderer.getWorldView().setWorld(null);
         this.world.unloadAll();
         this.writePlayer();
+        this.world = null;
     }
     
     public void saveAll() {
