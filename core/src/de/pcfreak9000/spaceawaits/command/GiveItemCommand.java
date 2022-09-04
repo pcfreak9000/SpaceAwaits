@@ -5,7 +5,7 @@ import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -18,7 +18,7 @@ public class GiveItemCommand implements Runnable {
     
     @Override
     public void run() {
-        Item i = GameRegistry.ITEM_REGISTRY.get(id);
+        Item i = Registry.ITEM_REGISTRY.get(id);
         if (i != null) {
             IInventory inv = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getInventory();
             InvUtil.insert(inv, new ItemStack(i, amount));

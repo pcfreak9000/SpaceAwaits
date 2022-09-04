@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
 
-public class GeneratorRegistry extends GameRegistry<WorldSetup> {
+public class GeneratorRegistry extends Registry<WorldSetup> {
     
     public List<WorldSetup> filtered(Object... filter) {
         List<WorldSetup> filterOutput = new ArrayList<>();

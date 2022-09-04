@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -81,7 +81,7 @@ public class NextTickTile implements INBTSerializable {
         x = c.getInt("x");
         y = c.getInt("y");
         layer = c.getByte("z") == 1 ? TileLayer.Front : TileLayer.Back;
-        tile = GameRegistry.TILE_REGISTRY.get(c.getString("t"));
+        tile = Registry.TILE_REGISTRY.get(c.getString("t"));
         tick = c.getLong("tick");
     }
     
@@ -90,7 +90,7 @@ public class NextTickTile implements INBTSerializable {
         c.putInt("x", x);
         c.putInt("y", y);
         c.putByte("z", layer == TileLayer.Front ? (byte) 1 : (byte) 0);
-        c.putString("t", GameRegistry.TILE_REGISTRY.getId(tile));
+        c.putString("t", Registry.TILE_REGISTRY.getId(tile));
         c.putLong("tick", tick);
     }
     

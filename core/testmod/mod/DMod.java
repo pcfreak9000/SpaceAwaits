@@ -29,7 +29,7 @@ import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
@@ -79,6 +79,8 @@ public class DMod {
     public SpaceshipFactory fac = new SpaceshipFactory();
     public static final Item MININGLASER = new ItemMininglaser();
     
+    public TestTileRegen regen = new TestTileRegen();
+    
     //TODO ALLGEMEIN:
     //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
     //random tick system, erledigt (mehr oder weniger) random tick system für entities
@@ -88,13 +90,15 @@ public class DMod {
     //baum animation, abreiß animation (-> klassen durchgucken die dinge nur bei gedrückt tun)
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
-        GameRegistry.COMPOSITE_MANAGER.create(0, "Proton").build();
-        GameRegistry.COMPOSITE_MANAGER.create(0, "Electron").build();
-        GameRegistry.COMPOSITE_MANAGER.create(1, "Stonestuff").add(10f, "Proton").add(10f, "Electron").build();
+        Registry.COMPOSITE_MANAGER.create(0, "Proton").build();
+        Registry.COMPOSITE_MANAGER.create(0, "Electron").build();
+        Registry.COMPOSITE_MANAGER.create(1, "Stonestuff").add(10f, "Proton").add(10f, "Electron").build();
+        
+        Registry.REGEN_REGISTRY.register("testtile", regen);
         
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
-        GameRegistry.WORLD_ENTITY_REGISTRY.register("spac", fac);
+        Registry.WORLD_ENTITY_REGISTRY.register("spac", fac);
         
         water.setTexture("stone.png");
         water.setSolid(false);
@@ -103,24 +107,24 @@ public class DMod {
         water.setColor(new Color(0, 100 / 255f, 1, 0.1f));//0.75f
         water.setDisplayName("Water");
         water.setOpaque(false);
-        GameRegistry.TILE_REGISTRY.register("water", water);
+        Registry.TILE_REGISTRY.register("water", water);
         
         Tile ironTile = new Tile();
         ironTile.setDisplayName("Iron Ore");
         ironTile.setTexture("ore_iron.png");
         // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
-        GameRegistry.TILE_REGISTRY.register("ore_iron", ironTile);
+        Registry.TILE_REGISTRY.register("ore_iron", ironTile);
         
         torch.setLightColor(Color.WHITE);
         torch.setDisplayName("torch");
-        GameRegistry.TILE_REGISTRY.register("torch", torch);
+        Registry.TILE_REGISTRY.register("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
         laser.setTexture("dirt.png");
         laser.setDisplayName("Laser");
         laser.setColor(Color.RED);
         laser.setLightColor(new Color(1, 0, 0, 1));
-        GameRegistry.TILE_REGISTRY.register("laser", laser);
+        Registry.TILE_REGISTRY.register("laser", laser);
         
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
@@ -130,15 +134,15 @@ public class DMod {
                         reee();
                     }
                 }), WorldView.VISIBLE_TILES_MAX, WorldView.VISIBLE_TILES_MAX);
-        GameRegistry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
+        Registry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         Background b2 = new Background(planet, 5, 5);
         b2.xoff = -20;
         b2.yoff = 15;
         b2.w = 1;
         b2.h = 1;
-        GameRegistry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
+        Registry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
-        GameRegistry.ITEM_REGISTRY.register("mininglaser", MININGLASER);
+        Registry.ITEM_REGISTRY.register("mininglaser", MININGLASER);
         
     }
     
@@ -166,7 +170,7 @@ public class DMod {
         housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
-        GameRegistry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
+        Registry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;
             
@@ -198,9 +202,9 @@ public class DMod {
                     
                     @Override
                     public void onLoading(World world) {
-                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(),
+                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(),
                                 false);
-                        world.spawnEntity(GameRegistry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(),
+                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(),
                                 false);
                         world.spawnEntity(testFogEntity(), false);
                     }

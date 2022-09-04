@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 
 public class Items {
     
@@ -14,12 +14,12 @@ public class Items {
     
     public static void registerItems() {
         //@formatter:off
-        GameRegistry.ITEM_REGISTRY.register("medkitSimple", MEDKIT_SIMPLE);
-        GameRegistry.ITEM_REGISTRY.register("axePrimitive", AXE_PRIMITIVE);
-        GameRegistry.ITEM_REGISTRY.register("pickaxePrimitive", PICKAXE_PRIMITIVE);
-        GameRegistry.ITEM_REGISTRY.register("twig", TWIG.setTexture("stick.png").setDisplayName("Twig"));
-        GameRegistry.ITEM_REGISTRY.register("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
-        GameRegistry.ITEM_REGISTRY.register("repairgun", REPAIRGUN);
+        Registry.ITEM_REGISTRY.register("medkitSimple", MEDKIT_SIMPLE);
+        Registry.ITEM_REGISTRY.register("axePrimitive", AXE_PRIMITIVE);
+        Registry.ITEM_REGISTRY.register("pickaxePrimitive", PICKAXE_PRIMITIVE);
+        Registry.ITEM_REGISTRY.register("twig", TWIG.setTexture("stick.png").setDisplayName("Twig"));
+        Registry.ITEM_REGISTRY.register("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
+        Registry.ITEM_REGISTRY.register("repairgun", REPAIRGUN);
         //@formatter:on
     }
     

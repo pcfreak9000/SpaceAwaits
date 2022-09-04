@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.Component;
 
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 
-public class WorldComponentRegistry extends GameRegistry<Class<? extends Component>> {
+public class WorldComponentRegistry extends Registry<Class<? extends Component>> {
     @Override
-    public GameRegistry<Class<? extends Component>> register(String name, Class<? extends Component> data) {
+    public Registry<Class<? extends Component>> register(String name, Class<? extends Component> data) {
         if (NBTSerializable.class.isAssignableFrom(data)) {
             try {
                 data.getDeclaredConstructor();

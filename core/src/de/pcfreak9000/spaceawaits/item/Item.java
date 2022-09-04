@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.comp.Composite;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -138,7 +138,7 @@ public class Item {
     @Override
     public String toString() {
         return "Item [maxstacksize=" + maxstacksize + ", displayName=" + displayName + ", registryId="
-                + GameRegistry.ITEM_REGISTRY.getId(this) + "]";
+                + Registry.ITEM_REGISTRY.getId(this) + "]";
     }
     
 }

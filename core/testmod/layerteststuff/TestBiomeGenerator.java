@@ -7,6 +7,8 @@ public class TestBiomeGenerator extends BiomeGenerator {
     
     private TestBiome testBiome = new TestBiome();
     
+    private int sampleDist = 5;
+    
     public TestBiomeGenerator(long seed) {
         super(seed);
     }

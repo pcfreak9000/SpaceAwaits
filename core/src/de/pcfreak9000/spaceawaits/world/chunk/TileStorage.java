@@ -10,7 +10,7 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTSmartIntList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ChunkDict;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -97,7 +97,7 @@ public class TileStorage implements Tickable {
             int y = (i) % size;
             int idN = (int) tileList.getNumberAutocast(i);
             String id = dict.getStringFrom(idN);
-            Tile t = GameRegistry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
+            Tile t = Registry.TILE_REGISTRY.getOrDefault(id, Tile.NOTHING);
             chunk.setTile(tx + x, ty + y, layer, t);
         }
         NBTList tileEntities = in.getList("tileEntities");
@@ -121,7 +121,7 @@ public class TileStorage implements Tickable {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 TileState st = tileArray[i][j];
-                String id = GameRegistry.TILE_REGISTRY.getId(st.getTile());
+                String id = Registry.TILE_REGISTRY.getId(st.getTile());
                 int idN = dict.getIdFor(id);
                 //array.add(idN);
                 list.addSmartInt(idN);

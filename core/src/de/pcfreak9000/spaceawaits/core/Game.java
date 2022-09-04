@@ -11,7 +11,7 @@ import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
@@ -58,7 +58,7 @@ public class Game {
             //Check if this save has a spawn place, otherwise generate a new one
             //When generating a new world, place the player at spawn
             String id = createWorld("Gurke",
-                    pickGenerator(GameRegistry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)),
+                    pickGenerator(Registry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)),
                     this.mySave.getSaveMeta().getSeed());//Derive world seed from that master seed instead of using it directly
             joinWorld(id);
         }
@@ -77,7 +77,7 @@ public class Game {
             String genId = meta.getWorldGeneratorUsed();
             long worldSeed = meta.getWorldSeed();
             //No default because this is crucial information and can't really be defaulted
-            WorldSetup gen = GameRegistry.GENERATOR_REGISTRY.get(genId);
+            WorldSetup gen = Registry.GENERATOR_REGISTRY.get(genId);
             WorldPrimer worldPrimer = gen.setupWorld(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
@@ -110,7 +110,7 @@ public class Game {
         WorldPrimer worldPrimer = generator.setupWorld(new GeneratorSettings(seed, fresh));
         fresh = false;
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
-                .worldGenerator(GameRegistry.GENERATOR_REGISTRY.getId(generator))
+                .worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator))
                 .dimensions(worldPrimer.getWorldBounds()).create();
         //The meta can probably be cached (useful for create-and-join)
         try {

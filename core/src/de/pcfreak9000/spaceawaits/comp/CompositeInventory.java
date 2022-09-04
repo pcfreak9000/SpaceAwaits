@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.ObjectFloatMap;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTag;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 @Deprecated
 public class CompositeInventory implements NBTSerializable {
@@ -33,7 +33,7 @@ public class CompositeInventory implements NBTSerializable {
     
     @Override
     public void readNBT(NBTTag tag) {
-        CompositeManager compMgr = GameRegistry.COMPOSITE_MANAGER;
+        CompositeManager compMgr = Registry.COMPOSITE_MANAGER;
         NBTCompound comp = (NBTCompound) tag;
         for (Entry<String, NBTTag> e : comp.entrySet()) {
             Composite c = compMgr.getCompositeForName(e.getKey());

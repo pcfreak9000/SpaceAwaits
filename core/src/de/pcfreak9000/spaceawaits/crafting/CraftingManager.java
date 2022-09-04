@@ -15,8 +15,13 @@ public class CraftingManager {
     private Array<SimpleRecipe> simpleRecipes = new Array<>();
     private Array<ShapedRecipe> shapedRecipes = new Array<>();
     
+    @Deprecated
     public void addSimpleRecipe(ItemStack result, ItemStack... inputs) {
-        simpleRecipes.add(new SimpleRecipe(result, inputs));
+        addSimpleRecipe(new SimpleRecipe(result, inputs));
+    }
+    
+    public void addSimpleRecipe(SimpleRecipe recipe) {
+        simpleRecipes.add(recipe);
     }
     
     public void addShapedRecipe(ShapedRecipe sr) {

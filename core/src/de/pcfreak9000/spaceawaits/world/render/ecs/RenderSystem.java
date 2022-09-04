@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.Event;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
@@ -47,11 +47,11 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     };
     
     public static final class RegisterRenderStrategiesEvent extends Event {
-        public final GameRegistry<IRenderStrategy> renderStrategies;
+        public final Registry<IRenderStrategy> renderStrategies;
         public final World world;
         public final GameRenderer renderer;
         
-        public RegisterRenderStrategiesEvent(GameRegistry<IRenderStrategy> rendstrat, World world,
+        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world,
                 GameRenderer renderer) {
             this.renderStrategies = rendstrat;
             this.world = world;
@@ -62,7 +62,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;//TODO make light disableable
     private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
     
-    private final GameRegistry<IRenderStrategy> renderStrategies;
+    private final Registry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
     private GameRenderer renderer;
@@ -73,7 +73,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public RenderSystem(World world, GameRenderer renderer) {
         world.getWorldBus().register(this);
         this.entities = new Array<>();
-        this.renderStrategies = new GameRegistry<>();
+        this.renderStrategies = new Registry<>();
         this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
         this.batch = renderer.getSpriteBatch();//new SpriteBatchImpr(100);

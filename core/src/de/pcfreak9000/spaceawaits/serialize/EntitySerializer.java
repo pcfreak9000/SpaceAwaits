@@ -8,7 +8,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
@@ -26,8 +26,8 @@ public class EntitySerializer {
         if (isSerializable(entityImproved)) {
             NBTCompound nbt = new NBTCompound();
             WorldEntityFactory fac = Components.SERIALIZE_ENTITY.get(entityImproved).factory;
-            GameRegistry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
-            String facId = GameRegistry.WORLD_ENTITY_REGISTRY
+            Registry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
+            String facId = Registry.WORLD_ENTITY_REGISTRY
                     .getId(Components.SERIALIZE_ENTITY.get(entityImproved).factory);
             nbt.putString("entityFactoryId", facId);
             //This could also happen in a serialize function in the factory
@@ -39,10 +39,10 @@ public class EntitySerializer {
     
     public static Entity deserializeEntity(NBTCompound compound) {
         String entityFactoryId = compound.getString("entityFactoryId");
-        if (!GameRegistry.WORLD_ENTITY_REGISTRY.isRegistered(entityFactoryId)) {
+        if (!Registry.WORLD_ENTITY_REGISTRY.isRegistered(entityFactoryId)) {
             return null;
         }
-        Entity ent = GameRegistry.WORLD_ENTITY_REGISTRY.get(entityFactoryId).recreateEntity();
+        Entity ent = Registry.WORLD_ENTITY_REGISTRY.get(entityFactoryId).recreateEntity();
         if (!isSerializable(ent)) {
             throw new IllegalArgumentException("Entity is not serializable but was serialized");//Hmm, throw or not throw?
         }

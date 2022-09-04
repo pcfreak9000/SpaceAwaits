@@ -15,7 +15,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ChunkDict;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
@@ -240,7 +240,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     @Override
     public Tile setTile(int tx, int ty, TileLayer layer, Tile t) {
         Objects.requireNonNull(t);
-        GameRegistry.TILE_REGISTRY.checkRegistered(t);
+        Registry.TILE_REGISTRY.checkRegistered(t);
         TileStorage storage = getStorageForLayer(layer);
         RenderTileStorage renderStorage = getRenderStorageForLayer(layer);
         
