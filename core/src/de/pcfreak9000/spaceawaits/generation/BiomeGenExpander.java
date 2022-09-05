@@ -4,18 +4,17 @@ public class BiomeGenExpander {
     
     private IBiomeGen[] subgens;
     
-    public BiomeGenExpander(GenInfo[] layers, long seed) {
-        expand(layers, seed);
+    public BiomeGenExpander(GenInfo[] layers) {
+        expand(layers);
     }
     
-    private void expand(GenInfo[] layers, long seed) {
+    private void expand(GenInfo[] layers) {
         subgens = new IBiomeGen[layers.length];
         for (int i = 0; i < subgens.length; i++) {
             GenInfo inf = layers[i];
             if (inf.hasGenLayer()) {
-                GenLayer<?> sublayer = (GenLayer<?>) inf.getGenerated();
-                IGeneratingLayer gen = sublayer;
-                Object res = gen.generate(seed, inf.getParams());
+                GenLayer<?, Parameters, ?> sublayer = (GenLayer<?, Parameters, ?>) inf.getGenerated();
+                Object res = sublayer.generate(inf.getParams());
                 if (res instanceof IBiomeGen) {
                     IBiomeGen ibg = (IBiomeGen) res;
                     subgens[i] = ibg;

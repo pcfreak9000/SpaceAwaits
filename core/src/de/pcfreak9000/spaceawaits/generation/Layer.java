@@ -6,8 +6,8 @@ public class Layer implements IBiomeGen {
     
     private BiomeGenExpander expand;
     
-    public Layer(GenInfo[] layers, LayerParameters params, long seed) {
-        this.expand = new BiomeGenExpander(layers, seed);
+    public Layer(GenInfo[] layers, LayerParameters params) {
+        this.expand = new BiomeGenExpander(layers);
     }
     
     @Override

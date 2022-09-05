@@ -1,6 +1,6 @@
 package de.pcfreak9000.spaceawaits.generation;
 
-public interface IGeneratingLayer {
+public interface IGeneratingLayer<T, P extends Parameters> {
     
-    Object generate(long seed, Parameters params);
+    T generate(P params);
 }

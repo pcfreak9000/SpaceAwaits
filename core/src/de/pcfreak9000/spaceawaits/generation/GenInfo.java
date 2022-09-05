@@ -18,7 +18,7 @@ public class GenInfo {
     }
     
     public boolean hasGenLayer() {
-        return (generated instanceof GenLayer<?>);
+        return (generated instanceof GenLayer<?, ?, ?>);
     }
     
 }

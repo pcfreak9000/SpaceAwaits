@@ -6,8 +6,8 @@ public class Planet implements IBiomeGen {
     
     private BiomeGenExpander expand;
     
-    public Planet(GenInfo[] layers, PlanetParameters params, long seed) {
-        this.expand = new BiomeGenExpander(layers, seed);
+    public Planet(GenInfo[] layers, PlanetParameters params) {
+        this.expand = new BiomeGenExpander(layers);
     }
     
     @Override

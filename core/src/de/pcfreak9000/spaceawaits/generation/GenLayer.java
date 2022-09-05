@@ -2,23 +2,21 @@ package de.pcfreak9000.spaceawaits.generation;
 
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
-
-public abstract class GenLayer<T> implements IGeneratingLayer {
+//This class may be useless and its probably overusing generics anyways
+public abstract class GenLayer<T, P extends Parameters, C extends Parameters>
+        implements IGeneratingLayer<GenInfo[], P> {
     
-    //public abstract boolean isAcceptable(GenLayer parent, Parameters parameters,
-    //      ImmutableArray<GenInfo> parallelLayersSelected);
+    protected abstract C[] generateSubNodes(P parameters);
     
-    protected abstract Parameters[] generateSubNodes(long seed, Parameters parameters);
-    
-    protected abstract T getChildFor(long seed, Parameters childParams, ImmutableArray<GenInfo> parallelLayersSelected);
+    protected abstract T getChildFor(P myparams, C childParams, ImmutableArray<GenInfo> parallelLayersSelected);
     
     @Override
-    public Object generate(long seed, Parameters parameters) {
-        Parameters[] childParams = generateSubNodes(seed, parameters);
+    public GenInfo[] generate(P parameters) {
+        C[] childParams = generateSubNodes(parameters);
         Array<GenInfo> sublayers = new Array<>(true, childParams.length, GenInfo.class);
         ImmutableArray<GenInfo> sublayersImmutable = new ImmutableArray<>(sublayers);
-        for (Parameters p : childParams) {
-            T child = getChildFor(seed, parameters, sublayersImmutable);
+        for (C p : childParams) {
+            T child = getChildFor(parameters, p, sublayersImmutable);
             sublayers.add(new GenInfo(child, p));
         }
         return sublayers.items;
