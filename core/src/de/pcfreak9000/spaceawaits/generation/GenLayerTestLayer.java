@@ -10,8 +10,7 @@ public class GenLayerTestLayer extends GenLayer<IBiomeGen> implements IGeneratin
     }
     
     @Override
-    protected IBiomeGen selectChildFor(long seed, Parameters childParams,
-            ImmutableArray<GenInfo> parallelLayersSelected) {
+    protected IBiomeGen getChildFor(long seed, Parameters childParams, ImmutableArray<GenInfo> parallelLayersSelected) {
         return null;
     }
     

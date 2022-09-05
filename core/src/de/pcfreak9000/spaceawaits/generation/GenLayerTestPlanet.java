@@ -12,7 +12,7 @@ public class GenLayerTestPlanet extends GenLayer<GenLayer<?>> implements IGenera
     }
     
     @Override
-    protected GenLayer<?> selectChildFor(long seed, Parameters childParams,
+    protected GenLayer<?> getChildFor(long seed, Parameters childParams,
             ImmutableArray<GenInfo> parallelLayersSelected) {
         return sublayer;
     }

@@ -10,10 +10,7 @@ public abstract class GenLayer<T> implements IGeneratingLayer {
     
     protected abstract Parameters[] generateSubNodes(long seed, Parameters parameters);
     
-    protected abstract T selectChildFor(long seed, Parameters childParams,
-            ImmutableArray<GenInfo> parallelLayersSelected);
-    
-    //public abstract G generateFlat(long seed, Parameters parameters);
+    protected abstract T getChildFor(long seed, Parameters childParams, ImmutableArray<GenInfo> parallelLayersSelected);
     
     @Override
     public Object generate(long seed, Parameters parameters) {
@@ -21,7 +18,7 @@ public abstract class GenLayer<T> implements IGeneratingLayer {
         Array<GenInfo> sublayers = new Array<>(true, childParams.length, GenInfo.class);
         ImmutableArray<GenInfo> sublayersImmutable = new ImmutableArray<>(sublayers);
         for (Parameters p : childParams) {
-            T child = selectChildFor(seed, parameters, sublayersImmutable);
+            T child = getChildFor(seed, parameters, sublayersImmutable);
             sublayers.add(new GenInfo(child, p));
         }
         return sublayers.items;
