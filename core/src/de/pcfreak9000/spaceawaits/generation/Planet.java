@@ -1,23 +1,17 @@
 package de.pcfreak9000.spaceawaits.generation;
 
-public class Planet implements IWorldGen {
+import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
+
+public class Planet implements IBiomeGen {
     
-    private GenInfo[] sublayers;
-    
-    private IWorldGen[] subgens;
+    private BiomeGenExpander expand;
     
     public Planet(GenInfo[] layers, PlanetParameters params, long seed) {
-        this.sublayers = layers;
-    }
-    
-    private void expand(GenInfo[] layers, long seed) {
-        for (GenInfo i : layers) {
-            i.generate(seed);
-        }
+        this.expand = new BiomeGenExpander(layers, seed);
     }
     
     @Override
-    public GenInfo getFrom(int tx, int ty) {
-        return sublayers[0];
+    public Biome getFrom(int tx, int ty) {
+        return expand.getSubBiomeGen(0).getFrom(tx, ty);
     }
 }

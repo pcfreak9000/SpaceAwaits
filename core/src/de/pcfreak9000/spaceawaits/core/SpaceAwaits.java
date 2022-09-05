@@ -24,6 +24,7 @@ import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
+import de.pcfreak9000.spaceawaits.generation.Generation;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
@@ -79,7 +80,7 @@ public class SpaceAwaits extends Game {
         //Setup debugging stuff
         Logger.setMinLogType(DEBUG ? LogType.Debug : LogType.Info);
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
-        
+        Generation.setup(0);
         //Instantiate infrastructure
         this.modloader = new Modloader();
         this.assetManager = createAssetmanager();

@@ -1,24 +1,24 @@
 package de.pcfreak9000.spaceawaits.generation;
 
 public class GenInfo {
-    private GenLayer myLayer;
+    private Object generated;
     private Parameters myParams;
     
-    public GenInfo(GenLayer myLayer, Parameters myParams) {
-        this.myLayer = myLayer;
+    public GenInfo(Object generated, Parameters myParams) {
+        this.generated = generated;
         this.myParams = myParams;
     }
     
-    public GenLayer getLayer() {
-        return myLayer;
+    public Object getGenerated() {
+        return generated;
     }
     
     public Parameters getParams() {
         return myParams;
     }
     
-    public GenInfo[] generate(long seed) {
-        return this.myLayer.generate(seed, this.myParams);
+    public boolean hasGenLayer() {
+        return (generated instanceof GenLayer<?>);
     }
     
 }
