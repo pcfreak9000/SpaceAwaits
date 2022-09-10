@@ -21,6 +21,7 @@ import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
 import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
+import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
@@ -42,7 +43,6 @@ import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
@@ -170,20 +170,15 @@ public class DMod {
         housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
-        Registry.GENERATOR_REGISTRY.register("STS", new WorldSetup() {
+        Registry.GENERATOR_REGISTRY.register("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;
-            
-            @Override
-            protected void initCaps() {
-                this.CAPS.add(GeneratorCapabilitiesBase.LVL_ENTRY);
-            }
             
             private Vector2 spawn = null;
             
             @Override
-            public WorldPrimer setupWorld(GeneratorSettings genset) {
-                WorldPrimer p = new WorldPrimer(this);
+            public WorldPrimer generate(GeneratorSettings genset) {
+                WorldPrimer p = new WorldPrimer();
                 p.setWorldGenerator(new IWorldGenerator() {
                     @Override
                     public void generate(World world) {
@@ -202,8 +197,7 @@ public class DMod {
                     
                     @Override
                     public void onLoading(World world) {
-                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(),
-                                false);
+                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
                         world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(),
                                 false);
                         world.spawnEntity(testFogEntity(), false);
@@ -227,7 +221,8 @@ public class DMod {
                 });
                 p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
                 p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
-                p.setChunkGenerator(new BiomeChunkGenerator(new TestBiomeGenerator(genset.getSeed())));
+                p.setChunkGenerator(
+                        new BiomeChunkGenerator(new TestBiomeGenerator(genset.getSeed()), genset.getSeed()));
                 return p;
             }
         });

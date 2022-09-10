@@ -16,6 +16,7 @@
 
 package de.omnikryptec.math;
 
+import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -36,6 +37,11 @@ public class MathUtil {
             rand -= t.getWeight();
         }
         return null;
+    }
+    
+    public static <T> T getRandom(Random random, List<T> list) {
+        int rand = random.nextInt(list.size());
+        return list.get(rand);
     }
     
     public static <T extends Weighted> T getWeightedRandom(final Random random, final Iterable<T> ts) {

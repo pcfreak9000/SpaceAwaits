@@ -1,22 +1,14 @@
 package de.pcfreak9000.spaceawaits.generation;
 
-import com.badlogic.ashley.utils.ImmutableArray;
-
+@Deprecated
 public class GenLayerTestLayer implements IGeneratingLayer<Layer, LayerParameters> {
     
-    GenLayer<IBiomeGen, LayerParameters, Parameters> layerlayer = new GenLayer<IBiomeGen, LayerParameters, Parameters>() {
+    IGeneratingLayer<GenInfo[], LayerParameters> layerlayer = new IGeneratingLayer<GenInfo[], LayerParameters>() {
         
         @Override
-        protected Parameters[] generateSubNodes(LayerParameters parameters) {
-            return new Parameters[] {};
-        }
-        
-        @Override
-        protected IBiomeGen getChildFor(LayerParameters p, Parameters childParams,
-                ImmutableArray<GenInfo> parallelLayersSelected) {
+        public GenInfo[] generate(LayerParameters params) {
             return null;
         }
-        
     };
     
     @Override

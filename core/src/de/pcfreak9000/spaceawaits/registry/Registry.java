@@ -40,6 +40,8 @@ public class Registry<T> {
     
     public static final GeneratorRegistry GENERATOR_REGISTRY = new GeneratorRegistry();
     
+    //public static final Registry<IGeneratingLayer<?, ?>> GENERATOR_REGISTRY = new Registry<>();
+    
     protected final Logger LOGGER = Logger.getLogger(getClass());
     
     protected final HashMap<String, T> registered = new HashMap<>();

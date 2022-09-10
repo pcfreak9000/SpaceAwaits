@@ -1,15 +1,18 @@
 package de.pcfreak9000.spaceawaits.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ISave;
@@ -23,8 +26,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.gen.WorldSetup;
-import de.pcfreak9000.spaceawaits.world.gen.WorldSetup.GeneratorCapabilitiesBase;
 import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
 
 public class Game {
@@ -57,16 +58,18 @@ public class Game {
         } else {
             //Check if this save has a spawn place, otherwise generate a new one
             //When generating a new world, place the player at spawn
-            String id = createWorld("Gurke",
-                    pickGenerator(Registry.GENERATOR_REGISTRY.filtered(GeneratorCapabilitiesBase.LVL_ENTRY)),
+            String id = createWorld("Gurke", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
                     this.mySave.getSaveMeta().getSeed());//Derive world seed from that master seed instead of using it directly
             joinWorld(id);
         }
     }
     
-    //TMP
-    private WorldSetup pickGenerator(List<WorldSetup> list) {
-        return MathUtil.getWeightedRandom(new Random(), list);
+    //TMP!!!!
+    private IGeneratingLayer<WorldPrimer, GeneratorSettings> pickGenerator(
+            Set<IGeneratingLayer<WorldPrimer, GeneratorSettings>> set) {
+        List<IGeneratingLayer<WorldPrimer, GeneratorSettings>> list = new ArrayList<>();
+        list.addAll(set);
+        return MathUtil.getRandom(new Random(), list);
     }
     
     public void joinWorld(String uuid) {
@@ -77,8 +80,9 @@ public class Game {
             String genId = meta.getWorldGeneratorUsed();
             long worldSeed = meta.getWorldSeed();
             //No default because this is crucial information and can't really be defaulted
-            WorldSetup gen = Registry.GENERATOR_REGISTRY.get(genId);
-            WorldPrimer worldPrimer = gen.setupWorld(new GeneratorSettings(worldSeed, fresh));
+            IGeneratingLayer<WorldPrimer, GeneratorSettings> gen = (IGeneratingLayer<WorldPrimer, GeneratorSettings>) Registry.GENERATOR_REGISTRY
+                    .get(genId);
+            WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
             WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
@@ -105,13 +109,13 @@ public class Game {
         }
     }
     
-    public String createWorld(String name, WorldSetup generator, long seed) {
+    public String createWorld(String name, IGeneratingLayer<WorldPrimer, GeneratorSettings> generator, long seed) {
         LOGGER.infof("Creating world...");
-        WorldPrimer worldPrimer = generator.setupWorld(new GeneratorSettings(seed, fresh));
+        WorldPrimer worldPrimer = generator.generate(new GeneratorSettings(seed, fresh));
         fresh = false;
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
-                .worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator))
-                .dimensions(worldPrimer.getWorldBounds()).create();
+                .worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldPrimer.getWorldBounds())
+                .create();
         //The meta can probably be cached (useful for create-and-join)
         try {
             String uuid = this.mySave.createWorld(name, wMeta);

@@ -11,18 +11,22 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class BiomeChunkGenerator implements IChunkGenerator {
     
-    private BiomeGenerator biomeGenerator;
-    private Random rand = new RandomXS128();
-    
     private static final int POPULATE_DIV = 16;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
-    public BiomeChunkGenerator(BiomeGenerator biomeGenerator) {
+    private IBiomeGen biomeGenerator;
+    private long seed;
+    
+    private Random rand = new RandomXS128();
+    
+    public BiomeChunkGenerator(IBiomeGen biomeGenerator, long seed) {
         this.biomeGenerator = biomeGenerator;
+        this.seed = seed;
     }
     
+    //TODO Move this? Not every world necessarily has a seed... but the random here does have a seed
     private long getSeedForChunk(Chunk chunk) {
-        long l = this.biomeGenerator.getWorldSeed();
+        long l = seed;
         l += 6793451682347862416L;
         l *= chunk.getGlobalChunkX();
         l += 6793451682347862416L;
@@ -41,7 +45,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(x, y);
-                biome.genTerrainTileAt(x, y, chunk, this.biomeGenerator, rand);
+                biome.genTerrainTileAt(x, y, chunk, (BiomeGenerator) this.biomeGenerator, rand);
             }
         }
     }
@@ -60,7 +64,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(sampletx, samplety);
-                biome.populate(ts, world, biomeGenerator, txs, tys, rand, POPULATE_DIV);
+                biome.populate(ts, world, (BiomeGenerator) biomeGenerator, txs, tys, rand, POPULATE_DIV);
             }
         }
     }

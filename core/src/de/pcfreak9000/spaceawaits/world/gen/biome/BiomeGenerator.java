@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.gen.biome;
 
-public abstract class BiomeGenerator {
+@Deprecated
+public abstract class BiomeGenerator implements IBiomeGen {
     
     protected final long worldSeed;
     
@@ -8,12 +9,14 @@ public abstract class BiomeGenerator {
         this.worldSeed = seed;
     }
     
+    @Override
     public abstract Biome getBiome(int tx, int ty);
     
     public long getWorldSeed() {
         return this.worldSeed;
     }
     
+    @Deprecated
     public float interpolateAlongX(Class<? extends BiomeInterpolatable> interpolator, int tx, int ty) {
         Biome biome = getBiome(tx, ty);
         if (!biome.hasInterpolatable(interpolator)) {
