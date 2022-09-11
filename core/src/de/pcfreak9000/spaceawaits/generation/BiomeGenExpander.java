@@ -4,14 +4,8 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.IBiomeGen;
 
 public class BiomeGenExpander {
     
-    private IBiomeGen[] subgens;
-    
-    public BiomeGenExpander(GenInfo[] layers) {
-        subgens = new IBiomeGen[layers.length];
-        expand(layers);
-    }
-    
-    private void expand(GenInfo[] layers) {
+    public static IBiomeGen[] expand(GenInfo[] layers) {
+        IBiomeGen[] subgens = new IBiomeGen[layers.length];
         for (int i = 0; i < subgens.length; i++) {
             GenInfo inf = layers[i];
             Object res = inf.getGenerated();
@@ -26,14 +20,7 @@ public class BiomeGenExpander {
                 //Problem   
             }
         }
-    }
-    
-    public int getSubCount() {
-        return subgens.length;
-    }
-    
-    public IBiomeGen getSubBiomeGen(int index) {
-        return subgens[index];
+        return subgens;
     }
     
 }

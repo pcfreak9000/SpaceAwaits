@@ -21,7 +21,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
@@ -30,7 +30,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import mod.DMod;
 
-public class TestBiome extends Biome implements HeightSupplier {
+public class TestBiome extends Biome {
     private void genNoise() {
         ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
         gen.setNumOctaves(6);
@@ -61,14 +61,12 @@ public class TestBiome extends Biome implements HeightSupplier {
     
     public TestBiome() {
         genNoise();
-        this.interpolators.put(HeightInterpolatable.class, new HeightInterpolatable(this));
         this.bp = new StringBasedBlueprint();
         this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
         this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
     }
     
-    @Override
-    public float getHeight(int tx, int ty) {
+    public int getHeight(int tx, int ty) {
         return 400 + (int) Math.round(60 * noise.get(tx, 0.5));
     }
     
@@ -82,9 +80,9 @@ public class TestBiome extends Biome implements HeightSupplier {
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenerator biomeGen, Random rand) {
-        checkSetSeed(biomeGen.getWorldSeed());
-        int value = (int) biomeGen.interpolateAlongX(HeightInterpolatable.class, tx, ty);
+    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen) {
+        checkSetSeed(getWorldSeed());
+        int value = getHeight(tx, ty);
         if (ty > value + 1) {
             return;
         }
@@ -93,7 +91,7 @@ public class TestBiome extends Biome implements HeightSupplier {
             t = Tiles.BEDROCK;
         } else {
             if (ty == value + 1) {
-                if (rand.nextDouble() < 0.1) {
+                if (getRandom().nextDouble() < 0.1) {
                     t = Tiles.LOOSEROCKS;
                 } else {
                     return;
@@ -108,10 +106,10 @@ public class TestBiome extends Biome implements HeightSupplier {
         }
         
         if (t == Tiles.STONE) {
-            if (rand.nextDouble() < 0.001) {
+            if (getRandom().nextDouble() < 0.001) {
                 t = DMod.instance.laser;
             }
-            if (rand.nextDouble() < 0.002) {
+            if (getRandom().nextDouble() < 0.002) {
                 t = DMod.instance.torch;
             }
         }
@@ -146,11 +144,10 @@ public class TestBiome extends Biome implements HeightSupplier {
     };
     
     @Override
-    public void populate(TileSystem tiles, World world, BiomeGenerator biomeGen, int tx, int ty, Random rand,
-            int area) {
+    public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area) {
         for (int i = 0; i < 50; i++) {
-            int x = rand.nextInt(area) + tx;
-            int y = rand.nextInt(area) + ty;
+            int x = getRandom().nextInt(area) + tx;
+            int y = getRandom().nextInt(area) + ty;
             if (tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS) {
                 //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
                 //fgen.generate(tiles, world, x, y, rand, area);

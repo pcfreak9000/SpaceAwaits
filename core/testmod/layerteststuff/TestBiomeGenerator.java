@@ -1,16 +1,14 @@
 package layerteststuff;
 
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 
-public class TestBiomeGenerator extends BiomeGenerator {
+public class TestBiomeGenerator extends BiomeGenCompBased {
     
     private TestBiome testBiome = new TestBiome();
     
-    private int sampleDist = 5;
-    
     public TestBiomeGenerator(long seed) {
-        super(seed);
+        super(null);
     }
     
     @Override

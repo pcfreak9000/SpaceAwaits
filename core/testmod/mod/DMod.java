@@ -170,7 +170,7 @@ public class DMod {
         housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
-        Registry.GENERATOR_REGISTRY.register("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
+        Registry.GENERATOR_REGISTRY.registerWorldGen("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
             private static final int WIDTH = 5000;
             private static final int HEIGHT = 2500;
             

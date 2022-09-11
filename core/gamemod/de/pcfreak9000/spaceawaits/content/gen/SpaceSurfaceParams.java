@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.generation;
+package de.pcfreak9000.spaceawaits.content.gen;
 
 public class SpaceSurfaceParams {
     

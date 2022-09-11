@@ -14,12 +14,12 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     private static final int POPULATE_DIV = 16;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
-    private IBiomeGen biomeGenerator;
+    private BiomeGenCompBased biomeGenerator;
     private long seed;
     
     private Random rand = new RandomXS128();
     
-    public BiomeChunkGenerator(IBiomeGen biomeGenerator, long seed) {
+    public BiomeChunkGenerator(BiomeGenCompBased biomeGenerator, long seed) {
         this.biomeGenerator = biomeGenerator;
         this.seed = seed;
     }
@@ -36,7 +36,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     
     @Override
     public void generateChunk(Chunk chunk) {
-        rand.setSeed(getSeedForChunk(chunk));
+        long chunkseed = getSeedForChunk(chunk);
+        rand.setSeed(chunkseed);
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = i + chunk.getGlobalTileX();
@@ -45,14 +46,18 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(x, y);
-                biome.genTerrainTileAt(x, y, chunk, (BiomeGenerator) this.biomeGenerator, rand);
+                biome.setWorldSeedCurrent(this.seed);
+                biome.setChunkSeedCurrent(chunkseed);
+                biome.setRandomCurrent(rand);
+                biome.genTerrainTileAt(x, y, chunk, this.biomeGenerator);
             }
         }
     }
     
     @Override
     public void populateChunk(Chunk chunk, World world) {
-        rand.setSeed(getSeedForChunk(chunk));
+        long chunkseed = getSeedForChunk(chunk) + 768435;
+        rand.setSeed(chunkseed);
         TileSystem ts = world.getSystem(TileSystem.class);
         for (int i = 0; i < POPULATE_COUNT; i++) {
             for (int j = 0; j < POPULATE_COUNT; j++) {
@@ -64,7 +69,10 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGenerator.getBiome(sampletx, samplety);
-                biome.populate(ts, world, (BiomeGenerator) biomeGenerator, txs, tys, rand, POPULATE_DIV);
+                biome.setWorldSeedCurrent(this.seed);
+                biome.setChunkSeedCurrent(chunkseed);
+                biome.setRandomCurrent(rand);
+                biome.populate(ts, world, biomeGenerator, txs, tys, POPULATE_DIV);
             }
         }
     }
