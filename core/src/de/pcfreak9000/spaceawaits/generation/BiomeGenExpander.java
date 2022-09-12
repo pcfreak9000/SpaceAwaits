@@ -1,11 +1,11 @@
 package de.pcfreak9000.spaceawaits.generation;
 
-import de.pcfreak9000.spaceawaits.world.gen.biome.IBiomeGen;
+import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 
 public class BiomeGenExpander {
     
-    public static IBiomeGen[] expand(GenInfo[] layers) {
-        IBiomeGen[] subgens = new IBiomeGen[layers.length];
+    public static BiomeGenCompBased[] expand(GenInfo[] layers) {
+        BiomeGenCompBased[] subgens = new BiomeGenCompBased[layers.length];
         for (int i = 0; i < subgens.length; i++) {
             GenInfo inf = layers[i];
             Object res = inf.getGenerated();
@@ -13,8 +13,8 @@ public class BiomeGenExpander {
                 IGeneratingLayer<?, Object> sublayer = (IGeneratingLayer<?, Object>) res;
                 res = sublayer.generate(inf.getParams());
             }
-            if (res instanceof IBiomeGen) {
-                IBiomeGen ibg = (IBiomeGen) res;
+            if (res instanceof BiomeGenCompBased) {
+                BiomeGenCompBased ibg = (BiomeGenCompBased) res;
                 subgens[i] = ibg;
             } else {
                 //Problem   

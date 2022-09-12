@@ -3,20 +3,13 @@ package layerteststuff;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Entity;
-import com.sudoplay.joise.module.Module;
-import com.sudoplay.joise.module.ModuleAutoCorrect;
-import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
-import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
-import com.sudoplay.joise.module.ModuleFractal;
-import com.sudoplay.joise.module.ModuleFractal.FractalType;
-import com.sudoplay.joise.module.SeededModule;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
+import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
@@ -31,23 +24,6 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import mod.DMod;
 
 public class TestBiome extends Biome {
-    private void genNoise() {
-        ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
-        gen.setNumOctaves(6);
-        gen.setFrequency(0.00184);
-        gen.setLacunarity(2.1);
-        seeded = gen;
-        
-        ModuleAutoCorrect source = new ModuleAutoCorrect(-1, 1);
-        source.setSource(gen);
-        source.setSampleScale(Chunk.CHUNK_SIZE * 2);
-        source.setSamples(10000);
-        source.calculate2D();
-        noise = source;
-    }
-    
-    private Module noise;
-    private SeededModule seeded;
     
     private StringBasedBlueprint bp;
     
@@ -59,30 +35,23 @@ public class TestBiome extends Biome {
             "#$###$###$$$#", //
     };
     
-    public TestBiome() {
-        genNoise();
+    private boolean sub;
+    
+    public TestBiome(boolean sub) {
+        this.sub = sub;
         this.bp = new StringBasedBlueprint();
         this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
         this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
     }
     
-    public int getHeight(int tx, int ty) {
-        return 400 + (int) Math.round(60 * noise.get(tx, 0.5));
-    }
-    
-    private long seedCurrent = SeededModule.DEFAULT_SEED;
-    
-    private void checkSetSeed(long seed) {
-        if (seedCurrent != seed) {
-            seeded.setSeed(seed);
-            seedCurrent = seed;
-        }
-    }
-    
     @Override
     public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen) {
-        checkSetSeed(getWorldSeed());
-        int value = getHeight(tx, ty);
+        if (sub) {
+            chunk.setTile(tx, ty, TileLayer.Front, Tiles.BRICKS_OLD);
+            chunk.setTile(tx, ty, TileLayer.Back, Tiles.BRICKS_OLD);
+            return;
+        }
+        int value = biomeGen.getComponent(HeightComponent.class).getHeight(tx, ty, getWorldSeed());
         if (ty > value + 1) {
             return;
         }
@@ -145,6 +114,8 @@ public class TestBiome extends Biome {
     
     @Override
     public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area) {
+        if (sub)
+            return;
         for (int i = 0; i < 50; i++) {
             int x = getRandom().nextInt(area) + tx;
             int y = getRandom().nextInt(area) + ty;

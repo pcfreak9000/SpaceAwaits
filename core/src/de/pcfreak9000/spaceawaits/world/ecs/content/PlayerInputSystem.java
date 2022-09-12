@@ -26,7 +26,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
-    private static final boolean FREE_MOVEMENT = false;
+    private static final boolean FREE_MOVEMENT = true;
     
     private final GameRenderer worldRend;
     

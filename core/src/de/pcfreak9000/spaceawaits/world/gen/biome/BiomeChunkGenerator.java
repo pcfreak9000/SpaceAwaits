@@ -45,11 +45,12 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(x, y)) {
                     continue;
                 }
-                Biome biome = biomeGenerator.getBiome(x, y);
+                BiomeGenCompBased leaf = biomeGenerator.getLeaf(x, y);
+                Biome biome = leaf.getBiome(x, y);
                 biome.setWorldSeedCurrent(this.seed);
                 biome.setChunkSeedCurrent(chunkseed);
                 biome.setRandomCurrent(rand);
-                biome.genTerrainTileAt(x, y, chunk, this.biomeGenerator);
+                biome.genTerrainTileAt(x, y, chunk, leaf);
             }
         }
     }
@@ -68,11 +69,12 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(sampletx, samplety)) {
                     continue;
                 }
-                Biome biome = biomeGenerator.getBiome(sampletx, samplety);
+                BiomeGenCompBased leaf = biomeGenerator.getLeaf(sampletx, samplety);
+                Biome biome = leaf.getBiome(sampletx, samplety);
                 biome.setWorldSeedCurrent(this.seed);
                 biome.setChunkSeedCurrent(chunkseed);
                 biome.setRandomCurrent(rand);
-                biome.populate(ts, world, biomeGenerator, txs, tys, POPULATE_DIV);
+                biome.populate(ts, world, leaf, txs, tys, POPULATE_DIV);
             }
         }
     }

@@ -14,6 +14,19 @@ public abstract class BiomeGenCompBased implements IBiomeGen {
         this.parent = parent;
     }
     
+    //return "this" if this is the desired leaf
+    public abstract BiomeGenCompBased getLeaf(int tx, int ty);
+    
+    @Override
+    public Biome getBiome(int tx, int ty) {
+        BiomeGenCompBased leaf = getLeaf(tx, ty);
+        if (leaf == this) {
+            throw new IllegalStateException("A leaf must override getBiome!");
+        }
+        return leaf.getBiome(tx, ty);
+    }
+    
+    //maybe change this and allow the Class to be a supertype of T
     protected <T extends GenerationDataComponent> void addComponent(Class<T> clazz, T comp) {
         map.put(clazz, comp);
     }
@@ -24,6 +37,10 @@ public abstract class BiomeGenCompBased implements IBiomeGen {
             return parent.getComponent(clazz);
         }
         return data;
+    }
+    
+    public boolean hasComponent(Class<? extends GenerationDataComponent> clazz) {
+        return getComponent(clazz) != null;
     }
     
     public <T extends BiomeGenCompBased> T getParent(Class<T> clazz) {
