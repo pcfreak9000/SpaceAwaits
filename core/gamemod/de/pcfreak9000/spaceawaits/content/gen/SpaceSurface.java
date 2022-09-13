@@ -1,5 +1,9 @@
 package de.pcfreak9000.spaceawaits.content.gen;
 
+import java.util.Random;
+
+import com.badlogic.gdx.math.RandomXS128;
+
 import de.pcfreak9000.spaceawaits.generation.BiomeGenExpander;
 import de.pcfreak9000.spaceawaits.generation.GenInfo;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
@@ -25,12 +29,22 @@ public class SpaceSurface extends BiomeGenCompBased {
     private BiomeGenCompBased[] subs;
     private SpaceSurfaceParams params;
     
+    private LayerHeightVariation[] vars;
+    
+    private HeightComponent height;
+    
     public SpaceSurface(SpaceSurfaceParams params) {
         super(null);
         this.params = params;
-        addComponent(HeightComponent.class, new HeightComponent());
+        this.height = new HeightComponent(params.getSeed());
+        addComponent(HeightComponent.class, this.height);
         //setup SpaceSurface children
         subs = BiomeGenExpander.expand(genChildren.generate(this));
+        vars = new LayerHeightVariation[subs.length - 1];
+        Random r = new RandomXS128(params.getSeed());
+        for (int i = 0; i < vars.length; i++) {
+            vars[i] = new LayerHeightVariation(params.getSeed() + 1 + i, 15 + r.nextInt(5));
+        }
     }
     
     public SpaceSurfaceParams getParams() {
@@ -41,7 +55,7 @@ public class SpaceSurface extends BiomeGenCompBased {
     public BiomeGenCompBased getLeaf(int tx, int ty) {
         for (int i = 0; i < subs.length - 1; i++) {
             Layer l = (Layer) subs[i];
-            if (ty < l.getParams().getMeanY() + l.getParams().getMeanThickness()) {
+            if (ty < l.getParams().getMeanY() + l.getParams().getMeanThickness() + vars[i].getVariation(tx, ty)) {
                 return l;
             }
         }

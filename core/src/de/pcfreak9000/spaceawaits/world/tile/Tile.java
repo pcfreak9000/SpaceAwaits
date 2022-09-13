@@ -158,7 +158,7 @@ public class Tile extends Destructible {
         return false;
     }
     
-    public final Item getRegisterItem() {
+    public final Item getRegisterItem() {//this sucks
         if (this.itemTile == null) {
             this.itemTile = createItem();
             return this.itemTile;

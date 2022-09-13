@@ -12,6 +12,7 @@ public class RandomTickComponent extends ValidatingComponent implements Componen
         void tick(World world, Entity entity);
     }
     
+    public double chance = 0.01;
     public RandomTickable tickable;
     
 }

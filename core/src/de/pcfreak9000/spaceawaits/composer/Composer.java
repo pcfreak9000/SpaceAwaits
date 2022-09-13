@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public class Composer {
-    
+    //TODO tiled compositions
     private int width;
     private int height;
     

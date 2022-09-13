@@ -79,6 +79,7 @@ public class TreeFactory implements WorldEntityFactory {
         entity.add(bc);
         RandomTickComponent rtc = new RandomTickComponent();
         rtc.setRequired(Components.TRANSFORM, Components.TREESTATE);//Hmm
+        rtc.chance = 0.00001;
         rtc.tickable = (world, ent) -> {
             if (Components.TREESTATE.get(ent).loose) {
                 return;

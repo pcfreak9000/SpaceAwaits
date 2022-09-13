@@ -21,8 +21,8 @@ public class RandomTickSystem extends IntervalIteratingSystem {
     
     @Override
     protected void processEntity(Entity entity) {
-        if (tickRandom.nextDouble() < 0.01) {
-            RandomTickComponent rtc = Components.RANDOM_TICK.get(entity);
+        RandomTickComponent rtc = Components.RANDOM_TICK.get(entity);
+        if (tickRandom.nextDouble() < rtc.chance) {
             if (rtc.validate(entity)) {
                 Components.RANDOM_TICK.get(entity).tickable.tick(world, entity);
             }

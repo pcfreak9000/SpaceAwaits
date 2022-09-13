@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.registry.Registry;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
 public class Items {
     
@@ -11,15 +11,17 @@ public class Items {
     public static final Item TWIG = new Item();
     public static final Item LOOSEROCK = new Item();
     public static final Item REPAIRGUN = new ItemRepairGun();
+    public static final Item CLUMP_ORE_IRON = new Item();
     
     public static void registerItems() {
         //@formatter:off
-        Registry.ITEM_REGISTRY.register("medkitSimple", MEDKIT_SIMPLE);
-        Registry.ITEM_REGISTRY.register("axePrimitive", AXE_PRIMITIVE);
-        Registry.ITEM_REGISTRY.register("pickaxePrimitive", PICKAXE_PRIMITIVE);
-        Registry.ITEM_REGISTRY.register("twig", TWIG.setTexture("stick.png").setDisplayName("Twig"));
-        Registry.ITEM_REGISTRY.register("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
-        Registry.ITEM_REGISTRY.register("repairgun", REPAIRGUN);
+        GameRegistry.registerItem("medkitSimple", MEDKIT_SIMPLE);
+        GameRegistry.registerItem("axePrimitive", AXE_PRIMITIVE);
+        GameRegistry.registerItem("pickaxePrimitive", PICKAXE_PRIMITIVE);
+        GameRegistry.registerItem("twig", TWIG.setTexture("stick.png").setDisplayName("Twig"));
+        GameRegistry.registerItem("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
+        GameRegistry.registerItem("repairgun", REPAIRGUN);
+        GameRegistry.registerItem("clumpOreIron", CLUMP_ORE_IRON.setTexture("oreIronClump.png").setDisplayName("Iron Ore Clump"));
         //@formatter:on
     }
     

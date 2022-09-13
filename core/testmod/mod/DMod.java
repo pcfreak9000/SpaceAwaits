@@ -32,7 +32,6 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.util.Util;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
@@ -41,7 +40,6 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.WorldView;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
-import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
@@ -52,17 +50,17 @@ public class DMod {
     public static DMod instance;
     TextureProvider texture = TextureProvider.get("sdfsdf");
     TextureProvider planet = TextureProvider.get("planet.png");
-    public Tile laser = new Tile() {//FIXME laser does weird stuff? position and stuff
-        @Override
-        public boolean hasTileEntity() {
-            return true;
-        }
-        
-        @Override
-        public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
-            return new LaserTileEntity(world, gtx, gty);
-        };
-    };
+    //    public Tile laser = new Tile() {//FIXME laser does weird stuff? position and stuff
+    //        @Override
+    //        public boolean hasTileEntity() {
+    //            return true;
+    //        }
+    //        
+    //        @Override
+    //        public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
+    //            return new LaserTileEntity(world, gtx, gty);
+    //        };
+    //    };
     public Tile torch = new Tile();
     
     public TileLiquid water = new TileLiquid();
@@ -111,11 +109,11 @@ public class DMod {
         Registry.TILE_REGISTRY.register("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
-        laser.setTexture("dirt.png");
-        laser.setDisplayName("Laser");
-        laser.setColor(Color.RED);
-        laser.setLightColor(new Color(1, 0, 0, 1));
-        Registry.TILE_REGISTRY.register("laser", laser);
+//        laser.setTexture("dirt.png");
+//        laser.setDisplayName("Laser");
+//        laser.setColor(Color.RED);
+//        laser.setLightColor(new Color(1, 0, 0, 1));
+//        Registry.TILE_REGISTRY.register("laser", laser);
         
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
@@ -160,7 +158,7 @@ public class DMod {
         housethingTable.addMax(3);
         housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
         housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
-        housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
+        //housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
         SpaceSurfaceGenerator gen = new SpaceSurfaceGenerator();
         Registry.GENERATOR_REGISTRY.registerWorldGen("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
             

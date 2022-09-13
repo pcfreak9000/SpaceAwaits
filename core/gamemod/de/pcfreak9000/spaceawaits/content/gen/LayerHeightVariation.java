@@ -8,26 +8,26 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
-public class HeightComponent implements GenerationDataComponent {
-    
+public class LayerHeightVariation {
     private Module noise;
+    private int amplitude;
     
-    public HeightComponent(long seed) {
+    public LayerHeightVariation(long seed, int amplitude) {
+        this.amplitude = amplitude;
         genNoise(seed);
     }
     
-    public int getHeight(int tx, int ty) {
-        return 1000 + (int) Math.round(60 * noise.get(tx, 0.5));
+    public int getVariation(int tx, int ty) {
+        return (int) Math.round(amplitude * noise.get(tx, 0.5));
     }
     
     private void genNoise(long seed) {
         ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
         gen.setSeed(seed);
-        gen.setNumOctaves(6);
-        gen.setFrequency(0.00184);
-        gen.setLacunarity(2.1);
+        gen.setNumOctaves(2);
+        gen.setFrequency(0.00224);
+        gen.setLacunarity(14);
         
         ModuleAutoCorrect source = new ModuleAutoCorrect(-1, 1);
         source.setSource(gen);
@@ -36,5 +36,4 @@ public class HeightComponent implements GenerationDataComponent {
         source.calculate2D();
         noise = source;
     }
-    
 }

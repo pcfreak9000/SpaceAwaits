@@ -6,8 +6,10 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
 import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
+import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
@@ -47,11 +49,11 @@ public class TestBiome extends Biome {
     @Override
     public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen) {
         if (sub) {
-            chunk.setTile(tx, ty, TileLayer.Front, Tiles.BRICKS_OLD);
-            chunk.setTile(tx, ty, TileLayer.Back, Tiles.BRICKS_OLD);
+            chunk.setTile(tx, ty, TileLayer.Front, Tiles.STONE_DARK);
+            chunk.setTile(tx, ty, TileLayer.Back, Tiles.STONE_DARK);
             return;
         }
-        int value = biomeGen.getComponent(HeightComponent.class).getHeight(tx, ty, getWorldSeed());
+        int value = biomeGen.getComponent(HeightComponent.class).getHeight(tx, ty);
         if (ty > value + 1) {
             return;
         }
@@ -75,10 +77,7 @@ public class TestBiome extends Biome {
         }
         
         if (t == Tiles.STONE) {
-            if (getRandom().nextDouble() < 0.001) {
-                t = DMod.instance.laser;
-            }
-            if (getRandom().nextDouble() < 0.002) {
+            if (getRandom().nextDouble() < 0.003) {
                 t = DMod.instance.torch;
             }
         }
@@ -127,6 +126,20 @@ public class TestBiome extends Biome {
                 TransformComponent tc = Components.TRANSFORM.get(tree);
                 tc.position.set(x - 0.5f, y + 1);
                 world.spawnEntity(tree, false);
+                if (getRandom().nextDouble() < 0.3) {
+                    ItemStack s = new ItemStack(Items.TWIG, getRandom().nextInt(1) + 1);
+                    s.dropRandomInTile(world, x, y + 1);
+                }
+            } else if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
+                for (int j = -2; j <= 2; j++) {
+                    for (int k = -2; k <= 2; k++) {
+                        if (j * j + k * k < 2 * 2) {
+                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
+                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

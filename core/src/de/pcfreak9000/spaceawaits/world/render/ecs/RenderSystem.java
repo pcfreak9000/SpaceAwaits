@@ -51,8 +51,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         public final World world;
         public final GameRenderer renderer;
         
-        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world,
-                GameRenderer renderer) {
+        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world, GameRenderer renderer) {
             this.renderStrategies = rendstrat;
             this.world = world;
             this.renderer = renderer;
@@ -151,22 +150,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 }
             }
         }
-        //        Objects.requireNonNull(rc.renderStratId);
-        //        IRenderStrategy renderStrategy = this.renderStrategies.get(rc.renderStratId);
-        //        if (renderStrategy == null) {
-        //            throw new IllegalStateException("No such IRenderStrategy: " + rc.renderStratId);
-        //        }
-        //        boolean matches = renderStrategy.getFamily().matches(entity);
-        //        if (!matches) {
-        //            throw new IllegalStateException("Entity does not have the right components for the render strategy '"
-        //                    + rc.renderStratId + "': " + entity);
-        //        }
-        //        rc.renderStrategy = renderStrategy;
         this.entities.add(entity);
-        //        if (renderStrategy instanceof EntityListener) {
-        //            EntityListener el = (EntityListener) renderStrategy;
-        //            el.entityAdded(entity);
-        //        }
     }
     
     private void removeEntityPrep(Entity entity) {
@@ -178,11 +162,6 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             }
         }
         rc.renderStrategies.clear();
-        //        IRenderStrategy dec = rc.renderStrategy;
-        //        if (dec instanceof EntityListener) {
-        //            EntityListener el = (EntityListener) dec;
-        //            el.entityRemoved(entity);
-        //        }
     }
     
     @Override
@@ -203,7 +182,6 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 if (dec.considerGui() && !renderer.showGui()) {
                     continue;
                 }
-                //IRenderStrategy dec = rc.renderStrategy;
                 if (dec != last || startLight) {
                     if (last != null) {
                         last.end();
