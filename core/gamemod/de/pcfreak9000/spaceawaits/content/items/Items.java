@@ -12,9 +12,11 @@ public class Items {
     public static final Item LOOSEROCK = new Item();
     public static final Item REPAIRGUN = new ItemRepairGun();
     public static final Item CLUMP_ORE_IRON = new Item();
+    public static final Item CREATIVE_BREAKER = new ItemCreativeBreaker();
     
     public static void registerItems() {
         //@formatter:off
+        GameRegistry.registerItem("crebreak", CREATIVE_BREAKER);
         GameRegistry.registerItem("medkitSimple", MEDKIT_SIMPLE);
         GameRegistry.registerItem("axePrimitive", AXE_PRIMITIVE);
         GameRegistry.registerItem("pickaxePrimitive", PICKAXE_PRIMITIVE);

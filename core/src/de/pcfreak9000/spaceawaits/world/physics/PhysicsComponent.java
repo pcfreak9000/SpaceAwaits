@@ -11,6 +11,8 @@ public class PhysicsComponent implements Component {
     public BodyWrapper body;
     public BodyFactory factory;
     
+    boolean tmpadded = false;
+    
     @NBTSerialize(key = "vx")
     float xVel;
     

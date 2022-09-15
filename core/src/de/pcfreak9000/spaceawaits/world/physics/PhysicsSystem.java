@@ -16,6 +16,7 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -70,8 +71,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
     
-    private final Array<Array<Entity>> tmpAddedPhysicsEntitiesStack = new Array<>(false, 3);
-    private boolean currentlyEnsuringEntityPhysicsPresence = false;
+    private final Array<Entity> tmpEntities = new Array<>(false, 10);
+    private int tmpEntitiesDepth = 0;
     
     private final UserDataHelper udh = new UserDataHelper();
     
@@ -208,8 +209,13 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
+        if (pc.tmpadded && entity.flags == ModifiedEngine.FLAG_ADDED) {
+            tmpEntities.removeValue(entity, true);
+            pc.tmpadded = false;
+        }
         if (pc.body != null) {
             LOGGER.error("Body of just added entity isn't null: " + entity);
+            Thread.dumpStack();
         }
         pc.body = new BodyWrapper(pc.factory.createBody(box2dWorld, entity));
         pc.body.getBody().setLinearVelocity(pc.xVel, pc.yVel);
@@ -232,24 +238,25 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void unensureChunks() {
-        Array<Entity> top = tmpAddedPhysicsEntitiesStack.pop();
-        while (top.size > 0) {
-            //TODx make sure not to remove entities which were legally added inbetween (shouldnt happen, but who knows)
-            entityRemoved(top.pop());
+        if (tmpEntitiesDepth <= 0) {
+            throw new IllegalStateException("Too much unensuring");
         }
-        currentlyEnsuringEntityPhysicsPresence = false;
+        tmpEntitiesDepth--;
+        if (tmpEntitiesDepth == 0) {
+            while (tmpEntities.size > 0) {
+                Entity e = tmpEntities.pop();
+                if (e.flags != ModifiedEngine.FLAG_ADDED) {
+                    entityRemoved(e);
+                }
+            }
+        }
     }
     
     private void ensureChunksAABB(float x1, float y1, float x2, float y2) {
         if (chunkProvider == null) {
             return;
         }
-        if (currentlyEnsuringEntityPhysicsPresence) {
-            LOGGER.warn("Already ensuring physics presence of some entities, this might lead to weird bugs");
-            //
-         throw new IllegalStateException();
-        }
-        currentlyEnsuringEntityPhysicsPresence = true;
+        tmpEntitiesDepth++;
         int cx1 = Chunk.toGlobalChunkf(x1);
         int cy1 = Chunk.toGlobalChunkf(y1);
         int cx2 = Chunk.toGlobalChunkf(x2);
@@ -264,19 +271,22 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             cy2 = cy1;
             cy1 = t;
         }
-        Array<Entity> ents = new Array<>(false, 10);
-        tmpAddedPhysicsEntitiesStack.add(ents);
+        //would be nice if coordinate point of things always was the lower left corner, then the upper bounds +1 could be left out
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
                 if (world.getBounds().inBoundsChunk(i, j)) {
                     Chunk c = chunkProvider.getChunk(i, j);
-                    if (!c.isActive()) {
+                    if (c == null) { //hmm                        
+                        continue;
+                    }
+                    if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
                         for (Entity e : c.getEntities()) {
                             if (getFamily().matches(e)) {
-                                if (e.flags != ModifiedEngine.FLAG_ADDED) {
+                                if (e.flags != ModifiedEngine.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
+                                    Components.PHYSICS.get(e).tmpadded = true;
+                                    tmpEntities.add(e);
                                     entityAdded(e);
                                     syncBodyToTransform(e);
-                                    ents.add(e);
                                 }
                             }
                         }

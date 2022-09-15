@@ -115,6 +115,7 @@ public class TestBiome extends Biome {
     public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area) {
         if (sub)
             return;
+        //this algorithm is f*cking slow
         for (int i = 0; i < 50; i++) {
             int x = getRandom().nextInt(area) + tx;
             int y = getRandom().nextInt(area) + ty;
@@ -135,7 +136,7 @@ public class TestBiome extends Biome {
                     for (int k = -2; k <= 2; k++) {
                         if (j * j + k * k < 2 * 2) {
                             if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                //tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
+                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
                             }
                         }
                     }

@@ -105,7 +105,7 @@ public class TreeFactory implements WorldEntityFactory {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
                 if (tc.position.y > ngty) {
                     for (int i = 0; i < 2; i++) {
-                        if (tileSystem.getTile(Tile.toGlobalTile(tc.position.x) + i, ngty, layer).isSolid()) {
+                        if (tileSystem.getTile(Tile.toGlobalTile(tc.position.x + 1) + i, ngty, layer).isSolid()) {
                             return;
                         }
                     }

@@ -123,6 +123,15 @@ public class ChunkProvider implements IChunkProvider {
                 return cached;
             }
         }
+        if (isTmpMode()) {
+            IntCoordKey key = new IntCoordKey(x, y);
+            Chunk chunk = chunks.get(key);
+            if (chunk == null) {
+                chunk = genChunks.get(key);
+            }
+            cached = chunk;
+            return chunk;
+        }
         Chunk chunk = ensureChunk(x, y, ChunkGenStage.Populated);
         if (active && !chunk.isActive()) {
             world.addChunk(chunk);
