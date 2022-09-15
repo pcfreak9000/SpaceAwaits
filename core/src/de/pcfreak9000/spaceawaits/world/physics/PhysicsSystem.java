@@ -91,6 +91,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         this.box2dWorld.setContactListener(contactEventDispatcher);
     }
     
+    //for the PhysicsDebugRendererSystem
     public World getB2DWorld() {
         return box2dWorld;
     }
@@ -132,12 +133,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     public void raycastEntities(float x1, float y1, float x2, float y2, IRaycastEntityCallback callback) {
-        raycastCallbackWr.callb = callback;//Might trigger multiple times for one entity with multiple fixtures
+        raycastCallbackWr.callb = callback;//FIXME? Might trigger multiple times for one entity with multiple fixtures
         raycast(x1, y1, x2, y2, raycastCallbackWr);
         raycastCallbackWr.callb = null;
     }
     
-    public boolean checkRectOccupation(float x, float y, float w, float h) {
+    public boolean checkRectOccupation(float x, float y, float w, float h, boolean canSensorsBlock) {
         int ix = Mathf.floori(x);
         int iy = Mathf.floori(y);
         int iw = Mathf.ceili(x + w);
@@ -150,17 +151,17 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
                 }
             }
         }
-        //first asking for tiles will load chunks if they arent loaded, physics doesnt load chunks itself
-        if (checkRectEntityOccupation(x, y, x + w, y + h)) {
+        if (checkRectEntityOccupation(x, y, x + w, y + h, canSensorsBlock)) {
             return true;
         }
         return false;
     }
     
-    public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2) {
+    public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2, boolean canSensorsBlock) {
         entCheck.ud.clear();
+        entCheck.canSensorsBlock = canSensorsBlock;
         queryAABB(x1, y1, x2, y2, entCheck);
-        boolean b = entCheck.blocking;//TODO maybe consider an on/off for this, sometimes sensors aren't blocking...
+        boolean b = entCheck.blocking;
         return b;
     }
     
@@ -341,10 +342,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         
         public boolean blocking;
         
+        public boolean canSensorsBlock;
+        
         @Override
         public boolean reportFixture(Fixture fix, UnitConversion conv) {
             ud.set(fix.getUserData(), fix);
-            if (ud.isEntity() && fix.isSensor()) {
+            if (canSensorsBlock && ud.isEntity() && fix.isSensor()) {
                 blocking = Components.PHYSICS.get(ud.getEntity()).considerSensorsAsBlocking;
             } else {
                 blocking = ud.isEntity();

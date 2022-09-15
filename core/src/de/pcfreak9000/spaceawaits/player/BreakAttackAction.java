@@ -25,7 +25,7 @@ public class BreakAttackAction implements Action {
         Entity e0 = (Entity) o0;
         Entity e1 = (Entity) o1;
         if (Components.RENDER.has(e0) && Components.RENDER.has(e1)) {
-            float dif = Components.RENDER.get(e1).layer - Components.RENDER.get(e0).layer;
+            float dif = Components.RENDER.get(e1).getLayer() - Components.RENDER.get(e0).getLayer();
             return (int) Math.signum(dif);
         }
         return 0;

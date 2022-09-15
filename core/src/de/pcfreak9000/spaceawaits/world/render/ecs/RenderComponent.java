@@ -3,23 +3,35 @@ package de.pcfreak9000.spaceawaits.world.render.ecs;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
+@NBTSerialize(key = "spaceawaitsRender")
 public class RenderComponent implements Component {
     
+    @NBTSerialize(key = "e", dBool = true)
     public boolean enabled = true;
+    @NBTSerialize(key = "l")
+    private float layer;
+    
     public boolean considerAsGui = false;
     
-    public final float layer;
-    
     Array<IRenderStrategy> renderStrategies = new Array<>();
-    
-    //public final String renderStratId;
-    //Cache the render strategy:
-    //IRenderStrategy renderStrategy;
+    RenderSystem renSys;
     
     public RenderComponent(float layer) {
         this.layer = layer;
+    }
+    
+    public void setLayer(float layer) {
+        this.layer = layer;
+        if (renSys != null) {
+            renSys.forceLayerSort();
+        }
+    }
+    
+    public float getLayer() {
+        return layer;
     }
     
     @Deprecated

@@ -61,11 +61,11 @@ public class WorldUtil {
             float x = spawnX + rand.nextFloat() * spawnWidth;
             float y = spawnY + rand.nextFloat() * spawnHeight;
             if (world.getBounds().inBoundsf(x, y)) {
-                if (!ps.checkRectOccupation(x, y, entWidth, entHeight)) {
+                if (!ps.checkRectOccupation(x, y, entWidth, entHeight, false)) {
                     if (world.getWorldProperties().autoLowerSpawnpointToSolidGround()) {
                         while (true) {
                             y--;
-                            if (ps.checkRectOccupation(x, y, entWidth, entHeight)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
+                            if (ps.checkRectOccupation(x, y, entWidth, entHeight, false)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 
                                 y++;
                                 break;
                             }

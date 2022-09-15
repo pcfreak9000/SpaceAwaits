@@ -109,7 +109,8 @@ public class TreeFactory implements WorldEntityFactory {
                             return;
                         }
                     }
-                    entity.getComponent(TreeStateComponent.class).loose = true;
+                    Components.TREESTATE.get(entity).loose = true;
+                    Components.RENDER.get(entity).setLayer(RenderLayers.ENTITY);
                     Body b = Components.PHYSICS.get(entity).body.getBody();
                     b.setType(BodyType.DynamicBody);
                     for (Fixture f : b.getFixtureList()) {

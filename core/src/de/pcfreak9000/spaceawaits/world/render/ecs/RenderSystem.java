@@ -38,7 +38,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private static final Comparator<Entity> COMPARATOR = (e1, e2) -> {
         RenderComponent r1 = Components.RENDER.get(e1);
         RenderComponent r2 = Components.RENDER.get(e2);
-        float maj = r1.layer - r2.layer;
+        float maj = r1.getLayer() - r2.getLayer();
         //        if (maj == 0) {
         //            int min = r1.renderStratId.hashCode() - r2.renderStratId.hashCode();
         //            return min;
@@ -68,6 +68,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private FrameBuffer sceneBuffer;
     private SpriteBatchImpr batch;
+    
+    private boolean forceSort = false;
     
     public RenderSystem(World world, GameRenderer renderer) {
         world.getWorldBus().register(this);
@@ -101,7 +103,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         for (Entity e : engineEntities) {
             addEntityInternal(e);
         }
-        this.entities.sort(COMPARATOR);
+        forceLayerSort();
         for (IRenderStrategy strat : this.renderStrategies.getAll()) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
@@ -130,7 +132,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     @Override
     public void entityAdded(Entity entity) {
         addEntityInternal(entity);
-        this.entities.sort(COMPARATOR);
+        forceLayerSort();
     }
     
     @Override
@@ -141,6 +143,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
+        rc.renSys = this;
         for (IRenderStrategy r : this.renderStrategies.getAll()) {
             if (r.getFamily().matches(entity)) {
                 rc.renderStrategies.add(r);
@@ -155,6 +158,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private void removeEntityPrep(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
+        rc.renSys = null;
         for (IRenderStrategy r : rc.renderStrategies) {
             if (r instanceof EntityListener) {
                 EntityListener el = (EntityListener) r;
@@ -162,6 +166,17 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             }
         }
         rc.renderStrategies.clear();
+    }
+    
+    public void forceLayerSort() {
+        this.forceSort = true;
+    }
+    
+    private void sortIfNecessary() {
+        if (forceSort) {
+            this.entities.sort(COMPARATOR);
+            this.forceSort = false;
+        }
     }
     
     @Override
@@ -172,12 +187,13 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         IRenderStrategy last = null;
         float lastLayer = Float.NEGATIVE_INFINITY;
         boolean endedLight = false;
+        sortIfNecessary();
         for (Entity e : entities) {
             RenderComponent rc = Components.RENDER.get(e);
             if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
                 continue;
             }
-            boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.layer >= BEGIN_LIGHT_LAYER;
+            boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.getLayer() >= BEGIN_LIGHT_LAYER;
             for (IRenderStrategy dec : rc.renderStrategies) {
                 if (dec.considerGui() && !renderer.showGui()) {
                     continue;
@@ -192,7 +208,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                     dec.begin();
                     last = dec;
                 }
-                if (lastLayer < END_LIGHT_LAYER && rc.layer >= END_LIGHT_LAYER) {
+                if (lastLayer < END_LIGHT_LAYER && rc.getLayer() >= END_LIGHT_LAYER) {
                     if (last != null) {
                         last.end();
                     }
@@ -204,7 +220,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 }
                 dec.render(e, deltaTime);
             }
-            lastLayer = rc.layer;
+            lastLayer = rc.getLayer();
         }
         if (last != null) {
             last.end();

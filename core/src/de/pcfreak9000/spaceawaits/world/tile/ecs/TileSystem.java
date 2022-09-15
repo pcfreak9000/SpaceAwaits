@@ -207,7 +207,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
             }
             if (!ents.isEmpty()) {
                 for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-                    if (!phys.get(getEngine()).checkRectOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f)) {//This doesn't account for possible item mergers...
+                    if (!phys.get(getEngine()).checkRectOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f,
+                            true)) {//This doesn't account for possible item mergers...
                         reloc = d;
                         break;
                     }

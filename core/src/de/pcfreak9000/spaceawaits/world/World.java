@@ -17,7 +17,6 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
@@ -49,9 +48,6 @@ public abstract class World {
     
     //Used for random item drops etc, not terrain gen etc
     protected final RandomXS128 worldRandom;
-    
-    //    public long time;//TMP until there is a proper class updating the universe
-    //    private float timehelper;
     
     private int countChunkActive = 0;
     
@@ -86,14 +82,6 @@ public abstract class World {
     
     public void update(float dt) {
         this.ecsEngine.update(dt);
-        //this.chunkProvider.unloadQueued();
-        
-        //        timehelper += dt * 50;
-        //        if (timehelper >= 1) {
-        //            int i = Mathf.floori(timehelper);
-        //            timehelper -= i;
-        //            time += i;
-        //        }
     }
     
     protected void addChunk(Chunk c) {
@@ -173,7 +161,7 @@ public abstract class World {
             Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
             //getSystem... oof
             if (ecsEngine.getSystem(PhysicsSystem.class).checkRectOccupation(t.position.x + wh.x / 4,
-                    t.position.y + wh.y / 4, wh.x / 2, wh.y / 2)) {
+                    t.position.y + wh.y / 4, wh.x / 2, wh.y / 2, false)) {
                 return false;
             }
         }
@@ -214,26 +202,6 @@ public abstract class World {
         unchunkProvider.get().removeEntity(entity);
         ecsEngine.removeEntity(entity);
         //        DynamicAssetUtil.checkAndDisposeAsset(entity);
-    }
-    
-    public void adjustChunk(Entity e, ChunkComponent c, TransformComponent t) {
-        int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
-        int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-        if (c.currentChunk == null) {
-            throw new NullPointerException();
-        } else if (supposedChunkX != c.currentChunk.getGlobalChunkX()
-                || supposedChunkY != c.currentChunk.getGlobalChunkY()) {
-            Chunk newchunk = chunkProvider.getChunk(supposedChunkX, supposedChunkY);
-            //If for some reason the new chunk doesn't exist, keep the old link
-            if (newchunk != null) {
-                c.currentChunk.removeEntity(e);
-                newchunk.addEntity(e);
-                if (!newchunk.isActive()) {
-                    //Calling this method means the supplied entity is updating, but after the switch it might not be supposed to be anymore so it will be removed
-                    ecsEngine.removeEntity(e);
-                }
-            }
-        }
     }
     
     public void unloadAll() {

@@ -78,7 +78,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystem phsys = new PhysicsSystem(this, chunkProvider);
         ecs.addSystem(phsys);
-        ecs.addSystem(new WorldEntityChunkAdjustSystem(this));
+        ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
         ecs.addSystem(new CameraSystem(this));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
