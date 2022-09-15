@@ -8,20 +8,17 @@ import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
 public class ChunkLoader implements IChunkLoader {
     
     private Map<IntCoordKey, Chunk> loadedChunks;
     
     private World world;
-    private IChunkGenerator chunkGen;
     private IWorldSave save;
     
-    public ChunkLoader(World world, IChunkGenerator chunkGen) {
+    public ChunkLoader(World world) {
         this.loadedChunks = new HashMap<>();
         this.world = world;
-        this.chunkGen = chunkGen;
     }
     
     void setSave(IWorldSave save) {
@@ -34,9 +31,6 @@ public class ChunkLoader implements IChunkLoader {
             chunk = new Chunk(key.getX(), key.getY(), this.world);
             if (save.hasChunk(key.getX(), key.getY())) {
                 readChunk(chunk);
-                chunkGen.regenerateChunk(chunk, this.world);
-            } else {
-                chunk.generate(chunkGen);
             }
             this.loadedChunks.put(key, chunk);
         }

@@ -70,7 +70,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
     
-    private final Array<Entity> tmpAddedPhysicsEntities = new Array<>(false, 10);
+    private final Array<Array<Entity>> tmpAddedPhysicsEntitiesStack = new Array<>(false, 3);
     private boolean currentlyEnsuringEntityPhysicsPresence = false;
     
     private final UserDataHelper udh = new UserDataHelper();
@@ -232,9 +232,10 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void unensureChunks() {
-        while (tmpAddedPhysicsEntities.size > 0) {
+        Array<Entity> top = tmpAddedPhysicsEntitiesStack.pop();
+        while (top.size > 0) {
             //TODx make sure not to remove entities which were legally added inbetween (shouldnt happen, but who knows)
-            entityRemoved(tmpAddedPhysicsEntities.pop());
+            entityRemoved(top.pop());
         }
         currentlyEnsuringEntityPhysicsPresence = false;
     }
@@ -245,6 +246,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         }
         if (currentlyEnsuringEntityPhysicsPresence) {
             LOGGER.warn("Already ensuring physics presence of some entities, this might lead to weird bugs");
+            //
+         throw new IllegalStateException();
         }
         currentlyEnsuringEntityPhysicsPresence = true;
         int cx1 = Chunk.toGlobalChunkf(x1);
@@ -261,6 +264,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             cy2 = cy1;
             cy1 = t;
         }
+        Array<Entity> ents = new Array<>(false, 10);
+        tmpAddedPhysicsEntitiesStack.add(ents);
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
                 if (world.getBounds().inBoundsChunk(i, j)) {
@@ -271,7 +276,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
                                 if (e.flags != ModifiedEngine.FLAG_ADDED) {
                                     entityAdded(e);
                                     syncBodyToTransform(e);
-                                    tmpAddedPhysicsEntities.add(e);
+                                    ents.add(e);
                                 }
                             }
                         }

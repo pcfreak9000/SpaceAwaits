@@ -135,7 +135,7 @@ public class TestBiome extends Biome {
                     for (int k = -2; k <= 2; k++) {
                         if (j * j + k * k < 2 * 2) {
                             if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
+                                //tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
                             }
                         }
                     }

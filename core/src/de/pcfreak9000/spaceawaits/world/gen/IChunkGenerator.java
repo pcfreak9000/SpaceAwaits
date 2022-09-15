@@ -13,10 +13,10 @@ public interface IChunkGenerator {
     
     void generateChunk(Chunk chunk);
     
-    void populateChunk(Chunk chunk, World world);
-    
-    @Deprecated
-    default void regenerateChunk(Chunk chunk, World world) {
+    default void structureChunk(Chunk chunk) {
+        
     }
+    
+    void populateChunk(Chunk chunk, World world);
     
 }

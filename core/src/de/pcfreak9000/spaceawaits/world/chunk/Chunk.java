@@ -40,7 +40,16 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class Chunk implements INBTSerializable, Tickable, ITileArea {
     
     public static enum ChunkGenStage {
-        Empty, Generated, Populated;
+        Empty(null, 0), Tiled(Empty, 1), Structured(Tiled, 2), Populated(Structured, 3);
+        
+        public final ChunkGenStage before;
+        public final int level;
+        
+        private ChunkGenStage(ChunkGenStage before, int lvl) {
+            this.before = before;
+            this.level = lvl;
+        }
+        
     }
     
     public static final int CHUNK_SIZE = 64;
@@ -126,12 +135,20 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         if (genStage != ChunkGenStage.Empty) {
             throw new IllegalStateException();
         }
-        genStage = ChunkGenStage.Generated;
+        genStage = ChunkGenStage.Tiled;
         chunkGen.generateChunk(this);
     }
     
+    public void structure(IChunkGenerator chunkGen) {
+        if (genStage != ChunkGenStage.Tiled) {
+            throw new IllegalStateException();
+        }
+        genStage = ChunkGenStage.Structured;
+        chunkGen.structureChunk(this);
+    }
+    
     public void populate(IChunkGenerator chunkGen) {
-        if (genStage != ChunkGenStage.Generated) {
+        if (genStage != ChunkGenStage.Structured) {
             throw new IllegalStateException();
         }
         genStage = ChunkGenStage.Populated;
