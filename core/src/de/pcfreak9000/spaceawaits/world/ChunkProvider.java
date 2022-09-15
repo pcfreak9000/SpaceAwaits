@@ -119,20 +119,11 @@ public class ChunkProvider implements IChunkProvider {
                 if (!cached.isActive() && active) {
                     world.addChunk(cached);
                 }
-                //cached isn't moved up in the usage queue...
+                //cached isn't moved up in the usage queue... but the queue shouldn't have changed so cached should still be new
                 return cached;
             }
         }
         Chunk chunk = ensureChunk(x, y, ChunkGenStage.Populated);
-        // if (chunk == null) {  
-        //Why here? Before the population??
-        //            if (!populationMode && active) {
-        //                if (!chunk.isActive()) {
-        //                    world.addChunk(chunk);
-        //                }
-        //            }
-        
-        //}
         if (active && !chunk.isActive()) {
             world.addChunk(chunk);
         }
