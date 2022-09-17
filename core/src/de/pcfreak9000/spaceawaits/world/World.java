@@ -3,31 +3,19 @@ package de.pcfreak9000.spaceawaits.world;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
-import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public abstract class World {
     
@@ -68,11 +56,7 @@ public abstract class World {
         this.chunkLoader = createChunkLoader(primer);
         this.unchunkProvider = createUnchunkProvider(primer);
         this.chunkProvider = createChunkProvider(primer);
-        //        //setup
-        //        finishSetup(primer, ecsEngine);
     }
-    
-    //    protected abstract void finishSetup(WorldPrimer primer, Engine ecs);
     
     protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
     
@@ -103,105 +87,21 @@ public abstract class World {
         return l;
     }
     
-    public Random getRandomForTile(int tx, int ty) {
+    @Deprecated
+    public Random getWorldRandom() {
+        return worldRandom;
+    }
+    
+    public Random createRandomForTile(int tx, int ty) {
         return new RandomXS128(getSeedForTile(tx, ty));
+    }
+    
+    public long getSeed() {
+        return seed;
     }
     
     public void joinWorld(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
-    }
-    
-    public float breakEntity(IBreaker breaker, Entity entity) {
-        if (!Components.BREAKABLE.has(entity)) {
-            return IBreaker.ABORTED_BREAKING;
-        }
-        Destructible destr = Components.BREAKABLE.get(entity).destructable;
-        if (!destr.canBreak()) {
-            return IBreaker.ABORTED_BREAKING;
-        }
-        if (!breaker.canBreak(this, destr)) {
-            return IBreaker.ABORTED_BREAKING;
-        }
-        BreakingComponent bc = Components.BREAKING.get(entity);
-        if (bc == null) {
-            bc = new BreakingComponent();//Maybe pool breakingcomponent?
-            entity.add(bc);
-        }
-        float speedActual = breaker.breakIt(this, destr, bc.progress);
-        bc.last = bc.progress;
-        bc.progress += speedActual * STEPLENGTH_SECONDS;
-        if (bc.progress >= IBreaker.FINISHED_BREAKING) {
-            entity.remove(BreakingComponent.class);
-            BreakableComponent breakableComponent = Components.BREAKABLE.get(entity);
-            boolean validated = breakableComponent.validate(entity);
-            Array<ItemStack> drops = new Array<>();
-            if (validated) {
-                breakableComponent.breakable.onBreak(this, drops, worldRandom, entity);
-            }
-            breaker.onBreak(this, breakableComponent.destructable, drops, worldRandom);
-            this.despawnEntity(entity);
-            if (drops.size > 0) {
-                TransformComponent tc = Components.TRANSFORM.get(entity);
-                for (ItemStack s : drops) {
-                    s.dropRandomInTile(this, tc.position.x, tc.position.y);
-                }
-                drops.clear();
-            }
-            return IBreaker.FINISHED_BREAKING;
-        }
-        return MathUtils.clamp(bc.progress, 0, 1);
-    }
-    
-    public boolean spawnEntity(Entity entity, boolean checkOccupation) {
-        //what happens if the chunk is not loaded? -> the chunk gets loaded if this World has the generating backend, but spawning should only happen there anyways
-        //TODO what happens if the coordinates are somewhere out of bounds?
-        if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity) && checkOccupation) {
-            TransformComponent t = Components.TRANSFORM.get(entity);
-            PhysicsComponent pc = Components.PHYSICS.get(entity);
-            Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
-            //getSystem... oof
-            if (ecsEngine.getSystem(PhysicsSystem.class).checkRectOccupation(t.position.x + wh.x / 4,
-                    t.position.y + wh.y / 4, wh.x / 2, wh.y / 2, false)) {
-                return false;
-            }
-        }
-        if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
-            TransformComponent t = Components.TRANSFORM.get(entity);
-            int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
-            int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
-            if (c == null) {
-                return false;//Not so nice, this way the entity is just forgotten 
-            }
-            c.addEntity(entity);
-            if (c.isActive()) {
-                ecsEngine.addEntity(entity);
-            }
-        } else {
-            //Hmmm...
-            unchunkProvider.get().addEntity(entity);
-            ecsEngine.addEntity(entity);
-        }
-        //        DynamicAssetUtil.checkAndCreateAsset(entity);
-        return true;
-    }
-    
-    public void despawnEntity(Entity entity) {
-        if (Components.CHUNK.has(entity)) {
-            Chunk c = Components.CHUNK.get(entity).currentChunk;
-            if (c != null) {
-                c.removeEntity(entity);
-            }
-        } else if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
-            TransformComponent t = Components.TRANSFORM.get(entity);
-            int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
-            int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
-            c.removeEntity(entity);
-        }
-        unchunkProvider.get().removeEntity(entity);
-        ecsEngine.removeEntity(entity);
-        //        DynamicAssetUtil.checkAndDisposeAsset(entity);
     }
     
     public void unloadAll() {
@@ -213,13 +113,17 @@ public abstract class World {
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
         for (EntitySystem es : syss) {
             ecsEngine.removeSystem(es);
-            SpaceAwaits.BUS.unregister(es);//Hmmm... the systems should handle this or even better, just use the worlds EventBus
+            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling 
             if (es instanceof Disposable) {
                 Disposable d = (Disposable) es;
                 d.dispose();
             }
         }
         SpaceAwaits.BUS.unregister(eventBus);
+    }
+    
+    public <T extends EntitySystem> T getSystem(Class<T> clazz) {
+        return ecsEngine.getSystem(clazz);
     }
     
     public int getLoadedChunksCount() {
@@ -242,21 +146,8 @@ public abstract class World {
         return this.playerSpawn;
     }
     
-    public long getSeed() {
-        return seed;
-    }
-    
     public EventBus getWorldBus() {
         return this.eventBus;
-    }
-    
-    @Deprecated
-    public Random getWorldRandom() {
-        return worldRandom;
-    }
-    
-    public <T extends EntitySystem> T getSystem(Class<T> clazz) {
-        return ecsEngine.getSystem(clazz);
     }
     
     public IWorldProperties getWorldProperties() {

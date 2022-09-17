@@ -12,6 +12,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
@@ -45,13 +46,15 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
                 Components.STATS.get(ship).get("mechHealth").current = 1;
                 LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
                         ship.getComponent(ComponentInventoryShip.class).invShip);
-                world.spawnEntity(ship, false);
+                world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
             }
             
             @Override
             public void onLoading(World world) {
-                world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
-                world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(), false);
+                world.getSystem(EntityInteractSystem.class)
+                        .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
+                world.getSystem(EntityInteractSystem.class)
+                        .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(), false);
                 //world.spawnEntity(testFogEntity(), false);
             }
         });

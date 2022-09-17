@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
@@ -19,10 +20,11 @@ public class WorldUtil {
     public static void createWorldBorders(World world, int width, int height) {
         float wf = width;
         float hf = height;
-        world.spawnEntity(createBorderEntity(-50, -50, 50, hf + 100), false);
-        world.spawnEntity(createBorderEntity(0, -50, wf, 50), false);
-        world.spawnEntity(createBorderEntity(0, hf, wf, 50), false);
-        world.spawnEntity(createBorderEntity(wf, -50, 50, hf + 100), false);
+        EntityInteractSystem eis = world.getSystem(EntityInteractSystem.class);
+        eis.spawnEntity(createBorderEntity(-50, -50, 50, hf + 100), false);
+        eis.spawnEntity(createBorderEntity(0, -50, wf, 50), false);
+        eis.spawnEntity(createBorderEntity(0, hf, wf, 50), false);
+        eis.spawnEntity(createBorderEntity(wf, -50, 50, hf + 100), false);
     }
     
     private static Entity createBorderEntity(float x, float y, float w, float h) {

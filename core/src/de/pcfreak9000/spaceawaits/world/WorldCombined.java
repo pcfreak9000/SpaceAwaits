@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.InventoryOpenerSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ParallaxSystem;
@@ -70,6 +71,7 @@ public class WorldCombined extends World {
     private void setupECS(WorldPrimer primer, Engine engine) {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new InventoryOpenerSystem(gameRenderer, this));
+        ecs.addSystem(new EntityInteractSystem(this, chunkProvider, unchunkProvider));
         ecs.addSystem(new TileSystem(this, worldRandom, chunkProvider));
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));

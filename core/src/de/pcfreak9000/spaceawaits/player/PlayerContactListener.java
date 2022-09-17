@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
@@ -25,7 +26,7 @@ public class PlayerContactListener implements IContactListener {
                 ItemStackComponent iscomp = Components.ITEM_STACK.get(ent);
                 iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
                 if (iscomp.stack == null) {
-                    world.despawnEntity(ent);
+                    world.getSystem(EntityInteractSystem.class).despawnEntity(ent);
                 }
             }
         }

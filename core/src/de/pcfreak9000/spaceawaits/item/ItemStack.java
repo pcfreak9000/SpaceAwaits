@@ -8,6 +8,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 /**
@@ -213,7 +214,7 @@ public class ItemStack {
     
     public void drop(World world, float x, float y) {
         Entity e = ItemEntityFactory.setupItemEntity(this, x - Item.WORLD_SIZE / 2.1f, y - Item.WORLD_SIZE / 2.1f);
-        world.spawnEntity(e, false);
+        world.getSystem(EntityInteractSystem.class).spawnEntity(e, false);
     }
     
     @Override

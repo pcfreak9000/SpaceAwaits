@@ -13,6 +13,7 @@ import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -104,7 +105,7 @@ public class BreakAttackAction implements Action {
             if (!ent.isEmpty()) {
                 Entity first = (Entity) ent.get(0);
                 //checks are done by breakEntity, thats sufficient in this case
-                float prog = world.breakEntity(br, first);
+                float prog = world.getSystem(EntityInteractSystem.class).breakEntity(br, first);
                 if (prog == IBreaker.ABORTED_BREAKING) {
                     //default attack here?
                 }

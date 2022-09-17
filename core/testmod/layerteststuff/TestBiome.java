@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
@@ -126,7 +127,7 @@ public class TestBiome extends Biome {
                 Entity tree = Entities.TREE.createEntity();
                 TransformComponent tc = Components.TRANSFORM.get(tree);
                 tc.position.set(x - 0.5f, y + 1);
-                world.spawnEntity(tree, false);
+                world.getSystem(EntityInteractSystem.class).spawnEntity(tree, false);
                 if (getRandom().nextDouble() < 0.3) {
                     ItemStack s = new ItemStack(Items.TWIG, getRandom().nextInt(1) + 1);
                     s.dropRandomInTile(world, x, y + 1);

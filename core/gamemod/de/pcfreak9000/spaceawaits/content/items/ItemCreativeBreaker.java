@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -49,7 +50,7 @@ public class ItemCreativeBreaker extends Item {
     @Override
     public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, World world, float x, float y,
             Entity entity) {
-        float f = world.breakEntity(breaker, entity);
+        float f = world.getSystem(EntityInteractSystem.class).breakEntity(breaker, entity);
         return f != IBreaker.ABORTED_BREAKING;
     }
     
