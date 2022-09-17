@@ -6,7 +6,7 @@ import java.util.List;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.ISaveManager;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 
 /**
  * Basiacally the backend to a level selector. Creates new gamesaves, and loads
@@ -21,13 +21,13 @@ public class GameManager {
     //Also game unloading
     
     private ISaveManager saveManager;
-    private GameRenderer gameRenderer;
+    private ScreenManager screenManager;
     
     private Game gameCurrent;
     
-    public GameManager(ISaveManager saveMgr, GameRenderer renderer) {
+    public GameManager(ISaveManager saveMgr, ScreenManager scm) {
         this.saveManager = saveMgr;
-        this.gameRenderer = renderer;
+        this.screenManager = scm;
     }
     
     public void createAndLoadGame(String name, long seed) throws IOException {
@@ -40,9 +40,9 @@ public class GameManager {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Game game = new Game(save, gameRenderer, fresh);
-        game.joinGame();
+        Game game = new Game(save, fresh);
         this.gameCurrent = game;
+        screenManager.setGameScreen(game);
     }
     
     public void unloadGame() {

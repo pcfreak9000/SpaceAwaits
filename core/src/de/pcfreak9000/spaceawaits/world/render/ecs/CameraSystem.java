@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class CameraSystem extends IteratingSystem {
     
@@ -29,7 +30,7 @@ public class CameraSystem extends IteratingSystem {
         PlayerInputComponent pc = Components.PLAYER_INPUT.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
-        Camera camera = SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().getCurrentView().getCamera();
+        Camera camera = ((GameScreen) SpaceAwaits.getSpaceAwaits().getScreen()).getCurrentView().getCamera();//FIXME ugly
         if (!SpaceAwaits.DEBUG_CAMERA) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
@@ -37,6 +38,6 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(world.getBounds().getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        SpaceAwaits.getSpaceAwaits().getScreenManager().getGameRenderer().applyViewport();
+        ((GameScreen) SpaceAwaits.getSpaceAwaits().getScreen()).applyViewport();
     }
 }

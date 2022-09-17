@@ -15,7 +15,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class RenderItemStrategy implements IRenderStrategy {
     
@@ -35,13 +35,13 @@ public class RenderItemStrategy implements IRenderStrategy {
         
     }
     
-    public RenderItemStrategy(GameRenderer renderer) {
+    public RenderItemStrategy(GameScreen renderer) {
         this.render = renderer;
         this.batch = this.render.getSpriteBatch();
         this.cam = renderer.getCurrentView().getCamera();
     }
     
-    private GameRenderer render;
+    private GameScreen render;
     private SpriteBatch batch;
     
     private Camera cam;

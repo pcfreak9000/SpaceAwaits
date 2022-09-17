@@ -51,7 +51,7 @@ public class GuiChat extends GuiOverlay {
                 }
                 if (input.startsWith("/")) {
                     input = input.substring(1);
-                    gameRenderer.getCurrentView().getCommandContext().submitCommand(input);
+                    gameScreen.getCurrentView().getCommandContext().submitCommand(input);
                 }
             }
             closeContainer();

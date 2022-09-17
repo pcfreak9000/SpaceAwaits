@@ -6,11 +6,11 @@ import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 public class RendererEvents {
     
     public static class ResizeWorldRendererEvent extends Event {
-        public final GameRenderer renderer;
+        public final GameScreen renderer;
         public final int widthNew;
         public final int heightNew;
         
-        public ResizeWorldRendererEvent(GameRenderer renderer, int w, int h) {
+        public ResizeWorldRendererEvent(GameScreen renderer, int w, int h) {
             this.renderer = renderer;
             this.widthNew = w;
             this.heightNew = h;

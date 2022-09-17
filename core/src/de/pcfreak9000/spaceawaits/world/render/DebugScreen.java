@@ -19,7 +19,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class DebugScreen {
     
-    private GameRenderer renderer;
+    private GameScreen renderer;
     private Stage stage;
     
     private Table table;
@@ -32,7 +32,7 @@ public class DebugScreen {
     
     private Label time;
     
-    public DebugScreen(GameRenderer renderer) {
+    public DebugScreen(GameScreen renderer) {
         this.renderer = renderer;
         this.stage = renderer.getGuiHelper().createStage();
         this.table = new Table(CoreRes.SKIN.getSkin());

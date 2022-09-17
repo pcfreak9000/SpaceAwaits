@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class ParallaxSystem extends IteratingSystem {
@@ -15,7 +15,7 @@ public class ParallaxSystem extends IteratingSystem {
     private World tileWorld;
     private Camera camera;
     
-    public ParallaxSystem(World world, GameRenderer renderer) {
+    public ParallaxSystem(World world, GameScreen renderer) {
         super(Family.all(ParallaxComponent.class, TransformComponent.class).get());
         this.tileWorld = world;
         this.camera = renderer.getCurrentView().getCamera();

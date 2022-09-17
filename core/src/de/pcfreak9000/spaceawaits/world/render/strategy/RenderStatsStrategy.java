@@ -12,13 +12,13 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.RenderStatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent.StatData;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class RenderStatsStrategy extends AbstractRenderStrategy {
     
     private SpriteBatch batch;
     
-    public RenderStatsStrategy(GameRenderer rend) {
+    public RenderStatsStrategy(GameScreen rend) {
         super(Family.all(TransformComponent.class, StatsComponent.class, RenderStatsComponent.class).get());
         this.batch = rend.getSpriteBatch();
     }

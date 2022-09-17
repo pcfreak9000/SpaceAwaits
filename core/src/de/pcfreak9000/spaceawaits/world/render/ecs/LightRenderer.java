@@ -14,7 +14,7 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -25,14 +25,14 @@ public class LightRenderer implements Disposable {
     private static final int extraLightRadius = 25;
     
     private World world;
-    private GameRenderer renderer;
+    private GameScreen renderer;
     
     private FrameBuffer lightsBuffer;
     private FrameBuffer sceneBuffer;
     private Texture texture;
     private int gwi, ghi;
     
-    public LightRenderer(World world, GameRenderer renderer) {
+    public LightRenderer(World world, GameScreen renderer) {
         world.getWorldBus().register(this);
         this.world = world;
         this.renderer = renderer;

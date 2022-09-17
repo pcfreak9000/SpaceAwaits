@@ -6,12 +6,12 @@ import com.badlogic.gdx.utils.Disposable;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class GuiOverlay implements Disposable {
     //Table? Actor? Stage!
     
-    protected GameRenderer gameRenderer;
+    protected GameScreen gameScreen;
     protected Player player;
     protected Stage stage;
     
@@ -20,10 +20,10 @@ public class GuiOverlay implements Disposable {
     //Crappy workaround
     private boolean justOpened = true;
     
-    public final void create(GameRenderer gameRenderer, Player player) {
-        this.gameRenderer = gameRenderer;
+    public final void create(GameScreen gameScreen, Player player) {
+        this.gameScreen = gameScreen;
         this.player = player;
-        this.stage = gameRenderer.getGuiHelper().createStage();
+        this.stage = gameScreen.getGuiHelper().createStage();
         create();
     }
     
@@ -32,7 +32,7 @@ public class GuiOverlay implements Disposable {
     }
     
     protected void closeContainer() {
-        this.gameRenderer.setGuiCurrent(null);
+        this.gameScreen.setGuiCurrent(null);
     }
     
     public void onOpened() {
@@ -44,8 +44,8 @@ public class GuiOverlay implements Disposable {
     }
     
     public void actAndDraw(float dt) {
-        this.gameRenderer.getGuiHelper().drawDarken(0.7f);
-        this.gameRenderer.getGuiHelper().actAndDraw(stage, dt);
+        this.gameScreen.getGuiHelper().drawDarken(0.7f);
+        this.gameScreen.getGuiHelper().actAndDraw(stage, dt);
         if (!justOpened && (InptMgr.isJustPressed(EnumInputIds.Esc)
                 || (InptMgr.isJustPressed(EnumInputIds.ToggleInventory) && reactsToToggleInventory))) {
             closeContainer();

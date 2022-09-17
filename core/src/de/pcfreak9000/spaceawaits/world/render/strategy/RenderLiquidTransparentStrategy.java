@@ -21,7 +21,7 @@ import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.render.water.LiquidQuad2D;
@@ -32,7 +32,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy implements Disposable {
     
-    private GameRenderer rend;
+    private GameScreen rend;
     private Camera camera;
     
     private ShaderProvider shader = CoreRes.LIQUID_TRANSPARENT_SHADER;
@@ -45,7 +45,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     
     private FrameBuffer refl;
     
-    public RenderLiquidTransparentStrategy(GameRenderer rend, World world) {
+    public RenderLiquidTransparentStrategy(GameScreen rend, World world) {
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
         this.camera = this.rend.getCurrentView().getCamera();

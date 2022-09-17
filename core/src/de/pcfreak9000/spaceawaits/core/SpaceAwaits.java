@@ -107,8 +107,7 @@ public class SpaceAwaits extends Game {
         BUS.register(new WorldSetupHandler());
         //Instantiate game stuff
         this.screenManager = new ScreenManager(this);
-        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()),
-                this.screenManager.getGameRenderer());
+        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()), this.screenManager);
         
         this.screenManager.setMainMenuScreen();
     }
@@ -142,14 +141,14 @@ public class SpaceAwaits extends Game {
     
     @Override
     public void dispose() {
-        if (this.gameManager.isInGame()) {
-            LOGGER.warn("Unloading world (Exit while in loaded world)");
-            this.gameManager.unloadGame();
-        }
+        //        if (this.gameManager.isInGame()) {
+        //            LOGGER.warn("Unloading world (Exit while in loaded world)");
+        //            this.gameManager.unloadGame();
+        //        }
         LOGGER.info("Exit...");
         BUS.post(new CoreEvents.ExitEvent());
+        this.setScreen(null);
         super.dispose();
-        this.screenManager.dispose();
         this.assetManager.dispose();
         CoreRes.dispose();
         LOGGER.info("Exit.");

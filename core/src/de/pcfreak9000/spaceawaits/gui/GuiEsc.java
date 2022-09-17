@@ -33,7 +33,7 @@ public class GuiEsc extends GuiOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().saveAll();
+                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().saveGame();
             }
         });
         table.add(buttonSaveAll).pad(5);
@@ -43,7 +43,7 @@ public class GuiEsc extends GuiOverlay {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameRenderer.queueSaveAndExitToMainMenu();
+                gameScreen.queueSaveAndExitToMainMenu();
             }
         });
         table.add(buttonSaveExit).pad(5);

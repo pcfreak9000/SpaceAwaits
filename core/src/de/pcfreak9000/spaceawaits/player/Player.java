@@ -12,7 +12,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 /**
  * Information about the player: level, ships, inventory, etc. Also the player
@@ -25,14 +25,14 @@ public class Player implements INBTSerializable {
     
     private final Entity playerEntity;
     
-    private GameRenderer gameRenderer;
+    private GameScreen gameScreen;
     
     private InventoryPlayer inventory;
     
     private Array<ItemStack> toDrop = new Array<>(false, 10);
     
-    public Player(GameRenderer rend) {
-        this.gameRenderer = rend;
+    public Player(GameScreen rend) {
+        this.gameScreen = rend;
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
     }
@@ -68,8 +68,8 @@ public class Player implements INBTSerializable {
     }
     
     public void openContainer(GuiOverlay container) {
-        container.create(this.gameRenderer, this);
-        this.gameRenderer.setGuiCurrent(container);
+        container.create(this.gameScreen, this);
+        this.gameScreen.setGuiCurrent(container);
     }
     
     public void openInventory() {

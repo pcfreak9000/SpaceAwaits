@@ -25,7 +25,7 @@ import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
@@ -49,9 +49,9 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public static final class RegisterRenderStrategiesEvent extends Event {
         public final Registry<IRenderStrategy> renderStrategies;
         public final World world;
-        public final GameRenderer renderer;
+        public final GameScreen renderer;
         
-        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world, GameRenderer renderer) {
+        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world, GameScreen renderer) {
             this.renderStrategies = rendstrat;
             this.world = world;
             this.renderer = renderer;
@@ -64,14 +64,14 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private final Registry<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
-    private GameRenderer renderer;
+    private GameScreen renderer;
     
     private FrameBuffer sceneBuffer;
     private SpriteBatchImpr batch;
     
     private boolean forceSort = false;
     
-    public RenderSystem(World world, GameRenderer renderer) {
+    public RenderSystem(World world, GameScreen renderer) {
         world.getWorldBus().register(this);
         this.entities = new Array<>();
         this.renderStrategies = new Registry<>();

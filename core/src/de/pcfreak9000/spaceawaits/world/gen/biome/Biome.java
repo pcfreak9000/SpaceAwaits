@@ -16,6 +16,9 @@ public abstract class Biome {
     
     public abstract void genTerrainTileAt(int tx, int ty, ITileArea tiles, BiomeGenCompBased biomeGen, RndHelper rnd);
     
+    public abstract void genStructureTiles(TileSystem tiles, BiomeGenCompBased biomeGen, int tx, int ty, int structureDiv,
+            RndHelper rnd);
+    
     public abstract void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty,
             int populateDiv, RndHelper rnd);
 }

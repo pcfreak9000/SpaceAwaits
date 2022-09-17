@@ -10,7 +10,7 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable, RenderSystemMarker {
     
@@ -22,7 +22,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     
     private boolean enabled;
     
-    public PhysicsDebugRendererSystem(PhysicsSystem sys, GameRenderer renderer) {
+    public PhysicsDebugRendererSystem(PhysicsSystem sys, GameScreen renderer) {
         this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
         this.phsystem = sys;
         this.cam = renderer.getCurrentView().getCamera();

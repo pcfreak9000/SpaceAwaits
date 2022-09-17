@@ -24,6 +24,7 @@ public class MenuScreen extends ScreenAdapter {
     @Override
     public void hide() {
         Gdx.input.setInputProcessor(null);
+        dispose();
     }
     
     @Override

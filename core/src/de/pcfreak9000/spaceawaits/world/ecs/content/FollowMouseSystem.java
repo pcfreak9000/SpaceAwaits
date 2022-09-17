@@ -6,13 +6,13 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class FollowMouseSystem extends IteratingSystem {
     
-    private GameRenderer renderer;
+    private GameScreen renderer;
     
-    public FollowMouseSystem(GameRenderer renderer) {
+    public FollowMouseSystem(GameScreen renderer) {
         super(Family.all(FollowMouseComponent.class).get());
         this.renderer = renderer;
     }

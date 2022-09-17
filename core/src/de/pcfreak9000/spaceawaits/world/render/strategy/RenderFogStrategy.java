@@ -14,16 +14,16 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ShaderProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 
 public class RenderFogStrategy extends AbstractRenderStrategy implements Disposable {
     
     private Mesh mesh;
-    private GameRenderer renderer;
+    private GameScreen renderer;
     private ShaderProvider shader = CoreRes.FOG_SHADER;
     
-    public RenderFogStrategy(GameRenderer renderer) {
+    public RenderFogStrategy(GameScreen renderer) {
         super(Family.all(RenderFogComponent.class, TransformComponent.class).get());
         this.renderer = renderer;
         mesh = new Mesh(false, 4, 6, new VertexAttribute(Usage.Position, 2, "pos"));

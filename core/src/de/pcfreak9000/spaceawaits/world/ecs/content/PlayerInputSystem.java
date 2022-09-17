@@ -19,7 +19,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
@@ -28,7 +28,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     private static final boolean FREE_MOVEMENT = true;
     
-    private final GameRenderer worldRend;
+    private final GameScreen worldRend;
     
     private Player player;
     
@@ -36,7 +36,7 @@ public class PlayerInputSystem extends EntitySystem {
     
     private Entity tileSelectorEntity;
     
-    public PlayerInputSystem(World world, GameRenderer renderer) {
+    public PlayerInputSystem(World world, GameScreen renderer) {
         this.worldRend = renderer;
         this.tileSelectorEntity = createTileSelectorEntity();
         this.world = world;

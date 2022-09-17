@@ -17,7 +17,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class ActivatorSystem extends EntitySystem {
     
@@ -30,12 +30,12 @@ public class ActivatorSystem extends EntitySystem {
                 .signum(Components.ACTIVATOR.get((Entity) e1).layer - Components.ACTIVATOR.get((Entity) e0).layer);
     };
     
-    private GameRenderer gameRend;
+    private GameScreen gameRend;
     private World world;
     private Player player;
     private ImmutableArray<Entity> entities;
     
-    public ActivatorSystem(GameRenderer rend, World world) {
+    public ActivatorSystem(GameScreen rend, World world) {
         this.gameRend = rend;
         this.world = world;
         this.world.getWorldBus().register(this);

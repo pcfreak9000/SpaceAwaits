@@ -39,6 +39,25 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     }
     
     @Override
+    public void structureChunk(Chunk chunk, TileSystem ts) {
+        rnd.set(seed, 3 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
+        for (int i = 0; i < POPULATE_COUNT; i++) {
+            for (int j = 0; j < POPULATE_COUNT; j++) {
+                int txs = chunk.getGlobalTileX() + i * POPULATE_DIV;
+                int tys = chunk.getGlobalTileY() + j * POPULATE_DIV;
+                int sampletx = txs + POPULATE_DIV / 2;
+                int samplety = tys + POPULATE_DIV / 2;
+                if (!chunk.inBounds(sampletx, samplety)) {
+                    continue;
+                }
+                BiomeGenCompBased leaf = biomeGenerator.getLeaf(sampletx, samplety);
+                Biome biome = leaf.getBiome(sampletx, samplety);
+                biome.genStructureTiles(ts, leaf, txs, txs, POPULATE_DIV, rnd);
+            }
+        }
+    }
+    
+    @Override
     public void populateChunk(Chunk chunk, World world) {
         rnd.set(seed, 3 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
         TileSystem ts = world.getSystem(TileSystem.class);

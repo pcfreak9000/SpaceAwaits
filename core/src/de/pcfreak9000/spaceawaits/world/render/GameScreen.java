@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cyphercove.flexbatch.FlexBatch;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.Game;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
@@ -18,7 +19,7 @@ import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
-public class GameRenderer extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter {
     
     private ScreenManager gsm;
     
@@ -42,14 +43,16 @@ public class GameRenderer extends ScreenAdapter {
     
     private boolean saveAndExitToMainMenu = false;
     
-    public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
+    private Game game;
+    
+    public GameScreen(ScreenManager gsm, GuiHelper guiHelper, Game game) {
         this.gsm = gsm;
         this.guiHelper = guiHelper;
+        this.game = game;
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
         this.worldView = new WorldView(guiHelper);
         this.debugScreen = new DebugScreen(this);
         this.fbostack = new FrameBufferStack();
-        setWorldView();
     }
     
     //Always takes a new GuiContainer. Is that the way to go?
@@ -130,8 +133,19 @@ public class GameRenderer extends ScreenAdapter {
     public void show() {
         InptMgr.init();
         super.show();
+        setWorldView();
+        this.game.loadGame(this);
+        this.game.joinGame();
         //TODO Thats ugly, also the worldView should be configured elsewhere
-        worldView.setPlayer(SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer());
+        worldView.setPlayer(game.getPlayer());
+    }
+    
+    @Override
+    public void hide() {
+        this.game.unloadGame();
+        worldView.setWorld(null);
+        super.hide();
+        this.dispose();
     }
     
     @Override
@@ -152,7 +166,9 @@ public class GameRenderer extends ScreenAdapter {
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
-        viewCurrent.updateAndRenderContent(delta, showGui);
+        if (viewCurrent != null) {//Hmmmm
+            viewCurrent.updateAndRenderContent(delta, showGui);
+        }
         if (showGui) {
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
@@ -162,11 +178,6 @@ public class GameRenderer extends ScreenAdapter {
             }
         }
         if (saveAndExitToMainMenu) {
-            saveAndExitToMainMenu = false;
-            showDebugScreen = false;
-            showGui = true;
-            setGuiCurrent(null);//TODO Reset somewhere else? Or create a new GameRenderer vor each new Game?
-            SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();
         }
     }
@@ -190,7 +201,6 @@ public class GameRenderer extends ScreenAdapter {
     @Override
     public void dispose() {
         super.dispose();
-        this.guiHelper.dispose();
         this.spriteBatch.dispose();
     }
     

@@ -147,5 +147,10 @@ public class TestBiome extends Biome {
             }
         }
     }
+
+    @Override
+    public void genStructureTiles(TileSystem tiles, BiomeGenCompBased biomeGen, int tx, int ty, int structureDiv,
+            RndHelper rnd) {
+    }
     
 }

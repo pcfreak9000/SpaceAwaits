@@ -144,7 +144,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
             throw new IllegalStateException();
         }
         genStage = ChunkGenStage.Structured;
-        chunkGen.structureChunk(this);
+        chunkGen.structureChunk(this, this.tileSystem);
     }
     
     public void populate(IChunkGenerator chunkGen) {

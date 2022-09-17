@@ -10,14 +10,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class RenderTextureStrategy extends AbstractRenderStrategy {
     
-    private GameRenderer renderer;
+    private GameScreen renderer;
     
-    public RenderTextureStrategy(GameRenderer renderer) {
+    public RenderTextureStrategy(GameScreen renderer) {
         super(Family.all(RenderTextureComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
         this.cam = renderer.getCurrentView().getCamera();

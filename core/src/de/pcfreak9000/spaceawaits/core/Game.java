@@ -26,7 +26,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class Game {
     
@@ -35,20 +35,40 @@ public class Game {
     //switch worlds etc
     
     private ISave mySave;
-    private GameRenderer gameRenderer;
     
     private Player player;
     private String uuidPlayerLocation;
     private World world;
     
     private boolean fresh;//TMP!!! also what if the spawn world is deleted? that shoudl then be replaced by another spawn world
+    private GameScreen screen;//TMP
     
-    public Game(ISave save, GameRenderer renderer, boolean fresh) {
+    public Game(ISave save, boolean fresh) {
         this.mySave = save;
-        this.gameRenderer = renderer;
-        this.player = new Player(renderer);
         this.fresh = fresh;
+    }
+    
+    public void loadGame(GameScreen screen) {
+        this.screen = screen;
+        this.player = new Player(screen);
         this.readPlayer();
+    }
+    
+    public void unloadGame() {
+        saveAndLeaveCurrentWorld();
+        this.screen = null;
+    }
+    
+    public void saveAndLeaveCurrentWorld() {
+        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
+        this.writePlayer();
+        this.world = null;
+    }
+    
+    public void saveGame() {
+        WorldCombined w = (WorldCombined) world;
+        w.saveWorld();
+        writePlayer();
     }
     
     //probably also TMP
@@ -58,7 +78,7 @@ public class Game {
         } else {
             //Check if this save has a spawn place, otherwise generate a new one
             //When generating a new world, place the player at spawn
-            String id = createWorld("Gurke", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
+            String id = createWorld("A nice World", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
                     this.mySave.getSaveMeta().getSeed());//Derive world seed from that master seed instead of using it directly
             joinWorld(id);
         }
@@ -85,7 +105,7 @@ public class Game {
             WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            WorldCombined world = new WorldCombined(worldPrimer, save, gameRenderer);
+            WorldCombined world = new WorldCombined(worldPrimer, save, screen);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;
             this.uuidPlayerLocation = uuid;
@@ -101,8 +121,8 @@ public class Game {
             }
             LOGGER.info("Joining world...");
             world.joinWorld(player);
-            this.gameRenderer.setWorldView();//TODO what the hell is even this?
-            this.gameRenderer.getWorldView().setWorld(world);
+            this.screen.setWorldView();//TODO what the hell is even this?
+            this.screen.getWorldView().setWorld(world);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -122,19 +142,6 @@ public class Game {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-    }
-    
-    public void saveAndLeaveCurrentWorld() {
-        this.gameRenderer.getWorldView().setWorld(null);
-        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
-        this.writePlayer();
-        this.world = null;
-    }
-    
-    public void saveAll() {
-        WorldCombined w = (WorldCombined) world;
-        w.saveWorld();
-        writePlayer();
     }
     
     public World getWorldCurrent() {

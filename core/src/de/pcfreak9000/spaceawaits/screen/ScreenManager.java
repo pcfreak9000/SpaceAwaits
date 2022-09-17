@@ -1,55 +1,30 @@
 package de.pcfreak9000.spaceawaits.screen;
 
-import com.badlogic.gdx.utils.Disposable;
-
+import de.pcfreak9000.spaceawaits.core.Game;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.render.GameRenderer;
+import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
-public class ScreenManager implements Disposable {
+public class ScreenManager {
     
     private SpaceAwaits space;
     private GuiHelper guiHelper;
-    
-    private MainMenuScreen mainMenu;
-    private SelectSaveScreen selectSaveScreen;
-    private GameRenderer worldScreen;
     
     public ScreenManager(SpaceAwaits space) {
         this.space = space;
         this.guiHelper = new GuiHelper();
         
-        worldScreen = new GameRenderer(this, guiHelper);
-        mainMenu = new MainMenuScreen(this, guiHelper);
-        selectSaveScreen = new SelectSaveScreen(this, guiHelper);
     }
     
     public void setMainMenuScreen() {
-        this.space.setScreen(this.mainMenu);
+        this.space.setScreen(new MainMenuScreen(this, guiHelper));
     }
     
     public void setSelectSaveScreen() {
-        this.space.setScreen(this.selectSaveScreen);
+        this.space.setScreen(new SelectSaveScreen(this, guiHelper));
     }
     
-    public void setGameScreen() {
-        this.space.setScreen(this.worldScreen);
+    public void setGameScreen(Game game) {
+        this.space.setScreen(new GameScreen(this, guiHelper, game));
     }
     
-    public GameRenderer getGameRenderer() {
-        return this.worldScreen;
-    }
-    
-    public MainMenuScreen getMainMenu() {
-        return this.mainMenu;
-    }
-    
-    public SelectSaveScreen getSelectSave() {
-        return this.selectSaveScreen;
-    }
-    
-    @Override
-    public void dispose() {
-        this.selectSaveScreen.dispose();
-        this.mainMenu.dispose();
-    }
 }
