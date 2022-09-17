@@ -56,8 +56,8 @@ public class WorldUtil {
     
     //TODO refine spawning system
     public static Vector2 findSpawnpoint(World world, float entWidth, float entHeight, float spawnX, float spawnY,
-            float spawnWidth, float spawnHeight) {
-        RandomXS128 rand = new RandomXS128(world.getSeed());//Hmm
+            float spawnWidth, float spawnHeight, long seed) {
+        RandomXS128 rand = new RandomXS128(seed);
         PhysicsSystem ps = world.getSystem(PhysicsSystem.class);
         for (int i = 0; i < 100; i++) {
             float x = spawnX + rand.nextFloat() * spawnWidth;

@@ -85,7 +85,7 @@ public class Game {
             WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
+            WorldCombined world = new WorldCombined(worldPrimer, save, gameRenderer);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;
             this.uuidPlayerLocation = uuid;

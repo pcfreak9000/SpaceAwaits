@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
@@ -48,7 +49,7 @@ public class TestBiome extends Biome {
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen) {
+    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen, RndHelper rnd) {
         if (sub) {
             chunk.setTile(tx, ty, TileLayer.Front, Tiles.STONE_DARK);
             chunk.setTile(tx, ty, TileLayer.Back, Tiles.STONE_DARK);
@@ -63,7 +64,7 @@ public class TestBiome extends Biome {
             t = Tiles.BEDROCK;
         } else {
             if (ty == value + 1) {
-                if (getRandom().nextDouble() < 0.1) {
+                if (rnd.getRandom().nextDouble() < 0.1) {
                     t = Tiles.LOOSEROCKS;
                 } else {
                     return;
@@ -78,7 +79,7 @@ public class TestBiome extends Biome {
         }
         
         if (t == Tiles.STONE) {
-            if (getRandom().nextDouble() < 0.003) {
+            if (rnd.getRandom().nextDouble() < 0.003) {
                 t = DMod.instance.torch;
             }
         }
@@ -113,13 +114,14 @@ public class TestBiome extends Biome {
     };
     
     @Override
-    public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area) {
+    public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area,
+            RndHelper rnd) {
         if (sub)
             return;
         //this algorithm is f*cking slow
         for (int i = 0; i < 50; i++) {
-            int x = getRandom().nextInt(area) + tx;
-            int y = getRandom().nextInt(area) + ty;
+            int x = rnd.getRandom().nextInt(area) + tx;
+            int y = rnd.getRandom().nextInt(area) + ty;
             if (tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS) {
                 //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
                 //fgen.generate(tiles, world, x, y, rand, area);
@@ -128,8 +130,8 @@ public class TestBiome extends Biome {
                 TransformComponent tc = Components.TRANSFORM.get(tree);
                 tc.position.set(x - 0.5f, y + 1);
                 world.getSystem(EntityInteractSystem.class).spawnEntity(tree, false);
-                if (getRandom().nextDouble() < 0.3) {
-                    ItemStack s = new ItemStack(Items.TWIG, getRandom().nextInt(1) + 1);
+                if (rnd.getRandom().nextDouble() < 0.3) {
+                    ItemStack s = new ItemStack(Items.TWIG, rnd.getRandom().nextInt(1) + 1);
                     s.dropRandomInTile(world, x, y + 1);
                 }
             } else if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {

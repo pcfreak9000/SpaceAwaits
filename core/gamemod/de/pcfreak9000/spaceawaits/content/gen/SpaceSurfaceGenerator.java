@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.gen;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -39,12 +40,12 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
                 TransformComponent tc = ship.getComponent(TransformComponent.class);
                 Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
                 Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),
-                        params.getHeight());
+                        params.getHeight(), params.getSeed());
                 spawn = s;
                 tc.position.set(s);
                 //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
                 Components.STATS.get(ship).get("mechHealth").current = 1;
-                LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
+                LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
                         ship.getComponent(ComponentInventoryShip.class).invShip);
                 world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
             }

@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world.tile.ecs;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -38,7 +37,6 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 public class TileSystem extends EntitySystem implements ITileArea {
     
     private World world;
-    private Random worldRandom;
     private IChunkProvider chunkProvider;
     private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     private final Entity entity;
@@ -46,9 +44,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     private UserDataHelper ud = new UserDataHelper();
     
-    public TileSystem(World world, Random r, IChunkProvider ch) {
+    public TileSystem(World world, IChunkProvider ch) {
         this.world = world;
-        this.worldRandom = r;
         this.chunkProvider = ch;
         this.entity = createInfoEntity();
     }
@@ -266,8 +263,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
-            tile.onBreak(world, drops, worldRandom, this, tx, ty, layer);
-            breaker.onBreak(world, tile, drops, worldRandom);
+            tile.onBreak(world, drops, world.getWorldRandom(), this, tx, ty, layer);
+            breaker.onBreak(world, tile, drops, world.getWorldRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 for (ItemStack s : drops) {

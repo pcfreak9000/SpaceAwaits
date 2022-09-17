@@ -20,7 +20,6 @@ public abstract class World {
     public static final float STEPLENGTH_SECONDS = 1 / 60f;
     
     private WorldBounds worldBounds;
-    private final long seed;
     
     protected final IPlayerSpawn playerSpawn;
     protected final IWorldProperties worldProperties;
@@ -30,17 +29,16 @@ public abstract class World {
     protected final EventBus eventBus;
     
     //Used for random item drops etc, not terrain gen etc
-    protected final RandomXS128 worldRandom;
+    private final RandomXS128 worldRandom;
     
     private int countChunkActive = 0;
     
-    public World(WorldPrimer primer, long seed) {
+    public World(WorldPrimer primer) {
         //initialize fields
-        this.seed = seed;
         this.ecsEngine = new ModifiedEngine(STEPLENGTH_SECONDS);
         this.eventBus = new EventBus();
         SpaceAwaits.BUS.register(eventBus);//Not too sure about this
-        this.worldRandom = new RandomXS128(seed);
+        this.worldRandom = new RandomXS128();
         
         //do priming stuff
         this.worldBounds = primer.getWorldBounds();
@@ -66,26 +64,8 @@ public abstract class World {
         countChunkActive--;
     }
     
-    public long getSeedForTile(int tx, int ty) {
-        long l = getSeed();
-        l += 8793457682347863416L;
-        l *= tx;
-        l += 8793457682347863416L;
-        l *= ty;
-        return l;
-    }
-    
-    @Deprecated
     public Random getWorldRandom() {
         return worldRandom;
-    }
-    
-    public Random createRandomForTile(int tx, int ty) {
-        return new RandomXS128(getSeedForTile(tx, ty));
-    }
-    
-    public long getSeed() {
-        return seed;
     }
     
     public void joinWorld(Player player) {

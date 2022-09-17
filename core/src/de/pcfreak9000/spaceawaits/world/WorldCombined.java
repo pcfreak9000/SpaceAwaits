@@ -41,8 +41,8 @@ public class WorldCombined extends World {
     //Client side stuff
     private GameRenderer gameRenderer;
     
-    public WorldCombined(WorldPrimer primer, IWorldSave save, long seed, GameRenderer renderer) {
-        super(primer, seed);
+    public WorldCombined(WorldPrimer primer, IWorldSave save, GameRenderer renderer) {
+        super(primer);
         this.gameRenderer = renderer;
         this.chunkLoader = new ChunkLoader(save, this);
         this.unchunkProvider = new UnchunkProvider(save, this, primer.getWorldGenerator());
@@ -80,7 +80,7 @@ public class WorldCombined extends World {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new InventoryOpenerSystem(gameRenderer, this));
         ecs.addSystem(new EntityInteractSystem(this, chunkProvider, unchunkProvider));
-        ecs.addSystem(new TileSystem(this, worldRandom, chunkProvider));
+        ecs.addSystem(new TileSystem(this, chunkProvider));
         ecs.addSystem(new PlayerInputSystem(this, this.gameRenderer));
         ecs.addSystem(new ActivatorSystem(gameRenderer, this));
         ecs.addSystem(new FollowMouseSystem(gameRenderer));
@@ -95,7 +95,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
         ecs.addSystem(new TickCounterSystem(this));
-        ecs.addSystem(new RandomTickSystem(worldRandom, this));
+        ecs.addSystem(new RandomTickSystem(getWorldRandom(), this));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         new DynamicAssetListener().register(engine);
