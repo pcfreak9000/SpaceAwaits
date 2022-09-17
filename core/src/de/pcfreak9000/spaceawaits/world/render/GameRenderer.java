@@ -12,6 +12,7 @@ import com.cyphercove.flexbatch.FlexBatch;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.gui.GuiEsc;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
@@ -38,6 +39,8 @@ public class GameRenderer extends ScreenAdapter {
     private DebugScreen debugScreen;
     
     private float renderTime = 0;
+    
+    private boolean saveAndExitToMainMenu = false;
     
     public GameRenderer(ScreenManager gsm, GuiHelper guiHelper) {
         this.gsm = gsm;
@@ -127,13 +130,18 @@ public class GameRenderer extends ScreenAdapter {
     public void show() {
         InptMgr.init();
         super.show();
-        worldView.setPlayer(SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer());//Thats ugly, also the worldView should be configured elsewhere
+        //TODO Thats ugly, also the worldView should be configured elsewhere
+        worldView.setPlayer(SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer());
     }
     
     @Override
     public void render(float delta) {
         renderTime += delta;
-        boolean exit = this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc);
+        if (this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc)) {
+            GuiEsc gesc = new GuiEsc();
+            gesc.create(this, null);//Hmmmmmmm
+            setGuiCurrent(gesc);
+        }
         if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
             showDebugScreen = !showDebugScreen;
         }
@@ -149,19 +157,22 @@ public class GameRenderer extends ScreenAdapter {
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
             }
-            //            if (InptMgr.isJustPressed(EnumInputIds.Console)) {
-            //                this.setGuiCurrent(new GuiChat());
-            //            }
             if (this.guiContainerCurrent != null) {
                 this.guiContainerCurrent.actAndDraw(delta);
             }
         }
-        //fps.log();
-        if (exit) {
+        if (saveAndExitToMainMenu) {
+            saveAndExitToMainMenu = false;
+            showDebugScreen = false;
+            showGui = true;
+            setGuiCurrent(null);//TODO Reset somewhere else? Or create a new GameRenderer vor each new Game?
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();//oof still...
             gsm.setMainMenuScreen();
         }
-        //InptMgr.clear();
+    }
+    
+    public void queueSaveAndExitToMainMenu() {
+        saveAndExitToMainMenu = true;
     }
     
     private void updateMouseWorldPosCache() {

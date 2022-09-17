@@ -16,12 +16,9 @@ public class ChunkLoader implements IChunkLoader {
     private World world;
     private IWorldSave save;
     
-    public ChunkLoader(World world) {
+    public ChunkLoader(IWorldSave save, World world) {
         this.loadedChunks = new HashMap<>();
         this.world = world;
-    }
-    
-    void setSave(IWorldSave save) {
         this.save = save;
     }
     

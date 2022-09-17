@@ -5,12 +5,10 @@ import java.util.Random;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
@@ -24,9 +22,6 @@ public abstract class World {
     private WorldBounds worldBounds;
     private final long seed;
     
-    protected final IChunkProvider chunkProvider;
-    protected final IChunkLoader chunkLoader;
-    protected final IUnchunkProvider unchunkProvider;
     protected final IPlayerSpawn playerSpawn;
     protected final IWorldProperties worldProperties;
     private AmbientLightProvider ambientLightProvider;
@@ -53,16 +48,9 @@ public abstract class World {
         this.playerSpawn = primer.getPlayerSpawn();
         this.worldProperties = primer.getWorldProperties();
         
-        this.chunkLoader = createChunkLoader(primer);
-        this.unchunkProvider = createUnchunkProvider(primer);
-        this.chunkProvider = createChunkProvider(primer);
     }
     
-    protected abstract IChunkProvider createChunkProvider(WorldPrimer primer);
-    
-    protected abstract IUnchunkProvider createUnchunkProvider(WorldPrimer primer);
-    
-    protected abstract IChunkLoader createChunkLoader(WorldPrimer primer);
+    public abstract void unloadWorld();
     
     public void update(float dt) {
         this.ecsEngine.update(dt);
@@ -104,30 +92,8 @@ public abstract class World {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     
-    public void unloadAll() {
-        this.getWorldBus().post(new WorldEvents.WorldMetaNBTEvent(this.unchunkProvider.worldInfo(), Type.Writing));
-        ((ChunkProvider) chunkProvider).saveAll();
-        ((ChunkProvider) chunkProvider).unloadAll();
-        this.unchunkProvider.unload();
-        ecsEngine.removeAllEntities();
-        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
-        for (EntitySystem es : syss) {
-            ecsEngine.removeSystem(es);
-            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling 
-            if (es instanceof Disposable) {
-                Disposable d = (Disposable) es;
-                d.dispose();
-            }
-        }
-        SpaceAwaits.BUS.unregister(eventBus);
-    }
-    
     public <T extends EntitySystem> T getSystem(Class<T> clazz) {
         return ecsEngine.getSystem(clazz);
-    }
-    
-    public int getLoadedChunksCount() {
-        return chunkProvider.getLoadedChunkCount();
     }
     
     public int getUpdatingChunksCount() {

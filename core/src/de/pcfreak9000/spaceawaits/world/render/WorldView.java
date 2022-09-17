@@ -33,7 +33,7 @@ public class WorldView implements View {
         this.commands = new WorldCommandContext();
     }
     
-    public void setPlayer(Player player) {
+    public void setPlayer(Player player) {//TODO HMMMMMMMMMM
         this.hud.setPlayer(player);
     }
     

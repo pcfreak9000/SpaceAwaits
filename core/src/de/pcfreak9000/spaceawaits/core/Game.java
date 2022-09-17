@@ -88,9 +88,8 @@ public class Game {
             WorldCombined world = new WorldCombined(worldPrimer, save, worldSeed, gameRenderer);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;
-            //worldPrimer.getWorldGenerator().generate(world);
             this.uuidPlayerLocation = uuid;
-            if (newLocation) {
+            if (newLocation) {//hmmmmmmm
                 LOGGER.info("Looking for a spawnpoint...");
                 Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
                 Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
@@ -102,7 +101,7 @@ public class Game {
             }
             LOGGER.info("Joining world...");
             world.joinWorld(player);
-            this.gameRenderer.setWorldView();
+            this.gameRenderer.setWorldView();//TODO what the hell is even this?
             this.gameRenderer.getWorldView().setWorld(world);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -127,15 +126,23 @@ public class Game {
     
     public void saveAndLeaveCurrentWorld() {
         this.gameRenderer.getWorldView().setWorld(null);
-        this.world.unloadAll();
+        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
         this.writePlayer();
         this.world = null;
     }
     
     public void saveAll() {
         WorldCombined w = (WorldCombined) world;
-        w.saveAll();
-        this.writePlayer();
+        w.saveWorld();
+        writePlayer();
+    }
+    
+    public World getWorldCurrent() {
+        return this.world;
+    }
+    
+    public Player getPlayer() {
+        return this.player;
     }
     
     private void readPlayer() {
@@ -151,14 +158,6 @@ public class Game {
         comp.put("player", INBTSerializable.writeNBT(player));
         comp.putString("currentLocation", uuidPlayerLocation);
         mySave.writePlayerNBT(comp);
-    }
-    
-    public World getWorldCurrent() {
-        return this.world;
-    }
-    
-    public Player getPlayer() {
-        return this.player;
     }
     
 }

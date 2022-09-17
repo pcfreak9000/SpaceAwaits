@@ -1,7 +1,9 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -29,6 +31,11 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class WorldCombined extends World {
+    
+    private final ChunkProvider chunkProvider;
+    private final ChunkLoader chunkLoader;
+    private final UnchunkProvider unchunkProvider;
+    
     //Server side stuff
     private TicketedChunkManager ticketHandler;
     //Client side stuff
@@ -37,35 +44,36 @@ public class WorldCombined extends World {
     public WorldCombined(WorldPrimer primer, IWorldSave save, long seed, GameRenderer renderer) {
         super(primer, seed);
         this.gameRenderer = renderer;
+        this.chunkLoader = new ChunkLoader(save, this);
+        this.unchunkProvider = new UnchunkProvider(save, this, primer.getWorldGenerator());
+        this.chunkProvider = new ChunkProvider(this, chunkLoader, primer.getChunkGenerator());
         setupECS(primer, ecsEngine);
-        ((ChunkLoader) chunkLoader).setSave(save);
-        ((UnchunkProvider) unchunkProvider).setSave(save);
-        ((UnchunkProvider) unchunkProvider).load();
-        this.getWorldBus().post(new WorldEvents.WMNBTReadingEvent(this.unchunkProvider.worldInfo()));
+        unchunkProvider.load();//TODO Move this?
         if (worldProperties.autoWorldBorders()) {
             WorldUtil.createWorldBorders(this, getBounds().getWidth(), getBounds().getHeight());
         }
     }
     
-    public void saveAll() {
-        this.getWorldBus().post(new WorldEvents.WMNBTWritingEvent(this.unchunkProvider.worldInfo()));
-        ((ChunkProvider) chunkProvider).saveAll();
-        ((UnchunkProvider) unchunkProvider).save();
+    public void saveWorld() {
+        chunkProvider.saveAll();
+        unchunkProvider.save();
     }
     
     @Override
-    protected IChunkLoader createChunkLoader(WorldPrimer primer) {
-        return new ChunkLoader(this);
-    }
-    
-    @Override
-    protected IChunkProvider createChunkProvider(WorldPrimer primer) {
-        return new ChunkProvider(this, chunkLoader, primer.getChunkGenerator());
-    }
-    
-    @Override
-    protected IUnchunkProvider createUnchunkProvider(WorldPrimer primer) {
-        return new UnchunkProvider(this, primer.getWorldGenerator());
+    public void unloadWorld() {
+        chunkProvider.unloadAll();
+        unchunkProvider.unload();
+        ecsEngine.removeAllEntities();
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            ecsEngine.removeSystem(es);
+            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling 
+            if (es instanceof Disposable) {
+                Disposable d = (Disposable) es;
+                d.dispose();
+            }
+        }
+        SpaceAwaits.BUS.unregister(eventBus);
     }
     
     private void setupECS(WorldPrimer primer, Engine engine) {
@@ -82,7 +90,7 @@ public class WorldCombined extends World {
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
         ecs.addSystem(new CameraSystem(this));
-        ecs.addSystem(ticketHandler = new TicketedChunkManager(this, (ChunkProvider) chunkProvider));
+        ecs.addSystem(ticketHandler = new TicketedChunkManager(this, chunkProvider));
         ecs.addSystem(new ParallaxSystem(this, this.gameRenderer));
         ecs.addSystem(new RenderSystem(this, this.gameRenderer));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, this.gameRenderer));
@@ -99,6 +107,10 @@ public class WorldCombined extends World {
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(new FollowingTicket(playerpos, 4));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
+    }
+    
+    public int getLoadedChunksCount() {
+        return chunkProvider.getLoadedChunkCount();
     }
     
     public void addTicket(ITicket ticket) {

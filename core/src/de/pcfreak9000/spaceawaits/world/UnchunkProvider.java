@@ -16,16 +16,13 @@ public class UnchunkProvider implements IUnchunkProvider {
     
     private IWorldSave save;
     
-    public UnchunkProvider(World world, IWorldGenerator worldGenerator) {
+    public UnchunkProvider(IWorldSave save, World world, IWorldGenerator worldGenerator) {
         this.world = world;
         this.worldGen = worldGenerator;
-    }
-    
-    public void setSave(IWorldSave save) {
         this.save = save;
     }
     
-    public void load() {
+    public void load() {//TODO Split this up in generation and loading??
         if (data != null) {
             return;
         }
@@ -39,6 +36,7 @@ public class UnchunkProvider implements IUnchunkProvider {
             worldGen.generate(world);
             worldGen.onLoading(world);
         }
+        world.getWorldBus().post(new WorldEvents.WMNBTReadingEvent(nbt));
     }
     
     @Override
@@ -47,6 +45,7 @@ public class UnchunkProvider implements IUnchunkProvider {
     }
     
     public void save() {
+        world.getWorldBus().post(new WorldEvents.WMNBTWritingEvent(nbt));
         if (data != null) {
             NBTCompound nbt = new NBTCompound();
             nbt.put("entities", INBTSerializable.writeNBT(data));
@@ -58,15 +57,7 @@ public class UnchunkProvider implements IUnchunkProvider {
     @Override
     public void unload() {
         save();
-        //        for (Entity e : data.getEntities()) {
-        //            DynamicAssetUtil.checkAndDisposeAsset(e);
-        //        }
         data = null;
-    }
-    
-    @Override
-    public NBTCompound worldInfo() {
-        return nbt;
     }
     
 }
