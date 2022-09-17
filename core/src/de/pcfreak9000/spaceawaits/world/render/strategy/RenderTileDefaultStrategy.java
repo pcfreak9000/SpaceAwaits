@@ -30,7 +30,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
         super(Family.all(ChunkRenderComponent.class, RenderTileDefaultMarkerComponent.class).get());
         this.gameScreen = renderer;
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
-        this.camera = renderer.getCurrentView().getCamera();
+        this.camera = renderer.getCamera();
     }
     
     @Override

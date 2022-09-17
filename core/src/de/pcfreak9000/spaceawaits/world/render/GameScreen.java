@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -9,32 +10,25 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cyphercove.flexbatch.FlexBatch;
 
+import de.pcfreak9000.spaceawaits.command.ICommandContext;
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
-import de.pcfreak9000.spaceawaits.core.Game;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
-import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
-public class GameScreen extends ScreenAdapter {
-    
-    private ScreenManager gsm;
+public abstract class GameScreen extends ScreenAdapter {
     
     private GuiHelper guiHelper;
     
     private SpriteBatchImpr spriteBatch;
-    private GuiOverlay guiContainerCurrent;
     private Vector2 mousePosVec = new Vector2();
     private FrameBufferStack fbostack;
     
-    private WorldView worldView;
-    
-    private View viewCurrent;
-    
     private boolean showGui = true;
+    private GuiOverlay guiContainerCurrent;
     
     private boolean showDebugScreen;
     private DebugScreen debugScreen;
@@ -43,14 +37,9 @@ public class GameScreen extends ScreenAdapter {
     
     private boolean saveAndExitToMainMenu = false;
     
-    private Game game;
-    
-    public GameScreen(ScreenManager gsm, GuiHelper guiHelper, Game game) {
-        this.gsm = gsm;
+    public GameScreen(GuiHelper guiHelper) {
         this.guiHelper = guiHelper;
-        this.game = game;
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
-        this.worldView = new WorldView(guiHelper);
         this.debugScreen = new DebugScreen(this);
         this.fbostack = new FrameBufferStack();
     }
@@ -78,18 +67,6 @@ public class GameScreen extends ScreenAdapter {
     
     public boolean isGuiContainerOpen() {
         return this.guiContainerCurrent != null;
-    }
-    
-    public void setWorldView() {
-        this.viewCurrent = worldView;
-    }
-    
-    public WorldView getWorldView() {
-        return worldView;
-    }
-    
-    public View getCurrentView() {
-        return viewCurrent;
     }
     
     public SpriteBatchImpr getSpriteBatch() {
@@ -124,7 +101,7 @@ public class GameScreen extends ScreenAdapter {
     }
     
     public void applyViewport() {
-        Viewport vp = viewCurrent.getViewport();
+        Viewport vp = getViewport();
         vp.apply();
         this.spriteBatch.setProjectionMatrix(vp.getCamera().combined);
     }
@@ -133,18 +110,12 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         InptMgr.init();
         super.show();
-        setWorldView();
-        this.game.loadGame(this);
-        this.game.joinGame();
-        //TODO Thats ugly, also the worldView should be configured elsewhere
-        worldView.setPlayer(game.getPlayer());
     }
     
     @Override
     public void hide() {
-        this.game.unloadGame();
-        worldView.setWorld(null);
         super.hide();
+        setGuiCurrent(null);
         this.dispose();
     }
     
@@ -153,8 +124,7 @@ public class GameScreen extends ScreenAdapter {
         renderTime += delta;
         if (this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc)) {
             GuiEsc gesc = new GuiEsc();
-            gesc.create(this, null);//Hmmmmmmm
-            setGuiCurrent(gesc);
+            gesc.createAndOpen(null);//Hmmmmmmm
         }
         if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
             showDebugScreen = !showDebugScreen;
@@ -166,9 +136,7 @@ public class GameScreen extends ScreenAdapter {
         applyViewport();
         updateMouseWorldPosCache();
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
-        if (viewCurrent != null) {//Hmmmm
-            viewCurrent.updateAndRenderContent(delta, showGui);
-        }
+        updateAndRenderContent(delta, showGui);
         if (showGui) {
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
@@ -178,7 +146,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         if (saveAndExitToMainMenu) {
-            gsm.setMainMenuScreen();
+            SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();
         }
     }
     
@@ -188,12 +156,12 @@ public class GameScreen extends ScreenAdapter {
     
     private void updateMouseWorldPosCache() {
         mousePosVec.set(Gdx.input.getX(), Gdx.input.getY());
-        mousePosVec = this.viewCurrent.getViewport().unproject(mousePosVec);
+        mousePosVec = this.getViewport().unproject(mousePosVec);
     }
     
     @Override
     public void resize(int width, int height) {
-        this.viewCurrent.getViewport().update(width, height);
+        this.getViewport().update(width, height);
         this.guiHelper.resize(width, height);
         SpaceAwaits.BUS.post(new RendererEvents.ResizeWorldRendererEvent(this, width, height));
     }
@@ -215,4 +183,12 @@ public class GameScreen extends ScreenAdapter {
     public float getRenderTime() {
         return renderTime;
     }
+    
+    public abstract Viewport getViewport();
+    
+    public abstract Camera getCamera();
+    
+    public abstract ICommandContext getCommandContext();
+    
+    public abstract void updateAndRenderContent(float delta, boolean gui);
 }

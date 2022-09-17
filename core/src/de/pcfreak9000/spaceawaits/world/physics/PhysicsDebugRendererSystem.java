@@ -25,7 +25,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     public PhysicsDebugRendererSystem(PhysicsSystem sys, GameScreen renderer) {
         this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
         this.phsystem = sys;
-        this.cam = renderer.getCurrentView().getCamera();
+        this.cam = renderer.getCamera();
     }
     
     @Override

@@ -63,7 +63,7 @@ public class LightRenderer implements Disposable {
     
     public void exitAndRenderLitScene() {
         this.renderer.getFBOStack().pop(sceneBuffer);
-        Camera cam = renderer.getWorldView().getCamera();
+        Camera cam = renderer.getCamera();
         SpriteBatchImpr batch = renderer.getSpriteBatch();
         batch.resetSettings();
         

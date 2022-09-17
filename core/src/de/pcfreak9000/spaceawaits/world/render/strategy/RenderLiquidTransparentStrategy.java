@@ -48,7 +48,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     public RenderLiquidTransparentStrategy(GameScreen rend, World world) {
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
-        this.camera = this.rend.getCurrentView().getCamera();
+        this.camera = this.rend.getCamera();
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);
         this.batchSimple = rend.getSpriteBatch();
         this.batch.setShader(shader.getShader());

@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
+import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
@@ -26,7 +27,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class Game {
     
@@ -35,34 +35,28 @@ public class Game {
     //switch worlds etc
     
     private ISave mySave;
+    private ScreenManager scm;//Meh
     
     private Player player;
     private String uuidPlayerLocation;
     private World world;
     
     private boolean fresh;//TMP!!! also what if the spawn world is deleted? that shoudl then be replaced by another spawn world
-    private GameScreen screen;//TMP
     
-    public Game(ISave save, boolean fresh) {
+    public Game(ISave save, boolean fresh, ScreenManager scm) {
         this.mySave = save;
         this.fresh = fresh;
+        this.scm = scm;
     }
     
-    public void loadGame(GameScreen screen) {
-        this.screen = screen;
-        this.player = new Player(screen);
+    public void loadGame() {
+        this.player = new Player();
         this.readPlayer();
     }
     
     public void unloadGame() {
         saveAndLeaveCurrentWorld();
-        this.screen = null;
-    }
-    
-    public void saveAndLeaveCurrentWorld() {
-        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
-        this.writePlayer();
-        this.world = null;
+        writePlayer();
     }
     
     public void saveGame() {
@@ -92,6 +86,11 @@ public class Game {
         return MathUtil.getRandom(new Random(), list);
     }
     
+    public void saveAndLeaveCurrentWorld() {
+        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
+        this.world = null;
+    }
+    
     public void joinWorld(String uuid) {
         try {
             LOGGER.infof("Setting up world for joining...");
@@ -105,7 +104,7 @@ public class Game {
             WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
-            WorldCombined world = new WorldCombined(worldPrimer, save, screen);
+            WorldCombined world = new WorldCombined(worldPrimer, save);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;
             this.uuidPlayerLocation = uuid;
@@ -120,9 +119,8 @@ public class Game {
                 osgc.lastContactY = spawnpoint.y;
             }
             LOGGER.info("Joining world...");
-            world.joinWorld(player);
-            this.screen.setWorldView();//TODO what the hell is even this?
-            this.screen.getWorldView().setWorld(world);
+            scm.setWorldScreen(world, player);//Replace scm with something that onle allows non-null GameScreens?
+            world.setPlayer(player);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

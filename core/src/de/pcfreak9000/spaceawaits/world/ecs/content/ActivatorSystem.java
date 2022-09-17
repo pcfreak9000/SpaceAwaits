@@ -64,7 +64,7 @@ public class ActivatorSystem extends EntitySystem {
             return;
         }
         Vector2 mouse = gameRend.getMouseWorldPos();
-        if (!gameRend.getCurrentView().getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
+        if (!gameRend.getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }
         Array<Object> ents = phys.get(getEngine()).queryXY(mouse.x, mouse.y,

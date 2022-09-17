@@ -30,7 +30,7 @@ public class CameraSystem extends IteratingSystem {
         PlayerInputComponent pc = Components.PLAYER_INPUT.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
-        Camera camera = ((GameScreen) SpaceAwaits.getSpaceAwaits().getScreen()).getCurrentView().getCamera();//FIXME ugly
+        Camera camera = ((GameScreen) SpaceAwaits.getSpaceAwaits().getScreen()).getCamera();//FIXME ugly
         if (!SpaceAwaits.DEBUG_CAMERA) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);

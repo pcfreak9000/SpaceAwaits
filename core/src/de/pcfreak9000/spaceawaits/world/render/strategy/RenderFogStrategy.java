@@ -47,7 +47,7 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     public void render(Entity e, float dt) {
         RenderFogComponent rfc = Components.RENDER_FOG.get(e);
         TransformComponent tc = Components.TRANSFORM.get(e);
-        Camera cam = renderer.getCurrentView().getCamera();
+        Camera cam = renderer.getCamera();
         shader.getShader().bind();
         shader.getShader().setUniformMatrix("u_projView", cam.combined);
         shader.getShader().setUniformf("time", renderer.getRenderTime());

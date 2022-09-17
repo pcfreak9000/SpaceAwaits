@@ -20,7 +20,7 @@ public class RenderTextureStrategy extends AbstractRenderStrategy {
     public RenderTextureStrategy(GameScreen renderer) {
         super(Family.all(RenderTextureComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
-        this.cam = renderer.getCurrentView().getCamera();
+        this.cam = renderer.getCamera();
         this.renderer = renderer;
     }
     

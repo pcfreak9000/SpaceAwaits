@@ -40,17 +40,19 @@ public class GameManager {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Game game = new Game(save, fresh);
+        Game game = new Game(save, fresh, screenManager);
+        game.loadGame();
+        game.joinGame();
         this.gameCurrent = game;
-        screenManager.setGameScreen(game);
     }
     
     public void unloadGame() {
         if (!isInGame()) {
             throw new IllegalStateException();
         }
-        this.gameCurrent.saveAndLeaveCurrentWorld();
+        this.gameCurrent.unloadGame();
         this.gameCurrent = null;
+        this.screenManager.setMainMenuScreen();
     }
     
     public List<SaveMeta> listSaves() {

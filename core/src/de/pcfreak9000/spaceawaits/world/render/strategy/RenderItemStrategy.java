@@ -38,7 +38,7 @@ public class RenderItemStrategy implements IRenderStrategy {
     public RenderItemStrategy(GameScreen renderer) {
         this.render = renderer;
         this.batch = this.render.getSpriteBatch();
-        this.cam = renderer.getCurrentView().getCamera();
+        this.cam = renderer.getCamera();
     }
     
     private GameScreen render;

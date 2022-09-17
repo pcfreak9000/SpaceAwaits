@@ -10,8 +10,9 @@ import de.pcfreak9000.spaceawaits.gui.Hud;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldCombined;
 
-public class WorldView implements View {
+public class WorldScreen extends GameScreen {
     public static final int VISIBLE_TILES_MIN = 35;
     public static final int VISIBLE_TILES_MAX = 6 * VISIBLE_TILES_MIN;
     
@@ -24,21 +25,17 @@ public class WorldView implements View {
     
     private WorldCommandContext commands;
     
-    public WorldView(GuiHelper guiHelper) {
+    public WorldScreen(GuiHelper guiHelper, WorldCombined world, Player player) {
+        super(guiHelper);
+        this.world = world;
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(VISIBLE_TILES_MIN, VISIBLE_TILES_MIN, VISIBLE_TILES_MAX, VISIBLE_TILES_MAX,
                 camera);
-        //this.viewport = new FitViewport(1920 / 24, 1080 / 24, camera);//Problematic because of mouse stuff?
         this.hud = new Hud(guiHelper);
         this.commands = new WorldCommandContext();
-    }
-    
-    public void setPlayer(Player player) {//TODO HMMMMMMMMMM
-        this.hud.setPlayer(player);
-    }
-    
-    public void setWorld(World world) {
-        this.world = world;
+        //Hmmmm
+        world.initRenderableWorld(this);
+        hud.setPlayer(player);
     }
     
     @Override
@@ -63,5 +60,4 @@ public class WorldView implements View {
     public ICommandContext getCommandContext() {
         return commands;
     }
-    
 }

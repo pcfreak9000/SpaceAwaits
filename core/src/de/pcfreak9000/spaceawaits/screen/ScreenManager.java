@@ -1,8 +1,9 @@
 package de.pcfreak9000.spaceawaits.screen;
 
-import de.pcfreak9000.spaceawaits.core.Game;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
+import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.world.WorldCombined;
+import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 
 public class ScreenManager {
     
@@ -12,7 +13,10 @@ public class ScreenManager {
     public ScreenManager(SpaceAwaits space) {
         this.space = space;
         this.guiHelper = new GuiHelper();
-        
+    }
+    
+    public GuiHelper getGuiHelper() {
+        return guiHelper;
     }
     
     public void setMainMenuScreen() {
@@ -23,8 +27,8 @@ public class ScreenManager {
         this.space.setScreen(new SelectSaveScreen(this, guiHelper));
     }
     
-    public void setGameScreen(Game game) {
-        this.space.setScreen(new GameScreen(this, guiHelper, game));
+    public void setWorldScreen(WorldCombined world, Player player) {
+        this.space.setScreen(new WorldScreen(guiHelper, world, player));
     }
     
 }

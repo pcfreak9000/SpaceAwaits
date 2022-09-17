@@ -68,7 +68,7 @@ public abstract class World {
         return worldRandom;
     }
     
-    public void joinWorld(Player player) {
+    public void setPlayer(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     

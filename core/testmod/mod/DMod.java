@@ -37,7 +37,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.render.WorldView;
+import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -116,13 +116,13 @@ public class DMod {
 //        Registry.TILE_REGISTRY.register("laser", laser);
         
         Background back = new Background(new ComposedTextureProvider(
-                new Composer(WorldView.VISIBLE_TILES_MAX * 40, WorldView.VISIBLE_TILES_MAX * 40) {
+                new Composer(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40) {
                     @Override
                     protected void render() {
                         super.render();
                         reee();
                     }
-                }), WorldView.VISIBLE_TILES_MAX, WorldView.VISIBLE_TILES_MAX);
+                }), WorldScreen.VISIBLE_TILES_MAX, WorldScreen.VISIBLE_TILES_MAX);
         Registry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
         Background b2 = new Background(planet, 5, 5);
         b2.xoff = -20;

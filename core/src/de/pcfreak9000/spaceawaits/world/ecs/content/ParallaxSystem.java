@@ -18,7 +18,7 @@ public class ParallaxSystem extends IteratingSystem {
     public ParallaxSystem(World world, GameScreen renderer) {
         super(Family.all(ParallaxComponent.class, TransformComponent.class).get());
         this.tileWorld = world;
-        this.camera = renderer.getCurrentView().getCamera();
+        this.camera = renderer.getCamera();
     }
     
     @Override

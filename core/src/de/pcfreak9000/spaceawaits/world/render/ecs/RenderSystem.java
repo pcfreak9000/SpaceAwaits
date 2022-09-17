@@ -232,7 +232,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         renderer.applyViewport();
         batch.setDefaultBlending();
         batch.setColor(Color.WHITE);
-        Camera cam = this.renderer.getWorldView().getCamera();
+        Camera cam = this.renderer.getCamera();
         batch.begin();
         batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,

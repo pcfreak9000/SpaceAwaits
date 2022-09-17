@@ -1,10 +1,12 @@
 package de.pcfreak9000.spaceawaits.gui;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
@@ -20,11 +22,16 @@ public class GuiOverlay implements Disposable {
     //Crappy workaround
     private boolean justOpened = true;
     
-    public final void create(GameScreen gameScreen, Player player) {
-        this.gameScreen = gameScreen;
+    public final void createAndOpen(Player player) {
+        Screen currentScreen = SpaceAwaits.getSpaceAwaits().getScreen();
+        if (!(currentScreen instanceof GameScreen)) {
+            throw new IllegalStateException("Current screen is not a GameScreen");
+        }
+        this.gameScreen = (GameScreen) currentScreen;
         this.player = player;
-        this.stage = gameScreen.getGuiHelper().createStage();
+        this.stage = this.gameScreen.getGuiHelper().createStage();
         create();
+        this.gameScreen.setGuiCurrent(this);
     }
     
     protected void create() {
