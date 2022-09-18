@@ -175,14 +175,14 @@ public class TileSystem extends EntitySystem implements ITileArea {
         }
         Tile current = getTile(tx, ty, layer);
         if (current != null && (!current.canBeReplacedBy(tile) || current == tile)) {
-            //check current occupation, only place tile if there isnt already one
+            //check current occupation, only place tile if there isnt already one present
             return null;
         }
         Array<Entity> ents = new Array<>();
         Direction reloc = null;
         if (tile.isSolid() && layer == TileLayer.Front) {
             boolean[] blocking = new boolean[1];
-            phys.get(getEngine()).queryAABB(tx, ty, tx + 1f, ty + 1f, (fix, conv) -> {
+            phys.get(getEngine()).queryAABB(tx + 0.15f, ty + 0.15f, tx + 0.7f, ty + 0.7f, (fix, conv) -> {
                 ud.set(fix.getUserData(), fix);
                 if (fix.isSensor()) {
                     if (!ud.isEntity() || !Components.PHYSICS.get(ud.getEntity()).considerSensorsAsBlocking) {
@@ -204,7 +204,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             }
             if (!ents.isEmpty()) {
                 for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-                    if (!phys.get(getEngine()).checkRectOccupation(tx + d.dx + 0.1f, ty + d.dy + 0.1f, 0.79f, 0.79f,
+                    if (!phys.get(getEngine()).checkRectOccupation(tx + d.dx + 0.15f, ty + d.dy + 0.15f, 0.7f, 0.7f,
                             true)) {//This doesn't account for possible item mergers...
                         reloc = d;
                         break;
@@ -262,14 +262,12 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (t.getProgress() >= IBreaker.FINISHED_BREAKING) {
             //********************************+
             //Handle tile breaking:
-            Array<ItemStack> drops = new Array<>();
+            Array<ItemStack> drops = new Array<>();//tile.getDropsBase(world, world.getWorldRandom(), tx, ty, layer);
             tile.onBreak(world, drops, world.getWorldRandom(), this, tx, ty, layer);
             breaker.onBreak(world, tile, drops, world.getWorldRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
-                for (ItemStack s : drops) {
-                    s.dropRandomInTile(world, tx, ty);
-                }
+                ItemStack.dropRandomInTile(drops, world, tx, ty);
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;

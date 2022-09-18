@@ -22,6 +22,7 @@ public class TileLooseRocks extends Tile {
                 tileSystem.removeTile(gtx, gty, layer);
                 ItemStack toDrop = new ItemStack(getItemDropped(), getDroppedQuantity());//TODO maybe put this somewhere else?
                 toDrop.drop(world, gtx, gty);
+                //ItemStack.dropRandomInTile(getDropsBase(world, null, gtx, gty, layer), world, gtx, gty);
             }
         }
     }
@@ -48,6 +49,6 @@ public class TileLooseRocks extends Tile {
     
     @Override
     public float[] getCustomHitbox() {
-        return new float[] { 0, 0, /**/ 1, 0, /**/1, 0.3f, /**/0, 0.3f };
+        return new float[] { 0, 0, /**/ 1, 0, /**/1, 0.2f, /**/0, 0.2f };
     }
 }

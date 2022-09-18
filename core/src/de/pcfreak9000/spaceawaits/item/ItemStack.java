@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.item;
 import java.util.Objects;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -29,6 +30,18 @@ public class ItemStack {
             return;
         }
     };
+    
+    public static void drop(Array<ItemStack> array, World world, float tx, float ty) {
+        for (ItemStack s : array) {
+            s.drop(world, tx, ty);
+        }
+    }
+    
+    public static void dropRandomInTile(Array<ItemStack> array, World world, float tx, float ty) {
+        for (ItemStack s : array) {
+            s.dropRandomInTile(world, tx, ty);
+        }
+    }
     
     public static boolean isItemEqual(ItemStack s1, ItemStack s2) {
         if (isEmptyOrNull(s1) || isEmptyOrNull(s2)) {

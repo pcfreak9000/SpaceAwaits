@@ -66,9 +66,7 @@ public class EntityInteractSystem extends EntitySystem {
             this.despawnEntity(entity);
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
-                for (ItemStack s : drops) {
-                    s.dropRandomInTile(world, tc.position.x, tc.position.y);
-                }
+                ItemStack.dropRandomInTile(drops, world, tc.position.x, tc.position.y);
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;

@@ -55,8 +55,6 @@ public class Tile extends Destructible {
     
     private boolean opaque = true;
     private boolean solid = true;
-    //private boolean canBeReplaced = false;
-    //private boolean indestructible = false;
     
     private Color color = Color.WHITE;
     
@@ -113,6 +111,11 @@ public class Tile extends Destructible {
         return this.solid;
     }
     
+    //Maybe use a replacement mode e.g. if tile should be dropped or just be removed etc? 
+    public boolean canBeReplacedBy(Tile t) {
+        return false;
+    }
+    
     public void setLightColor(Color color) {
         this.lightColor = color;
     }
@@ -151,10 +154,6 @@ public class Tile extends Destructible {
         this.composite = composite;
     }
     
-    public boolean canBeReplacedBy(Tile t) {
-        return false;
-    }
-    
     public Item getItemTile() {
         return Registry.ITEM_REGISTRY.get(Registry.TILE_REGISTRY.getId(this));//Hmmm... possibly cache the result? Or a different approach?
     }
@@ -166,6 +165,10 @@ public class Tile extends Destructible {
     public int getDroppedQuantity() {
         return 1;
     }
+    
+    //    public Array<ItemStack> getDropsBase(World world, Random random, int tx, int ty, TileLayer layer) {
+    //        return Array.with(new ItemStack(getItemDropped(), getDroppedQuantity()));
+    //    }
     
     public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
             TileLayer layer) {

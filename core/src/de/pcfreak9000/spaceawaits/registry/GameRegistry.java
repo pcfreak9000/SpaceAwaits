@@ -39,7 +39,7 @@ public class GameRegistry {
                 itemTile = itemCtor.newInstance(ObjectArrays.concat(tile, args));
             }
             Registry.TILE_REGISTRY.register(id, tile);
-            if (itemTile != null) {
+            if (itemTile != null) {//Hmmm
                 Registry.ITEM_REGISTRY.register(id, itemTile);
             }
         } catch (Exception ex) {
