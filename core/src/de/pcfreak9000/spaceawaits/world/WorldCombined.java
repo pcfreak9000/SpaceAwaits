@@ -39,6 +39,8 @@ public class WorldCombined extends World {
     //Server side stuff
     private TicketedChunkManager ticketHandler;
     
+    private ITicket currentPlayerTicket;
+    
     public WorldCombined(WorldPrimer primer, IWorldSave save) {
         super(primer);
         this.chunkLoader = new ChunkLoader(save, this);
@@ -97,7 +99,8 @@ public class WorldCombined extends World {
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, gameScreen));
         ecs.addSystem(new TickCounterSystem(this));
         ecs.addSystem(new RandomTickSystem(getWorldRandom(), this));
-        //TODO SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
+        //this one needs some stuff with topological sort anyways to resolve dependencies etc
+        //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
         new DynamicAssetListener().register(engine);
     }
@@ -106,8 +109,16 @@ public class WorldCombined extends World {
     public void setPlayer(Player player) {
         super.setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
-        addTicket(new FollowingTicket(playerpos, 4));
+        addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 4));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
+    }
+    
+    @Override
+    public void removePlayer(Player player) {
+        super.removePlayer(player);
+        removeTicket(currentPlayerTicket);
+        currentPlayerTicket = null;
+        SpaceAwaits.BUS.post(new WorldEvents.PlayerLeftEvent(this, player));
     }
     
     public int getLoadedChunksCount() {

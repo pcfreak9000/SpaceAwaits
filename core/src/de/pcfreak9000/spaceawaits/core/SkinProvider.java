@@ -22,7 +22,7 @@ public class SkinProvider {
     
     @EventSubscription
     private void resEv1(QueueResourcesEvent ev) {
-        ev.assetMgr.load("ui/skin.json", Skin.class);//TODO license stuff
+        ev.assetMgr.load("ui/skin.json", Skin.class);
     }
     
     @EventSubscription

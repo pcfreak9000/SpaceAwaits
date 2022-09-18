@@ -17,7 +17,6 @@ import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-//TODO having there global (gameregistrey and tiles and stuff) might not be the best idea
 public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements Disposable {
     
     private SpriteCache regionCache;//Maybe use something global instead

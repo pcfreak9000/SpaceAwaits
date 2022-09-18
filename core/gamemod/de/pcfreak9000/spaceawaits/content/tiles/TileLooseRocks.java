@@ -20,7 +20,7 @@ public class TileLooseRocks extends Tile {
         if (ngty == gty - 1 && ngtx == gtx) {
             if (!newNeighbour.isSolid()) {
                 tileSystem.removeTile(gtx, gty, layer);
-                ItemStack toDrop = new ItemStack(getItemDropped(), getDroppedQuantity());//TODO maybe put this somewhere else?
+                ItemStack toDrop = new ItemStack(getItemDropped(), getDroppedQuantity());//TODO maybe put this somewhere else? -> drops rework
                 toDrop.drop(world, gtx, gty);
                 //ItemStack.dropRandomInTile(getDropsBase(world, null, gtx, gty, layer), world, gtx, gty);
             }

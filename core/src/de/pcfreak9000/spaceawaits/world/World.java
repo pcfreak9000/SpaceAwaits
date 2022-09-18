@@ -72,6 +72,11 @@ public abstract class World {
         ecsEngine.addEntity(player.getPlayerEntity());
     }
     
+    //Could keep the Player instance here and just removePlayer()...
+    public void removePlayer(Player player) {
+        ecsEngine.removeEntity(player.getPlayerEntity());
+    }
+    
     public <T extends EntitySystem> T getSystem(Class<T> clazz) {
         return ecsEngine.getSystem(clazz);
     }

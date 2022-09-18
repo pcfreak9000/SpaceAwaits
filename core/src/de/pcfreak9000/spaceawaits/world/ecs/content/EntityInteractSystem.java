@@ -76,12 +76,11 @@ public class EntityInteractSystem extends EntitySystem {
     
     public boolean spawnEntity(Entity entity, boolean checkOccupation) {
         //what happens if the chunk is not loaded? -> the chunk gets loaded if this World has the generating backend, but spawning should only happen there anyways
-        //TODO what happens if the coordinates are somewhere out of bounds?
+        //what happens if the coordinates are somewhere out of bounds? the entity isn't spawned and simply forgotten (return false)
         if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity) && checkOccupation) {
             TransformComponent t = Components.TRANSFORM.get(entity);
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
-            //getSystem... oof
             if (phys.get(getEngine()).checkRectOccupation(t.position.x + wh.x / 4, t.position.y + wh.y / 4, wh.x / 2,
                     wh.y / 2, false)) {
                 return false;

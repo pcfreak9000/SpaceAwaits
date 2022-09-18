@@ -19,6 +19,7 @@ import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
+//TODO Maybe have a GameScreen2D in the hierachy as well?
 public abstract class GameScreen extends ScreenAdapter {
     
     private GuiHelper guiHelper;

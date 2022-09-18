@@ -22,7 +22,7 @@ public class UnchunkProvider implements IUnchunkProvider {
         this.save = save;
     }
     
-    public void load() {//TODO Split this up in generation and loading??
+    public void load() {//Split this up in generation and loading?? this isn't so big, so this can stay for now
         if (data != null) {
             return;
         }
@@ -31,11 +31,10 @@ public class UnchunkProvider implements IUnchunkProvider {
             NBTCompound nbt = save.readGlobal();
             data.readNBT(nbt.getCompound("entities"));
             this.nbt = nbt.getCompound("dat");
-            worldGen.onLoading(world);
         } else {
             worldGen.generate(world);
-            worldGen.onLoading(world);
         }
+        worldGen.onLoading(world);
         world.getWorldBus().post(new WorldEvents.WMNBTReadingEvent(nbt));
     }
     

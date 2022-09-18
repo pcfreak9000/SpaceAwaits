@@ -7,7 +7,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 
 public class WorldEvents {
-    
+    @Deprecated
     public static class SetupEntitySystemsEvent extends Event {
         public final World world;
         public final SystemResolver ecs;
@@ -29,6 +29,16 @@ public class WorldEvents {
             this.player = player;
         }
         
+    }
+    
+    public static class PlayerLeftEvent extends Event {
+        public final World world;
+        public final Player player;
+        
+        public PlayerLeftEvent(World world, Player player) {
+            this.world = world;
+            this.player = player;
+        }
     }
     
     public static class WorldMetaNBTEvent extends Event {

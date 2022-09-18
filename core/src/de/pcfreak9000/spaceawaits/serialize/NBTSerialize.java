@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ FIELD, TYPE })
 public @interface NBTSerialize {
     
-    //TODO option to not write if its the default??
+    //option to not write if its the default?? this is kinda already done, defaults aren't saved except if disableDefaults is true
     
     String key();
     

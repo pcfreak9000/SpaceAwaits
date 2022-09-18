@@ -50,7 +50,7 @@ public class TreeBodyFactory implements BodyFactory {
     }
     
     @Override
-    public Vector2 boundingBoxWidthAndHeight() {
+    public Vector2 boundingBoxWidthAndHeight() {//This kinda sucks anyways
         return WH;//TODO Maybe change to a bounding sphere instead?
     }
     

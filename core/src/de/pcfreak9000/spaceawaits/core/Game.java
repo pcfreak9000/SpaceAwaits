@@ -87,7 +87,8 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        this.world.unloadWorld();//TODO World#leaveWorld(player) maybe?
+        this.world.removePlayer(player);
+        this.world.unloadWorld();
         this.world = null;
     }
     
