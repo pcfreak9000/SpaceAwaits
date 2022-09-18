@@ -19,17 +19,8 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
  */
 public class Registry<T> {
     
-    public static final Registry<Tile> TILE_REGISTRY = new Registry<Tile>() {
-        @Override
-        public Registry<Tile> register(String name, Tile data) {
-            super.register(name, data);
-            Item item = data.getRegisterItem();
-            if (item != null) {
-                ITEM_REGISTRY.register(name, item);
-            }
-            return this;
-        };
-    };
+    public static final Registry<Tile> TILE_REGISTRY = new Registry<Tile>();
+    
     public static final Registry<Item> ITEM_REGISTRY = new Registry<>();
     
     public static final Registry<IRegen<?>> REGEN_REGISTRY = new Registry<>();

@@ -30,6 +30,7 @@ import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
 import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
@@ -87,7 +88,7 @@ public class DMod {
         
         //        Animation<ITextureProvider> stoneanim = new Animation<>(5, TextureProvider.get("stone.png"),
         //                TextureProvider.get("sand.png"));
-        Registry.WORLD_ENTITY_REGISTRY.register("spac", fac);
+        GameRegistry.registerWorldEntity("spac", fac);
         
         water.setTexture("stone.png");
         water.setSolid(false);
@@ -96,24 +97,24 @@ public class DMod {
         water.setColor(new Color(0, 100 / 255f, 1, 0.1f));//0.75f
         water.setDisplayName("Water");
         water.setOpaque(false);
-        Registry.TILE_REGISTRY.register("water", water);
+        GameRegistry.registerTile("water", water);
         
         Tile ironTile = new Tile();
         ironTile.setDisplayName("Iron Ore");
         ironTile.setTexture("ore_iron.png");
         // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
-        Registry.TILE_REGISTRY.register("ore_iron", ironTile);
+        GameRegistry.registerTile("ore_iron", ironTile);
         
         torch.setLightColor(Color.WHITE);
         torch.setDisplayName("torch");
-        Registry.TILE_REGISTRY.register("torch", torch);
+        GameRegistry.registerTile("torch", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
-//        laser.setTexture("dirt.png");
-//        laser.setDisplayName("Laser");
-//        laser.setColor(Color.RED);
-//        laser.setLightColor(new Color(1, 0, 0, 1));
-//        Registry.TILE_REGISTRY.register("laser", laser);
+        //        laser.setTexture("dirt.png");
+        //        laser.setDisplayName("Laser");
+        //        laser.setColor(Color.RED);
+        //        laser.setLightColor(new Color(1, 0, 0, 1));
+        //        Registry.TILE_REGISTRY.register("laser", laser);
         
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40) {
@@ -123,15 +124,15 @@ public class DMod {
                         reee();
                     }
                 }), WorldScreen.VISIBLE_TILES_MAX, WorldScreen.VISIBLE_TILES_MAX);
-        Registry.WORLD_ENTITY_REGISTRY.register("background.stars", back);
+        GameRegistry.registerWorldEntity("background.stars", back);
         Background b2 = new Background(planet, 5, 5);
         b2.xoff = -20;
         b2.yoff = 15;
         b2.w = 1;
         b2.h = 1;
-        Registry.WORLD_ENTITY_REGISTRY.register("background.planet", b2);
+        GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
-        Registry.ITEM_REGISTRY.register("mininglaser", MININGLASER);
+        GameRegistry.registerItem("mininglaser", MININGLASER);
         
     }
     

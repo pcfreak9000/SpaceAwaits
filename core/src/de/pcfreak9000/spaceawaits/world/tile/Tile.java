@@ -12,7 +12,6 @@ import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.item.ItemTile;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.Destructible;
@@ -67,8 +66,6 @@ public class Tile extends Destructible {
     private float bouncyness = 0f;
     
     private String displayName;
-    
-    private Item itemTile;
     
     private Composite composite;
     
@@ -158,20 +155,8 @@ public class Tile extends Destructible {
         return false;
     }
     
-    public final Item getRegisterItem() {//this sucks
-        if (this.itemTile == null) {
-            this.itemTile = createItem();
-            return this.itemTile;
-        }
-        return null;
-    }
-    
-    protected Item createItem() {
-        return new ItemTile(this);
-    }
-    
     public Item getItemTile() {
-        return itemTile;
+        return Registry.ITEM_REGISTRY.get(Registry.TILE_REGISTRY.getId(this));//Hmmm... possibly cache the result? Or a different approach?
     }
     
     public Item getItemDropped() {
