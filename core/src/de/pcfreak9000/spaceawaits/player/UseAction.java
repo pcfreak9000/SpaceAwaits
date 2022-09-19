@@ -38,13 +38,13 @@ public class UseAction implements Action {
         TileSystem tileSystem = world.getSystem(TileSystem.class);
         if (!used && player.isInReachFromHand(mousex, mousey,
                 (ItemStack.isEmptyOrNull(stack) ? player.getReach() : stack.getItem().getReach(player, stack)))) {//Move to activator in chunk entity? -> chunk isnt filled with fixtures but they are used for detection, so no (for now)
-            Tile clicked = tileSystem.getTile(tx, ty, layer);
+            Tile clicked = tileSystem.getTile(tx, ty, layer);//FIXME can't use backlayer tiles if front layer is blocking!! (reuse from building?)
             //onTileUse
             ItemStack cp = stack != null ? stack.cpy() : null;
             if (InptMgr.isJustPressed(getInputKey())) {
-                used |= clicked.onTileJustUse(player, world, tileSystem, stack, tx, ty);
+                used |= clicked.onTileJustUse(player, world, tileSystem, stack, tx, ty, layer);
             }
-            used |= clicked.onTileUse(player, world, tileSystem, cp, tx, ty);
+            used |= clicked.onTileUse(player, world, tileSystem, cp, tx, ty, layer);
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
         }
         

@@ -17,6 +17,7 @@ public class Tiles {
     public static final Tile BEDROCK = new Tile();
     public static final Tile DIRT = new Tile();
     public static final Tile WORKBENCH_PRIMITIVE = new TilePrimitiveCrafting();
+    public static final Tile FURNACE_PRIMITIVE = new TilePrimitiveFurnace();
     public static final Tile STONE_DARK = new Tile();
     public static final Tile ORE_IRON = new TileOreIron();
     
@@ -32,6 +33,7 @@ public class Tiles {
         GameRegistry.registerTile("bedrock", BEDROCK.setTexture("stoneWhite.png").setColor(new Color(0.1f, 0.1f, 0.1f, 1)).setDisplayName("Bedrock or something").setCanBreak(false));
         GameRegistry.registerTile("dirt", DIRT.setTexture("dirt.png").setDisplayName("Dirt"));
         GameRegistry.registerTile("workbenchPrimitive", WORKBENCH_PRIMITIVE);
+        GameRegistry.registerTile("furnacePrimitive", FURNACE_PRIMITIVE);
         GameRegistry.registerTile("oreIron", ORE_IRON);
         //@formatter:on
     }

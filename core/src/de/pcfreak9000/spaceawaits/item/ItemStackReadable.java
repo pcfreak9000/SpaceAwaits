@@ -1,5 +1,5 @@
 package de.pcfreak9000.spaceawaits.item;
-
+@Deprecated
 public class ItemStackReadable {
     private ItemStack stack;
     private IInventory origin;

@@ -20,8 +20,8 @@ import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
-import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
 import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
+import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -138,14 +138,13 @@ public class DMod {
     
     @EventSubscription
     public void postinit(CoreEvents.PostInitEvent ev) {
-        CraftingManager.instance().addSimpleRecipe(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
+        SimpleRecipe.add(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
                 new ItemStack(Items.LOOSEROCK, 2));
-        CraftingManager.instance().addSimpleRecipe(new ItemStack(Items.PICKAXE_PRIMITIVE, 1),
-                new ItemStack(Items.TWIG, 2), new ItemStack(Items.LOOSEROCK, 3));
-        CraftingManager.instance().addSimpleRecipe(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1),
-                new ItemStack(Tiles.WOOD, 4));
-        CraftingManager.instance().addShapedRecipe(
-                new ShapedRecipe(Items.AXE_PRIMITIVE, "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S', Items.TWIG));
+        SimpleRecipe.add(new ItemStack(Items.PICKAXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
+                new ItemStack(Items.LOOSEROCK, 3));
+        SimpleRecipe.add(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1), new ItemStack(Tiles.WOOD, 4));
+        ShapedRecipe
+                .add(new ShapedRecipe(Items.AXE_PRIMITIVE, "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S', Items.TWIG));
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);

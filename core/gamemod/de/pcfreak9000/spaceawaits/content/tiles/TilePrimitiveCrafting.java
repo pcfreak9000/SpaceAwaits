@@ -27,9 +27,7 @@ public class TilePrimitiveCrafting extends Tile {
     
     @Override
     public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
-            int gty) {
-        // TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(gtx, gty, TileLayer.Front);
-        //  player.openContainer(new ContainerStorageDrawer(te));
+            int gty, TileLayer layer) {
         player.openContainer(new ContainerCrafter(3));
         return true;
     }

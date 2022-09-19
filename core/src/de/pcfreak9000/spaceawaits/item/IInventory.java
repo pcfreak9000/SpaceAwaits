@@ -17,16 +17,13 @@ public interface IInventory {
     
     /**
      * Returns the contents of the specified slot or null if it's empty. <br>
-     * Don't modify the returned ItemStack.
+     * If the stack is modified, call {@link #setSlotContent(int, ItemStack)}
+     * afterwards
      * 
      * @param index slot
      * @return content in the given slot or null if none
      */
-    ItemStack getStack(int index);//dOnT mOdIfY... this kinda sucks
-    
-    default ItemStackReadable getStackR(int index) {
-        return new ItemStackReadable(getStack(index), this, index);
-    }
+    ItemStack getStack(int index);
     
     /**
      * Removes the contents of the specified slot and returns them.
@@ -34,7 +31,6 @@ public interface IInventory {
      * @param index slot
      * @return previous content in the given slot or null if none
      */
-    @Deprecated
     default ItemStack removeStack(int index) {
         ItemStack stack = getStack(index);
         setSlotContent(index, null);

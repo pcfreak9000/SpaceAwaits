@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.crafting.CraftingManager;
 import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -37,7 +36,7 @@ public class ContainerInventoryPlayer extends GuiInventory {
         Table crafting = new Table();
         List<RecipeUI> list = new List<>(CoreRes.SKIN.getSkin());
         Array<RecipeUI> a = new Array<>();
-        for (SimpleRecipe sr : CraftingManager.instance().getRecipesSimple()) {
+        for (SimpleRecipe sr : SimpleRecipe.getRecipes()) {
             RecipeUI rui = new RecipeUI();
             rui.simpleRecipe = sr;
             a.add(rui);
@@ -54,7 +53,7 @@ public class ContainerInventoryPlayer extends GuiInventory {
                 RecipeUI selected = list.getSelected();
                 if (dif < InptMgr.DOUBLECLICK_DURATION_MS && lastS == selected && selected != null) {
                     if (lastS.simpleRecipe.matches(player.getInventory())) {
-                        ItemStack is = lastS.simpleRecipe.getCraftingResult(player.getInventory());
+                        ItemStack is = lastS.simpleRecipe.craftFromInventory(player.getInventory());
                         ItemStack leftover = InvUtil.insert(player.getInventory(), is);
                         player.dropWhenPossible(leftover);
                     }

@@ -203,12 +203,13 @@ public class Tile extends Destructible {
         return null;
     }
     
-    public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty) {
+    public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty,
+            TileLayer layer) {
         return false;
     }
     
     public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
-            int gty) {
+            int gty, TileLayer layer) {
         return false;
     }
     

@@ -64,7 +64,7 @@ public class InventoryCrafting implements IInventory {
                 return;
             }
         }
-        currentRecipe = CraftingManager.instance().findMatchingRecipe(this);
+        currentRecipe = ShapedRecipe.findMatchingRecipe(this);//TODO shapeless recipes etc, also more general stuff for other crafting stuff
         if (currentRecipe != null) {
             result = currentRecipe.getCraftingResult(this);
             craftingresult.setSlotContent(0, result);

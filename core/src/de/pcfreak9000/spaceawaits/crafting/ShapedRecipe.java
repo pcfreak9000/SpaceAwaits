@@ -3,12 +3,36 @@ package de.pcfreak9000.spaceawaits.crafting;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.Array;
+import com.google.common.base.Objects;
+
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class ShapedRecipe implements IRecipe {
+    
+    //************ Maybe put this in a dedicated class? **************
+    
+    private static final Array<ShapedRecipe> recipes = new Array<>();
+    //private static final ImmutableArray<ShapedRecipe> recipesImmutable = new ImmutableArray<>(recipes);
+    
+    public static void add(ShapedRecipe sr) {
+        recipes.add(sr);
+    }
+    //TODO maybe IGridRecipe instead?
+    public static ShapedRecipe findMatchingRecipe(InventoryCrafting inventoryCrafting) {
+        for (ShapedRecipe s : recipes) {
+            if (s.matches(inventoryCrafting)) {
+                return s;
+            }
+        }
+        return null;
+    }
+    
+    //****************************************************************
     
     private ItemStack result;
     private Object[] inputs;
@@ -91,7 +115,9 @@ public class ShapedRecipe implements IRecipe {
                         return false;
                     }
                 } else if (input instanceof String) {
-                    //dynamic dict stuff
+                    if (!Objects.equal(input, GameRegistry.getOreDict().getKey(slot))) {
+                        return false;
+                    }
                 }
             }
         }

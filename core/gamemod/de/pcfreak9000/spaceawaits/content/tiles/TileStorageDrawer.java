@@ -34,8 +34,8 @@ public class TileStorageDrawer extends Tile {
     
     @Override
     public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
-            int gty) {
-        TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(gtx, gty, TileLayer.Front);
+            int gty, TileLayer layer) {
+        TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(gtx, gty, layer);
         player.openContainer(new ContainerStorageDrawer(te));
         return true;
     }
@@ -44,7 +44,7 @@ public class TileStorageDrawer extends Tile {
     public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
             TileLayer layer) {
         super.onBreak(world, drops, random, tiles, tx, ty, layer);
-        TileEntityStorageDrawer te = (TileEntityStorageDrawer) tiles.getTileEntity(tx, ty, TileLayer.Front);
+        TileEntityStorageDrawer te = (TileEntityStorageDrawer) tiles.getTileEntity(tx, ty, layer);
         for (int i = 0; i < te.slots(); i++) {
             drops.add(te.removeStack(i));
         }
