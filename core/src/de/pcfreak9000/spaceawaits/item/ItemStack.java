@@ -240,6 +240,7 @@ public class ItemStack {
         return Objects.hash(count, item);
     }
     
+    //Hmmmmmmm, what about nbt?
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
