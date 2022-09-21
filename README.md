@@ -9,3 +9,6 @@ A procedural space game like Starbound based on research and exploration (WIP).
 - FlexBatch [Link](https://github.com/CypherCove/FlexBatch) (Apache License 2.0)
 - Joise [Link](https://github.com/SudoPlayGames/Joise) (Apache License 2.0)
 - CJP-Base [Link](https://github.com/Panzer1119/CJP-Base) (Apache License 2.0)
+
+## Other 
+- Astronaut.png made by Nathan_4312 [Link](https://opengameart.org/content/astronaut-3) ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)) 
