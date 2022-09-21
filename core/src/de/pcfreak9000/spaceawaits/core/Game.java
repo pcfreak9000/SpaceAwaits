@@ -109,6 +109,8 @@ public class Game {
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;
             this.uuidPlayerLocation = uuid;
+            LOGGER.info("Joining world...");
+            scm.setWorldScreen(world, player);//Replace scm with something that onle allows non-null GameScreens?
             if (newLocation) {//hmmmmmmm
                 LOGGER.info("Looking for a spawnpoint...");
                 Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
@@ -119,8 +121,6 @@ public class Game {
                 osgc.lastContactX = spawnpoint.x;
                 osgc.lastContactY = spawnpoint.y;
             }
-            LOGGER.info("Joining world...");
-            scm.setWorldScreen(world, player);//Replace scm with something that onle allows non-null GameScreens?
             world.setPlayer(player);
         } catch (IOException e) {
             throw new RuntimeException(e);

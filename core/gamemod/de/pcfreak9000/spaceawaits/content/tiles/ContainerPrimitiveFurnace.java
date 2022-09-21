@@ -35,7 +35,7 @@ public class ContainerPrimitiveFurnace extends GuiInventory {
         some.add(subtable);
         pb = new ProgressBar(0, 1f, 0.00001f, false, CoreRes.SKIN.getSkin());
         pb.setAnimateInterpolation(Interpolation.fade);
-        pb.setAnimateDuration(0.03f);
+        pb.setAnimateDuration(0.05f);
         some.add(pb).pad(5f);
         some.add(registerSlot(new ResultSlot(furnace, TileEntityPrimitiveFurnace.RESULTSLOT)));
         supertable.add(some).pad(10f);
