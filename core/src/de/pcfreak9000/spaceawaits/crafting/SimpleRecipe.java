@@ -5,7 +5,10 @@ import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.item.OreDictStack;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class SimpleRecipe {
     
@@ -14,7 +17,7 @@ public class SimpleRecipe {
     private static final Array<SimpleRecipe> recipes = new Array<>();
     private static final ImmutableArray<SimpleRecipe> recipesImmutable = new ImmutableArray<>(recipes);
     
-    public static void add(ItemStack result, ItemStack... inpts) {
+    public static void add(ItemStack result, Object... inpts) {
         add(new SimpleRecipe(result, inpts));
     }
     
@@ -29,11 +32,30 @@ public class SimpleRecipe {
     //****************************************************************
     
     private final ItemStack result;
-    private final ItemStack[] inputs;
+    private final Object[] inputs;
     
-    public SimpleRecipe(ItemStack result, ItemStack... inputs) {
+    public SimpleRecipe(ItemStack result, Object... inputs) {
+        if (inputs.length == 0) {
+            throw new IllegalArgumentException();
+        }
+        this.inputs = new Object[inputs.length];
+        for (int i = 0; i < inputs.length; i++) {
+            Object obj = inputs[i];
+            if (obj instanceof ItemStack) {
+                //copy the itemstack fitst or use it directly??
+                this.inputs[i] = obj;
+            } else if (obj instanceof Item) {
+                this.inputs[i] = new ItemStack((Item) obj);
+            } else if (obj instanceof Tile) {
+                this.inputs[i] = new ItemStack((Tile) obj);
+            } else if (obj instanceof String) {
+                this.inputs[i] = new OreDictStack((String) obj, 1);
+            } else if (obj instanceof OreDictStack) {
+                //dynamic dictionary stuff
+                this.inputs[i] = obj;
+            }
+        }
         this.result = result;
-        this.inputs = inputs;
     }
     
     public ItemStack getResult() {
@@ -41,17 +63,27 @@ public class SimpleRecipe {
     }
     
     public boolean matches(IInventory inventory) {
-        for (ItemStack in : inputs) {
-            if (!InvUtil.containsItemCount(inventory, in)) {
-                return false;
+        for (Object in : inputs) {
+            if (in instanceof ItemStack) {
+                if (!InvUtil.containsItemCount(inventory, (ItemStack) in)) {
+                    return false;
+                }
+            } else if (in instanceof OreDictStack) {
+                if (!InvUtil.containsItemCount(inventory, (OreDictStack) in)) {
+                    return false;
+                }
             }
         }
         return true;
     }
     
     public ItemStack craftFromInventory(IInventory inv) {
-        for (ItemStack in : inputs) {
-            InvUtil.removeItemCount(inv, in);
+        for (Object in : inputs) {
+            if (in instanceof ItemStack) {
+                InvUtil.removeItemCount(inv, (ItemStack) in);
+            } else if (in instanceof OreDictStack) {
+                InvUtil.removeItemCount(inv, (OreDictStack) in);
+            }
         }
         return result.cpy();
     }

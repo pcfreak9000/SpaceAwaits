@@ -4,6 +4,8 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.item.OreDictStack;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
 public class FurnaceRecipe {
     
@@ -29,7 +31,7 @@ public class FurnaceRecipe {
     //****************************************************************
     
     private ItemStack result;
-    private ItemStack input;
+    private Object input;
     private float burntime;
     
     public FurnaceRecipe(ItemStack result, ItemStack input) {
@@ -37,6 +39,16 @@ public class FurnaceRecipe {
     }
     
     public FurnaceRecipe(ItemStack result, ItemStack input, float burntime) {
+        this.result = result;
+        this.input = input;
+        this.burntime = burntime;
+    }
+    
+    public FurnaceRecipe(ItemStack result, OreDictStack input) {
+        this(result, input, DEFAULT_BURNTIME);
+    }
+    
+    public FurnaceRecipe(ItemStack result, OreDictStack input, float burntime) {
         this.result = result;
         this.input = input;
         this.burntime = burntime;
@@ -50,12 +62,22 @@ public class FurnaceRecipe {
         return result;
     }
     
-    public ItemStack getInput() {
-        return input;
-    }
-    
     public float getBurntime() {
         return burntime;
     }
     
+    public int getInputCount() {
+        return this.input instanceof ItemStack ? ((ItemStack) input).getCount() : ((OreDictStack) input).getCount();
+    }
+    
+    public boolean matches(ItemStack actualInput) {
+        if (this.input instanceof ItemStack) {
+            ItemStack is = (ItemStack) this.input;
+            return ItemStack.isItemEqual(is, actualInput) && actualInput.getCount() >= is.getCount();
+        } else if (this.input instanceof OreDictStack) {
+            OreDictStack ods = (OreDictStack) input;
+            return GameRegistry.getOreDict().isItemEqual(ods, actualInput) && actualInput.getCount() >= ods.getCount();
+        }
+        return false;
+    }
 }

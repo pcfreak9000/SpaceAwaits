@@ -52,7 +52,6 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
             this.progress += dtime;
             //check for interuptions or put the result
             if (this.progress >= this.currentRecipe.getBurntime()) {
-                decrStackSize(INPUTSLOT, 1);
                 this.progress = 0;
                 ItemStack st = getStack(RESULTSLOT);
                 if (ItemStack.isEmptyOrNull(st)) {
@@ -61,6 +60,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
                     st.changeNumber(this.currentRecipe.getCraftingResult().getCount());
                 }
                 setSlotContent(RESULTSLOT, st);
+                decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
             }
         }
         //remove burntime if there is any left
@@ -92,8 +92,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
         if (!ItemStack.isEmptyOrNull(stack)) {
             boolean found = false;
             for (FurnaceRecipe r : FurnaceRecipe.getRecipes()) {
-                System.out.println(r.getInput());
-                if (ItemStack.isItemEqual(stack, r.getInput())) {
+                if (r.matches(stack)) {
                     if (this.currentRecipe != r) {
                         this.currentRecipe = r;
                         this.progress = 0;

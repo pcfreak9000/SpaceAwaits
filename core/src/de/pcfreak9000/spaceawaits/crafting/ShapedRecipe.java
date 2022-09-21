@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Array;
-import com.google.common.base.Objects;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.item.OreDictStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
@@ -22,6 +22,7 @@ public class ShapedRecipe implements IRecipe {
     public static void add(ShapedRecipe sr) {
         recipes.add(sr);
     }
+    
     //TODO maybe IGridRecipe instead?
     public static ShapedRecipe findMatchingRecipe(InventoryCrafting inventoryCrafting) {
         for (ShapedRecipe s : recipes) {
@@ -72,6 +73,8 @@ public class ShapedRecipe implements IRecipe {
             } else if (obj instanceof Tile) {
                 itemmap.put(c, new ItemStack((Tile) obj));
             } else if (obj instanceof String) {
+                itemmap.put(c, new OreDictStack((String) obj, 1));
+            } else if (obj instanceof OreDictStack) {
                 //dynamic dictionary stuff
                 itemmap.put(c, obj);
             } else {
@@ -114,8 +117,8 @@ public class ShapedRecipe implements IRecipe {
                     if (!ItemStack.isItemEqual(slot, (ItemStack) input)) {
                         return false;
                     }
-                } else if (input instanceof String) {
-                    if (!Objects.equal(input, GameRegistry.getOreDict().getKey(slot))) {
+                } else if (input instanceof OreDictStack) {
+                    if (!GameRegistry.getOreDict().isItemEqual((OreDictStack) input, slot)) {
                         return false;
                     }
                 }

@@ -2,6 +2,8 @@ package de.pcfreak9000.spaceawaits.item;
 
 import com.badlogic.gdx.utils.IntArray;
 
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+
 public class InvUtil {
     
     //Illegal stack sizes are pruned, so items can get lost
@@ -88,6 +90,39 @@ public class InvUtil {
         return false;
     }
     
+    public static boolean removeItemCount(IInventory inv, OreDictStack stack) {
+        IntArray array = new IntArray();
+        int counttmp = stack.getCount();
+        int count = stack.getCount();
+        for (int i = 0; i < inv.slots(); i++) {
+            ItemStack content = inv.getStack(i);
+            if (GameRegistry.getOreDict().isItemEqual(stack.getName(), content)) {
+                array.add(i);
+                count -= content.getCount();
+                //content.changeNumber(-rem.getCount());
+                //inv.setSlotContent(i, content);
+                //return true;
+            }
+            if (count <= 0) {
+                break;
+            }
+        }
+        if (count > 0) {
+            return false;
+        }
+        for (int i = 0; i < array.size; i++) {
+            int stackindex = array.get(i);
+            ItemStack content = inv.getStack(stackindex);
+            int x = content.getCount();
+            content.changeNumber(-counttmp);
+            counttmp -= (x - content.getCount());
+            if (counttmp <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public static boolean containsItemCount(IInventory inv, ItemStack item) {
         for (int i = 0; i < inv.slots(); i++) {
             if (ItemStack.isItemEqual(item, inv.getStack(i)) && inv.getStack(i).getCount() >= item.getCount()) {
@@ -96,6 +131,20 @@ public class InvUtil {
         }
         return false;
     }
+    
+    public static boolean containsItemCount(IInventory inv, OreDictStack stack) {
+        int count = stack.getCount();
+        for (int i = 0; i < inv.slots(); i++) {
+            if (GameRegistry.getOreDict().isItemEqual(stack.getName(), inv.getStack(i))) {
+                count -= inv.getStack(i).getCount();
+            }
+            if (count <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     //    public static void sort(IInventory inv, int begIncl, int endExcl) {
     //        //does nothing right now
     //    }
