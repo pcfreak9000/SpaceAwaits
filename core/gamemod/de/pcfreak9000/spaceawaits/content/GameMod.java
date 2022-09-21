@@ -19,10 +19,10 @@ public class GameMod {
         Tiles.registerTiles();
         Entities.registerEntities();
     }
-
+    
     @EventSubscription
     public void postinit(CoreEvents.PostInitEvent ev) {
         FurnaceRecipe
-                .add(new FurnaceRecipe(new ItemStack(Items.CREATIVE_BREAKER), new ItemStack(Items.CLUMP_ORE_IRON)));
+                .add(new FurnaceRecipe(new ItemStack(Items.CREATIVE_BREAKER), new ItemStack(Items.CLUMP_ORE_IRON, 4)));
     }
 }
