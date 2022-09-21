@@ -7,6 +7,9 @@ public class OreDictStack {
     public OreDictStack(String name, int count) {
         this.name = name;
         this.count = count;
+        if (count < 1) {
+            throw new IllegalArgumentException("count < 1");
+        }
     }
     
     public String getName() {

@@ -33,14 +33,21 @@ public class OreDict {
     }
     
     public boolean isItemEqual(String key, Item input) {
+        if (input == null) {
+            return false;
+        }
         String rvk = getKey(input);
         return Objects.equal(key, rvk);
     }
     
     public boolean isItemEqual(String key, ItemStack input) {
+        if (ItemStack.isEmptyOrNull(input)) {
+            return false;
+        }
         return isItemEqual(key, input.getItem());
     }
     
+    //Check the oredictstack for null as well?
     public boolean isItemEqual(OreDictStack stack, ItemStack input) {
         return isItemEqual(stack.getName(), input);
     }
