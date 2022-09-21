@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.crafting;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
-public class InventoryCrafting implements IInventory {
+public class InventoryGridCrafting implements IInventory {
     private final ItemStack[] stacks;
     private final int size;
     
@@ -12,7 +12,7 @@ public class InventoryCrafting implements IInventory {
     private IRecipe currentRecipe;
     private ItemStack result;
     
-    public InventoryCrafting(int side) {
+    public InventoryGridCrafting(int side) {
         this.stacks = new ItemStack[side * side];
         this.size = side;
         this.craftingresult = new InventoryCraftingResult(this);

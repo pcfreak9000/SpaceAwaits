@@ -6,9 +6,9 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 public class InventoryCraftingResult implements IInventory {
     private ItemStack[] results = new ItemStack[1];
     
-    private InventoryCrafting parent;
+    private InventoryGridCrafting parent;
     
-    public InventoryCraftingResult(InventoryCrafting parent) {
+    public InventoryCraftingResult(InventoryGridCrafting parent) {
         this.parent = parent;
     }
     

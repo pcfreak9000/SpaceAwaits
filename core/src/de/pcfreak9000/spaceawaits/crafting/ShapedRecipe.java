@@ -8,8 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.item.OreDictStack;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.OreDict;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class ShapedRecipe implements IRecipe {
@@ -24,9 +23,9 @@ public class ShapedRecipe implements IRecipe {
     }
     
     //TODO maybe IGridRecipe instead?
-    public static ShapedRecipe findMatchingRecipe(InventoryCrafting inventoryCrafting) {
+    public static ShapedRecipe findMatchingRecipe(InventoryGridCrafting inventoryGridCrafting) {
         for (ShapedRecipe s : recipes) {
-            if (s.matches(inventoryCrafting)) {
+            if (s.matches(inventoryGridCrafting)) {
                 return s;
             }
         }
@@ -90,10 +89,10 @@ public class ShapedRecipe implements IRecipe {
     
     @Override
     public boolean matches(IInventory inventory) {
-        if (!(inventory instanceof InventoryCrafting)) {
+        if (!(inventory instanceof InventoryGridCrafting)) {
             return false;
         }
-        InventoryCrafting ic = (InventoryCrafting) inventory;
+        InventoryGridCrafting ic = (InventoryGridCrafting) inventory;
         int craftgridWidth = ic.getSideSize();
         int craftgridHeight = ic.getSideSize();
         for (int x = 0; x <= craftgridWidth - width; x++) {
@@ -106,7 +105,7 @@ public class ShapedRecipe implements IRecipe {
         return false;
     }
     
-    private boolean checkMatch(InventoryCrafting inv, int x, int y) {
+    private boolean checkMatch(InventoryGridCrafting inv, int x, int y) {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int ax = i + x;
@@ -118,7 +117,7 @@ public class ShapedRecipe implements IRecipe {
                         return false;
                     }
                 } else if (input instanceof OreDictStack) {
-                    if (!GameRegistry.getOreDict().isItemEqual((OreDictStack) input, slot)) {
+                    if (!OreDict.isItemEqual((OreDictStack) input, slot)) {
                         return false;
                     }
                 }

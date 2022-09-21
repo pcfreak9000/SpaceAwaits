@@ -2,7 +2,8 @@ package de.pcfreak9000.spaceawaits.item;
 
 import com.badlogic.gdx.utils.IntArray;
 
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.crafting.OreDictStack;
+import de.pcfreak9000.spaceawaits.registry.OreDict;
 
 public class InvUtil {
     
@@ -96,7 +97,7 @@ public class InvUtil {
         int count = stack.getCount();
         for (int i = 0; i < inv.slots(); i++) {
             ItemStack content = inv.getStack(i);
-            if (GameRegistry.getOreDict().isItemEqual(stack.getName(), content)) {
+            if (OreDict.isItemEqual(stack.getName(), content)) {
                 array.add(i);
                 count -= content.getCount();
                 //content.changeNumber(-rem.getCount());
@@ -135,7 +136,7 @@ public class InvUtil {
     public static boolean containsItemCount(IInventory inv, OreDictStack stack) {
         int count = stack.getCount();
         for (int i = 0; i < inv.slots(); i++) {
-            if (GameRegistry.getOreDict().isItemEqual(stack.getName(), inv.getStack(i))) {
+            if (OreDict.isItemEqual(stack.getName(), inv.getStack(i))) {
                 count -= inv.getStack(i).getCount();
             }
             if (count <= 0) {

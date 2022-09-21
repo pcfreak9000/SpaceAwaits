@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.content;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import de.pcfreak9000.spaceawaits.crafting.InventoryCrafting;
+import de.pcfreak9000.spaceawaits.crafting.InventoryGridCrafting;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.ResultSlot;
 import de.pcfreak9000.spaceawaits.gui.Slot;
@@ -13,11 +13,11 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 public class ContainerCrafter extends GuiInventory {
     
     private final int side;
-    private final InventoryCrafting inv;
+    private final InventoryGridCrafting inv;
     
     public ContainerCrafter(int side) {
         this.side = side;
-        this.inv = new InventoryCrafting(side);
+        this.inv = new InventoryGridCrafting(side);
     }
     
     @Override

@@ -1,6 +1,8 @@
 package de.pcfreak9000.spaceawaits.registry;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.ObjectArrays;
 
@@ -11,10 +13,21 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class GameRegistry {
     
-    private static final OreDict ORE_DICT = new OreDict();
+    private static List<IBurnHandler> burnhandlers = new ArrayList<>();
     
-    public static OreDict getOreDict() {
-        return ORE_DICT;
+    public static void registerBurnHandler(IBurnHandler handler) {
+        burnhandlers.add(handler);
+    }
+    
+    public static float getBurnTime(Item item) {
+        if (item == null) {
+            return 0;
+        }
+        float max = 0;
+        for (IBurnHandler bh : burnhandlers) {
+            max = Math.max(max, bh.getBurnTime(item));
+        }
+        return max;
     }
     
     public static void registerItem(String id, Item item) {

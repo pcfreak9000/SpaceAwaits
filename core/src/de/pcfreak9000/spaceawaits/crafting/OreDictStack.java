@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.item;
+package de.pcfreak9000.spaceawaits.crafting;
 
 public class OreDictStack {
     private String name;

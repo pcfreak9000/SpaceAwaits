@@ -7,7 +7,6 @@ import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.item.OreDictStack;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class SimpleRecipe {
@@ -53,6 +52,8 @@ public class SimpleRecipe {
             } else if (obj instanceof OreDictStack) {
                 //dynamic dictionary stuff
                 this.inputs[i] = obj;
+            } else {
+                throw new IllegalArgumentException();
             }
         }
         this.result = result;

@@ -3,9 +3,10 @@ package de.pcfreak9000.spaceawaits.crafting;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.item.OreDictStack;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.OreDict;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class FurnaceRecipe {
     
@@ -34,24 +35,36 @@ public class FurnaceRecipe {
     private Object input;
     private float burntime;
     
-    public FurnaceRecipe(ItemStack result, ItemStack input) {
+    public FurnaceRecipe(Item result, Object input) {
+        this(new ItemStack(result), input);
+    }
+    
+    public FurnaceRecipe(Tile result, Object input) {
+        this(new ItemStack(result), input);
+    }
+    
+    public FurnaceRecipe(ItemStack result, Object input) {
         this(result, input, DEFAULT_BURNTIME);
     }
     
-    public FurnaceRecipe(ItemStack result, ItemStack input, float burntime) {
+    public FurnaceRecipe(ItemStack result, Object obj, float burntime) {
         this.result = result;
-        this.input = input;
         this.burntime = burntime;
-    }
-    
-    public FurnaceRecipe(ItemStack result, OreDictStack input) {
-        this(result, input, DEFAULT_BURNTIME);
-    }
-    
-    public FurnaceRecipe(ItemStack result, OreDictStack input, float burntime) {
-        this.result = result;
-        this.input = input;
-        this.burntime = burntime;
+        if (obj instanceof ItemStack) {
+            //copy the itemstack fitst or use it directly??
+            input = obj;
+        } else if (obj instanceof Item) {
+            input = new ItemStack((Item) obj);
+        } else if (obj instanceof Tile) {
+            input = new ItemStack((Tile) obj);
+        } else if (obj instanceof String) {
+            input = new OreDictStack((String) obj, 1);
+        } else if (obj instanceof OreDictStack) {
+            //dynamic dictionary stuff
+            input = obj;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
     
     public ItemStack getCraftingResult() {
@@ -76,7 +89,7 @@ public class FurnaceRecipe {
             return ItemStack.isItemEqual(is, actualInput) && actualInput.getCount() >= is.getCount();
         } else if (this.input instanceof OreDictStack) {
             OreDictStack ods = (OreDictStack) input;
-            return GameRegistry.getOreDict().isItemEqual(ods, actualInput) && actualInput.getCount() >= ods.getCount();
+            return OreDict.isItemEqual(ods, actualInput) && actualInput.getCount() >= ods.getCount();
         }
         return false;
     }

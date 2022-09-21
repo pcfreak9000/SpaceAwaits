@@ -4,6 +4,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.crafting.FurnaceRecipe;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
@@ -34,7 +35,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
     
     @Override
     public void tick(float dtime, long tickIndex) {
-        ItemStack res = this.stacks[RESULTSLOT];
+        ItemStack res = getStack(RESULTSLOT);
         //TODO this kind of checking for the other craftings as well?
         boolean freeresult = ItemStack.isEmptyOrNull(res) || (this.currentRecipe != null
                 && res.getCount() + this.currentRecipe.getResult().getCount() < this.currentRecipe.getResult().getMax()
@@ -46,24 +47,34 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
         if (currentRecipe != null && freeresult) {
             if (partialBurnTimeLeft <= 0) {
                 //refuel but only if there is an active recipe
-                partialBurnTimeLeft = 1;//ah yes, magic auto refuel
-            }
-            //increase progress
-            this.progress += dtime;
-            //check for interuptions or put the result
-            if (this.progress >= this.currentRecipe.getBurntime()) {
-                this.progress = 0;
-                ItemStack st = getStack(RESULTSLOT);
-                if (ItemStack.isEmptyOrNull(st)) {
-                    st = this.currentRecipe.getCraftingResult();
-                } else {
-                    st.changeNumber(this.currentRecipe.getCraftingResult().getCount());
+                ItemStack fuelstack = getStack(FUELSLOT);
+                if (!ItemStack.isEmptyOrNull(fuelstack)) {
+                    float v = GameRegistry.getBurnTime(fuelstack.getItem());
+                    partialBurnTimeLeft = v;
+                    fuelstack.changeNumber(-1);
+                    setSlotContent(FUELSLOT, fuelstack);
                 }
-                setSlotContent(RESULTSLOT, st);
-                decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
+            }
+            if (partialBurnTimeLeft > 0) {
+                //increase progress
+                this.progress += dtime;
+                //check for interuptions or put the result
+                if (this.progress >= this.currentRecipe.getBurntime()) {
+                    this.progress = 0;
+                    ItemStack st = getStack(RESULTSLOT);
+                    if (ItemStack.isEmptyOrNull(st)) {
+                        st = this.currentRecipe.getCraftingResult();
+                    } else {
+                        st.changeNumber(this.currentRecipe.getCraftingResult().getCount());
+                    }
+                    setSlotContent(RESULTSLOT, st);
+                    decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
+                }
+            } else {
+                this.progress = 0;
             }
         }
-        //remove burntime if there is any left
+        //remove burntime if there is any left even if there isn't an active recipe
         if (partialBurnTimeLeft > 0) {
             partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - dtime);
         }
@@ -113,7 +124,10 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
     
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;//Check for fuel?
+        if (index == FUELSLOT) {
+            return GameRegistry.getBurnTime(stack.getItem()) > 0;
+        }
+        return true;
     }
     
     @Override
