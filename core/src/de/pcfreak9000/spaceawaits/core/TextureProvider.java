@@ -46,7 +46,7 @@ public class TextureProvider implements ITextureProvider {
         setTexture(name);
     }
     
-    public void setTexture(String name) {
+    private void setTexture(String name) {
         this.name = name;
     }
     

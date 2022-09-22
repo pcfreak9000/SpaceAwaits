@@ -33,13 +33,17 @@ public class ItemStack {
     
     public static void drop(Array<ItemStack> array, World world, float tx, float ty) {
         for (ItemStack s : array) {
-            s.drop(world, tx, ty);
+            if (!ItemStack.isEmptyOrNull(s)) {
+                s.drop(world, tx, ty);
+            }
         }
     }
     
     public static void dropRandomInTile(Array<ItemStack> array, World world, float tx, float ty) {
         for (ItemStack s : array) {
-            s.dropRandomInTile(world, tx, ty);
+            if (!ItemStack.isEmptyOrNull(s)) {
+                s.dropRandomInTile(world, tx, ty);
+            }
         }
     }
     

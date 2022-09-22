@@ -267,6 +267,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             breaker.onBreak(world, tile, drops, world.getWorldRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
+                System.out.println(drops);
                 ItemStack.dropRandomInTile(drops, world, tx, ty);
                 drops.clear();
             }

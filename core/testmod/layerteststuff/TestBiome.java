@@ -118,6 +118,21 @@ public class TestBiome extends Biome {
             RndHelper rnd) {
         if (sub)
             return;
+        for (int i = 0; i < 5; i++) {
+            int x = rnd.getRandom().nextInt(area) + tx;
+            int y = rnd.getRandom().nextInt(area) + ty;
+            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
+                for (int j = -2; j <= 2; j++) {
+                    for (int k = -2; k <= 2; k++) {
+                        if (j * j + k * k < 2 * 2) {
+                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
+                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         //this algorithm is f*cking slow
         for (int i = 0; i < 50; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
@@ -134,23 +149,14 @@ public class TestBiome extends Biome {
                     ItemStack s = new ItemStack(Items.TWIG, rnd.getRandom().nextInt(1) + 1);
                     s.dropRandomInTile(world, x, y + 1);
                 }
-            } else if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
-                for (int j = -2; j <= 2; j++) {
-                    for (int k = -2; k <= 2; k++) {
-                        if (j * j + k * k < 2 * 2) {
-                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
-                            }
-                        }
-                    }
-                }
             }
         }
     }
-
+    
     @Override
-    public void genStructureTiles(TileSystem tiles, BiomeGenCompBased biomeGen, int tx, int ty, int structureDiv,
+    public void genStructureTiles(TileSystem tiles, BiomeGenCompBased biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
+        //FIXME tiles is null...
     }
     
 }

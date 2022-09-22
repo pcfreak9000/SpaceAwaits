@@ -45,16 +45,20 @@ public class InventoryGridCrafting implements IInventory {
             return null;
         }
         ItemStack ret = result;
+        int recipeMult = ret.getCount();
         int canCraftCount = count;
         for (ItemStack content : stacks) {
             if (!ItemStack.isEmptyOrNull(content)) {
                 canCraftCount = Math.min(canCraftCount, content.getCount());
             }
         }
+        //FIXME meh... 
+        int outcount = recipeMult * canCraftCount;
+        outcount = Math.min(ret.getMax(), outcount);
         for (int i = 0; i < slots(); i++) {
             decrStackSize(i, canCraftCount);
         }
-        ret.setCount(canCraftCount);
+        ret.setCount(outcount);
         return ret;
     }
     
