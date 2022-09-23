@@ -24,15 +24,29 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
  */
 public class Player implements INBTSerializable {
     
+    public static enum GameMode {
+        Survival, Testing;
+    }
+    
     private final Entity playerEntity;
     
     private InventoryPlayer inventory;
+    
+    private GameMode gameMode = GameMode.Survival;
     
     private Array<ItemStack> toDrop = new Array<>(false, 10);
     
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
+    }
+    
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+    
+    public void setGameMode(GameMode mode) {
+        this.gameMode = mode;
     }
     
     public Entity getPlayerEntity() {

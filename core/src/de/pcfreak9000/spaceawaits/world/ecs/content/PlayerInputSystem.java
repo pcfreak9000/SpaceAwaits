@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -25,8 +26,6 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class PlayerInputSystem extends EntitySystem {
-    
-    public static final boolean FREE_MOVEMENT = false;
     
     private final GameScreen worldRend;
     
@@ -99,7 +98,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
             Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
-        if (FREE_MOVEMENT) {
+        if (player.getGameMode() == GameMode.Testing) {
             if (up) {
                 vy += play.maxXv;
             }

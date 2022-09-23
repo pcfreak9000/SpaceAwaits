@@ -34,7 +34,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
-    public static final boolean DEBUG_CAMERA = false;
     
     public static final String NAME = "Space Awaits";
     public static final String VERSION = "pre-Alpha-0";

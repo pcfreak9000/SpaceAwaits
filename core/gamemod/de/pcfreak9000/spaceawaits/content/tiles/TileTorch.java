@@ -24,6 +24,7 @@ public class TileTorch extends Tile {
         setOpaque(false);
         setLightColor(Color.WHITE);
         setHardness(0);
+        //THIS IS GARBAGE:
         ITextureProvider[] ar = new ITextureProvider[7];
         for (int i = 0; i < ar.length; i++) {
             final int x = i;
