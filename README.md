@@ -12,3 +12,4 @@ A procedural space game like Starbound based on research and exploration (WIP).
 
 ## Other 
 - Astronaut.png made by Nathan_4312 [Link](https://opengameart.org/content/astronaut-3) ([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)) 
+- A lot of textures made by drummyfish [Link](https://opengameart.org/content/big-pack-of-hand-painted-tiling-textures) ([CC0](https://creativecommons.org/publicdomain/zero/1.0/))
