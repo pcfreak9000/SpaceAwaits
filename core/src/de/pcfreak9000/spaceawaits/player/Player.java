@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTList;
+import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.gui.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -73,16 +75,25 @@ public class Player implements INBTSerializable {
     
     @Override
     public void readNBT(NBTCompound pc) {
-        System.out.println(Components.RENDER.get(getPlayerEntity()).getLayer());
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.inventory.readNBT(pc.getCompound("inventory"));
-        System.out.println(Components.RENDER.get(getPlayerEntity()).getLayer());
+        NBTList todropl = pc.getListOrDefault("todrop", new NBTList(NBTType.Compound));
+        for (int i = 0; i < todropl.size(); i++) {
+            toDrop.add(ItemStack.readNBT(todropl.getCompound(i)));
+        }
     }
     
     @Override
     public void writeNBT(NBTCompound pc) {
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
         pc.put("inventory", INBTSerializable.writeNBT(inventory));
+        NBTList todropl = new NBTList(NBTType.Compound);
+        for (ItemStack s : toDrop) {
+            if (!ItemStack.isEmptyOrNull(s)) {
+                todropl.add(ItemStack.writeNBT(s, new NBTCompound()));
+            }
+        }
+        pc.put("todrop", todropl);
     }
     
 }

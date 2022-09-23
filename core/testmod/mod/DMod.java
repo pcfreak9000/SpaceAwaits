@@ -103,7 +103,7 @@ public class DMod {
         
         torch.setLightColor(Color.WHITE);
         torch.setDisplayName("torch");
-        GameRegistry.registerTile("torch", torch);
+        GameRegistry.registerTile("torchh", torch);
         //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
         //        laser.setTexture("dirt.png");

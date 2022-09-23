@@ -1,10 +1,10 @@
 package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.crafting.BlastFurnaceRecipe;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
@@ -21,16 +21,16 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
     private BlastFurnaceRecipe currentRecipe = null;
     
     @NBTSerialize(key = "burntimeLeft")
-    private float partialBurnTimeLeft;
+    private int partialBurnTimeLeft;
     
     @NBTSerialize(key = "prog")
-    private float progress;
+    private int progress;
     
     public float getRelativeProgress() {
         if (this.currentRecipe == null) {
             return 0;
         }
-        return progress / this.currentRecipe.getBurntime();
+        return progress / (float) this.currentRecipe.getBurntime();
     }
     
     @Override
@@ -48,9 +48,9 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
             if (partialBurnTimeLeft <= 0) {
                 //refuel but only if there is an active recipe
                 ItemStack fuelstack = getStack(FUELSLOT);
-                if (!ItemStack.isEmptyOrNull(fuelstack)) {
-                    //TODO blast furnace uses coke
-                    float v = GameRegistry.getBurnTime(fuelstack.getItem());
+                if (!ItemStack.isEmptyOrNull(fuelstack) && fuelstack.getItem() == Items.COKE) {
+                    //hardcoded COKE isnt nice
+                    int v = 20 * 60;
                     partialBurnTimeLeft = v;
                     fuelstack.changeNumber(-1);
                     setSlotContent(FUELSLOT, fuelstack);
@@ -58,7 +58,7 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
             }
             if (partialBurnTimeLeft > 0) {
                 //increase progress
-                this.progress += dtime;
+                this.progress += 1;
                 //check for interuptions or put the result
                 if (this.progress >= this.currentRecipe.getBurntime()) {
                     this.progress = 0;
@@ -72,12 +72,12 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
                     decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
                 }
             } else {
-                this.progress = 0;
+                this.progress = Math.max(0, this.progress - 1);//Hmm
             }
         }
         //remove burntime if there is any left even if there isn't an active recipe
         if (partialBurnTimeLeft > 0) {
-            partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - dtime);
+            partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - 1);
         }
     }
     
@@ -126,7 +126,7 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == FUELSLOT) {
-            return GameRegistry.getBurnTime(stack.getItem()) > 0;
+            return stack.getItem() == Items.COKE;
         }
         return true;
     }

@@ -19,11 +19,11 @@ public class GameRegistry {
         burnhandlers.add(handler);
     }
     
-    public static float getBurnTime(Item item) {
+    public static int getBurnTime(Item item) {
         if (item == null) {
             return 0;
         }
-        float max = 0;
+        int max = 0;
         for (IBurnHandler bh : burnhandlers) {
             max = Math.max(max, bh.getBurnTime(item));
         }

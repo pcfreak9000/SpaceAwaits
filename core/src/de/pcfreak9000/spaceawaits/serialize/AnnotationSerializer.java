@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.nbt.NBTTypeException;
 
 public class AnnotationSerializer {
     private static final NBTCompound EMPTY_NONNULL = new NBTCompound();
@@ -188,6 +189,31 @@ public class AnnotationSerializer {
                         f.setDouble(ser, dooble);
                     } else {
                         throw new IllegalArgumentException("Type not supported: " + type);
+                    }
+                } catch (NBTTypeException ex) {
+                    if (an.disableDefaults()) {
+                        new RuntimeException("Can't fall back to defaults since they are disabled", ex);
+                    }
+                    try {
+                        if (type == Integer.TYPE) {
+                            f.setInt(ser, an.dInt());
+                        } else if (type == Long.TYPE) {
+                            f.setLong(ser, an.dLong());
+                        } else if (type == Short.TYPE) {
+                            f.setShort(ser, an.dShort());
+                        } else if (type == Byte.TYPE) {
+                            f.setByte(ser, an.dByte());
+                        } else if (type == Boolean.TYPE) {
+                            f.setBoolean(ser, an.dBool());
+                        } else if (type == Float.TYPE) {
+                            f.setFloat(ser, an.dFloat());
+                        } else if (type == Double.TYPE) {
+                            f.setDouble(ser, an.dDouble());
+                        } else {
+                            throw new IllegalArgumentException("Type not supported: " + type);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);

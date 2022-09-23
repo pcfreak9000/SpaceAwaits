@@ -47,7 +47,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
                 Components.STATS.get(ship).get("mechHealth").current = 1;
                 LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
                         ship.getComponent(ComponentInventoryShip.class).invShip);
-                world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
+                //world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
             }
             
             @Override

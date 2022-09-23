@@ -42,7 +42,9 @@ public class GameMod {
                 .add(new ShapedRecipe(Items.PICKAXE_SIMPLE, "XXX", " I ", " I ", 'X', "ingotIron", 'I', Items.STICK));
         ShapedRecipe.add(new ShapedRecipe(Tiles.FURNACE_BLAST, "- -", "-x-", "-x-", '-', "ingotIron", 'x',
                 Tiles.FURNACE_PRIMITIVE));
+        ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.TORCH, 4), "X", "I", 'X', Items.COAL, 'I', Items.STICK));
         FurnaceRecipe.add(new FurnaceRecipe(Items.INGOT_IRON, Items.CLUMP_ORE_IRON));
+        FurnaceRecipe.add(new FurnaceRecipe(Items.COKE, Items.COAL));
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.CLUMP_ORE_IRON));
         //Maybe a quicker burntime? Maybe add normal furnace recipes if no matching blastfurnacerecipe is found?
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.INGOT_IRON));

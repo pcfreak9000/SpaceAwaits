@@ -7,6 +7,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Action;
+import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.tile.InstantBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -26,6 +27,9 @@ public class TestExplodeTilesAction implements Action {
     
     @Override
     public boolean handle(float mousex, float mousey, World world, Entity source) {
+        if (!PlayerInputSystem.FREE_MOVEMENT) {
+            return false;
+        }
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         int txm = Tile.toGlobalTile(mousex);

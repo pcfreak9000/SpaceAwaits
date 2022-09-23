@@ -16,6 +16,7 @@ public class Items {
     public static final Item INGOT_REFINED_IRON = new Item();
     
     public static final Item COAL = new Item();
+    public static final Item COKE = new Item();
     
     public static final Item STICK = new Item();
     
@@ -38,6 +39,7 @@ public class Items {
         GameRegistry.registerItem("stick", STICK.setTexture("stick.png").setDisplayName("Stick"));
         GameRegistry.registerItem("pickaxeSimple", PICKAXE_SIMPLE);
         GameRegistry.registerItem("coal", COAL.setTexture("coal.png").setDisplayName("Coal"));
+        GameRegistry.registerItem("coke", COKE.setTexture("coke.png").setDisplayName("Coke"));
         //@formatter:on
     }
     

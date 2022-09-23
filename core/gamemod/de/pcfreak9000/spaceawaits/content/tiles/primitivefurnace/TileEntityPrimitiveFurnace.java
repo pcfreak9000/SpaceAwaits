@@ -21,18 +21,16 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
     private FurnaceRecipe currentRecipe = null;
     
     @NBTSerialize(key = "burntimeLeft")
-    private float partialBurnTimeLeft;
+    private int partialBurnTimeLeft;
     
     @NBTSerialize(key = "prog")
-    private float progress;
-    
-    private boolean fueljustempty = false;
+    private int progress;
     
     public float getRelativeProgress() {
         if (this.currentRecipe == null) {
             return 0;
         }
-        return progress / this.currentRecipe.getBurntime();
+        return progress / (float) this.currentRecipe.getBurntime();
     }
     
     @Override
@@ -51,7 +49,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
                 //refuel but only if there is an active recipe
                 ItemStack fuelstack = getStack(FUELSLOT);
                 if (!ItemStack.isEmptyOrNull(fuelstack)) {
-                    float v = GameRegistry.getBurnTime(fuelstack.getItem());
+                    int v = GameRegistry.getBurnTime(fuelstack.getItem());
                     partialBurnTimeLeft = v;
                     fuelstack.changeNumber(-1);
                     setSlotContent(FUELSLOT, fuelstack);
@@ -59,7 +57,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
             }
             if (partialBurnTimeLeft > 0) {
                 //increase progress
-                this.progress += dtime;
+                this.progress += 1;
                 //check for interuptions or put the result
                 if (this.progress >= this.currentRecipe.getBurntime()) {
                     this.progress = 0;
@@ -73,12 +71,12 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
                     decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
                 }
             } else {
-                this.progress = Math.max(0, this.progress - dtime / 2f);//Hmm
+                this.progress = Math.max(0, this.progress - 1);//Hmm
             }
         }
         //remove burntime if there is any left even if there isn't an active recipe
         if (partialBurnTimeLeft > 0) {
-            partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - dtime);
+            partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - 1);
         }
     }
     

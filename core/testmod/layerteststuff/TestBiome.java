@@ -25,7 +25,6 @@ import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
-import mod.DMod;
 
 public class TestBiome extends Biome {
     
@@ -77,14 +76,10 @@ public class TestBiome extends Biome {
                 t = Tiles.STONE;
             }
         }
-        
-        if (t == Tiles.STONE) {
-            if (rnd.getRandom().nextDouble() < 0.003) {
-                t = DMod.instance.torch;
-            }
-        }
         chunk.setTile(tx, ty, TileLayer.Front, t);
-        chunk.setTile(tx, ty, TileLayer.Back, t);
+        if (t != Tiles.LOOSEROCKS) {
+            chunk.setTile(tx, ty, TileLayer.Back, t);
+        }
     }
     
     private FeatureGenerator fgen = new FeatureGenerator() {

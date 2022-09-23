@@ -241,22 +241,4 @@ public class ItemStack {
         return "ItemStack [item=" + Objects.toString(item) + ", count=" + count + ", hasNBT=" + hasNBT() + "]";
     }
     
-    @Override
-    public int hashCode() {
-        return Objects.hash(count, item);
-    }
-    
-    //Hmmmmmmm, what about nbt?
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ItemStack)) {
-            return false;
-        }
-        ItemStack other = (ItemStack) obj;
-        return count == other.count && Objects.equals(item, other.item);
-    }
-    
 }

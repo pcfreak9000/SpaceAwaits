@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class BlastFurnaceRecipe {
     
-    private static final float DEFAULT_BURNTIME = 4f;
+    private static final int DEFAULT_BURNTIME = 4 * 60;
     
     //************ Maybe put this in a dedicated class? **************
     
@@ -33,7 +33,7 @@ public class BlastFurnaceRecipe {
     
     private ItemStack result;
     private Object input;
-    private float burntime;
+    private int burntime;
     
     public BlastFurnaceRecipe(Item result, Object input) {
         this(new ItemStack(result), input);
@@ -47,7 +47,7 @@ public class BlastFurnaceRecipe {
         this(result, input, DEFAULT_BURNTIME);
     }
     
-    public BlastFurnaceRecipe(ItemStack result, Object obj, float burntime) {
+    public BlastFurnaceRecipe(ItemStack result, Object obj, int burntime) {
         this.result = result;
         this.burntime = burntime;
         if (obj instanceof ItemStack) {
@@ -75,7 +75,7 @@ public class BlastFurnaceRecipe {
         return result;
     }
     
-    public float getBurntime() {
+    public int getBurntime() {
         return burntime;
     }
     

@@ -11,8 +11,9 @@ public class RenderComponent implements Component {
     
     @NBTSerialize(key = "e", dBool = true)
     public boolean enabled = true;
+    
     @NBTSerialize(key = "l")
-    private float layer;
+    private float layer;//Hmmmmm. this one might need special treatment
     
     public boolean considerAsGui = false;
     
