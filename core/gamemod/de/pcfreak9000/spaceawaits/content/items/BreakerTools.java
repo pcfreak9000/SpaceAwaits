@@ -9,12 +9,16 @@ import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
-public class BreakerPrimitiveTools implements IBreaker {
+public class BreakerTools implements IBreaker {
     
     private String tool;
+    private float level;
+    private float basespeed;
     
-    public BreakerPrimitiveTools(String tool) {
+    public BreakerTools(String tool, float basespeed, float level) {
         this.tool = tool;
+        this.basespeed = basespeed;
+        this.level = level;
     }
     
     public void setTool(String tool) {
@@ -23,12 +27,12 @@ public class BreakerPrimitiveTools implements IBreaker {
     
     @Override
     public float breakIt(World world, Destructible breakable, float progressCurrent) {
-        return 2f / breakable.getHardness();
+        return basespeed / breakable.getHardness();
     }
     
     @Override
     public boolean canBreak(World world, Destructible breakable) {
-        return breakable.getMaterialLevel() <= 1.0f && tool == breakable.getRequiredTool();
+        return breakable.getMaterialLevel() <= level && tool == breakable.getRequiredTool();
     }
     
     @Override

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.tiles;
+package de.pcfreak9000.spaceawaits.content.tiles.primitivefurnace;
 
 import java.util.Random;
 

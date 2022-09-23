@@ -15,6 +15,7 @@ public class BurnHandler implements IBurnHandler {
     public BurnHandler() {
         map.put(Items.TWIG, 1f);
         map.put(Tiles.WOOD.getItemTile(), 8f);
+        map.put(Items.COAL, 16f);
     }
     
     @Override

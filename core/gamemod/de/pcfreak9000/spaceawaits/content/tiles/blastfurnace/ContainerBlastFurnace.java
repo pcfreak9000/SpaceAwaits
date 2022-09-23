@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.tiles;
+package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -9,13 +9,13 @@ import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.ResultSlot;
 import de.pcfreak9000.spaceawaits.gui.Slot;
 
-public class ContainerPrimitiveFurnace extends GuiInventory {
+public class ContainerBlastFurnace extends GuiInventory {
     
-    private TileEntityPrimitiveFurnace furnace;
+    private TileEntityBlastFurnace furnace;
     
     private ProgressBar pb;
     
-    public ContainerPrimitiveFurnace(TileEntityPrimitiveFurnace te) {
+    public ContainerBlastFurnace(TileEntityBlastFurnace te) {
         this.furnace = te;
     }
     
@@ -28,13 +28,13 @@ public class ContainerPrimitiveFurnace extends GuiInventory {
         Table some = new Table();
         Table subtable = new Table();
         subtable.align(Align.center);
-        subtable.add(registerSlot(new Slot(furnace, TileEntityPrimitiveFurnace.INPUTSLOT))).pad(5f);
+        subtable.add(registerSlot(new Slot(furnace, TileEntityBlastFurnace.INPUTSLOT))).pad(5f);
         subtable.row();
-        subtable.add(registerSlot(new Slot(furnace, TileEntityPrimitiveFurnace.FUELSLOT))).pad(5f);
+        subtable.add(registerSlot(new Slot(furnace, TileEntityBlastFurnace.FUELSLOT))).pad(5f);
         some.add(subtable);
         pb = new ProgressBar(0, 1f, 0.00001f, false, CoreRes.SKIN.getSkin());
         some.add(pb).pad(5f);
-        some.add(registerSlot(new ResultSlot(furnace, TileEntityPrimitiveFurnace.RESULTSLOT)));
+        some.add(registerSlot(new ResultSlot(furnace, TileEntityBlastFurnace.RESULTSLOT)));
         supertable.add(some).pad(10f);
         supertable.row();
         supertable.add(createPlayerInventoryTable());

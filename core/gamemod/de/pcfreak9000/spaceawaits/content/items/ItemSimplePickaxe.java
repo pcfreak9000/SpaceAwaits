@@ -1,39 +1,28 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
-import com.badlogic.ashley.core.Entity;
-
 import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class ItemPrimitiveAxe extends Item {
+public class ItemSimplePickaxe extends Item {
     
     private static final float RANGE = 5;
-    private static final int MAX_USES = 20;
+    private static final int MAX_USES = 200;
+    private final BreakerTools breaker = new BreakerTools(Tools.PICKAXE, 3f, 2f);
     
-    private final BreakerTools breaker = new BreakerTools(Tools.AXE, 2f, 1f);
-    
-    public ItemPrimitiveAxe() {
+    public ItemSimplePickaxe() {
         this.setMaxStackSize(1);
-        this.setDisplayName("Primitive Axe");
-        this.setTexture("primitiveAxe.png");
+        this.setDisplayName("Simple Pickaxe");
+        this.setTexture("simplePickaxe.png");
     }
     
     @Override
     public float getMaxRangeBreakAttack(Player player, ItemStack stack) {
         return RANGE;
-    }
-    
-    @Override
-    public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, World world, float x, float y,
-            Entity entity) {
-        float f = world.getSystem(EntityInteractSystem.class).breakEntity(breaker, entity);
-        return Tools.handleUsageBreaker(f, stackUsed, MAX_USES);
     }
     
     @Override

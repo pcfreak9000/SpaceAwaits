@@ -54,7 +54,7 @@ public abstract class GameScreen extends ScreenAdapter {
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
             this.guiContainerCurrent = null;
-        } else {// if (!isGuiContainerOpen())
+        } else if (guicont != null) {// if (!isGuiContainerOpen())
             if (isGuiContainerOpen()) {
                 setGuiCurrent(null);
             }

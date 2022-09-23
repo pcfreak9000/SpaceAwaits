@@ -1,7 +1,7 @@
-package de.pcfreak9000.spaceawaits.content.tiles;
+package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.crafting.FurnaceRecipe;
+import de.pcfreak9000.spaceawaits.crafting.BlastFurnaceRecipe;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 
-public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable, ITileEntity, Tickable {
+public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITileEntity, Tickable {
     
     public static final int RESULTSLOT = 2;
     public static final int INPUTSLOT = 1;
@@ -18,7 +18,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
     
     private ItemStack[] stacks = new ItemStack[3];
     
-    private FurnaceRecipe currentRecipe = null;
+    private BlastFurnaceRecipe currentRecipe = null;
     
     @NBTSerialize(key = "burntimeLeft")
     private float partialBurnTimeLeft;
@@ -49,6 +49,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
                 //refuel but only if there is an active recipe
                 ItemStack fuelstack = getStack(FUELSLOT);
                 if (!ItemStack.isEmptyOrNull(fuelstack)) {
+                    //TODO blast furnace uses coke
                     float v = GameRegistry.getBurnTime(fuelstack.getItem());
                     partialBurnTimeLeft = v;
                     fuelstack.changeNumber(-1);
@@ -102,7 +103,7 @@ public class TileEntityPrimitiveFurnace implements IInventory, INBTSerializable,
         ItemStack stack = getStack(INPUTSLOT);
         if (!ItemStack.isEmptyOrNull(stack)) {
             boolean found = false;
-            for (FurnaceRecipe r : FurnaceRecipe.getRecipes()) {
+            for (BlastFurnaceRecipe r : BlastFurnaceRecipe.getRecipes()) {
                 if (r.matches(stack)) {
                     if (this.currentRecipe != r) {
                         this.currentRecipe = r;

@@ -17,14 +17,10 @@ import de.pcfreak9000.spaceawaits.composer.Composer;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceGenerator;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceParams;
 import de.pcfreak9000.spaceawaits.content.items.Items;
-import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
-import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
-import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.GuaranteedInventoryContent;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.item.loot.WeightedRandomInventoryContent;
@@ -138,17 +134,10 @@ public class DMod {
     
     @EventSubscription
     public void postinit(CoreEvents.PostInitEvent ev) {
-        SimpleRecipe.add(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
-                new ItemStack(Items.LOOSEROCK, 2));
-        SimpleRecipe.add(new ItemStack(Items.PICKAXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
-                new ItemStack(Items.LOOSEROCK, 3));
-        SimpleRecipe.add(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1), new ItemStack(Tiles.WOOD, 4));
-        ShapedRecipe
-                .add(new ShapedRecipe(Items.AXE_PRIMITIVE, "XX", "SX", "S ", 'X', Items.LOOSEROCK, 'S', Items.TWIG));
         LootTable shipStarterTable = LootTable.getFor("shipspawn");
         //shipStarterTable.addMin(0);
         shipStarterTable.addMax(2);
-        shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
+        //shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
         shipStarterTable.add(new GuaranteedInventoryContent(Items.MEDKIT_SIMPLE, 1, 2));
         shipStarterTable.add(new WeightedRandomInventoryContent(MININGLASER, 2, 1, 1, false));
         shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));

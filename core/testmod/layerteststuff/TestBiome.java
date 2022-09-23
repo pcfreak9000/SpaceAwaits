@@ -118,7 +118,7 @@ public class TestBiome extends Biome {
             RndHelper rnd) {
         if (sub)
             return;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
             if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
@@ -126,7 +126,22 @@ public class TestBiome extends Biome {
                     for (int k = -2; k <= 2; k++) {
                         if (j * j + k * k < 2 * 2) {
                             if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_IRON);
+                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_POOR_IRON);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            int x = rnd.getRandom().nextInt(area) + tx;
+            int y = rnd.getRandom().nextInt(area) + ty;
+            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
+                for (int j = -2; j <= 2; j++) {
+                    for (int k = -2; k <= 2; k++) {
+                        if (j * j + k * k < 2 * 2) {
+                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
+                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_COAL);
                             }
                         }
                     }

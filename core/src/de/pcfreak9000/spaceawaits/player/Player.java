@@ -73,8 +73,10 @@ public class Player implements INBTSerializable {
     
     @Override
     public void readNBT(NBTCompound pc) {
+        System.out.println(Components.RENDER.get(getPlayerEntity()).getLayer());
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.inventory.readNBT(pc.getCompound("inventory"));
+        System.out.println(Components.RENDER.get(getPlayerEntity()).getLayer());
     }
     
     @Override

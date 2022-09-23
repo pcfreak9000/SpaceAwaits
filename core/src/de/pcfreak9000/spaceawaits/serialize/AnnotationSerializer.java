@@ -62,7 +62,7 @@ public class AnnotationSerializer {
     }
     
     private static void serializeAnnotatedFields(NBTCompound nbt, Object ser) {
-        Field[] fields = ser.getClass().getFields();
+        Field[] fields = ser.getClass().getDeclaredFields();//TODO super fields
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
@@ -134,7 +134,7 @@ public class AnnotationSerializer {
     //TODO if the Fields type is Serializable just serialize that?? and deserialization???
     //TODO enums can be saved as ints/ids, strings can be saved
     private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser) {
-        Field[] fields = ser.getClass().getFields();
+        Field[] fields = ser.getClass().getDeclaredFields();//TODO super fields
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {

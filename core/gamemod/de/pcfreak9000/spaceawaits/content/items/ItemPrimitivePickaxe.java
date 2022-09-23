@@ -12,12 +12,12 @@ public class ItemPrimitivePickaxe extends Item {
     
     private static final float RANGE = 5;
     private static final int MAX_USES = 20;
-    private final BreakerPrimitiveTools breaker = new BreakerPrimitiveTools(Tools.PICKAXE);
+    private final BreakerTools breaker = new BreakerTools(Tools.PICKAXE, 2f, 1f);
     
     public ItemPrimitivePickaxe() {
         this.setMaxStackSize(1);
         this.setDisplayName("Primitive Pickaxe");
-        this.setTexture("shitty_pickaxe.png");
+        this.setTexture("primitivePickaxe.png");
     }
     
     @Override

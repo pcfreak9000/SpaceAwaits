@@ -72,7 +72,9 @@ public class TreeFactory implements WorldEntityFactory {
             
             @Override
             public void onBreak(World world, Array<ItemStack> drops, Random random, Entity entity) {
-                drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 5 + random.nextInt(3)));
+                drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 3 + random.nextInt(4)));
+                drops.add(new ItemStack(Items.TWIG, random.nextInt(3)));
+                
             }
             
         };

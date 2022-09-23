@@ -8,24 +8,24 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.registry.OreDict;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
-public class FurnaceRecipe {
+public class BlastFurnaceRecipe {
     
     private static final float DEFAULT_BURNTIME = 4f;
     
     //************ Maybe put this in a dedicated class? **************
     
-    private static final Array<FurnaceRecipe> recipes = new Array<>();
-    private static final ImmutableArray<FurnaceRecipe> recipesImmutable = new ImmutableArray<>(recipes);
+    private static final Array<BlastFurnaceRecipe> recipes = new Array<>();
+    private static final ImmutableArray<BlastFurnaceRecipe> recipesImmutable = new ImmutableArray<>(recipes);
     
     //    public static void add(ItemStack result, ItemStack... inpts) {
     //        add(new SimpleRecipe(result, inpts));
     //    }
     
-    public static void add(FurnaceRecipe sr) {
+    public static void add(BlastFurnaceRecipe sr) {
         recipes.add(sr);
     }
     
-    public static ImmutableArray<FurnaceRecipe> getRecipes() {
+    public static ImmutableArray<BlastFurnaceRecipe> getRecipes() {
         return recipesImmutable;
     }
     
@@ -35,19 +35,19 @@ public class FurnaceRecipe {
     private Object input;
     private float burntime;
     
-    public FurnaceRecipe(Item result, Object input) {
+    public BlastFurnaceRecipe(Item result, Object input) {
         this(new ItemStack(result), input);
     }
     
-    public FurnaceRecipe(Tile result, Object input) {
+    public BlastFurnaceRecipe(Tile result, Object input) {
         this(new ItemStack(result), input);
     }
     
-    public FurnaceRecipe(ItemStack result, Object input) {
+    public BlastFurnaceRecipe(ItemStack result, Object input) {
         this(result, input, DEFAULT_BURNTIME);
     }
     
-    public FurnaceRecipe(ItemStack result, Object obj, float burntime) {
+    public BlastFurnaceRecipe(ItemStack result, Object obj, float burntime) {
         this.result = result;
         this.burntime = burntime;
         if (obj instanceof ItemStack) {
