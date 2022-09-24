@@ -32,6 +32,8 @@ public class GameMod {
     public void postinit(CoreEvents.PostInitEvent ev) {
         SimpleRecipe.add(new ItemStack(Items.AXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
                 new ItemStack(Items.LOOSEROCK, 2));
+        SimpleRecipe.add(new ItemStack(Items.SHOVEL_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
+                new ItemStack(Items.LOOSEROCK, 1));
         SimpleRecipe.add(new ItemStack(Items.PICKAXE_PRIMITIVE, 1), new ItemStack(Items.TWIG, 2),
                 new ItemStack(Items.LOOSEROCK, 3));
         SimpleRecipe.add(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1), new ItemStack(Tiles.WOOD, 1));

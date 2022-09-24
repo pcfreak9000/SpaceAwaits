@@ -8,6 +8,7 @@ public class Items {
     public static final Item MEDKIT_SIMPLE = new ItemMedkitSimple();
     public static final Item AXE_PRIMITIVE = new ItemPrimitiveAxe();
     public static final Item PICKAXE_PRIMITIVE = new ItemPrimitivePickaxe();
+    public static final Item SHOVEL_PRIMITIVE = new ItemPrimitiveShovel();
     public static final Item TWIG = new Item();
     public static final Item LOOSEROCK = new Item();
     //public static final Item REPAIRGUN = new ItemRepairGun();
@@ -30,6 +31,7 @@ public class Items {
         GameRegistry.registerItem("medkitSimple", MEDKIT_SIMPLE);
         GameRegistry.registerItem("axePrimitive", AXE_PRIMITIVE);
         GameRegistry.registerItem("pickaxePrimitive", PICKAXE_PRIMITIVE);
+        GameRegistry.registerItem("shovelPrimitive", SHOVEL_PRIMITIVE);
         GameRegistry.registerItem("twig", TWIG.setTexture("twig.png").setDisplayName("Twig"));
         GameRegistry.registerItem("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
         //GameRegistry.registerItem("repairgun", REPAIRGUN);

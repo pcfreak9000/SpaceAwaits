@@ -33,12 +33,12 @@ public class Tiles {
         GameRegistry.registerTile("storageDrawer", STORAGE_DRAWER);
         GameRegistry.registerTile("bricksOld", BRICKS_OLD.setTexture("oldbricks.png").setDisplayName("Old Bricks"));
         GameRegistry.registerTile("wood", WOOD.setTexture("wood.png").setDisplayName("Wood").setMaterialLevel(1f).setRequiredTool(Tools.AXE));
-        GameRegistry.registerTile("grass", GRASS.setTexture("grass.png").setDisplayName("Grass"));
+        GameRegistry.registerTile("grass", GRASS.setTexture("grass.png").setDisplayName("Grass").setRequiredTool(Tools.SHOVEL).setMaterialLevel(1f).setHardness(0.9f));
         GameRegistry.registerTile("stone", STONE.setTexture("stoneWhite.png").setColor(Color.GRAY).setDisplayName("Stone").setLightTransmission(0.6f).setMaterialLevel(1f).setRequiredTool(Tools.PICKAXE));
         GameRegistry.registerTile("stoneDark", STONE_DARK.setTexture("stoneWhite.png").setColor(Color.DARK_GRAY).setDisplayName("Dark Stone").setLightTransmission(0.5f).setMaterialLevel(2f).setRequiredTool(Tools.PICKAXE));
         GameRegistry.registerTile("looserocks", LOOSEROCKS);
         GameRegistry.registerTile("bedrock", BEDROCK.setTexture("stoneWhite.png").setColor(new Color(0.1f, 0.1f, 0.1f, 1)).setDisplayName("Bedrock or something").setCanBreak(false));
-        GameRegistry.registerTile("dirt", DIRT.setTexture("dirt.png").setDisplayName("Dirt"));
+        GameRegistry.registerTile("dirt", DIRT.setTexture("dirt.png").setDisplayName("Dirt").setRequiredTool(Tools.SHOVEL).setMaterialLevel(1f).setHardness(0.9f));
         GameRegistry.registerTile("workbenchPrimitive", WORKBENCH_PRIMITIVE);
         GameRegistry.registerTile("furnacePrimitive", FURNACE_PRIMITIVE);
         GameRegistry.registerTile("orePoorIron", ORE_POOR_IRON);
