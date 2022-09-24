@@ -68,7 +68,7 @@ public class Player implements INBTSerializable {
     }
     
     public float getReach() {
-        return 10;
+        return getGameMode() == GameMode.Testing ? 200 : 10;
     }
     
     //have reach component??? maybe move this into hand component or so? and then as parameter have an entity?

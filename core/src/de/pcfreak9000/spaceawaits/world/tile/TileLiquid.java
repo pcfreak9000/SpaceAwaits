@@ -73,14 +73,7 @@ public class TileLiquid extends Tile {
     
     @Override
     public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
-        return new LiquidState();
-    }
-    
-    @Override
-    public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem ts) {
-        super.onTilePlaced(tx, ty, layer, world, ts);
-        LiquidState liquid = (LiquidState) ts.getTileEntity(tx, ty, layer);
-        liquid.addLiquid(getMaxValue());
+        return new LiquidState(getMaxValue());
     }
     
     @Override
@@ -131,6 +124,7 @@ public class TileLiquid extends Tile {
                         if (ne != this) {
                             ts.setTile(i, j, layer, this);
                             neighdata = (LiquidState) ts.getTileEntity(i, j, layer);
+                            neighdata.setLiquid(0);
                         }
                         flow = MathUtils.clamp(flow, 0, myLiquid);
                         myLiquid -= flow;

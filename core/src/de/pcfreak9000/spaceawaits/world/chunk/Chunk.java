@@ -302,7 +302,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
         if (inBounds(tx, ty) && tile != null && tile != Tile.NOTHING) {
             tickTiles.add(new NextTickTile(tx, ty, layer, tile,
-                    waitticks + world.getSystem(TickCounterSystem.class).getTick()));//hmm. maybe pool NextTickTile?
+                    waitticks + world.getSystem(TickCounterSystem.class).getTick()));//TODO hmm. maybe pool NextTickTile?
         }
     }
     

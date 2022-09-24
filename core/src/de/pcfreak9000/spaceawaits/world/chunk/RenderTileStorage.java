@@ -35,7 +35,7 @@ public class RenderTileStorage {
             array = new LongArray(false, 16);
             storage.put(rendererId, array);
             Entity e = new EntityImproved();
-            e.add(new RenderComponent(renderlayer));
+            e.add(new RenderComponent(renderlayer + rendererId.layeroffset));//Uhoh...
             e.add(rendererId);
             ChunkRenderComponent crc = new ChunkRenderComponent();
             crc.chunk = this.chunk;

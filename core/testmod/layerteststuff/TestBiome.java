@@ -117,7 +117,7 @@ public class TestBiome extends Biome {
             RndHelper rnd) {
         if (sub)
             return;
-        int ironcount = rnd.getRandom().nextFloat() > 0.8f ? 1 : 0;
+        int ironcount = rnd.getRandom().nextFloat() > 0.6f ? 1 : 0;
         for (int i = 0; i < ironcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;

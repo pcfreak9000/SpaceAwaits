@@ -18,9 +18,10 @@ public class SpaceSurface extends BiomeGenCompBased {
         @Override
         public GenInfo[] generate(SpaceSurface surface) {
             SpaceSurfaceParams params = surface.getParams();
+            int higherlevelthick = Math.min(40, params.getHeight() / 3);
             int someint = params.getHeight() / 3;
             LayerParams lowerLevel = new LayerParams(surface, 0, someint);
-            LayerParams higherLevel = new LayerParams(surface, someint, someint);
+            LayerParams higherLevel = new LayerParams(surface, someint, higherlevelthick);
             //for each LayerParam pick a generator from generators
             return new GenInfo[] { new GenInfo(LayerGenerator.GENERATOR, lowerLevel),
                     new GenInfo(LayerGenerator.GENERATOR, higherLevel) };
@@ -36,14 +37,15 @@ public class SpaceSurface extends BiomeGenCompBased {
     public SpaceSurface(SpaceSurfaceParams params) {
         super(null);
         this.params = params;
-        this.height = new HeightComponent(params.getSeed());
+        this.height = new HeightComponent(params.getSeed(),
+                params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
         addComponent(HeightComponent.class, this.height);
         //setup SpaceSurface children
         subs = BiomeGenExpander.expand(genChildren.generate(this));
         vars = new LayerHeightVariation[subs.length - 1];
         Random r = new RandomXS128(params.getSeed());
         for (int i = 0; i < vars.length; i++) {
-            vars[i] = new LayerHeightVariation(params.getSeed() + 1 + i, 15 + r.nextInt(5));
+            vars[i] = new LayerHeightVariation(params.getSeed() + 1 + i, 8 + r.nextInt(5));
         }
     }
     

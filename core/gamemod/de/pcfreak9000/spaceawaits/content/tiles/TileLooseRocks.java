@@ -13,6 +13,7 @@ public class TileLooseRocks extends Tile {
         setDisplayName("Loose Rocks");
         setTexture("looseRocks.png");
         setHardness(0.1f);
+        setLightTransmission(0.9f);
     }
     
     @Override

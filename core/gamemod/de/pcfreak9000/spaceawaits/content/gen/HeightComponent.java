@@ -14,12 +14,17 @@ public class HeightComponent implements GenerationDataComponent {
     
     private Module noise;
     
-    public HeightComponent(long seed) {
+    private int offset;
+    private double amplitude;
+    
+    public HeightComponent(long seed, int offset, double amplitude) {
+        this.offset = offset;
+        this.amplitude = amplitude;
         genNoise(seed);
     }
     
     public int getHeight(int tx, int ty) {
-        return 1000 + (int) Math.round(60 * noise.get(tx, 0.5));
+        return offset + (int) Math.round(amplitude * noise.get(tx, 0.5));
     }
     
     private void genNoise(long seed) {

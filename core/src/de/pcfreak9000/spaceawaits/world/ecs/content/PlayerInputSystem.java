@@ -75,6 +75,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
+        boolean enableInput = !worldRend.isGuiContainerOpen();//How was that input multiplexing going again?!
         Entity entity = this.player.getPlayerEntity();
         Vector2 pos = Components.TRANSFORM.get(entity).position;
         for (ItemStack s : player.getDroppingQueue()) {
@@ -87,40 +88,37 @@ public class PlayerInputSystem extends EntitySystem {
         float vx = 0;
         //        Vector2 transform = transformMapper.get(entity).position;
         //if (physicsMapper.get(entities.get(0)).onGround) {
-        boolean up = InptMgr.isPressed(EnumInputIds.Up);
-        boolean left = InptMgr.isPressed(EnumInputIds.Left);
-        boolean down = InptMgr.isPressed(EnumInputIds.Down);
-        boolean right = InptMgr.isPressed(EnumInputIds.Right);
-        boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
+        boolean up = enableInput && InptMgr.isPressed(EnumInputIds.Up);
+        boolean left = enableInput && InptMgr.isPressed(EnumInputIds.Left);
+        boolean down = enableInput && InptMgr.isPressed(EnumInputIds.Down);
+        boolean right = enableInput && InptMgr.isPressed(EnumInputIds.Right);
+        boolean backlayer = enableInput && InptMgr.isPressed(EnumInputIds.BackLayerMod);
         boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
         boolean canmovefreely = Components.ON_SOLID_GROUND.get(entity).canMoveFreely();
-        if (!worldRend.isGuiContainerOpen()) {
-            if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
-                Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
-            }
+        if (enableInput && InptMgr.isJustPressed(EnumInputIds.TestButton)) {
+            Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
         if (player.getGameMode() == GameMode.Testing) {
-            if (!worldRend.isGuiContainerOpen()) {
-                if (up) {
-                    vy += play.maxXv;
-                }
-                if (down) {
-                    vy -= play.maxXv;
-                }
-                if (left) {
-                    vx -= play.maxXv;
-                }
-                if (right) {
-                    vx += play.maxXv;
-                }
+            if (up) {
+                vy += play.maxXv;
             }
+            if (down) {
+                vy -= play.maxXv;
+            }
+            if (left) {
+                vx -= play.maxXv;
+            }
+            if (right) {
+                vx += play.maxXv;
+            }
+            
             PhysicsComponent pc = Components.PHYSICS.get(entity);
-            if (!InptMgr.isPressed(EnumInputIds.MovMod)) {
+            if (enableInput && !InptMgr.isPressed(EnumInputIds.MovMod)) {
                 vx *= 0.5f;
                 vy *= 0.5f;
             }
             pc.body.setVelocityW(vx, vy);
-        } else if (!worldRend.isGuiContainerOpen()) {
+        } else {
             if (up) {
                 if (onSolidGround) {
                     vy += play.maxYv * 5;
@@ -147,15 +145,14 @@ public class PlayerInputSystem extends EntitySystem {
             pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40,
                     -pc.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         }
-        if (!worldRend.isGuiContainerOpen()) {
-            if (!InptMgr.isPressed(EnumInputIds.MovMod)) {
-                int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
-                player.getInventory().setSelectedSlot(hotbarChecked);
-            } else {
-                float scroll = InptMgr.getScrollY() * 0.1f;
-                ((WorldScreen) worldRend).changeZoom(scroll);
-            }
+        if (enableInput && !InptMgr.isPressed(EnumInputIds.MovMod)) {
+            int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
+            player.getInventory().setSelectedSlot(hotbarChecked);
+        } else if (enableInput) {
+            float scroll = InptMgr.getScrollY() * 0.1f;
+            ((WorldScreen) worldRend).changeZoom(scroll);
         }
+        
     }
     
     private int checkSelectHotbarSlot(int current) {

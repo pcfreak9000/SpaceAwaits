@@ -26,8 +26,7 @@ public class LayerHeightVariation {
         ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
         gen.setSeed(seed);
         gen.setNumOctaves(2);
-        gen.setFrequency(0.00224);
-        gen.setLacunarity(14);
+        gen.setFrequency(0.00225);
         
         ModuleAutoCorrect source = new ModuleAutoCorrect(-1, 1);
         source.setSource(gen);

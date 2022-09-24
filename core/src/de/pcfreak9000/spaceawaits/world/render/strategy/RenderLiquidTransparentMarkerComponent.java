@@ -5,5 +5,6 @@ public class RenderLiquidTransparentMarkerComponent extends RenderMarkerComp {
     public static final RenderLiquidTransparentMarkerComponent INSTANCE = new RenderLiquidTransparentMarkerComponent();
     
     private RenderLiquidTransparentMarkerComponent() {
+        super(0.1f);
     }
 }
