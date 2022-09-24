@@ -93,6 +93,7 @@ public class PlayerInputSystem extends EntitySystem {
         boolean right = InptMgr.isPressed(EnumInputIds.Right);
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
+        boolean canmovefreely = Components.ON_SOLID_GROUND.get(entity).canMoveFreely();
         if (!worldRend.isGuiContainerOpen()) {
             if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
                 Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
@@ -120,14 +121,20 @@ public class PlayerInputSystem extends EntitySystem {
             }
             pc.body.setVelocityW(vx, vy);
         } else if (!worldRend.isGuiContainerOpen()) {
-            if (onSolidGround) {
-                if (up) {
+            if (up) {
+                if (onSolidGround) {
                     vy += play.maxYv * 5;
+                } else if (canmovefreely) {
+                    vy += play.maxXv;
                 }
             }
             //kinda useless, use for sneaking/ladders instead?
             if (down) {
-                vy -= play.maxYv * 2;
+                if (canmovefreely) {
+                    vy -= play.maxXv;
+                } else {
+                    vy -= play.maxYv * 2;
+                }
             }
             if (left) {
                 vx -= play.maxXv;
@@ -136,8 +143,9 @@ public class PlayerInputSystem extends EntitySystem {
                 vx += play.maxXv;
             }
             PhysicsComponent pc = Components.PHYSICS.get(entity);
-            pc.body.applyAccelerationW(vx * 6, vy * 3);
-            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
+            pc.body.applyAccelerationW(vx * 6, vy * (canmovefreely ? 6 : 3));
+            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40,
+                    -pc.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         }
         if (!worldRend.isGuiContainerOpen()) {
             if (!InptMgr.isPressed(EnumInputIds.MovMod)) {

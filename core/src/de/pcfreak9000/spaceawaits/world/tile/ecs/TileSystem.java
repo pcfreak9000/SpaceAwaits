@@ -117,6 +117,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             int j = ty + d.dy;
             getTile(i, j, layer).onNeighbourChange(world, this, i, j, tile, old, tx, ty, layer);
         }
+        getTile(tx, ty, layer.other()).onNeighbourChange(world, this, tx, ty, tile, old, tx, ty, layer.other());
         phys.get(getEngine()).queryAABB(tx - 0.1f, ty - 0.1f, tx + 1 + 0.1f * 2, ty + 1 + 0.1f * 2, (fix, conv) -> {
             ud.set(fix.getUserData(), fix);
             if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!

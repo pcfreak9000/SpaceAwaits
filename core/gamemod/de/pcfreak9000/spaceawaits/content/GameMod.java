@@ -37,12 +37,13 @@ public class GameMod {
         SimpleRecipe.add(new ItemStack(Tiles.WORKBENCH_PRIMITIVE, 1), new ItemStack(Tiles.WOOD, 1));
         
         ShapedRecipe.add(new ShapedRecipe(Tiles.FURNACE_PRIMITIVE, " X ", "X X", "XXX", 'X', Tiles.STONE));
-        ShapedRecipe.add(new ShapedRecipe(new ItemStack(Items.STICK, 4), "X", "X", 'X', Tiles.WOOD));
+        ShapedRecipe.add(new ShapedRecipe(new ItemStack(Items.STICK, 16), "X", "X", 'X', Tiles.WOOD));
         ShapedRecipe
                 .add(new ShapedRecipe(Items.PICKAXE_SIMPLE, "XXX", " I ", " I ", 'X', "ingotIron", 'I', Items.STICK));
         ShapedRecipe.add(new ShapedRecipe(Tiles.FURNACE_BLAST, "- -", "-x-", "-x-", '-', "ingotIron", 'x',
                 Tiles.FURNACE_PRIMITIVE));
         ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.TORCH, 4), "X", "I", 'X', Items.COAL, 'I', Items.STICK));
+        ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.LADDER, 8), "XXX", "X X", "XXX", 'X', Items.STICK));
         FurnaceRecipe.add(new FurnaceRecipe(Items.INGOT_IRON, Items.CLUMP_ORE_IRON));
         FurnaceRecipe.add(new FurnaceRecipe(Items.COKE, Items.COAL));
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.CLUMP_ORE_IRON));

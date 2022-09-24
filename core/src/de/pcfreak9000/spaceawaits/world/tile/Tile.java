@@ -24,7 +24,22 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class Tile extends Destructible {
     
     public static enum TileLayer {
-        Front, Back;
+        Front {
+            @Override
+            public TileLayer other() {
+                return Back;
+            }
+        },
+        Back {
+            @Override
+            public TileLayer other() {
+                return Front;
+            }
+        };
+        
+        public TileLayer other() {
+            throw new IllegalStateException();
+        }
     }
     
     public static final float BACKGROUND_FACTOR = 0.55f;

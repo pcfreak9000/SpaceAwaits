@@ -47,7 +47,7 @@ public class TileLadder extends Tile implements IContactListener {
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
-            Components.ON_SOLID_GROUND.get(other.getEntity()).solidGroundContacts++;
+            Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts++;
         }
         return false;
     }
@@ -56,7 +56,7 @@ public class TileLadder extends Tile implements IContactListener {
     public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             World world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
-            Components.ON_SOLID_GROUND.get(other.getEntity()).solidGroundContacts--;
+            Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts--;
         }
         return false;
     }
