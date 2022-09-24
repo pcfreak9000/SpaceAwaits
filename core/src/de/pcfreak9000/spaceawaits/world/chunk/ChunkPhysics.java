@@ -45,7 +45,7 @@ public class ChunkPhysics implements BodyFactory {
                 if ((top == null || !isSolidAndFilling(top)) || (bot == null || !isSolidAndFilling(bot))
                         || (right == null || !isSolidAndFilling(right)) || (left == null || !isSolidAndFilling(left))
                         || t.hasCustomHitbox()) {
-                    if (t.isSolid()) {
+                    if (t.isSolid() || t.getContactListener() != null) {
                         createFixture(t, x, y);
                     }
                 }
@@ -93,6 +93,9 @@ public class ChunkPhysics implements BodyFactory {
         chunk.getTileState(gtx, gty).setFixture(fix);
         shape.dispose();
         fix.setUserData(tile);//Enough for now
+        if (!tile.isSolid() && tile.getContactListener() != null) {
+            fix.setSensor(true);
+        }
     }
     
     public boolean isSolidAndFilling(Tile t) {
@@ -123,7 +126,13 @@ public class ChunkPhysics implements BodyFactory {
                             createFixture(ts.getTile(), x, y);
                         }
                     }
+                    if (newTile.getContactListener() != null) {
+                        createFixture(newTile, gtx, gty);
+                    }
                 } else { //newstate is solid, oldstate wasn't
+                    if (oldTile.getContactListener() != null) {
+                        destroyFixture(state);
+                    }
                     boolean createFix = newTile.hasCustomHitbox();
                     for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
                         if (createFix) {
@@ -153,7 +162,7 @@ public class ChunkPhysics implements BodyFactory {
                     if (state.getFixture() != null) {
                         destroyFixture(state);
                     }
-                    if (newTile.hasCustomHitbox()) {
+                    if (newTile.hasCustomHitbox() || newTile.getContactListener() != null) {
                         createFixture(newTile, gtx, gty);
                     }
                 }

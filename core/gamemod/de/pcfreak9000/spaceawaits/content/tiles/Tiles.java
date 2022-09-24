@@ -26,6 +26,7 @@ public class Tiles {
     public static final Tile FURNACE_BLAST = new TileBlastFurnace();
     public static final Tile ORE_COAL = new TileOreCoal();
     public static final Tile TORCH = new TileTorch();
+    public static final Tile LADDER = new TileLadder();
     
     public static void registerTiles() {
         //@formatter:off
@@ -45,6 +46,7 @@ public class Tiles {
         GameRegistry.registerTile("furnaceBlast", FURNACE_BLAST);
         GameRegistry.registerTile("oreCoal", ORE_COAL);
         GameRegistry.registerTile("torch", TORCH);
+        GameRegistry.registerTile("ladder", LADDER);
         //@formatter:on
     }
 }
