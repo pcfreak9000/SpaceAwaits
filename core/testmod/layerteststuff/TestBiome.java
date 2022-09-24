@@ -21,6 +21,7 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
+import de.pcfreak9000.spaceawaits.world.gen.feature.OreGenTileFeature;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -108,39 +109,30 @@ public class TestBiome extends Biome {
         }
     };
     
+    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_POOR_IRON, 12, 19, Tiles.STONE);
+    private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 13, 20, Tiles.STONE);
+    
     @Override
     public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
         if (sub)
             return;
-        for (int i = 0; i < 4; i++) {
+        int ironcount = rnd.getRandom().nextFloat() > 0.8f ? 1 : 0;
+        for (int i = 0; i < ironcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
-            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
-                for (int j = -2; j <= 2; j++) {
-                    for (int k = -2; k <= 2; k++) {
-                        if (j * j + k * k < 2 * 2) {
-                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_POOR_IRON);
-                            }
-                        }
-                    }
-                }
+            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            if (height - y > 12) {
+                poorIron.generate(tiles, x, y, rnd.getRandom(), area);
             }
         }
-        for (int i = 0; i < 6; i++) {
+        int coalcount = rnd.getRandom().nextFloat() > 0.4f ? 1 : 0;
+        for (int i = 0; i < coalcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
-            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.STONE) {
-                for (int j = -2; j <= 2; j++) {
-                    for (int k = -2; k <= 2; k++) {
-                        if (j * j + k * k < 2 * 2) {
-                            if (tiles.getTile(x + j, y + k, TileLayer.Front) == Tiles.STONE) {
-                                tiles.setTile(x + j, y + k, TileLayer.Front, Tiles.ORE_COAL);
-                            }
-                        }
-                    }
-                }
+            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            if (height - y > 5) {
+                coal.generate(tiles, x, y, rnd.getRandom(), area);
             }
         }
         //this algorithm is f*cking slow

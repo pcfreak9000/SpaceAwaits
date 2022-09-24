@@ -4,7 +4,13 @@ public enum Direction {
     Up(0, 1), Down(0, -1), Left(-1, 0), Right(1, 0), UpLeft(-1, 1), UpRight(1, 1), DownLeft(-1, -1), DownRight(1, -1),
     Zero(0, 0);
     
+    /**
+     * Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight
+     */
     public static final Direction[] MOORE_NEIGHBOURS = { Up, Down, Left, Right, UpLeft, UpRight, DownLeft, DownRight };
+    /**
+     * Up, Down, Left, Right
+     */
     public static final Direction[] VONNEUMANN_NEIGHBOURS = { Up, Down, Left, Right };
     
     public final int dx;

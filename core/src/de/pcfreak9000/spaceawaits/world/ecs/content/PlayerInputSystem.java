@@ -22,6 +22,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
+import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
@@ -80,9 +81,6 @@ public class PlayerInputSystem extends EntitySystem {
             s.drop(world, pos.x, pos.y);
         }
         player.getDroppingQueue().clear();
-        if (worldRend.isGuiContainerOpen()) {
-            return;
-        }
         
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
@@ -95,26 +93,33 @@ public class PlayerInputSystem extends EntitySystem {
         boolean right = InptMgr.isPressed(EnumInputIds.Right);
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
         boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
-        if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
-            Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
+        if (!worldRend.isGuiContainerOpen()) {
+            if (InptMgr.isJustPressed(EnumInputIds.TestButton)) {
+                Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
+            }
         }
         if (player.getGameMode() == GameMode.Testing) {
-            if (up) {
-                vy += play.maxXv;
-            }
-            if (down) {
-                vy -= play.maxXv;
-            }
-            if (left) {
-                vx -= play.maxXv;
-            }
-            if (right) {
-                vx += play.maxXv;
+            if (!worldRend.isGuiContainerOpen()) {
+                if (up) {
+                    vy += play.maxXv;
+                }
+                if (down) {
+                    vy -= play.maxXv;
+                }
+                if (left) {
+                    vx -= play.maxXv;
+                }
+                if (right) {
+                    vx += play.maxXv;
+                }
             }
             PhysicsComponent pc = Components.PHYSICS.get(entity);
-            pc.body.applyAccelerationW(vx * 12, vy * 12);
-            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 35, -pc.body.getLinearVelocityPh().y * 35);
-        } else {
+            if (!InptMgr.isPressed(EnumInputIds.MovMod)) {
+                vx *= 0.5f;
+                vy *= 0.5f;
+            }
+            pc.body.setVelocityW(vx, vy);
+        } else if (!worldRend.isGuiContainerOpen()) {
             if (onSolidGround) {
                 if (up) {
                     vy += play.maxYv * 5;
@@ -134,8 +139,15 @@ public class PlayerInputSystem extends EntitySystem {
             pc.body.applyAccelerationW(vx * 6, vy * 3);
             pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40, -pc.body.getLinearVelocityPh().y * 0.1f);
         }
-        int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
-        player.getInventory().setSelectedSlot(hotbarChecked);
+        if (!worldRend.isGuiContainerOpen()) {
+            if (!InptMgr.isPressed(EnumInputIds.MovMod)) {
+                int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
+                player.getInventory().setSelectedSlot(hotbarChecked);
+            } else {
+                float scroll = InptMgr.getScrollY() * 0.1f;
+                ((WorldScreen) worldRend).changeZoom(scroll);
+            }
+        }
     }
     
     private int checkSelectHotbarSlot(int current) {

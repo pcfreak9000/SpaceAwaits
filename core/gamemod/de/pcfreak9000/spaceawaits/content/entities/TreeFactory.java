@@ -60,7 +60,7 @@ public class TreeFactory implements WorldEntityFactory {
         entity.add(new TreeStateComponent());
         entity.add(pc);
         entity.add(new SerializeEntityComponent(this));
-        entity.add(new RenderComponent(RenderLayers.ENTITY - 0.01f));
+        entity.add(new RenderComponent(RenderLayers.TILE_FRONT - 0.01f));
         ActivatorComponent ac = new ActivatorComponent();
         ac.layer = RenderLayers.ENTITY;
         //ac.activators.add(tt);

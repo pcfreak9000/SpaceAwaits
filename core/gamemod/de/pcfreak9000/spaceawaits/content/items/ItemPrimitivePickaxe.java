@@ -11,7 +11,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class ItemPrimitivePickaxe extends Item {
     
     private static final float RANGE = 5;
-    private static final int MAX_USES = 20;
+    private static final int MAX_USES = 40;
     private final BreakerTools breaker = new BreakerTools(Tools.PICKAXE, 2f, 1f);
     
     public ItemPrimitivePickaxe() {

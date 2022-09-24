@@ -109,7 +109,7 @@ public class WorldCombined extends World {
     public void setPlayer(Player player) {
         super.setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
-        addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 4));
+        addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 2));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
     }
     

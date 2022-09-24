@@ -1,11 +1,13 @@
 package de.pcfreak9000.spaceawaits.world.render;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.command.ICommandContext;
 import de.pcfreak9000.spaceawaits.command.WorldCommandContext;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.gui.Hud;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;
@@ -21,9 +23,11 @@ public class WorldScreen extends GameScreen {
     private World world;
     
     private OrthographicCamera camera;
-    private Viewport viewport;
+    private ExtendViewport viewport;
     
     private WorldCommandContext commands;
+    
+    private float zoom = 1;
     
     public WorldScreen(GuiHelper guiHelper, WorldCombined world, Player player) {
         super(guiHelper);
@@ -36,6 +40,23 @@ public class WorldScreen extends GameScreen {
         //Hmmmm
         world.initRenderableWorld(this);
         hud.setPlayer(player);
+    }
+    
+    public void changeZoom(float f) {
+        setZoom(zoom + f);
+    }
+    
+    public void resetZoom() {
+        setZoom(1);
+    }
+    
+    private void setZoom(float f) {
+        zoom = MathUtils.clamp(f, 0.075f, SpaceAwaits.DEBUG ? 4f : 2.5f);
+        this.viewport.setMaxWorldHeight(VISIBLE_TILES_MAX * zoom);
+        this.viewport.setMaxWorldWidth(VISIBLE_TILES_MAX * zoom);
+        this.viewport.setMinWorldHeight(VISIBLE_TILES_MIN * zoom);
+        this.viewport.setMinWorldWidth(VISIBLE_TILES_MIN * zoom);
+        this.viewport.update(this.viewport.getScreenWidth(), this.viewport.getScreenHeight());
     }
     
     @Override

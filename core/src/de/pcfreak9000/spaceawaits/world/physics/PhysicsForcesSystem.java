@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
+import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
@@ -21,6 +22,10 @@ public class PhysicsForcesSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         PhysicsComponent comp = Components.PHYSICS.get(entity);
         if (comp.body.getBody().getType() == BodyType.StaticBody) {
+            return;
+        }
+        if (Components.PLAYER_INPUT.has(entity)
+                && Components.PLAYER_INPUT.get(entity).player.getGameMode() == GameMode.Testing) {
             return;
         }
         comp.body.applyAccelerationPh(0, -9.81f);

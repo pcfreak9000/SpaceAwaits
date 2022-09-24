@@ -71,6 +71,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private boolean forceSort = false;
     
+    private boolean dolightsetting = true;
+    
     public RenderSystem(World world, GameScreen renderer) {
         world.getWorldBus().register(this);
         this.entities = new Array<>();
@@ -181,6 +183,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     @Override
     public void update(float deltaTime) {
+        boolean dolight = dolightsetting;
         super.update(deltaTime);
         renderer.getFBOStack().push(sceneBuffer);
         ScreenUtils.clear(0, 0, 0, 0);
@@ -193,7 +196,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
                 continue;
             }
-            boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.getLayer() >= BEGIN_LIGHT_LAYER;
+            boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.getLayer() >= BEGIN_LIGHT_LAYER && dolight;
             for (IRenderStrategy dec : rc.renderStrategies) {
                 if (dec.considerGui() && !renderer.showGui()) {
                     continue;
@@ -208,7 +211,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                     dec.begin();
                     last = dec;
                 }
-                if (lastLayer < END_LIGHT_LAYER && rc.getLayer() >= END_LIGHT_LAYER) {
+                if (lastLayer < END_LIGHT_LAYER && rc.getLayer() >= END_LIGHT_LAYER && dolight) {
                     if (last != null) {
                         last.end();
                     }
@@ -225,7 +228,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         if (last != null) {
             last.end();
         }
-        if (!endedLight) {
+        if (!endedLight && dolight) {
             lightRenderer.exitAndRenderLitScene();
         }
         renderer.getFBOStack().pop(sceneBuffer);
@@ -238,6 +241,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.sceneBuffer.getWidth(), this.sceneBuffer.getHeight(), false, true);
         batch.end();
+    }
+    
+    public void setDoLight(boolean b) {
+        this.dolightsetting = b;
     }
     
     @Override

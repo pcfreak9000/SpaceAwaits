@@ -23,6 +23,8 @@ public class WorldCommandContext implements ICommandContext {
         getCommandline().addSubCommand(new GiveItemCommand());
         getCommandline().addSubCommand(new SeedCommand());
         getCommandline().addSubCommand(new GamemodeCommand());
+        getCommandline().addSubCommand(new LightCommand());
+        getCommandline().addSubCommand(new GhostCommand());
     }
     
     @Override

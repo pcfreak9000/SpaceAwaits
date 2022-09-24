@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.content.items;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.Item;
@@ -38,8 +37,7 @@ public class ItemCreativeBreaker extends Item {
     public ItemCreativeBreaker() {
         this.setMaxStackSize(1);
         this.setDisplayName("Creative Breaker");
-        this.setTexture("shitty_pickaxe.png");
-        this.setColor(Color.GOLD);
+        this.setTexture("crebreak.png");
     }
     
     @Override
