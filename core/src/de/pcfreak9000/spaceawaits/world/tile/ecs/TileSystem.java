@@ -263,8 +263,9 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (t.getProgress() >= IBreaker.FINISHED_BREAKING) {
             //********************************+
             //Handle tile breaking:
-            Array<ItemStack> drops = new Array<>();//tile.getDropsBase(world, world.getWorldRandom(), tx, ty, layer);
-            tile.onBreak(world, drops, world.getWorldRandom(), this, tx, ty, layer);
+            Array<ItemStack> drops = new Array<>();
+            tile.collectDrops(world, world.getWorldRandom(), tx, ty, layer, drops);
+            tile.onTileBreak(tx, ty, layer, world, this, breaker);
             breaker.onBreak(world, tile, drops, world.getWorldRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {

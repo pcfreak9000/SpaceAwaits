@@ -60,7 +60,8 @@ public class EntityInteractSystem extends EntitySystem {
             Array<ItemStack> drops = new Array<>();
             Random worldRandom = world.getWorldRandom();
             if (validated) {
-                breakableComponent.breakable.onBreak(world, drops, worldRandom, entity);
+                breakableComponent.breakable.collectDrops(world, worldRandom, entity, drops);
+                breakableComponent.breakable.onEntityBreak(world, entity, breaker);
             }
             breaker.onBreak(world, breakableComponent.destructable, drops, worldRandom);
             this.despawnEntity(entity);

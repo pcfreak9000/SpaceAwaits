@@ -3,14 +3,13 @@ package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.crafting.BlastFurnaceRecipe;
+import de.pcfreak9000.spaceawaits.crafting.MachineBase;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
-import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 
-public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITileEntity, Tickable {
+public class TileEntityBlastFurnace extends MachineBase implements IInventory, INBTSerializable, ITileEntity {
     
     public static final int RESULTSLOT = 2;
     public static final int INPUTSLOT = 1;
@@ -20,65 +19,48 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
     
     private BlastFurnaceRecipe currentRecipe = null;
     
-    @NBTSerialize(key = "burntimeLeft")
-    private int partialBurnTimeLeft;
-    
-    @NBTSerialize(key = "prog")
-    private int progress;
-    
-    public float getRelativeProgress() {
-        if (this.currentRecipe == null) {
-            return 0;
-        }
-        return progress / (float) this.currentRecipe.getBurntime();
+    @Override
+    protected int getProcessingTicksRequired() {
+        return this.currentRecipe == null ? -1 : this.currentRecipe.getBurntime();
     }
     
     @Override
-    public void tick(float dtime, long tickIndex) {
-        ItemStack res = getStack(RESULTSLOT);
+    protected void refuel() {
+        ItemStack fuelstack = getStack(FUELSLOT);
+        if (!ItemStack.isEmptyOrNull(fuelstack) && fuelstack.getItem() == Items.COKE) {
+            int v = 20 * 60;//Hardcoded coke isnt nice
+            workTicksLeft = v;
+            fuelstack.changeNumber(-1);
+            setSlotContent(FUELSLOT, fuelstack);
+        }
+    }
+    
+    @Override
+    protected void finishProcess() {
+        this.progress = 0;
+        ItemStack st = getStack(RESULTSLOT);
+        if (ItemStack.isEmptyOrNull(st)) {
+            st = this.currentRecipe.getCraftingResult();
+        } else {
+            st.changeNumber(this.currentRecipe.getCraftingResult().getCount());
+        }
+        setSlotContent(RESULTSLOT, st);
+        decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
+    }
+    
+    @Override
+    protected boolean canProcess() {
         //TODO this kind of checking for the other craftings as well?
-        boolean freeresult = ItemStack.isEmptyOrNull(res) || (this.currentRecipe != null
-                && res.getCount() + this.currentRecipe.getResult().getCount() < this.currentRecipe.getResult().getMax()
+        ItemStack res = getStack(RESULTSLOT);
+        if (currentRecipe == null) {
+            return false;
+        }
+        if (ItemStack.isEmptyOrNull(res)) {
+            return true;
+        }
+        return res.getCount() + this.currentRecipe.getResult().getCount() < this.currentRecipe.getResult().getMax()
                 && ItemStack.isItemEqual(res, this.currentRecipe.getResult())
-                && ItemStack.isStackTagEqual(res, this.currentRecipe.getResult()));
-        if (!freeresult) {
-            this.progress = 0;
-        }
-        if (currentRecipe != null && freeresult) {
-            if (partialBurnTimeLeft <= 0) {
-                //refuel but only if there is an active recipe
-                ItemStack fuelstack = getStack(FUELSLOT);
-                if (!ItemStack.isEmptyOrNull(fuelstack) && fuelstack.getItem() == Items.COKE) {
-                    //hardcoded COKE isnt nice
-                    int v = 20 * 60;
-                    partialBurnTimeLeft = v;
-                    fuelstack.changeNumber(-1);
-                    setSlotContent(FUELSLOT, fuelstack);
-                }
-            }
-            if (partialBurnTimeLeft > 0) {
-                //increase progress
-                this.progress += 1;
-                //check for interuptions or put the result
-                if (this.progress >= this.currentRecipe.getBurntime()) {
-                    this.progress = 0;
-                    ItemStack st = getStack(RESULTSLOT);
-                    if (ItemStack.isEmptyOrNull(st)) {
-                        st = this.currentRecipe.getCraftingResult();
-                    } else {
-                        st.changeNumber(this.currentRecipe.getCraftingResult().getCount());
-                    }
-                    setSlotContent(RESULTSLOT, st);
-                    decrStackSize(INPUTSLOT, this.currentRecipe.getInputCount());
-                }
-            } else {
-                this.progress = Math.max(0, this.progress - 1);//Hmm
-            }
-        }
-        //remove burntime if there is any left even if there isn't an active recipe
-        if (partialBurnTimeLeft > 0) {
-            partialBurnTimeLeft = Math.max(0, partialBurnTimeLeft - 1);
-        }
+                && ItemStack.isStackTagEqual(res, this.currentRecipe.getResult());
     }
     
     @Override
@@ -106,8 +88,11 @@ public class TileEntityBlastFurnace implements IInventory, INBTSerializable, ITi
             for (BlastFurnaceRecipe r : BlastFurnaceRecipe.getRecipes()) {
                 if (r.matches(stack)) {
                     if (this.currentRecipe != r) {
+                        //currentRecipe == null -> either reading some save, or the progress is 0 anyways because the recipe was reset (see below)
+                        if (this.currentRecipe != null) {
+                            this.progress = 0;
+                        }
                         this.currentRecipe = r;
-                        this.progress = 0;
                     }
                     found = true;
                     break;

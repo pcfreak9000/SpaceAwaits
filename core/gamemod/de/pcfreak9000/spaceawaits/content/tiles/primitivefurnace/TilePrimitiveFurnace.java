@@ -44,12 +44,13 @@ public class TilePrimitiveFurnace extends Tile {
     }
     
     @Override
-    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
-            TileLayer layer) {
-        super.onBreak(world, drops, random, tiles, tx, ty, layer);
-        TileEntityPrimitiveFurnace te = (TileEntityPrimitiveFurnace) tiles.getTileEntity(tx, ty, layer);
+    public void collectDrops(World world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
+        super.collectDrops(world, random, tx, ty, layer, drops);
+        TileEntityPrimitiveFurnace te = (TileEntityPrimitiveFurnace) world.getSystem(TileSystem.class).getTileEntity(tx,
+                ty, layer);
         for (int i = 0; i < te.slots(); i++) {
             drops.add(te.removeStack(i));
         }
     }
+    
 }

@@ -75,7 +75,8 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
-        boolean enableInput = !worldRend.isGuiContainerOpen();//How was that input multiplexing going again?!
+        //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
+        boolean enableInput = !worldRend.isGuiContainerOpen();
         Entity entity = this.player.getPlayerEntity();
         Vector2 pos = Components.TRANSFORM.get(entity).position;
         for (ItemStack s : player.getDroppingQueue()) {

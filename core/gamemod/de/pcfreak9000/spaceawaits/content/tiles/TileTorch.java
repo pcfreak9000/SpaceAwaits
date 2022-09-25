@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.core.AnimatedTextureProvider;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -54,8 +53,7 @@ public class TileTorch extends Tile {
             Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
         if (!canPlace(gtx, gty, layer, world, tileSystem)) {
             tileSystem.removeTile(gtx, gty, layer);
-            ItemStack toDrop = new ItemStack(getItemDropped(), getDroppedQuantity());//TODO maybe put this somewhere else? -> drops rework
-            toDrop.drop(world, gtx, gty);
+            dropAsItemsInWorld(world, world.getWorldRandom(), gtx, gty, layer);
         }
     }
 }

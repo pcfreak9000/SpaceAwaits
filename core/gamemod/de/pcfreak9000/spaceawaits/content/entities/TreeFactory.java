@@ -32,6 +32,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -71,12 +72,14 @@ public class TreeFactory implements WorldEntityFactory {
         bc.breakable = new BreakableEntity() {
             
             @Override
-            public void onBreak(World world, Array<ItemStack> drops, Random random, Entity entity) {
+            public void collectDrops(World world, Random random, Entity entity, Array<ItemStack> drops) {
                 drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 3 + random.nextInt(4)));
                 drops.add(new ItemStack(Items.TWIG, random.nextInt(3)));
-                
             }
             
+            @Override
+            public void onEntityBreak(World world, Entity entity, IBreaker breaker) {
+            }
         };
         entity.add(bc);
         RandomTickComponent rtc = new RandomTickComponent();

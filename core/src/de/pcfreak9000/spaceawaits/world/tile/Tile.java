@@ -181,13 +181,17 @@ public class Tile extends Destructible {
         return 1;
     }
     
-    //    public Array<ItemStack> getDropsBase(World world, Random random, int tx, int ty, TileLayer layer) {
-    //        return Array.with(new ItemStack(getItemDropped(), getDroppedQuantity()));
-    //    }
-    
-    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
-            TileLayer layer) {
+    public void collectDrops(World world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
         drops.add(new ItemStack(getItemDropped(), getDroppedQuantity()));
+    }
+    
+    public void dropAsItemsInWorld(World world, Random random, int tx, int ty, TileLayer layer) {
+        Array<ItemStack> drops = new Array<>();
+        collectDrops(world, random, tx, ty, layer, drops);
+        ItemStack.dropRandomInTile(drops, world, tx, ty);
+    }
+    
+    public void onTileBreak(int tx, int ty, TileLayer layer, World world, TileSystem tiles, IBreaker breaker) {
     }
     
     public void onTileRemoved(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {

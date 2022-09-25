@@ -3,6 +3,8 @@ package de.pcfreak9000.spaceawaits.serialize;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import com.badlogic.gdx.utils.Array;
+
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTTypeException;
@@ -63,7 +65,19 @@ public class AnnotationSerializer {
     }
     
     private static void serializeAnnotatedFields(NBTCompound nbt, Object ser) {
-        Field[] fields = ser.getClass().getDeclaredFields();//TODO super fields
+        Class<?> clazz = ser.getClass();
+        Array<Class<?>> classes = new Array<>();
+        while (clazz != Object.class) {
+            classes.add(clazz);
+            clazz = clazz.getSuperclass();
+        }
+        for (int i = classes.size - 1; i >= 0; i--) {
+            serializeAnnotatedFields(nbt, ser, classes.get(i));
+        }
+    }
+    
+    private static void serializeAnnotatedFields(NBTCompound nbt, Object ser, Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {
@@ -132,10 +146,22 @@ public class AnnotationSerializer {
         }
     }
     
+    private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser) {
+        Class<?> clazz = ser.getClass();
+        Array<Class<?>> classes = new Array<>();
+        while (clazz != Object.class) {
+            classes.add(clazz);
+            clazz = clazz.getSuperclass();
+        }
+        for (int i = classes.size - 1; i >= 0; i--) {
+            deserializeAnnotatedFields(nbt, ser, classes.get(i));
+        }
+    }
+    
     //TODO if the Fields type is Serializable just serialize that?? and deserialization???
     //TODO enums can be saved as ints/ids, strings can be saved
-    private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser) {
-        Field[] fields = ser.getClass().getDeclaredFields();//TODO super fields
+    private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser, Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
         for (Field f : fields) {
             NBTSerialize an = f.getAnnotation(NBTSerialize.class);
             if (an != null) {

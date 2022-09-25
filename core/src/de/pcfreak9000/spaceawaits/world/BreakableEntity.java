@@ -6,9 +6,14 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public interface BreakableEntity {
     
-    void onBreak(World world, Array<ItemStack> drops, Random random, Entity entity);
+    //Does this seperation even make sense here?
+    
+    void collectDrops(World world, Random random, Entity entity, Array<ItemStack> drops);
+    
+    void onEntityBreak(World world, Entity entity, IBreaker breaker);
     
 }

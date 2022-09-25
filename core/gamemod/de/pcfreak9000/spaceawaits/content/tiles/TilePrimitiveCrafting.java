@@ -1,14 +1,11 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
-import java.util.Random;
-
-import com.badlogic.gdx.utils.Array;
-
 import de.pcfreak9000.spaceawaits.content.ContainerCrafter;
 import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
@@ -33,9 +30,8 @@ public class TilePrimitiveCrafting extends Tile {
     }
     
     @Override
-    public void onBreak(World world, Array<ItemStack> drops, Random random, TileSystem tiles, int tx, int ty,
-            TileLayer layer) {
-        super.onBreak(world, drops, random, tiles, tx, ty, layer);
+    public void onTileBreak(int tx, int ty, TileLayer layer, World world, TileSystem tiles, IBreaker breaker) {
+        super.onTileBreak(tx, ty, layer, world, tiles, breaker);
         //Close gui if open, drop current contents?
     }
     
