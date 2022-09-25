@@ -5,12 +5,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
+import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
@@ -252,8 +254,9 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         return inBounds(tx, ty) ? getTileState(tx, ty) : null;
     }
     
-    //Maybe save the set for later somehow?
+    private int randomTickTileCount = 0;
     
+    //Maybe save the set for later somehow?
     @Override
     public Tile setTile(int tx, int ty, TileLayer layer, Tile t) {
         Objects.requireNonNull(t);
@@ -263,6 +266,16 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         
         TileState state = storage.get(tx, ty);
         Tile oldTile = state.getTile();
+        
+        if (oldTile.receivesRandomTick()) {
+            randomTickTileCount--;
+            if (randomTickTileCount < 0) {
+                Logger.getLogger(getClass()).warn("Random tick tile count < 0");
+            }
+        }
+        if (t.receivesRandomTick()) {
+            randomTickTileCount++;
+        }
         
         storage.set(t, tx, ty);
         
@@ -294,6 +307,20 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
                     t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, this.tileSystem, ticks);
+                }
+            }
+        }
+        if (randomTickTileCount > 0) {
+            Random rand = this.world.getWorldRandom();
+            for (int i = 0; i < 6; i++) {
+                TileLayer l = rand.nextBoolean() ? TileLayer.Front : TileLayer.Back;
+                int x = getGlobalTileX() + rand.nextInt(CHUNK_SIZE);
+                int y = getGlobalTileY() + rand.nextInt(CHUNK_SIZE);
+                if (inBounds(x, y)) {
+                    Tile t = getTile(x, y, l);
+                    if (t.receivesRandomTick()) {
+                        t.randomTick(x, y, l, world, tileSystem, ticks);
+                    }
                 }
             }
         }

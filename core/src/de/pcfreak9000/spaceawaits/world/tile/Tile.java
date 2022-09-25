@@ -127,6 +127,7 @@ public class Tile extends Destructible {
     public boolean isSolid() {
         return this.solid;
     }
+    
     //Hmmm. Relevant for torched and rubble etc, but hmm
     public Tile setFullTile(boolean b) {
         this.fullTile = b;
@@ -206,11 +207,9 @@ public class Tile extends Destructible {
     }
     
     public void onTileRemoved(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
-        
     }
     
     public void onTileSet(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
-        
     }
     
     public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
@@ -218,11 +217,16 @@ public class Tile extends Destructible {
     }
     
     public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
-        
     }
     
     public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
-        
+    }
+    
+    public void randomTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
+    }
+    
+    public boolean receivesRandomTick() {
+        return false;
     }
     
     public boolean hasTileEntity() {

@@ -37,7 +37,6 @@ import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
-import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 
 @Mod(id = "SpaceAwaits-Experimental", name = "Space Awaits Experimental Additions", version = { 0, 0, 2 })
@@ -58,7 +57,6 @@ public class DMod {
     //            return new LaserTileEntity(world, gtx, gty);
     //        };
     //    };
-    public Tile torch = new Tile();
     
     public TileLiquid water = new TileLiquid();
     
@@ -67,13 +65,6 @@ public class DMod {
     
     public TestTileRegen regen = new TestTileRegen();
     
-    //TODO ALLGEMEIN:
-    //Tile render modifikatoren -> tiles die besser mit nachbarn klarkommen und vlt noch mit großem gras und blumen over extenden oder andere texture??
-    //random tick system, erledigt (mehr oder weniger) random tick system für entities
-    //wasser + kleine hitboxen
-    //terrain gen
-    //STEINTYPEN!?? + textur?
-    //baum animation, abreiß animation (-> klassen durchgucken die dinge nur bei gedrückt tun)
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         Registry.COMPOSITE_MANAGER.create(0, "Proton").build();
@@ -94,17 +85,6 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
-        
-        Tile ironTile = new Tile();
-        ironTile.setDisplayName("Iron Ore");
-        ironTile.setTexture("ore_iron.png");
-        // ironTile.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
-        GameRegistry.registerTile("ore_iron", ironTile);
-        
-        torch.setLightColor(Color.WHITE);
-        torch.setDisplayName("torch");
-        GameRegistry.registerTile("torchh", torch);
-        //torch.setLightColor(new Color(Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE, Tile.MAX_LIGHT_VALUE));
         
         //        laser.setTexture("dirt.png");
         //        laser.setDisplayName("Laser");
@@ -140,13 +120,11 @@ public class DMod {
         //shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
         shipStarterTable.add(new GuaranteedInventoryContent(Items.MEDKIT_SIMPLE, 1, 2));
         shipStarterTable.add(new WeightedRandomInventoryContent(MININGLASER, 2, 1, 1, false));
-        shipStarterTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 5, 2, 4, false));
         
         LootTable housethingTable = LootTable.getFor("housething");
         housethingTable.addMin(1);
         housethingTable.addMax(3);
         housethingTable.add(new WeightedRandomInventoryContent(MININGLASER, 10, 1, 1, false));
-        housethingTable.add(new WeightedRandomInventoryContent(torch.getItemTile(), 100, 5, 10, false));
         //housethingTable.add(new WeightedRandomInventoryContent(laser.getItemTile(), 3, 1, 2, false));
         SpaceSurfaceGenerator gen = new SpaceSurfaceGenerator();
         Registry.GENERATOR_REGISTRY.registerWorldGen("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
@@ -156,62 +134,7 @@ public class DMod {
                 return gen.generate(new SpaceSurfaceParams(params.getSeed(), 5000, 2500));
             }
         });
-        //        Registry.GENERATOR_REGISTRY.registerWorldGen("STS", new IGeneratingLayer<WorldPrimer, GeneratorSettings>() {
-        //            private static final int WIDTH = 5000;
-        //            private static final int HEIGHT = 2500;
-        //            
-        //            private Vector2 spawn = null;
-        //            
-        //            @Override
-        //            public WorldPrimer generate(GeneratorSettings genset) {
-        //                WorldPrimer p = new WorldPrimer();
-        //                p.setWorldGenerator(new IWorldGenerator() {
-        //                    @Override
-        //                    public void generate(World world) {
-        //                        Entity ship = DMod.instance.fac.createEntity();
-        //                        TransformComponent tc = ship.getComponent(TransformComponent.class);
-        //                        Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
-        //                        Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, 300, WIDTH, 700);
-        //                        spawn = s;
-        //                        tc.position.set(s);
-        //                        //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
-        //                        Components.STATS.get(ship).get("mechHealth").current = 1;
-        //                        LootTable.getFor("shipspawn").generate(world.getWorldRandom(),
-        //                                ship.getComponent(ComponentInventoryShip.class).invShip);
-        //                        world.spawnEntity(ship, false);
-        //                    }
-        //                    
-        //                    @Override
-        //                    public void onLoading(World world) {
-        //                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
-        //                        world.spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(),
-        //                                false);
-        //                        world.spawnEntity(testFogEntity(), false);
-        //                    }
-        //                });
-        //                p.setPlayerSpawn(new IPlayerSpawn() {
-        //                    
-        //                    @Override
-        //                    public Rectangle getSpawnArea(Player player) {
-        //                        return new Rectangle(0, 300, WIDTH, 700);
-        //                    }
-        //                    
-        //                    @Override
-        //                    public Vector2 getPlayerSpawn(Player player, World world) {
-        //                        Vector2 dim = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
-        //                                .boundingBoxWidthAndHeight();
-        //                        Rectangle rect = getSpawnArea(player);
-        //                        return spawn;
-        //                        //return WorldUtil.findSpawnpoint(world, dim.x, dim.y, rect.x, rect.y, rect.width, rect.height);
-        //                    }
-        //                });
-        //                p.setWorldBounds(new WorldBounds(WIDTH, HEIGHT));
-        //                p.setLightProvider(AmbientLightProvider.constant(Color.WHITE));
-        //                p.setChunkGenerator(
-        //                        new BiomeChunkGenerator(new TestBiomeGenerator(genset.getSeed()), genset.getSeed()));
-        //                return p;
-        //            }
-        //        });
+        
     }
     
     private Entity testFogEntity() {
