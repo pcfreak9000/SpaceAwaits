@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
@@ -66,7 +67,7 @@ public class Tile extends Destructible {
         Registry.TILE_REGISTRY.register("empty", NOTHING);
     }
     
-    private ITextureProvider textureProvider;
+    private ITextureProvider textureProvider = TextureProvider.EMPTY;
     
     private boolean opaque = true;
     private boolean solid = true;
@@ -170,7 +171,7 @@ public class Tile extends Destructible {
     }
     
     public Item getItemTile() {
-        return Registry.ITEM_REGISTRY.get(Registry.TILE_REGISTRY.getId(this));//Hmmm... possibly cache the result? Or a different approach?
+        return Registry.ITEM_REGISTRY.get(Registry.TILE_REGISTRY.getId(this));//If this becomes a problem possibly cache the result
     }
     
     public Item getItemDropped() {
@@ -248,8 +249,12 @@ public class Tile extends Destructible {
         return null;
     }
     
-    public ITextureProvider getTextureProvider() {
-        return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
+    public ITextureProvider getIcon(ItemStack stack) {
+        return textureProvider;
+    }
+    
+    public ITextureProvider getTextureProvider(int tx, int ty, TileLayer layer, ITileArea tiles) {
+        return textureProvider;
     }
     
     public RenderMarkerComp getRendererMarkerComp() {

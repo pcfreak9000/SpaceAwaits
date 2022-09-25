@@ -89,7 +89,8 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     }
     
     private void addTile(Tile t, int gtx, int gty, SpriteCache c, Chunk chunk, TileLayer layer) {
-        c.add(t.getTextureProvider().getRegion(), gtx, gty, 1, 1);
+        //TODO provide a tilearea that is readonly of the tilesystem instead of chunk, possibly even confined to a small space around the tile
+        c.add(t.getTextureProvider(gtx, gty, layer, chunk).getRegion(), gtx, gty, 1, 1);
     }
     
     public int getRenderedChunkCount() {

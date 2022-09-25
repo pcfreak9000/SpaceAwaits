@@ -65,7 +65,7 @@ public class RenderItemStrategy implements IRenderStrategy {
         if (stack != null && !stack.isEmpty()) {
             if (stack.getCount() == 1) {
                 batch.setColor(stack.getItem().getColor());
-                batch.draw(stack.getItem().getTextureProvider().getRegion(), tc.position.x - mod, tc.position.y - mod,
+                batch.draw(stack.getItem().getIcon(stack).getRegion(), tc.position.x - mod, tc.position.y - mod,
                         Item.WORLD_SIZE + mod * 2, Item.WORLD_SIZE + mod * 2);
                 batch.setColor(HIGHLIGHTER_COLOR);
                 batch.draw(CoreRes.ITEM_HIGHLIGHT.getRegion(), tc.position.x - HIGHLIGHTER_BASEOFFSET - mod,
@@ -80,8 +80,8 @@ public class RenderItemStrategy implements IRenderStrategy {
                     float x = offsets[i].x + tc.position.x;
                     float y = offsets[i].y + tc.position.y;
                     batch.setColor(stack.getItem().getColor());
-                    batch.draw(stack.getItem().getTextureProvider().getRegion(), x - mod, y - mod,
-                            Item.WORLD_SIZE + mod * 2, Item.WORLD_SIZE + mod * 2);
+                    batch.draw(stack.getItem().getIcon(stack).getRegion(), x - mod, y - mod, Item.WORLD_SIZE + mod * 2,
+                            Item.WORLD_SIZE + mod * 2);
                     batch.setColor(HIGHLIGHTER_COLOR);
                     batch.draw(CoreRes.ITEM_HIGHLIGHT.getRegion(), x - HIGHLIGHTER_BASEOFFSET - mod,
                             y - HIGHLIGHTER_BASEOFFSET - mod, Item.WORLD_SIZE + HIGHLIGHTER_BASEOFFSET * 2 + mod * 2,

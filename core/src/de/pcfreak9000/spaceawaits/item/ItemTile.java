@@ -23,8 +23,8 @@ public class ItemTile extends Item {
     }
     
     @Override
-    public ITextureProvider getTextureProvider() {
-        return this.tile.getTextureProvider();
+    public ITextureProvider getIcon(ItemStack stack) {
+        return this.tile.getIcon(stack);
     }
     
     @Override

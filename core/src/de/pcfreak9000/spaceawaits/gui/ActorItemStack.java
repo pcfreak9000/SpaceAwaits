@@ -25,13 +25,13 @@ public class ActorItemStack extends Actor {
         return this.itemstack;
     }
     
-    private static final float BAR_HEIGHT = 2f;
+    private static final float BAR_HEIGHT = 1.5f;
     
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();
-            ITextureProvider t = i.getTextureProvider();
+            ITextureProvider t = i.getIcon(itemstack);
             batch.setColor(i.getColor());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {

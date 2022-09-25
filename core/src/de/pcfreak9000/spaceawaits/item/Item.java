@@ -24,7 +24,7 @@ public class Item {
     
     public static final float WORLD_SIZE = 0.6f;
     
-    private ITextureProvider textureProvider;
+    private ITextureProvider textureProvider = TextureProvider.EMPTY;
     
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
     
@@ -78,19 +78,10 @@ public class Item {
         return composite;
     }
     
-    public ITextureProvider getTextureProvider() {
-        return textureProvider == null ? TextureProvider.EMPTY : textureProvider;
+    public ITextureProvider getIcon(ItemStack stack) {
+        return textureProvider;
     }
     
-    /**
-     * 
-     * @param player
-     * @param stackUsed
-     * @param world
-     * @param tilex
-     * @param tiley
-     * @return whether this item has actually been used
-     */
     public boolean onItemUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         return false;
