@@ -1,8 +1,10 @@
 package de.pcfreak9000.spaceawaits.content;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
+import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.crafting.InventoryGridCrafting;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.ResultSlot;
@@ -29,6 +31,9 @@ public class ContainerCrafter extends GuiInventory {
         Table some = new Table();
         Table subtable = new Table();
         subtable.align(Align.center);
+        Label label = new Label("Crafting Grid", CoreRes.SKIN.getSkin());
+        supertable.add(label).pad(1f);
+        supertable.row();
         for (int i = 0; i < inv.slots(); i++) {
             if (i % side == 0) {
                 subtable.row();

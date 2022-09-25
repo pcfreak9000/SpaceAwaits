@@ -15,6 +15,7 @@ public class TilePrimitiveCrafting extends Tile {
         this.setTexture("primitive_crafting.png");
         this.setMaterialLevel(1f);
         this.setRequiredTool(Tools.AXE);
+        setFullTile(false);
     }
     
     @Override

@@ -46,6 +46,7 @@ public class GameMod {
                 Tiles.FURNACE_PRIMITIVE));
         ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.TORCH, 4), "X", "I", 'X', Items.COAL, 'I', Items.STICK));
         ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.LADDER, 4), "XXX", "X X", "XXX", 'X', Items.STICK));
+        ShapedRecipe.add(new ShapedRecipe(Tiles.STORAGE_DRAWER, "XXX", "X X", "XXX", 'X', "ingotIron"));
         FurnaceRecipe.add(new FurnaceRecipe(Items.INGOT_IRON, Items.CLUMP_ORE_IRON));
         FurnaceRecipe.add(new FurnaceRecipe(Items.COKE, Items.COAL));
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.CLUMP_ORE_IRON));

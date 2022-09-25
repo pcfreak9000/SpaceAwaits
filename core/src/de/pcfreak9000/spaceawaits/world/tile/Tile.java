@@ -71,6 +71,7 @@ public class Tile extends Destructible {
     
     private boolean opaque = true;
     private boolean solid = true;
+    private boolean fullTile = true;
     
     private Color color = Color.WHITE;
     
@@ -125,6 +126,15 @@ public class Tile extends Destructible {
     
     public boolean isSolid() {
         return this.solid;
+    }
+    //Hmmm. Relevant for torched and rubble etc, but hmm
+    public Tile setFullTile(boolean b) {
+        this.fullTile = b;
+        return this;
+    }
+    
+    public boolean isFullTile() {
+        return this.fullTile;
     }
     
     //Maybe use a replacement mode e.g. if tile should be dropped or just be removed etc? 

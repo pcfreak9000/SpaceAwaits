@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -28,6 +29,9 @@ public class ContainerBlastFurnace extends GuiInventory {
         Table some = new Table();
         Table subtable = new Table();
         subtable.align(Align.center);
+        Label label = new Label("Blastfurnace", CoreRes.SKIN.getSkin());
+        supertable.add(label).pad(1f);
+        supertable.row();
         subtable.add(registerSlot(new Slot(furnace, TileEntityBlastFurnace.INPUTSLOT))).pad(5f);
         subtable.row();
         subtable.add(registerSlot(new Slot(furnace, TileEntityBlastFurnace.FUELSLOT))).pad(5f);

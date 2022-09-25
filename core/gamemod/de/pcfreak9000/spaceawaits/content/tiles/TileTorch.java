@@ -21,6 +21,7 @@ public class TileTorch extends Tile {
         setDisplayName("Simple Torch");
         setSolid(false);
         setOpaque(false);
+        setFullTile(false);
         setLightColor(Color.WHITE);
         setHardness(0);
         //THIS IS GARBAGE:
@@ -45,7 +46,8 @@ public class TileTorch extends Tile {
     public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
         Tile behind = layer == TileLayer.Front ? tileSystem.getTile(tx, ty, TileLayer.Back) : null;
         Tile below = tileSystem.getTile(tx, ty - 1, layer);
-        return (behind != null && behind.isSolid()) || (below != null && below.isSolid());
+        return (behind != null && behind.isSolid() && behind.isFullTile())
+                || (below != null && below.isSolid() && below.isFullTile());
     }
     
     @Override

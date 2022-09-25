@@ -12,7 +12,8 @@ public class TileLooseRocks extends Tile {
         setDisplayName("Loose Rocks");
         setTexture("looseRocks.png");
         setHardness(0.1f);
-        setLightTransmission(0.9f);
+        setLightTransmission(0.95f);
+        setFullTile(false);
     }
     
     @Override
@@ -36,7 +37,8 @@ public class TileLooseRocks extends Tile {
     
     @Override
     public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
-        return tileSystem.getTile(tx, ty - 1, layer).isSolid();
+        Tile below = tileSystem.getTile(tx, ty - 1, layer);
+        return below != null && below.isSolid() && below.isFullTile();
     }
     
     @Override
