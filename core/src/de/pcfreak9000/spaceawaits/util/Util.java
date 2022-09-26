@@ -1,16 +1,18 @@
 package de.pcfreak9000.spaceawaits.util;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
 public class Util {
     
@@ -19,16 +21,32 @@ public class Util {
         float my = (chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
         return camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0);
     }
-    
-    public static void deleteDirectoryRecursion(Path path) throws IOException {
-        if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
-            try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
-                for (Path entry : entries) {
-                    deleteDirectoryRecursion(entry);
-                }
-            }
+    //TODO move to Composer and improve that class, or something... probably as a subclass
+    public static Texture combine(ITextureProvider... providers) {
+        int w = 0, h = 0;
+        for (ITextureProvider tp : providers) {
+            w = Math.max(w, tp.getRegion().getRegionWidth());
+            h = Math.max(h, tp.getRegion().getRegionHeight());
         }
-        Files.delete(path);
+        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, w, h, false);
+        SpriteBatchImpr batch = new SpriteBatchImpr(providers.length);
+        Camera cam = new OrthographicCamera(1, -1);
+        batch.setProjectionMatrix(cam.combined);
+        fbo.begin();
+        ScreenUtils.clear(0, 0, 0, 0);
+        batch.setDefaultBlending();
+        batch.begin();
+        for (ITextureProvider tp : providers) {
+            batch.draw(tp.getRegion(), -0.5f, -0.5f, 1, 1);
+        }
+        batch.end();
+        Pixmap pix = Pixmap.createFromFrameBuffer(0, 0, w, h);
+        fbo.end();
+        Texture t = new Texture(pix);
+        fbo.dispose();
+        batch.dispose();
+        pix.dispose();
+        return t;
     }
     
     private static final double TEMPERATURE_RED_EXP_CONST = 329.698727446;

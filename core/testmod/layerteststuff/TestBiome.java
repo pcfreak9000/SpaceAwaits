@@ -109,8 +109,8 @@ public class TestBiome extends Biome {
         }
     };
     
-    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_POOR_IRON, 12, 19, Tiles.STONE);
-    private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 13, 20, Tiles.STONE);
+    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_POOR_IRON, 6, 9, Tiles.STONE);
+    private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10, Tiles.STONE);
     
     @Override
     public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area,
@@ -126,7 +126,7 @@ public class TestBiome extends Biome {
                 poorIron.generate(tiles, x, y, rnd.getRandom(), area);
             }
         }
-        int coalcount = rnd.getRandom().nextFloat() > 0.4f ? 1 : 0;
+        int coalcount = rnd.getRandom().nextFloat() > 0.5f ? 1 : 0;
         for (int i = 0; i < coalcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;

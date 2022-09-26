@@ -13,6 +13,7 @@ import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -64,7 +65,7 @@ public class Tile extends Destructible {
         NOTHING.setSolid(false);
         NOTHING.setColor(Color.CLEAR);
         NOTHING.setCanBreak(false);
-        Registry.TILE_REGISTRY.register("empty", NOTHING);
+        GameRegistry.registerTile("empty", NOTHING);
     }
     
     private ITextureProvider textureProvider = TextureProvider.EMPTY;

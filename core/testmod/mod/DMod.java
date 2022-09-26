@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.RandomXS128;
@@ -86,12 +85,6 @@ public class DMod {
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
         
-        //        laser.setTexture("dirt.png");
-        //        laser.setDisplayName("Laser");
-        //        laser.setColor(Color.RED);
-        //        laser.setLightColor(new Color(1, 0, 0, 1));
-        //        Registry.TILE_REGISTRY.register("laser", laser);
-        
         Background back = new Background(new ComposedTextureProvider(
                 new Composer(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40) {
                     @Override
@@ -120,7 +113,17 @@ public class DMod {
         //shipStarterTable.add(new GuaranteedInventoryContent(Items.REPAIRGUN, 1, 1));
         shipStarterTable.add(new GuaranteedInventoryContent(Items.MEDKIT_SIMPLE, 1, 2));
         shipStarterTable.add(new WeightedRandomInventoryContent(MININGLASER, 2, 1, 1, false));
-        
+        //        Texture t = Util.combine(TextureProvider.EMPTY, TextureProvider.get("ironIngot.png"));
+        //        TextureRegion tr = new TextureRegion(t);
+        //        ITextureProvider tp = new ITextureProvider() {
+        //            
+        //            @Override
+        //            public TextureRegion getRegion() {
+        //                return tr;
+        //            }
+        //        };
+        //        Background back = new Background(tp, WorldScreen.VISIBLE_TILES_MAX/40, WorldScreen.VISIBLE_TILES_MAX/40);
+        //        GameRegistry.registerWorldEntity("background.stars", back);
         LootTable housethingTable = LootTable.getFor("housething");
         housethingTable.addMin(1);
         housethingTable.addMax(3);
@@ -163,10 +166,7 @@ public class DMod {
     }
     
     private void reee() {
-        SpriteBatch b = new SpriteBatch();
         Camera cam = new OrthographicCamera(1, 1);
-        b.setProjectionMatrix(cam.combined);
-        //b.begin();
         ScreenUtils.clear(0, 0, 0, 0);
         ShapeRenderer s = new ShapeRenderer();
         s.setProjectionMatrix(cam.combined);
@@ -180,11 +180,9 @@ public class DMod {
             c.a = 1;
             s.setColor(c);
             s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()) / 4, 20);
-            //b.draw(CoreRes.WHITE, x-0.5f, y-0.5f, 0.001f, 0.001f);
         }
         s.end();
+        
         s.dispose();
-        //b.end();
-        b.dispose();
     }
 }

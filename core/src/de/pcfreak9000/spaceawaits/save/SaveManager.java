@@ -10,7 +10,6 @@ import de.pcfreak9000.nbt.CompressedNbtReader;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.TagReader;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
-import de.pcfreak9000.spaceawaits.util.Util;
 
 public class SaveManager implements ISaveManager {
     
@@ -51,7 +50,7 @@ public class SaveManager implements ISaveManager {
         File saveFolder = new File(savesDir, foldername);
         if (saveFolder.isDirectory() && saveFolder.exists()) {
             try {
-                Util.deleteDirectoryRecursion(saveFolder.toPath());
+                SaveUtils.deleteDirectoryRecursion(saveFolder.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
