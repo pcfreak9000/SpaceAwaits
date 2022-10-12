@@ -17,7 +17,6 @@ import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
@@ -264,11 +263,11 @@ public class Tile extends Destructible {
         return null;
     }
     
-    public ITextureProvider getIcon(ItemStack stack) {
+    public ITextureProvider getIcon() {
         return textureProvider;
     }
     
-    public ITextureProvider getTextureProvider(int tx, int ty, TileLayer layer, ITileArea tiles) {
+    public ITextureProvider getTexture() {
         return textureProvider;
     }
     

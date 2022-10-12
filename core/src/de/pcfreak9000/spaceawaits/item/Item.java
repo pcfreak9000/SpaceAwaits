@@ -78,7 +78,7 @@ public class Item {
         return composite;
     }
     
-    public ITextureProvider getIcon(ItemStack stack) {
+    public ITextureProvider getIcon() {
         return textureProvider;
     }
     

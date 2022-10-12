@@ -109,7 +109,7 @@ public class TestBiome extends Biome {
         }
     };
     
-    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_POOR_IRON, 6, 9, Tiles.STONE);
+    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_IRON, 6, 9, Tiles.STONE);
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10, Tiles.STONE);
     
     @Override

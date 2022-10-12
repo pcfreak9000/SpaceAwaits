@@ -31,7 +31,7 @@ public class ActorItemStack extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         if (itemstack != null && !itemstack.isEmpty()) {
             Item i = itemstack.getItem();
-            ITextureProvider t = i.getIcon(itemstack);
+            ITextureProvider t = i.getIcon();
             batch.setColor(i.getColor());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
             if (itemstack.getNBT() != null) {

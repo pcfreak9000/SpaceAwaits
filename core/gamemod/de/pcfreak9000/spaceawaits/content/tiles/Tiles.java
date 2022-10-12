@@ -15,7 +15,6 @@ public class Tiles {
     public static final Tile FURNACE_PRIMITIVE = new TilePrimitiveFurnace();
     public static final Tile FURNACE_BLAST = new TileBlastFurnace();
     
-    public static final Tile ORE_POOR_IRON = new TileOrePoorIron();
     public static final Tile ORE_IRON = new TileOreIron();
     public static final Tile ORE_COAL = new TileOreCoal();
     
@@ -45,7 +44,6 @@ public class Tiles {
         GameRegistry.registerTile("dirt", DIRT.setTexture("dirt.png").setDisplayName("Dirt").setRequiredTool(Tools.SHOVEL).setMaterialLevel(1f).setHardness(0.9f));
         GameRegistry.registerTile("workbenchPrimitive", WORKBENCH_PRIMITIVE);
         GameRegistry.registerTile("furnacePrimitive", FURNACE_PRIMITIVE);
-        GameRegistry.registerTile("orePoorIron", ORE_POOR_IRON);
         GameRegistry.registerTile("oreIron", ORE_IRON);
         GameRegistry.registerTile("furnaceBlast", FURNACE_BLAST);
         GameRegistry.registerTile("oreCoal", ORE_COAL);
