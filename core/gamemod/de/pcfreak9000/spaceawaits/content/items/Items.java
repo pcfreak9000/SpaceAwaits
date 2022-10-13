@@ -13,8 +13,11 @@ public class Items {
     public static final Item LOOSEROCK = new Item();
     //public static final Item REPAIRGUN = new ItemRepairGun();
     public static final Item CLUMP_ORE_IRON = new Item();
+    public static final Item INGOT_UNREFINED_IRON = new Item();
     public static final Item INGOT_IRON = new Item();
-    public static final Item INGOT_REFINED_IRON = new Item();
+    
+    public static final Item CLUMP_ORE_COPPER = new Item();
+    public static final Item INGOT_COPPER = new Item();
     
     public static final Item COAL = new Item();
     public static final Item COKE = new Item();
@@ -34,14 +37,15 @@ public class Items {
         GameRegistry.registerItem("shovelPrimitive", SHOVEL_PRIMITIVE);
         GameRegistry.registerItem("twig", TWIG.setTexture("twig.png").setDisplayName("Twig"));
         GameRegistry.registerItem("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
-        //GameRegistry.registerItem("repairgun", REPAIRGUN);
-        GameRegistry.registerItem("clumpOreIron", CLUMP_ORE_IRON.setTexture("oreIronClump.png").setDisplayName("Iron Ore Clump"));
-        GameRegistry.registerItem("ingotIron", INGOT_IRON.setTexture("ironIngot.png").setDisplayName("Iron Ingot"));
-        GameRegistry.registerItem("ingotRefinedIron", INGOT_REFINED_IRON.setTexture("ingotRefinedIron.png").setDisplayName("Refined Iron Ingot"));
+        GameRegistry.registerItem("clumpOreIron", CLUMP_ORE_IRON.setTexture("clumpOreIron.png").setDisplayName("Iron Ore Clump"));
+        GameRegistry.registerItem("ingotIron", INGOT_UNREFINED_IRON.setTexture("ingotIronUnrefined.png").setDisplayName("Unrefined Iron Ingot"));
+        GameRegistry.registerItem("ingotRefinedIron", INGOT_IRON.setTexture("ingotIron.png").setDisplayName("Iron Ingot"));
         GameRegistry.registerItem("stick", STICK.setTexture("stick.png").setDisplayName("Stick"));
         GameRegistry.registerItem("pickaxeSimple", PICKAXE_SIMPLE);
         GameRegistry.registerItem("coal", COAL.setTexture("coal.png").setDisplayName("Coal"));
         GameRegistry.registerItem("coke", COKE.setTexture("coke.png").setDisplayName("Coke"));
+        GameRegistry.registerItem("clumpOreCopper", CLUMP_ORE_COPPER.setTexture("clumpOreCopper.png").setDisplayName("Copper Ore Clump"));
+        GameRegistry.registerItem("ingotCopper", INGOT_COPPER.setTexture("ingotCopper.png").setDisplayName("Copper Ingot"));
         //@formatter:on
     }
     

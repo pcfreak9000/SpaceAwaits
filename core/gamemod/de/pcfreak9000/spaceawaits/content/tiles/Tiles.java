@@ -17,6 +17,7 @@ public class Tiles {
     
     public static final Tile ORE_IRON = new TileOreIron();
     public static final Tile ORE_COAL = new TileOreCoal();
+    public static final Tile ORE_COPPER = new TileOreCopper();
     
     public static final Tile LOOSEROCKS = new TileLooseRocks();
     public static final Tile WOOD = new Tile();
@@ -45,6 +46,7 @@ public class Tiles {
         GameRegistry.registerTile("workbenchPrimitive", WORKBENCH_PRIMITIVE);
         GameRegistry.registerTile("furnacePrimitive", FURNACE_PRIMITIVE);
         GameRegistry.registerTile("oreIron", ORE_IRON);
+        GameRegistry.registerTile("oreCopper", ORE_COPPER);
         GameRegistry.registerTile("furnaceBlast", FURNACE_BLAST);
         GameRegistry.registerTile("oreCoal", ORE_COAL);
         GameRegistry.registerTile("torch", TORCH);

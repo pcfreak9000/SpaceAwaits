@@ -109,7 +109,8 @@ public class TestBiome extends Biome {
         }
     };
     
-    private OreGenTileFeature poorIron = new OreGenTileFeature(Tiles.ORE_IRON, 6, 9, Tiles.STONE);
+    private OreGenTileFeature iron = new OreGenTileFeature(Tiles.ORE_IRON, 6, 9, Tiles.STONE);
+    private OreGenTileFeature copper = new OreGenTileFeature(Tiles.ORE_COPPER, 8, 12, Tiles.STONE);
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10, Tiles.STONE);
     
     @Override
@@ -117,13 +118,22 @@ public class TestBiome extends Biome {
             RndHelper rnd) {
         if (sub)
             return;
+        int coppercount = rnd.getRandom().nextFloat() > 0.7f ? 1 : 0;
+        for (int i = 0; i < coppercount; i++) {
+            int x = rnd.getRandom().nextInt(area) + tx;
+            int y = rnd.getRandom().nextInt(area) + ty;
+            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            if (height - y > 19) {
+                copper.generate(tiles, x, y, rnd.getRandom(), area);
+            }
+        }
         int ironcount = rnd.getRandom().nextFloat() > 0.6f ? 1 : 0;
         for (int i = 0; i < ironcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
             int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
             if (height - y > 12) {
-                poorIron.generate(tiles, x, y, rnd.getRandom(), area);
+                iron.generate(tiles, x, y, rnd.getRandom(), area);
             }
         }
         int coalcount = rnd.getRandom().nextFloat() > 0.5f ? 1 : 0;

@@ -24,8 +24,8 @@ public class GameMod {
         Entities.registerEntities();
         GameRegistry.registerBurnHandler(new BurnHandler());
         
+        OreDict.addEntry("ingotIron", Items.INGOT_UNREFINED_IRON);
         OreDict.addEntry("ingotIron", Items.INGOT_IRON);
-        OreDict.addEntry("ingotIron", Items.INGOT_REFINED_IRON);
     }
     
     @EventSubscription
@@ -47,10 +47,11 @@ public class GameMod {
         ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.TORCH, 4), "X", "I", 'X', Items.COAL, 'I', Items.STICK));
         ShapedRecipe.add(new ShapedRecipe(new ItemStack(Tiles.LADDER, 4), "XXX", "X X", "XXX", 'X', Items.STICK));
         ShapedRecipe.add(new ShapedRecipe(Tiles.STORAGE_DRAWER, "XXX", "X X", "XXX", 'X', "ingotIron"));
-        FurnaceRecipe.add(new FurnaceRecipe(Items.INGOT_IRON, Items.CLUMP_ORE_IRON));
+        FurnaceRecipe.add(new FurnaceRecipe(Items.INGOT_UNREFINED_IRON, Items.CLUMP_ORE_IRON));
         FurnaceRecipe.add(new FurnaceRecipe(Items.COKE, Items.COAL));
-        BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.CLUMP_ORE_IRON));
+        BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_IRON, Items.CLUMP_ORE_IRON));
         //Maybe a quicker burntime? Maybe add normal furnace recipes if no matching blastfurnacerecipe is found?
-        BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_REFINED_IRON, Items.INGOT_IRON));
+        BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_IRON, Items.INGOT_UNREFINED_IRON));
+        BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_COPPER, Items.CLUMP_ORE_COPPER));
     }
 }

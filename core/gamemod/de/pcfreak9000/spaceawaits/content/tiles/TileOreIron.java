@@ -7,12 +7,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class TileOreIron extends Tile {
     public TileOreIron() {
-        this.setTexture("oreIron.png").setDisplayName("Iron Ore").setMaterialLevel(2f).setRequiredTool(Tools.PICKAXE);
-    }
-    
-    @Override
-    public int getDroppedQuantity() {
-        return 2;
+        this.setTexture("oreIron.png").setDisplayName("Iron Ore").setMaterialLevel(1f).setRequiredTool(Tools.PICKAXE);
     }
     
     @Override

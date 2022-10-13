@@ -5,13 +5,14 @@ import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
-public class TileOrePoorIron extends Tile {
-    public TileOrePoorIron() {
-        this.setTexture("ore_iron.png").setDisplayName("Poor Iron Ore").setMaterialLevel(1f).setRequiredTool(Tools.PICKAXE);
+public class TileOreCopper extends Tile {
+    public TileOreCopper() {
+        this.setTexture("oreCopper.png").setDisplayName("Copper Ore").setMaterialLevel(2f)
+                .setRequiredTool(Tools.PICKAXE);
     }
     
     @Override
     public Item getItemDropped() {
-        return Items.CLUMP_ORE_IRON;
+        return Items.CLUMP_ORE_COPPER;
     }
 }
