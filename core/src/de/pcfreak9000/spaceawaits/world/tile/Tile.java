@@ -73,6 +73,8 @@ public class Tile extends Destructible {
     private boolean solid = true;
     private boolean fullTile = true;
     
+    private boolean canBeReplacedByOre;
+    
     private Color color = Color.WHITE;
     
     private Color lightColor;
@@ -83,6 +85,11 @@ public class Tile extends Destructible {
     private String displayName;
     
     private Composite composite;
+    
+    public Tile setCanBeReplacedByOre(boolean b) {
+        this.canBeReplacedByOre = b;
+        return this;
+    }
     
     public Tile setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));
@@ -141,6 +148,10 @@ public class Tile extends Destructible {
     //Maybe use a replacement mode e.g. if tile should be dropped or just be removed etc? 
     public boolean canBeReplacedBy(Tile t) {
         return false;
+    }
+    
+    public boolean canBeReplacedByOre(Tile ore) {
+        return canBeReplacedByOre;
     }
     
     public void setLightColor(Color color) {

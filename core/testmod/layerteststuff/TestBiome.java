@@ -109,9 +109,9 @@ public class TestBiome extends Biome {
         }
     };
     
-    private OreGenTileFeature iron = new OreGenTileFeature(Tiles.ORE_IRON, 6, 9, Tiles.STONE);
-    private OreGenTileFeature copper = new OreGenTileFeature(Tiles.ORE_COPPER, 8, 12, Tiles.STONE);
-    private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10, Tiles.STONE);
+    private OreGenTileFeature iron = new OreGenTileFeature(Tiles.ORE_IRON, 6, 9);
+    private OreGenTileFeature copper = new OreGenTileFeature(Tiles.ORE_COPPER, 8, 12);
+    private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10);
     
     @Override
     public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area,

@@ -14,6 +14,10 @@ public class OreGenTileFeature implements TileFeatureGenerator {
     private int min;
     private int max;
     
+    public OreGenTileFeature(Tile ore, int min, int max) {
+        this(ore, min, max, null);
+    }
+    
     public OreGenTileFeature(Tile ore, int min, int max, Tile replace) {
         this.ore = ore;
         this.min = min;
@@ -27,12 +31,14 @@ public class OreGenTileFeature implements TileFeatureGenerator {
         int maxloop = 3 * count;
         while (count > 0 && maxloop > 0) {
             maxloop--;
-            if (tiles.getTile(tx, ty, TileLayer.Front) == replace) {
+            Tile front = tiles.getTile(tx, ty, TileLayer.Front);
+            if (front.canBeReplacedByOre(ore) || front == replace) {
                 tiles.setTile(tx, ty, TileLayer.Front, ore);
                 count--;
             }
             for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
-                if (count > 0 && tiles.getTile(tx + d.dx, ty + d.dy, TileLayer.Front) == replace) {
+                Tile frontfor = tiles.getTile(tx + d.dx, ty + d.dy, TileLayer.Front);
+                if (count > 0 && (frontfor.canBeReplacedByOre(ore) || frontfor == replace)) {
                     tiles.setTile(tx + d.dx, ty + d.dy, TileLayer.Front, ore);
                     count--;
                 }
