@@ -106,18 +106,27 @@ public class ShapedRecipe implements IRecipe {
     }
     
     private boolean checkMatch(InventoryGridCrafting inv, int x, int y) {
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                int ax = i + x;
-                int ay = j + y;
-                Object input = inputs[i + j * width];
-                ItemStack slot = inv.getStackInXY(ax, ay);
-                if (input instanceof ItemStack) {
-                    if (!ItemStack.isItemEqual(slot, (ItemStack) input)) {
-                        return false;
+        for (int a = 0; a < inv.getSideSize(); a++) {
+            for (int b = 0; b < inv.getSideSize(); b++) {
+                //is a,b in bounds of recipe? if not, inv must be empty, otherwise check recipe
+                ItemStack slot = inv.getStackInXY(a, b);
+                if (a >= x && b >= y && a < x + width && b < y + height) {
+                    Object input = inputs[(a - x) + (b - y) * width];
+                    if (input instanceof ItemStack) {
+                        if (!ItemStack.isItemEqual(slot, (ItemStack) input)) {
+                            return false;
+                        }
+                    } else if (input instanceof OreDictStack) {
+                        if (!OreDict.isItemEqual((OreDictStack) input, slot)) {
+                            return false;
+                        }
+                    } else if (input == null) {
+                        if (!ItemStack.isEmptyOrNull(slot)) {
+                            return false;
+                        }
                     }
-                } else if (input instanceof OreDictStack) {
-                    if (!OreDict.isItemEqual((OreDictStack) input, slot)) {
+                } else {
+                    if (!ItemStack.isEmptyOrNull(slot)) {
                         return false;
                     }
                 }

@@ -215,7 +215,7 @@ public class ItemStack {
     public void setNBT(NBTCompound nbt) {
         this.nbt = nbt;
     }
-    
+    //move to some bar component in item?
     public void dealDamageUpdateBar(int dmgDealt, int max, boolean removeIfUsedUp) {
         NBTCompound nbt = this.getOrCreateNBT();
         nbt.putInt("barMax", max);

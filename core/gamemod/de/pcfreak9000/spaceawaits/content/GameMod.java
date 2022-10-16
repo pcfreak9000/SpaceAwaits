@@ -53,5 +53,18 @@ public class GameMod {
         //Maybe a quicker burntime? Maybe add normal furnace recipes if no matching blastfurnacerecipe is found?
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_IRON, Items.INGOT_UNREFINED_IRON));
         BlastFurnaceRecipe.add(new BlastFurnaceRecipe(Items.INGOT_COPPER, Items.CLUMP_ORE_COPPER));
+        
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_PRESSURE_CHAMBER, " X ", "X X", " X ", 'X', Items.INGOT_IRON));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_PISTON, "X", "X", 'X', Items.INGOT_IRON));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_COIL, " C ", "CIC", " C ", 'C', Items.INGOT_COPPER, 'I',
+                Items.INGOT_IRON));
+        ShapedRecipe
+                .add(new ShapedRecipe(new ItemStack(Items.SHEET_IRON, 12), "XX", "XX", 'X', Items.INGOT_IRON));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_ELECTRIC_MOTOR, "XXX", "CCC", "XXX", 'X',
+                Items.SHEET_IRON, 'C', Items.SIMPLE_COIL));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_COMPRESSOR, "XMX", "XKX", "XPX", 'X', Items.SHEET_IRON,
+                'M', Items.SIMPLE_ELECTRIC_MOTOR, 'K', Items.SIMPLE_PISTON, 'P', Items.SIMPLE_PRESSURE_CHAMBER));
+        ShapedRecipe.add(new ShapedRecipe(Items.JACKHAMMER, "XMX", " K ", " X ", 'X', Items.INGOT_IRON, 'M',
+                Items.SIMPLE_ELECTRIC_MOTOR, 'K', Items.SIMPLE_PISTON));
     }
 }

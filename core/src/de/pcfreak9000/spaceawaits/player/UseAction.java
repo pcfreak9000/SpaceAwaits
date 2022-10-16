@@ -47,7 +47,6 @@ public class UseAction implements Action {
             used |= clicked.onTileUse(player, world, tileSystem, cp, tx, ty, layer);
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
         }
-        
         if (!used && !ItemStack.isEmptyOrNull(stack)
                 && player.isInReachFromHand(mousex, mousey, stack.getItem().getMaxRangeUse(player, stack))) {
             //onItemUse
