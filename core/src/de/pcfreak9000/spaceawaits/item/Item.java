@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.Color;
 import de.pcfreak9000.spaceawaits.comp.Composite;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.module.IModule;
+import de.pcfreak9000.spaceawaits.module.ModuleHolder;
+import de.pcfreak9000.spaceawaits.module.ModuleID;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -32,6 +35,20 @@ public class Item {
     private String displayName = "";
     
     private Composite composite;
+    
+    private ModuleHolder modules = new ModuleHolder();
+    
+    public <T extends IModule> T getModule(ModuleID id) {
+        return modules.getModule(id);
+    }
+    
+    public boolean hasModule(ModuleID id) {
+        return modules.hasModule(id);
+    }
+    
+    public void addModule(ModuleID addAsId, IModule module) {
+        modules.addModule(addAsId, module);
+    }
     
     public Item setTexture(String name) {
         setTextureProvider(TextureProvider.get(name));

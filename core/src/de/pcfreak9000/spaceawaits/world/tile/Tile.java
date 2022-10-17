@@ -12,6 +12,9 @@ import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.IModule;
+import de.pcfreak9000.spaceawaits.module.ModuleHolder;
+import de.pcfreak9000.spaceawaits.module.ModuleID;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -85,6 +88,20 @@ public class Tile extends Destructible {
     private String displayName;
     
     private Composite composite;
+    
+    private ModuleHolder modules = new ModuleHolder();
+    
+    public <T extends IModule> T getModule(ModuleID id) {
+        return modules.getModule(id);
+    }
+    
+    public boolean hasModule(ModuleID id) {
+        return modules.hasModule(id);
+    }
+    
+    public void addModule(ModuleID addAsId, IModule module) {
+        modules.addModule(addAsId, module);
+    }
     
     public Tile setCanBeReplacedByOre(boolean b) {
         this.canBeReplacedByOre = b;
@@ -238,14 +255,6 @@ public class Tile extends Destructible {
     
     public boolean receivesRandomTick() {
         return false;
-    }
-    
-    public boolean hasTileEntity() {
-        return false;
-    }
-    
-    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
-        return null;
     }
     
     public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty,

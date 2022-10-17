@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.content;
 
+import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
@@ -13,7 +14,7 @@ public class Tools {
             return false;
         }
         if (result == IBreaker.FINISHED_BREAKING) {
-            used.dealDamageUpdateBar(1, maxuses, true);
+            ItemHelper.dealDamageUpdateBar(used, 1, maxuses, true);
         }
         return true;
     }

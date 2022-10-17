@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ChunkDict;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -80,8 +81,9 @@ public class TileStorage implements Tickable {
             state.setTileEntity(null);
         }
         tileArray[tileX - this.tx][tileY - this.ty].setTile(t);
-        if (t.hasTileEntity()) {
-            ITileEntity te = t.createTileEntity(this.world, tx, ty, this.layer);
+        if (t.hasModule(IModuleTileEntity.ID)) {
+            IModuleTileEntity temod = t.getModule(IModuleTileEntity.ID);
+            ITileEntity te = temod.createTileEntity(this.world, tx, ty, this.layer);
             state.setTileEntity(te);
             if (te instanceof Tickable) {
                 this.tickables.add((Tickable) te);
@@ -106,7 +108,7 @@ public class TileStorage implements Tickable {
             int x = (int) comp.getIntegerSmart("x");
             int y = (int) comp.getIntegerSmart("y");
             TileState state = tileArray[x][y];
-            if (state.getTile().hasTileEntity()) {//Possibly check if the tileentitytype matches, in the future the default tile could change etc...
+            if (state.getTile().hasModule(IModuleTileEntity.ID)) {//Possibly check if the tileentitytype matches, in the future the default tile could change etc...
                 AnnotationSerializer.deserialize(state.getTileEntity(), comp);
             }
         }
@@ -125,7 +127,7 @@ public class TileStorage implements Tickable {
                 int idN = dict.getIdFor(id);
                 //array.add(idN);
                 list.addSmartInt(idN);
-                if (st.getTile().hasTileEntity()) {
+                if (st.getTile().hasModule(IModuleTileEntity.ID)) {
                     ITileEntity te = st.getTileEntity();
                     NBTCompound tecomp = AnnotationSerializer.serialize(te);
                     if (!tecomp.isEmpty()) {

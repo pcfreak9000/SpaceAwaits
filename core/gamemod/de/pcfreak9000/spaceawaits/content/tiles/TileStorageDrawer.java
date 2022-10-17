@@ -7,19 +7,16 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class TileStorageDrawer extends Tile {
+public class TileStorageDrawer extends Tile implements IModuleTileEntity {
     public TileStorageDrawer() {
         this.setDisplayName("Storage Drawer");
         this.setTexture("storagedrawer.png");
-    }
-    
-    @Override
-    public boolean hasTileEntity() {
-        return true;
+        addModule(ID, this);
     }
     
     @Override

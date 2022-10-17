@@ -4,15 +4,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.Slot;
+import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class ContainerJackhammer extends GuiInventory {
     
-    private static final String COMPOUNDID = "stackEnergySrc";
+    public static final String COMPOUNDID = "stackEnergySrc";
     
     private ItemStack hammer;
     
@@ -21,11 +21,7 @@ public class ContainerJackhammer extends GuiInventory {
     public ContainerJackhammer(ItemStack hammer) {
         this.hammer = hammer;
         this.inv = new InventoryJackhammer();
-        if (hammer.hasNBT() && hammer.getNBT().hasKey(COMPOUNDID)) {
-            NBTCompound ensrccomp = hammer.getNBT().getCompound(COMPOUNDID);
-            ItemStack ensrc = ItemStack.readNBT(ensrccomp);
-            inv.setSlotContent(0, ensrc);
-        }
+        inv.setSlotContent(0, ItemHelper.getNBTStoredItemStack(hammer, COMPOUNDID));
     }
     
     @Override
@@ -49,18 +45,6 @@ public class ContainerJackhammer extends GuiInventory {
     @Override
     public void onClosed() {
         super.onClosed();
-        if (!ItemStack.isEmptyOrNull(inv.getStack(0))) {
-            NBTCompound old = null;
-            if (hammer.getNBT().hasKey(COMPOUNDID)) {
-                old = hammer.getNBT().getCompound(COMPOUNDID);
-                old.removeAll();
-            } else {
-                old = new NBTCompound();
-            }
-            NBTCompound comp = ItemStack.writeNBT(inv.getStack(0), old);
-            hammer.getOrCreateNBT().putCompound(COMPOUNDID, comp);
-        } else {
-            hammer.getOrCreateNBT().remove(COMPOUNDID);
-        }
+        ItemHelper.setNBTStoredItemStack(hammer, COMPOUNDID, inv.getStack(0));
     }
 }

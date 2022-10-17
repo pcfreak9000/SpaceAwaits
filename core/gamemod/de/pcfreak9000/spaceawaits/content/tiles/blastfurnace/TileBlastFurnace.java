@@ -8,16 +8,18 @@ import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class TileBlastFurnace extends Tile {
+public class TileBlastFurnace extends Tile implements IModuleTileEntity {
     public TileBlastFurnace() {
         this.setDisplayName("Blast Furnace");
         this.setTexture("blastfurnace.png");
         this.setMaterialLevel(1f);
         this.setRequiredTool(Tools.PICKAXE);
+        addModule(ID, this);
     }
     
     @Override
@@ -30,11 +32,6 @@ public class TileBlastFurnace extends Tile {
             int gty, TileLayer layer) {
         player.openContainer(
                 new ContainerBlastFurnace((TileEntityBlastFurnace) tileSystem.getTileEntity(gtx, gty, layer)));
-        return true;
-    }
-    
-    @Override
-    public boolean hasTileEntity() {
         return true;
     }
     

@@ -8,7 +8,7 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentM
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class TileLiquid extends Tile {
+public class TileLiquid extends Tile implements IModuleTileEntity {
     
     private static final Direction[] ORDER_DOWN = { Direction.Down, Direction.Left, Direction.Right, Direction.Up };
     private static final Direction[] ORDER_UP = { Direction.Up, Direction.Left, Direction.Right, Direction.Down };
@@ -19,6 +19,10 @@ public class TileLiquid extends Tile {
     private float maxComp = 1;//Hmmm. Higher makes the liquid level faster, which is weird
     private float flowSpeed = 1;
     private boolean flowUp = false;
+    
+    public TileLiquid() {
+        addModule(IModuleTileEntity.ID, this);
+    }
     
     @Override
     public RenderMarkerComp getRendererMarkerComp() {
@@ -64,11 +68,6 @@ public class TileLiquid extends Tile {
     @Override
     public boolean canBeReplacedBy(Tile t) {
         return t.isSolid();
-    }
-    
-    @Override
-    public boolean hasTileEntity() {
-        return true;
     }
     
     @Override

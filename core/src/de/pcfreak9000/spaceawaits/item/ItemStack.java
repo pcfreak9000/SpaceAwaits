@@ -215,15 +215,6 @@ public class ItemStack {
     public void setNBT(NBTCompound nbt) {
         this.nbt = nbt;
     }
-    //move to some bar component in item?
-    public void dealDamageUpdateBar(int dmgDealt, int max, boolean removeIfUsedUp) {
-        NBTCompound nbt = this.getOrCreateNBT();
-        nbt.putInt("barMax", max);
-        nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
-        if (removeIfUsedUp && nbt.getInt("bar") <= 0) {
-            this.changeNumber(-1);
-        }
-    }
     
     public void dropRandomInTile(World world, float x, float y) {
         x = x + world.getWorldRandom().nextFloat() * 0.9f;

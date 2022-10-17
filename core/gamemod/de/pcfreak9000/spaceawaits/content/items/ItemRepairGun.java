@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -41,7 +42,7 @@ public class ItemRepairGun extends Item {
             StatData s = sc.get("mechHealth");
             if (!s.isMax()) {
                 s.add(5);
-                stackUsed.dealDamageUpdateBar(1, MAX_USES, true);
+                ItemHelper.dealDamageUpdateBar(stackUsed, 1, MAX_USES, true);
                 return true;
             }
         }
