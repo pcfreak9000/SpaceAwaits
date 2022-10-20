@@ -58,13 +58,14 @@ public class GameMod {
         ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_PISTON, "X", "X", 'X', Items.INGOT_IRON));
         ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_COIL, " C ", "CIC", " C ", 'C', Items.INGOT_COPPER, 'I',
                 Items.INGOT_IRON));
-        ShapedRecipe
-                .add(new ShapedRecipe(new ItemStack(Items.SHEET_IRON, 12), "XX", "XX", 'X', Items.INGOT_IRON));
-        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_ELECTRIC_MOTOR, "XXX", "CCC", "XXX", 'X',
-                Items.SHEET_IRON, 'C', Items.SIMPLE_COIL));
-        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_COMPRESSOR, "XMX", "XKX", "XPX", 'X', Items.SHEET_IRON,
-                'M', Items.SIMPLE_ELECTRIC_MOTOR, 'K', Items.SIMPLE_PISTON, 'P', Items.SIMPLE_PRESSURE_CHAMBER));
+        ShapedRecipe.add(new ShapedRecipe(new ItemStack(Items.SHEET_IRON, 12), "XX", "XX", 'X', Items.INGOT_IRON));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_ELECTRIC_MOTOR, "XXX", "CCC", "XXX", 'X', Items.SHEET_IRON, 'C',
+                Items.SIMPLE_COIL));
+        ShapedRecipe.add(new ShapedRecipe(Items.SIMPLE_COMPRESSOR, "XMX", "XKX", "XPX", 'X', Items.SHEET_IRON, 'M',
+                Items.SIMPLE_ELECTRIC_MOTOR, 'K', Items.SIMPLE_PISTON, 'P', Items.SIMPLE_PRESSURE_CHAMBER));
         ShapedRecipe.add(new ShapedRecipe(Items.JACKHAMMER, "XMX", " K ", " X ", 'X', Items.INGOT_IRON, 'M',
                 Items.SIMPLE_ELECTRIC_MOTOR, 'K', Items.SIMPLE_PISTON));
+        ShapedRecipe.add(
+                new ShapedRecipe(Items.SIMPLE_BATTERY, "XCX", "XCX", "XXX", 'X', Items.INGOT_IRON, 'C', Items.COAL));
     }
 }

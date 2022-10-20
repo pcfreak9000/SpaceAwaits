@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
+import de.pcfreak9000.spaceawaits.item.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public class InventoryJackhammer implements IInventory {
@@ -24,7 +25,7 @@ public class InventoryJackhammer implements IInventory {
     
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+        return !ItemStack.isEmptyOrNull(stack) && stack.getItem().hasModule(IModuleEnergy.ID);
     }
     
 }

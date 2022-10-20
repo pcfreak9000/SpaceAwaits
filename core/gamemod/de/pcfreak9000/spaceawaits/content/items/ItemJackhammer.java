@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.content.Tools;
+import de.pcfreak9000.spaceawaits.item.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -45,9 +46,16 @@ public class ItemJackhammer extends Item {
         if (ItemStack.isEmptyOrNull(bat)) {
             return false;
         }
-        ItemHelper.dealDamageUpdateBar(bat, 1, 20000, true);
-        ItemHelper.setNBTStoredItemStack(stackUsed, ContainerJackhammer.COMPOUNDID, bat);
+        IModuleEnergy enmod = bat.getItem().getModule(IModuleEnergy.ID);
+        float chargeNeeded = 50f * World.STEPLENGTH_SECONDS;
+        if (!enmod.hasCharge(bat, chargeNeeded)) {
+            return false;
+        }
         float f = tiles.breakTile(tx, ty, layer, breaker);
+        if (f != IBreaker.ABORTED_BREAKING) {
+            enmod.changeCharge(bat, -chargeNeeded);
+            ItemHelper.setNBTStoredItemStack(stackUsed, ContainerJackhammer.COMPOUNDID, bat);
+        }
         return f != IBreaker.ABORTED_BREAKING;
     }
     

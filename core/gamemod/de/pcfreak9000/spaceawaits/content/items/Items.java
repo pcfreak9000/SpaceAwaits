@@ -37,6 +37,8 @@ public class Items {
     public static final Item SIMPLE_COMPRESSOR = new Item();
     public static final Item SIMPLE_PISTON = new Item();
     
+    public static final Item SIMPLE_BATTERY = new ItemSimpleBattery();
+    
     public static void registerItems() {
         //@formatter:off
         GameRegistry.registerItem("pressureChamberSimple", SIMPLE_PRESSURE_CHAMBER.setTexture("pressureChamber.png").setDisplayName("Simple Pressure Chamber"));
@@ -62,6 +64,7 @@ public class Items {
         GameRegistry.registerItem("clumpOreCopper", CLUMP_ORE_COPPER.setTexture("clumpOreCopper.png").setDisplayName("Copper Ore Clump"));
         GameRegistry.registerItem("ingotCopper", INGOT_COPPER.setTexture("ingotCopper.png").setDisplayName("Copper Ingot"));
         GameRegistry.registerItem("jackhammer", JACKHAMMER);
+        GameRegistry.registerItem("batterySimple", SIMPLE_BATTERY);
         //@formatter:on
     }
     
