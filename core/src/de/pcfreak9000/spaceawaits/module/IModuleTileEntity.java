@@ -1,8 +1,8 @@
-package de.pcfreak9000.spaceawaits.world.tile;
+package de.pcfreak9000.spaceawaits.module;
 
-import de.pcfreak9000.spaceawaits.module.IModule;
-import de.pcfreak9000.spaceawaits.module.ModuleID;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
+import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public interface IModuleTileEntity extends IModule {

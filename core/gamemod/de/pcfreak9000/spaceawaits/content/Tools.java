@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.content;
 
-import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.ModuleUsage;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public class Tools {
@@ -9,12 +9,13 @@ public class Tools {
     public static final String PICKAXE = "pickaxe";
     public static final String SHOVEL = "shovel";
     
-    public static boolean handleUsageBreaker(float result, ItemStack used, int maxuses) {
+    public static boolean handleUsageBreaker(float result, ItemStack used) {
         if (result == IBreaker.ABORTED_BREAKING) {
             return false;
         }
         if (result == IBreaker.FINISHED_BREAKING) {
-            ItemHelper.dealDamageUpdateBar(used, 1, maxuses, true);
+            ModuleUsage us = used.getItem().getModule(ModuleUsage.ID);
+            us.use(used, true);
         }
         return true;
     }

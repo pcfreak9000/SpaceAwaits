@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.ModuleBar;
+import de.pcfreak9000.spaceawaits.module.ModuleUsage;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -23,6 +24,8 @@ public class ItemRepairGun extends Item {
         setDisplayName("Repair tool");
         setTexture("gun_0.png");
         setColor(Color.GOLD);
+        addModule(ModuleUsage.ID, new ModuleUsage(MAX_USES));
+        addModule(ModuleBar.ID, new ModuleBar());
     }
     
     @Override
@@ -42,7 +45,8 @@ public class ItemRepairGun extends Item {
             StatData s = sc.get("mechHealth");
             if (!s.isMax()) {
                 s.add(5);
-                ItemHelper.dealDamageUpdateBar(stackUsed, 1, MAX_USES, true);
+                ModuleUsage mus = stackUsed.getItem().getModule(ModuleUsage.ID);
+                mus.use(stackUsed, true);
                 return true;
             }
         }

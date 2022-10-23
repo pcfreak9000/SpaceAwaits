@@ -1,8 +1,8 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.item.IInventory;
-import de.pcfreak9000.spaceawaits.item.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.IModuleEnergy;
 
 public class InventoryJackhammer implements IInventory {
     

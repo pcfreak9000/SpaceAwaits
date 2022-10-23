@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.gui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -8,6 +7,7 @@ import de.pcfreak9000.spaceawaits.core.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ActorItemStack extends Actor {
     
@@ -29,21 +29,20 @@ public class ActorItemStack extends Actor {
     
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if (itemstack != null && !itemstack.isEmpty()) {
+        if (!ItemStack.isEmptyOrNull(itemstack)) {
             Item i = itemstack.getItem();
             ITextureProvider t = i.getIcon();
             batch.setColor(i.getColor());
             batch.draw(t.getRegion(), getX(), getY(), getWidth(), getHeight());
-            if (itemstack.getNBT() != null) {
-                if (itemstack.getNBT().hasKey("bar")) {
-                    int max = itemstack.getNBT().getInt("barMax");
-                    int cur = itemstack.getNBT().getInt("bar");
-                    float fill = cur / (float) max;
+            if (itemstack.getItem().hasModule(ModuleBar.ID)) {
+                ModuleBar bar = itemstack.getItem().getModule(ModuleBar.ID);
+                float fill = bar.getValue(itemstack);
+                if (fill != ModuleBar.VALUE_HIDE) {
                     float widthFull = getWidth() * 0.9f;
                     float pad = (getWidth() - widthFull) * 0.5f;
-                    batch.setColor(Color.RED);
+                    batch.setColor(bar.getColorBack(itemstack));
                     batch.draw(CoreRes.WHITE, getX() + pad, getY(), widthFull, BAR_HEIGHT);
-                    batch.setColor(Color.GREEN);
+                    batch.setColor(bar.getColorFill(itemstack));
                     batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * widthFull, BAR_HEIGHT);
                 }
             }

@@ -1,7 +1,6 @@
-package de.pcfreak9000.spaceawaits.item;
+package de.pcfreak9000.spaceawaits.module;
 
-import de.pcfreak9000.spaceawaits.module.IModule;
-import de.pcfreak9000.spaceawaits.module.ModuleID;
+import de.pcfreak9000.spaceawaits.item.ItemStack;
 
 public interface IModuleEnergy extends IModule {
     

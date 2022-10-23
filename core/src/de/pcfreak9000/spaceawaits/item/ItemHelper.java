@@ -3,15 +3,6 @@ package de.pcfreak9000.spaceawaits.item;
 import de.pcfreak9000.nbt.NBTCompound;
 
 public class ItemHelper {
-    //move to some bar component in item?
-    public static void dealDamageUpdateBar(ItemStack stack, int dmgDealt, int max, boolean removeIfUsedUp) {
-        NBTCompound nbt = stack.getOrCreateNBT();
-        nbt.putInt("barMax", max);
-        nbt.putInt("bar", nbt.getIntOrDefault("bar", max) - dmgDealt);
-        if (removeIfUsedUp && nbt.getInt("bar") <= 0) {
-            stack.changeNumber(-1);
-        }
-    }
     
     public static ItemStack getNBTStoredItemStack(ItemStack container, String compId) {
         if (container.hasNBT() && container.getNBT().hasKey(compId)) {

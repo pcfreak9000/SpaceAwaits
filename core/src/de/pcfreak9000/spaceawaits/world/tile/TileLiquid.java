@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world.tile;
 
 import com.badlogic.gdx.math.MathUtils;
 
+import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentMarkerComponent;

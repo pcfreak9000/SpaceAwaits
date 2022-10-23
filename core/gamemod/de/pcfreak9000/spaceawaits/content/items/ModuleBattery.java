@@ -3,9 +3,9 @@ package de.pcfreak9000.spaceawaits.content.items;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.item.IModuleEnergy;
-import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.IModuleEnergy;
+import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ModuleBattery implements IModuleEnergy {
     
@@ -42,9 +42,13 @@ public class ModuleBattery implements IModuleEnergy {
         float newCharge = oldCharge + change;
         newCharge = MathUtils.clamp(newCharge, 0, chargeMax);
         nbt.putFloat(KEY_CHARGE, newCharge);
-        //This sucks because if charge rdrops below 0.1% (int)-cast makes it zero and then possibly removes the item
-        ItemHelper.dealDamageUpdateBar(stack, (int) ((oldCharge - newCharge) / chargeMax * 10000), 10000,
-                !isRechargeble(stack));
+        if (stack.getItem().hasModule(ModuleBar.ID)) {
+            ModuleBar bar = stack.getItem().getModule(ModuleBar.ID);
+            bar.setValue(stack, newCharge / chargeMax);
+        }
+        if (newCharge <= 0f && !isRechargeble(stack)) {
+            stack.changeNumber(-1);
+        }
     }
     
 }
