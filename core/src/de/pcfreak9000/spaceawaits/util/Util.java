@@ -3,13 +3,10 @@ package de.pcfreak9000.spaceawaits.util;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.composer.Recorder;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -21,6 +18,7 @@ public class Util {
         float my = (chunk.getGlobalChunkY() + 0.5f) * Chunk.CHUNK_SIZE;
         return camera.frustum.boundsInFrustum(mx, my, 0, 0.5f * Chunk.CHUNK_SIZE, 0.5f * Chunk.CHUNK_SIZE, 0);
     }
+    
     //TODO move to Composer and improve that class, or something... probably as a subclass
     public static Texture combine(ITextureProvider... providers) {
         int w = 0, h = 0;
@@ -28,24 +26,20 @@ public class Util {
             w = Math.max(w, tp.getRegion().getRegionWidth());
             h = Math.max(h, tp.getRegion().getRegionHeight());
         }
-        FrameBuffer fbo = new FrameBuffer(Format.RGBA8888, w, h, false);
+        Recorder rec = new Recorder(w, h);
         SpriteBatchImpr batch = new SpriteBatchImpr(providers.length);
         Camera cam = new OrthographicCamera(1, -1);
         batch.setProjectionMatrix(cam.combined);
-        fbo.begin();
-        ScreenUtils.clear(0, 0, 0, 0);
+        rec.begin();
         batch.setDefaultBlending();
         batch.begin();
         for (ITextureProvider tp : providers) {
             batch.draw(tp.getRegion(), -0.5f, -0.5f, 1, 1);
         }
         batch.end();
-        Pixmap pix = Pixmap.createFromFrameBuffer(0, 0, w, h);
-        fbo.end();
-        Texture t = new Texture(pix);
-        fbo.dispose();
+        Texture t = rec.end();
         batch.dispose();
-        pix.dispose();
+        rec.dispose();
         return t;
     }
     
