@@ -11,7 +11,6 @@ import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
 import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.mod.Mod;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.OreDict;
 
 @Mod(id = "SpaceAwaits-Game", name = "Space Awaits Main Game", version = { 0, 0, 1 })
@@ -22,7 +21,6 @@ public class GameMod {
         Items.registerItems();
         Tiles.registerTiles();
         Entities.registerEntities();
-        GameRegistry.registerBurnHandler(new BurnHandler());
         
         OreDict.addEntry("ingotIron", Items.INGOT_UNREFINED_IRON);
         OreDict.addEntry("ingotIron", Items.INGOT_IRON);

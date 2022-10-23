@@ -46,8 +46,9 @@ public class Item {
         return modules.hasModule(id);
     }
     
-    public void addModule(ModuleID addAsId, IModule module) {
+    public Item addModule(ModuleID addAsId, IModule module) {
         modules.addModule(addAsId, module);
+        return this;
     }
     
     public Item setTexture(String name) {

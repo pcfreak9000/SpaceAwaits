@@ -1,7 +1,8 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
+import de.pcfreak9000.spaceawaits.content.modules.IModuleEnergy;
+import de.pcfreak9000.spaceawaits.content.modules.ModuleBattery;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.module.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ItemSimpleBattery extends Item {

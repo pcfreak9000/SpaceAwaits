@@ -1,10 +1,10 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
 import de.pcfreak9000.spaceawaits.content.Tools;
+import de.pcfreak9000.spaceawaits.content.modules.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.module.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;

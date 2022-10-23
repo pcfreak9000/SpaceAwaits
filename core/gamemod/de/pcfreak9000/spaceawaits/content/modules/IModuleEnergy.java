@@ -1,6 +1,8 @@
-package de.pcfreak9000.spaceawaits.module;
+package de.pcfreak9000.spaceawaits.content.modules;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.module.IModule;
+import de.pcfreak9000.spaceawaits.module.ModuleID;
 
 public interface IModuleEnergy extends IModule {
     
@@ -16,14 +18,6 @@ public interface IModuleEnergy extends IModule {
     
     default boolean hasCharge(ItemStack stack, float amount) {
         return getCurrentCharge(stack) - amount >= 0;
-    }
-    @Deprecated
-    default boolean useIfPossible(ItemStack stack, float amount) {
-        if (getCurrentCharge(stack) - amount < 0) {
-            return false;
-        }
-        changeCharge(stack, -amount);
-        return true;
     }
     
 }

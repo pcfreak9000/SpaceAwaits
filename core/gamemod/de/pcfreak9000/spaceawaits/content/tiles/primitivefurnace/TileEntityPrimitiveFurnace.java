@@ -1,11 +1,11 @@
 package de.pcfreak9000.spaceawaits.content.tiles.primitivefurnace;
 
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.content.modules.IBurnModule;
 import de.pcfreak9000.spaceawaits.crafting.FurnaceRecipe;
 import de.pcfreak9000.spaceawaits.crafting.MachineBase;
 import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 
@@ -28,7 +28,8 @@ public class TileEntityPrimitiveFurnace extends MachineBase implements IInventor
     protected void refuel() {
         ItemStack fuelstack = getStack(FUELSLOT);
         if (!ItemStack.isEmptyOrNull(fuelstack)) {
-            int v = GameRegistry.getBurnTime(fuelstack.getItem());
+            IBurnModule burnm = fuelstack.getItem().getModule(IBurnModule.ID);
+            int v = burnm.getBurnTime(fuelstack);
             workTicksLeft = v;
             fuelstack.changeNumber(-1);
             setSlotContent(FUELSLOT, fuelstack);
@@ -111,7 +112,7 @@ public class TileEntityPrimitiveFurnace extends MachineBase implements IInventor
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == FUELSLOT) {
-            return GameRegistry.getBurnTime(stack.getItem()) > 0;
+            return stack.getItem().hasModule(IBurnModule.ID);
         }
         return true;
     }

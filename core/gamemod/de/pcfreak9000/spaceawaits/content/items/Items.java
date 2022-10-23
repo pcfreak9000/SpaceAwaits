@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
+import de.pcfreak9000.spaceawaits.content.modules.BurnModule;
+import de.pcfreak9000.spaceawaits.content.modules.IBurnModule;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 
@@ -52,14 +54,14 @@ public class Items {
         GameRegistry.registerItem("axePrimitive", AXE_PRIMITIVE);
         GameRegistry.registerItem("pickaxePrimitive", PICKAXE_PRIMITIVE);
         GameRegistry.registerItem("shovelPrimitive", SHOVEL_PRIMITIVE);
-        GameRegistry.registerItem("twig", TWIG.setTexture("twig.png").setDisplayName("Twig"));
+        GameRegistry.registerItem("twig", TWIG.setTexture("twig.png").setDisplayName("Twig").addModule(IBurnModule.ID, new BurnModule(60)));
         GameRegistry.registerItem("looserock", LOOSEROCK.setTexture("looserock.png").setDisplayName("Loose Rock"));
         GameRegistry.registerItem("clumpOreIron", CLUMP_ORE_IRON.setTexture("clumpOreIron.png").setDisplayName("Iron Ore Clump"));
         GameRegistry.registerItem("ingotUnrefinedIron", INGOT_UNREFINED_IRON.setTexture("ingotIronUnrefined.png").setDisplayName("Unrefined Iron Ingot"));
         GameRegistry.registerItem("ingotIron", INGOT_IRON.setTexture("ingotIron.png").setDisplayName("Iron Ingot"));
         GameRegistry.registerItem("stick", STICK.setTexture("stick.png").setDisplayName("Stick"));
         GameRegistry.registerItem("pickaxeSimple", PICKAXE_SIMPLE);
-        GameRegistry.registerItem("coal", COAL.setTexture("coal.png").setDisplayName("Coal"));
+        GameRegistry.registerItem("coal", COAL.setTexture("coal.png").setDisplayName("Coal").addModule(IBurnModule.ID, new BurnModule(16 * 60)));
         GameRegistry.registerItem("coke", COKE.setTexture("coke.png").setDisplayName("Coke"));
         GameRegistry.registerItem("clumpOreCopper", CLUMP_ORE_COPPER.setTexture("clumpOreCopper.png").setDisplayName("Copper Ore Clump"));
         GameRegistry.registerItem("ingotCopper", INGOT_COPPER.setTexture("ingotCopper.png").setDisplayName("Copper Ingot"));

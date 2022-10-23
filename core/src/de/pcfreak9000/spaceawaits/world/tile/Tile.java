@@ -99,8 +99,9 @@ public class Tile extends Destructible {
         return modules.hasModule(id);
     }
     
-    public void addModule(ModuleID addAsId, IModule module) {
+    public Tile addModule(ModuleID addAsId, IModule module) {
         modules.addModule(addAsId, module);
+        return this;
     }
     
     public Tile setCanBeReplacedByOre(boolean b) {

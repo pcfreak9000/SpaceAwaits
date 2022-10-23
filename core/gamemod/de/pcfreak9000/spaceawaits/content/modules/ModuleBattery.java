@@ -1,10 +1,9 @@
-package de.pcfreak9000.spaceawaits.content.items;
+package de.pcfreak9000.spaceawaits.content.modules;
 
 import com.badlogic.gdx.math.MathUtils;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.module.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ModuleBattery implements IModuleEnergy {
