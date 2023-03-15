@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
+import de.pcfreak9000.spaceawaits.content.gen.CaveComponent;
 import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
@@ -50,6 +51,9 @@ public class TestBiome extends Biome {
     
     @Override
     public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen, RndHelper rnd) {
+        if (biomeGen.getComponent(CaveComponent.class).isCave(tx, ty)) {
+            //return;
+        }
         if (sub) {
             chunk.setTile(tx, ty, TileLayer.Front, Tiles.STONE_DARK);
             chunk.setTile(tx, ty, TileLayer.Back, Tiles.STONE_DARK);

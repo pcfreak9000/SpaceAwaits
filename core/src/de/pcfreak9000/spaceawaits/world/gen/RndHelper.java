@@ -15,6 +15,15 @@ public class RndHelper {
         return l;
     }
     
+    public static long getSeedAt(long seedMaster, double x, double y) {
+        long l = seedMaster;
+        l += 6793451682347862416L;
+        l *= Double.hashCode(x);
+        l += 6793451682347862416L;
+        l *= Double.hashCode(y);
+        return l;
+    }
+    
     private Random random;
     private long seedMaster;
     private long seed;

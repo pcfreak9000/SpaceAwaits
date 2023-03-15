@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.sudoplay.joise.module.Module;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.composer.Recorder;
@@ -90,4 +91,60 @@ public class Util {
         blue = Mathf.clamp(blue, 0.0f, 255.0f);
         return new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1f);
     }
+    
+    public static int[][] smoothCA(Module noise, double x, double y, int width, int height, Direction[] rule,
+            int minSolidCount, int iterations, double thresh) {
+        int[][] result = new int[width][height];
+        if (iterations == 0) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    result[i][j] = noise.get((x + i + 0.5), (y + j + 0.5)) >= thresh ? 1 : 0;
+                }
+            }
+            return result;
+        }
+        int caWidth = width + (iterations - 1) * 2;
+        int caHeight = height + (iterations - 1) * 2;
+        int[][] read = new int[caWidth][caHeight];
+        int[][] write = new int[caWidth][caHeight];
+        for (int i = 0; i < iterations; i++) {
+            for (int j = i; j < caWidth - i; j++) {
+                for (int k = i; k < caHeight - i; k++) {
+                    
+                    int count = 0;
+                    for (Direction d : rule) {
+                        if (i == 0) {
+                            if (noise.get((x + j + d.dx + 0.5), (y + k + d.dy + 0.5)) >= thresh) {
+                                count++;
+                                write[j][k] = 1;
+                                //read[j][k] = 1;
+                            }
+                        } else {
+                            if (read[j + d.dx][k + d.dy] == 1) {
+                                count++;
+                            }
+                        }
+                    }
+                    
+                    if (count > minSolidCount) {
+                        write[j][k] = 1;
+                    } else if (count < minSolidCount) {
+                        write[j][k] = 0;
+                    } else {
+                        write[j][k] = read[j][k];
+                    }
+                    if (i == iterations - 1) {
+                        result[j - iterations + 1][k - iterations + 1] = write[j][k];
+                    }
+                    
+                }
+            }
+            int[][] tmp = read;
+            read = write;
+            write = tmp;
+        }
+        
+        return result;
+    }
+    
 }

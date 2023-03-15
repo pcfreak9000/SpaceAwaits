@@ -33,13 +33,16 @@ public class SpaceSurface extends BiomeGenCompBased {
     private LayerHeightVariation[] vars;
     
     private HeightComponent height;
+    private CaveComponent caves;
     
     public SpaceSurface(SpaceSurfaceParams params) {
         super(null);
         this.params = params;
         this.height = new HeightComponent(params.getSeed(),
                 params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
+        this.caves = new CaveComponent(params.getSeed());
         addComponent(HeightComponent.class, this.height);
+        addComponent(CaveComponent.class, this.caves);
         //setup SpaceSurface children
         subs = BiomeGenExpander.expand(genChildren.generate(this));
         vars = new LayerHeightVariation[subs.length - 1];

@@ -26,6 +26,7 @@ public strictfp class Mathf {
      * values below or equal to (-1) * this value are integer numbers.
      */
     private static final float TWO_POW_23 = 8388608.0f;
+    private static final double TWO_POW_52 = 4503599627370496.0d;
     
     public static float pow(final float in, final float e) {
         return (float) java.lang.Math.pow(in, e);
@@ -117,6 +118,29 @@ public strictfp class Mathf {
     
     public static int floori(float value) {
         return (int) floor(value);
+    }
+    
+    public static double floor(final double value) {
+        if (value != value) {
+            // NaN
+            return value;
+        }
+        if (value >= TWO_POW_52 || value <= -TWO_POW_52) {
+            return value;
+        }
+        long intvalue = (long) value;
+        if (value < 0 && intvalue != value) {
+            intvalue--;
+        }
+        return intvalue;
+    }
+    
+    public static int floori(double value) {
+        return (int) floor(value);
+    }
+    
+    public static long floorl(double value) {
+        return (long) floor(value);
     }
     
     public static float ceil(final float value) {
