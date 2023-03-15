@@ -29,6 +29,7 @@ public class DebugScreen {
     private Label chunkUpdates;
     private Label tile;
     private Label meta;
+    private Label seed;
     
     private Label time;
     
@@ -56,6 +57,9 @@ public class DebugScreen {
         this.meta = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(meta).align(Align.left);
         this.table.row();
+        this.seed = new Label("", CoreRes.SKIN.getSkin());
+        this.table.add(this.seed).align(Align.left);
+        this.table.row();
         this.time = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(this.time).align(Align.left);
         this.stage.addActor(table);
@@ -82,6 +86,7 @@ public class DebugScreen {
         this.tile.setText(
                 "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));//Hmmm
         this.meta.setText("Not displaying meta");
+        this.seed.setText("Master Seed: "+SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getMasterSeed());
         //this.time.setText(String.format("time: %d", time));
         renderer.getGuiHelper().actAndDraw(stage, dt);
     }

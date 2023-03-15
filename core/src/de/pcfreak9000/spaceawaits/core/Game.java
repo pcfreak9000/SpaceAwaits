@@ -49,6 +49,10 @@ public class Game {
         this.scm = scm;
     }
     
+    public long getMasterSeed() {
+        return mySave.getSaveMeta().getSeed();
+    }
+    
     public void loadGame() {
         this.player = new Player();
         this.readPlayer();
@@ -73,7 +77,7 @@ public class Game {
             //Check if this save has a spawn place, otherwise generate a new one
             //When generating a new world, place the player at spawn
             String id = createWorld("A nice World", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
-                    this.mySave.getSaveMeta().getSeed());//Derive world seed from that master seed instead of using it directly
+                    this.mySave.getSaveMeta().getSeed());//TODO Derive world seed from that master seed instead of using it directly
             joinWorld(id);
         }
     }

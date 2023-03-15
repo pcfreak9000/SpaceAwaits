@@ -7,6 +7,7 @@ public class GeneratorSettings {
     
     public GeneratorSettings(long seed, boolean freshgame) {
         this.freshGame = freshgame;
+        this.seed = seed;
     }
     
     public long getSeed() {
