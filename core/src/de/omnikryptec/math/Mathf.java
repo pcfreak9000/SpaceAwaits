@@ -120,29 +120,6 @@ public strictfp class Mathf {
         return (int) floor(value);
     }
     
-    public static double floor(final double value) {
-        if (value != value) {
-            // NaN
-            return value;
-        }
-        if (value >= TWO_POW_52 || value <= -TWO_POW_52) {
-            return value;
-        }
-        long intvalue = (long) value;
-        if (value < 0 && intvalue != value) {
-            intvalue--;
-        }
-        return intvalue;
-    }
-    
-    public static int floori(double value) {
-        return (int) floor(value);
-    }
-    
-    public static long floorl(double value) {
-        return (long) floor(value);
-    }
-    
     public static float ceil(final float value) {
         if (value != value) {
             // NaN
