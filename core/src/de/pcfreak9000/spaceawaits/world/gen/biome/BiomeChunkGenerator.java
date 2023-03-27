@@ -10,6 +10,7 @@ import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.generation.BiomeSystem;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -24,12 +25,12 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     private static final int POPULATE_DIV = 16;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
-    private BiomeGenCompBased biomeGenerator;
+    private BiomeSystem biomeGen;
     private RndHelper rnd;
     private final long seed;
     
-    public BiomeChunkGenerator(BiomeGenCompBased biomeGenerator, long seedMaster) {
-        this.biomeGenerator = biomeGenerator;
+    public BiomeChunkGenerator(BiomeSystem biomeGenerator, long seedMaster) {
+        this.biomeGen = biomeGenerator;
         this.seed = seedMaster;
         this.rnd = new RndHelper();
     }
@@ -66,13 +67,12 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(x, y)) {
                     continue;
                 }
-                if(caves[i][j] == 0) {
-               // if (interpolate(i / 3f, j / 3f, caves, Interpolation.smooth) == 0) {
+                if (caves[i][j] == 0) {
+                    // if (interpolate(i / 3f, j / 3f, caves, Interpolation.smooth) == 0) {
                     continue;
                 }
-                BiomeGenCompBased leaf = biomeGenerator.getLeaf(x, y);
-                Biome biome = leaf.getBiome(x, y);
-                biome.genTerrainTileAt(x, y, chunk, leaf, rnd);
+                Biome biome = biomeGen.getBiome(x, y);
+                biome.genTerrainTileAt(x, y, chunk, null, rnd);
             }
         }
     }
@@ -93,14 +93,14 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     private static float interpolateX2(float x, float y, float xs, int x0, int x1, int iy, int[][] array) {
         float v1 = array[x0][iy];
         float v2 = array[x1][iy];
-        return MathUtils.lerp(v1, v2,xs);
+        return MathUtils.lerp(v1, v2, xs);
     }
     
     public static float interpolateXY2(float x, float y, float xs, float ys, int x0, int x1, int y0, int y1,
             int[][] array) {
         float v1 = interpolateX2(x, y, xs, x0, x1, y0, array);
         float v2 = interpolateX2(x, y, xs, x0, x1, y1, array);
-        return MathUtils.lerp(v1, v2,ys);
+        return MathUtils.lerp(v1, v2, ys);
     }
     
     @Override
@@ -115,9 +115,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(sampletx, samplety)) {
                     continue;
                 }
-                BiomeGenCompBased leaf = biomeGenerator.getLeaf(sampletx, samplety);
-                Biome biome = leaf.getBiome(sampletx, samplety);
-                biome.genStructureTiles(ts, leaf, txs, txs, POPULATE_DIV, rnd);
+                Biome biome = biomeGen.getBiome(sampletx, samplety);
+                biome.genStructureTiles(ts, null, txs, txs, POPULATE_DIV, rnd);
             }
         }
     }
@@ -135,9 +134,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(sampletx, samplety)) {
                     continue;
                 }
-                BiomeGenCompBased leaf = biomeGenerator.getLeaf(sampletx, samplety);
-                Biome biome = leaf.getBiome(sampletx, samplety);
-                biome.populate(ts, world, leaf, txs, tys, POPULATE_DIV, rnd);
+                Biome biome = biomeGen.getBiome(sampletx, samplety);
+                biome.populate(ts, world, null, txs, tys, POPULATE_DIV, rnd);
             }
         }
     }

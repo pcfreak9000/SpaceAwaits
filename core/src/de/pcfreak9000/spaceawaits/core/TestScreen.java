@@ -107,7 +107,7 @@ public class TestScreen extends ScreenAdapter {
         if (tx != txd0) {
             double runv = tx;
             int intx = x;
-            while (runv == tx) {
+            while (runv == tx) {//Hier irgendeine binäre Suche benutzen?
                 intx++;
                 runv = randomAt(intx / size);
             }
@@ -116,7 +116,7 @@ public class TestScreen extends ScreenAdapter {
         } else if (tx != txd1) {
             double runv = txd1;
             int intx = x - interpconst - 1;
-            while (runv != tx) {
+            while (runv != tx) {//Hier irgendeine binäre Suche benutzen?
                 intx++;
                 runv = randomAt(intx / size);
             }

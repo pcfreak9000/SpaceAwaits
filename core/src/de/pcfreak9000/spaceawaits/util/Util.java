@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Interpolation;
 import com.sudoplay.joise.module.Module;
 
 import de.omnikryptec.math.Mathf;
@@ -13,6 +14,14 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
 public class Util {
+    
+    public static final Interpolation INTERPOL_NONE = new Interpolation() {
+        
+        @Override
+        public float apply(float a) {
+            return a > 0.5f ? 1 : 0;
+        }
+    };
     
     public static boolean checkChunkInFrustum(Chunk chunk, Camera camera) {
         float mx = (chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
