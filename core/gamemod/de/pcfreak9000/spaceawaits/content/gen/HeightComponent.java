@@ -7,10 +7,11 @@ import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
+import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
-public class HeightComponent implements GenerationDataComponent {
+public class HeightComponent implements GenerationDataComponent, IGenInt1D {
     
     private Module noise;
     
@@ -21,6 +22,11 @@ public class HeightComponent implements GenerationDataComponent {
         this.offset = offset;
         this.amplitude = amplitude;
         genNoise(seed);
+    }
+    
+    @Override
+    public int generate(int i) {
+        return getHeight(i, 0);
     }
     
     public int getHeight(int tx, int ty) {

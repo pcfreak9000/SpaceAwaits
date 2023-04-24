@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
+import de.pcfreak9000.spaceawaits.generation.BiomeSystem;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -47,14 +48,15 @@ public class TestBiome extends Biome {
         this.bp = new StringBasedBlueprint();
         this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
         this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
+        this.addTag(sub ? "lower" : "higher");
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeGenCompBased biomeGen, RndHelper rnd) {
+    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeSystem biomeGen, RndHelper rnd) {
         if (biomeGen.getComponent(CaveComponent.class).isCave(tx, ty)) {
             //return;
         }
-        if (sub) {
+        if (sub) {//AH yes, forgetting bedrock here...
             chunk.setTile(tx, ty, TileLayer.Front, Tiles.STONE_DARK);
             chunk.setTile(tx, ty, TileLayer.Back, Tiles.STONE_DARK);
             return;
@@ -118,7 +120,7 @@ public class TestBiome extends Biome {
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10);
     
     @Override
-    public void populate(TileSystem tiles, World world, BiomeGenCompBased biomeGen, int tx, int ty, int area,
+    public void populate(TileSystem tiles, World world, BiomeSystem biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
         if (sub)
             return;
@@ -170,7 +172,7 @@ public class TestBiome extends Biome {
     }
     
     @Override
-    public void genStructureTiles(TileSystem tiles, BiomeGenCompBased biomeGen, int tx, int ty, int area,
+    public void genStructureTiles(TileSystem tiles, BiomeSystem biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
         //FIXME tiles is null...
     }

@@ -18,7 +18,7 @@ public class LayerHeightVariation {
         genNoise(seed);
     }
     
-    public int getVariation(int tx, int ty) {
+    public int getVariation(int tx) {
         return (int) Math.round(amplitude * noise.get(tx, 0.5));
     }
     

@@ -1,11 +1,17 @@
 package de.pcfreak9000.spaceawaits.content.gen;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.generation.BiomeSystem;
+import de.pcfreak9000.spaceawaits.generation.GenFilter2DLayer;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
+import de.pcfreak9000.spaceawaits.generation.LayerSystem;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -18,8 +24,10 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
+import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import layerteststuff.TestBiome;
 import mod.ComponentInventoryShip;
 import mod.DMod;
 
@@ -29,8 +37,35 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
     
     @Override
     public WorldPrimer generate(SpaceSurfaceParams params) {
+        //Aus dem SpaceSurface Typ den Biome GenFilter2D herausholen
+        //Aus dem SpaceSurface Typ auch die möglichen Biome rausholen?
+        //Oder aus dem SpaceSurface Typ gleich das/ein BiomeSystem rausholen? Oder gleich den ChunkGenerator? <-
+        
+        //BiomeSystem abstract mit Möglichkeiten zum Hinterlegen von Dingen wie terrainheight etc? eigene Map an Dingen, ansonsten auch über die Filter?
+        //CaveSystem braucht BiomeSystem? Oder ist CaveSystem abstract und eine Subclass braucht BiomeSystem?
+        
+        //Form wird nicht vom Biome gemacht, sondern vom ChunkGenerator der Caves und Biomes etc beachtet, und wo kein Biome da auch kein Tile (leere Biome sind natürlich auch möglich)?
+        
+        Array<Biome> biomea = new Array<>(new Biome[] { new TestBiome(false), new TestBiome(true) });
+        
+        Random r = new RandomXS128(params.getSeed());
+        //int higherlevelthick = Math.min(40, params.getHeight() / 3);
+        int someint = params.getHeight() / 3;
+        LayerSystem layer = new LayerSystem(someint, new LayerHeightVariation(params.getSeed() + 1, 8 + r.nextInt(5)));
+        //LayerParams lowerLevel = new LayerParams(surface, 0, someint);
+        // LayerParams higherLevel = new LayerParams(surface, someint, higherlevelthick);
+        HeightComponent height = new HeightComponent(params.getSeed(),
+                params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
+        CaveComponent caves = new CaveComponent(params.getSeed());
+
+        GenFilter2DLayer layerfilter = new GenFilter2DLayer(layer, null, null, "lower", "higher");
+        GenFilter2DLayer airgroundfilter = new GenFilter2DLayer(height, layerfilter, null, null, new Object());
+        
+        BiomeSystem biomes = new BiomeSystem(airgroundfilter, biomea);
+        biomes.setComponent(HeightComponent.class, height);
+        biomes.setComponent(CaveComponent.class, caves);
         //setup SpaceSurface
-        SpaceSurface surface = new SpaceSurface(params);
+        //SpaceSurface surface = new SpaceSurface(params);
         //setup worldprimer
         WorldPrimer p = new WorldPrimer();
         p.setWorldGenerator(new IWorldGenerator() {
@@ -78,7 +113,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
         });
         p.setWorldBounds(new WorldBounds(params.getWidth(), params.getHeight()));
-        p.setChunkGenerator(new BiomeChunkGenerator(surface, params.getSeed()));
+        p.setChunkGenerator(new BiomeChunkGenerator(biomes, params.getSeed()));
         return p;
     }
     

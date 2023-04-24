@@ -72,7 +72,9 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGen.getBiome(x, y);
-                biome.genTerrainTileAt(x, y, chunk, null, rnd);
+                if (biome != null) {
+                    biome.genTerrainTileAt(x, y, chunk, biomeGen, rnd);
+                }
             }
         }
     }
@@ -116,7 +118,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGen.getBiome(sampletx, samplety);
-                biome.genStructureTiles(ts, null, txs, txs, POPULATE_DIV, rnd);
+                if(biome!=null)
+                biome.genStructureTiles(ts, biomeGen, txs, txs, POPULATE_DIV, rnd);
             }
         }
     }
@@ -135,7 +138,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                     continue;
                 }
                 Biome biome = biomeGen.getBiome(sampletx, samplety);
-                biome.populate(ts, world, null, txs, tys, POPULATE_DIV, rnd);
+                if(biome!=null)
+                biome.populate(ts, world, biomeGen, txs, tys, POPULATE_DIV, rnd);
             }
         }
     }

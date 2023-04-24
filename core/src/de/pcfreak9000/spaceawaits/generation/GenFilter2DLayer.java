@@ -4,16 +4,27 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 
 public class GenFilter2DLayer extends GenFilter2D<Biome> {
     
-    private LayerSystem layerSystem;
+    private IGenInt1D layerSystem;
     private GenFilter2D<Biome> lowerBiomes;
     private GenFilter2D<Biome> higherBiomes;
     
-    public GenFilter2DLayer(LayerSystem layerSystem, GenFilter2D<Biome> lowerBiomes, GenFilter2D<Biome> higherBiomes) {
+    private Object dislikeHigherIndicator;
+    private Object dislikeLowerIndicator;
+    
+    public GenFilter2DLayer(IGenInt1D layerSystem, GenFilter2D<Biome> lowerBiomes, GenFilter2D<Biome> higherBiomes,
+            Object dislikeHigherIndicator, Object dislikeLowerIndicator) {
         this.layerSystem = layerSystem;
+        this.lowerBiomes = lowerBiomes;
+        this.higherBiomes = higherBiomes;
+        this.dislikeHigherIndicator = dislikeHigherIndicator;
+        this.dislikeLowerIndicator = dislikeLowerIndicator;
+        if (this.dislikeHigherIndicator == null && this.dislikeLowerIndicator == null) {
+            throw new NullPointerException();
+        }
     }
     
     public int getHeight(int tx) {
-        return layerSystem.getHeight(tx);
+        return layerSystem.generate(tx);
     }
     
     private boolean isLower(int tx, int ty) {
@@ -21,17 +32,14 @@ public class GenFilter2DLayer extends GenFilter2D<Biome> {
     }
     
     @Override
-    public void filter(int tx, int ty, FilterCollection<Biome> stuff) {
+    protected void filterFlat(int tx, int ty, FilterCollection<Biome> stuff) {
         boolean lower = isLower(tx, ty);
         for (int i = 0; i < stuff.size(); i++) {
-            if (!lower) {
+            if (lower && (dislikeLowerIndicator == null || stuff.get(i).hasTag(dislikeLowerIndicator))) {
+                stuff.disable(i);
+            } else if (!lower && (dislikeHigherIndicator == null || stuff.get(i).hasTag(dislikeHigherIndicator))) {
                 stuff.disable(i);
             }
-            //TODO filtering based on certain tags
-        }
-        GenFilter2D<Biome> child = selectChild(tx, ty);
-        if (child != null) {
-            child.filter(tx, ty, stuff);
         }
     }
     
