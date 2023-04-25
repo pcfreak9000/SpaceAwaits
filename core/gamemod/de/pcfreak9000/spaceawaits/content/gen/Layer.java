@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.content.gen;
 
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
-
+@Deprecated
 public class Layer extends BiomeGenCompBased {
     
     private Biome b;

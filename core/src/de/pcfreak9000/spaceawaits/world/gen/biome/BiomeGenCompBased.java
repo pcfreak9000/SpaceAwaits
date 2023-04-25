@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.world.gen.biome;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
-
+@Deprecated
 public abstract class BiomeGenCompBased implements IBiomeGen {
     
     private final BiomeGenCompBased parent;

@@ -1,5 +1,5 @@
 package de.pcfreak9000.spaceawaits.generation;
-
+@Deprecated
 public class GenInfo {
     private Object generated;
     private Object myParams;

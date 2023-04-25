@@ -9,6 +9,7 @@ import de.pcfreak9000.spaceawaits.generation.GenInfo;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 
+@Deprecated
 public class SpaceSurface extends BiomeGenCompBased {
     
     private IGeneratingLayer<GenInfo[], SpaceSurface> genChildren = new IGeneratingLayer<GenInfo[], SpaceSurface>() {

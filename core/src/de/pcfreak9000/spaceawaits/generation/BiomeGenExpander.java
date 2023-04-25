@@ -2,8 +2,9 @@ package de.pcfreak9000.spaceawaits.generation;
 
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
 
+@Deprecated
 public class BiomeGenExpander {
-    
+    @Deprecated
     public static BiomeGenCompBased[] expand(GenInfo[] layers) {
         BiomeGenCompBased[] subgens = new BiomeGenCompBased[layers.length];
         for (int i = 0; i < subgens.length; i++) {

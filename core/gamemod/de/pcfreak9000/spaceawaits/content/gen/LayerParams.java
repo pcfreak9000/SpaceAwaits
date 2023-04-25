@@ -1,5 +1,5 @@
 package de.pcfreak9000.spaceawaits.content.gen;
-
+@Deprecated
 public class LayerParams {
     
     private SpaceSurface parent;
