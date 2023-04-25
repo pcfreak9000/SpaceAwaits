@@ -1,6 +1,8 @@
-package de.pcfreak9000.spaceawaits.generation;
+package de.pcfreak9000.spaceawaits.world.gen.biome;
 
-import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
+import de.pcfreak9000.spaceawaits.generation.FilterCollection;
+import de.pcfreak9000.spaceawaits.generation.GenFilter2D;
+import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
 
 public class GenFilter2DLayer extends GenFilter2D<Biome> {
     

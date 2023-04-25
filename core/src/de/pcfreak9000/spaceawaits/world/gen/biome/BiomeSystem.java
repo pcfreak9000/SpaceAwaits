@@ -1,12 +1,12 @@
-package de.pcfreak9000.spaceawaits.generation;
+package de.pcfreak9000.spaceawaits.world.gen.biome;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Array;
 
-import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
+import de.pcfreak9000.spaceawaits.generation.FilterCollection;
+import de.pcfreak9000.spaceawaits.generation.GenFilter2D;
 
 public class BiomeSystem {
     

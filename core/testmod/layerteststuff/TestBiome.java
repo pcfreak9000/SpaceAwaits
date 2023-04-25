@@ -5,12 +5,10 @@ import java.util.Random;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
-import de.pcfreak9000.spaceawaits.content.gen.CaveComponent;
 import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
-import de.pcfreak9000.spaceawaits.generation.BiomeSystem;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -20,7 +18,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeGenCompBased;
+import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
 import de.pcfreak9000.spaceawaits.world.gen.feature.OreGenTileFeature;
@@ -52,30 +50,17 @@ public class TestBiome extends Biome {
     }
     
     @Override
-    public void genTerrainTileAt(int tx, int ty, ITileArea chunk, BiomeSystem biomeGen, RndHelper rnd) {
-        if (biomeGen.getComponent(CaveComponent.class).isCave(tx, ty)) {
-            //return;
-        }
-        if (sub) {//AH yes, forgetting bedrock here...
-            chunk.setTile(tx, ty, TileLayer.Front, Tiles.STONE_DARK);
-            chunk.setTile(tx, ty, TileLayer.Back, Tiles.STONE_DARK);
-            return;
-        }
+    public Tile genTileAt(int tx, int ty, TileLayer layer, BiomeSystem biomeGen, RndHelper rnd) {
         int value = biomeGen.getComponent(HeightComponent.class).getHeight(tx, ty);
-        if (ty > value + 1) {
-            return;
-        }
-        Tile t;
+        
+        Tile t = Tile.NOTHING;
         if (ty == 0) {
             t = Tiles.BEDROCK;
         } else {
-            if (ty == value + 1) {
-                if (rnd.getRandom().nextDouble() < 0.1) {
-                    t = Tiles.LOOSEROCKS;
-                } else {
-                    return;
-                }
-            } else if (ty == value) {
+            if (sub) {
+                return Tiles.STONE_DARK;
+            }
+            if (ty == value) {
                 t = Tiles.GRASS;
             } else if (ty >= value - 3) {
                 t = Tiles.DIRT;
@@ -83,10 +68,7 @@ public class TestBiome extends Biome {
                 t = Tiles.STONE;
             }
         }
-        chunk.setTile(tx, ty, TileLayer.Front, t);
-        if (t != Tiles.LOOSEROCKS) {
-            chunk.setTile(tx, ty, TileLayer.Back, t);
-        }
+        return t;
     }
     
     private FeatureGenerator fgen = new FeatureGenerator() {
@@ -120,8 +102,7 @@ public class TestBiome extends Biome {
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10);
     
     @Override
-    public void populate(TileSystem tiles, World world, BiomeSystem biomeGen, int tx, int ty, int area,
-            RndHelper rnd) {
+    public void populate(TileSystem tiles, World world, BiomeSystem biomeGen, int tx, int ty, int area, RndHelper rnd) {
         if (sub)
             return;
         int coppercount = rnd.getRandom().nextFloat() > 0.7f ? 1 : 0;
@@ -172,8 +153,7 @@ public class TestBiome extends Biome {
     }
     
     @Override
-    public void genStructureTiles(TileSystem tiles, BiomeSystem biomeGen, int tx, int ty, int area,
-            RndHelper rnd) {
+    public void genStructureTiles(TileSystem tiles, BiomeSystem biomeGen, int tx, int ty, int area, RndHelper rnd) {
         //FIXME tiles is null...
     }
     

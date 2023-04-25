@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.sudoplay.joise.module.Module;
 
 import de.omnikryptec.math.Mathf;
@@ -22,6 +23,32 @@ public class Util {
             return a > 0.5f ? 1 : 0;
         }
     };
+    
+    public static int interpolate(float x, float y, int[][] array, Interpolation interpolator) {
+        int x0 = Mathf.floori(x);
+        int y0 = Mathf.floori(y);
+        if (MathUtils.isEqual(x, x0) && MathUtils.isEqual(y, y0)) {
+            return array[x0][y0];
+        }
+        int x1 = x0 + 1;
+        int y1 = y0 + 1;
+        float xs = interpolator.apply(x - x0);
+        float ys = interpolator.apply(y - y0);
+        return Math.round(interpolateXY2(x, y, xs, ys, x0, x1, y0, y1, array));
+    }
+    
+    private static float interpolateX2(float x, float y, float xs, int x0, int x1, int iy, int[][] array) {
+        float v1 = array[x0][iy];
+        float v2 = array[x1][iy];
+        return MathUtils.lerp(v1, v2, xs);
+    }
+    
+    public static float interpolateXY2(float x, float y, float xs, float ys, int x0, int x1, int y0, int y1,
+            int[][] array) {
+        float v1 = interpolateX2(x, y, xs, x0, x1, y0, array);
+        float v2 = interpolateX2(x, y, xs, x0, x1, y1, array);
+        return MathUtils.lerp(v1, v2, ys);
+    }
     
     public static boolean checkChunkInFrustum(Chunk chunk, Camera camera) {
         float mx = (chunk.getGlobalChunkX() + 0.5f) * Chunk.CHUNK_SIZE;
