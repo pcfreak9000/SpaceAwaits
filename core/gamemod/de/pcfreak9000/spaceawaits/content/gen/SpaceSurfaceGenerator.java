@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.generation.HeightVariation;
+import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -51,21 +51,19 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         Random r = new RandomXS128(params.getSeed());
         //int higherlevelthick = Math.min(40, params.getHeight() / 3);
         int someint = params.getHeight() / 3;
-        HeightVariation layer = new HeightVariation(someint, new LayerHeightVariation(params.getSeed() + 1, 8 + r.nextInt(5)));
-        //LayerParams lowerLevel = new LayerParams(surface, 0, someint);
-        // LayerParams higherLevel = new LayerParams(surface, someint, higherlevelthick);
-        HeightComponent height = new HeightComponent(params.getSeed(),
+        HeightVariation layer = new HeightVariation(someint,
+                new LayerHeightVariation(params.getSeed() + 1, 8 + r.nextInt(5)));
+        HeightSystem height = new HeightSystem(params.getSeed(),
                 params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
         CaveSystem caves = new CaveSystem(params.getSeed());
-
+        
         GenFilter2DLayer layerfilter = new GenFilter2DLayer(layer, null, null, "lower", "higher");
         GenFilter2DLayer airgroundfilter = new GenFilter2DLayer(height, layerfilter, null, null, new Object());
         
         BiomeSystem biomes = new BiomeSystem(airgroundfilter, biomea);
-        biomes.setComponent(HeightComponent.class, height);
+        biomes.setComponent(HeightSystem.class, height);
         biomes.setComponent(CaveSystem.class, caves);
-        //setup SpaceSurface
-        //SpaceSurface surface = new SpaceSurface(params);
+        
         //setup worldprimer
         WorldPrimer p = new WorldPrimer();
         p.setWorldGenerator(new IWorldGenerator() {

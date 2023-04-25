@@ -5,7 +5,7 @@ import java.util.Random;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
-import de.pcfreak9000.spaceawaits.content.gen.HeightComponent;
+import de.pcfreak9000.spaceawaits.content.gen.HeightSystem;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
@@ -51,7 +51,7 @@ public class TestBiome extends Biome {
     
     @Override
     public Tile genTileAt(int tx, int ty, TileLayer layer, BiomeSystem biomeGen, RndHelper rnd) {
-        int value = biomeGen.getComponent(HeightComponent.class).getHeight(tx, ty);
+        int value = biomeGen.getComponent(HeightSystem.class).getHeight(tx, ty);
         
         Tile t = Tile.NOTHING;
         if (ty == 0) {
@@ -109,7 +109,7 @@ public class TestBiome extends Biome {
         for (int i = 0; i < coppercount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            int height = biomeGen.getComponent(HeightSystem.class).getHeight(x, y);
             if (height - y > 19) {
                 copper.generate(tiles, x, y, rnd.getRandom(), area);
             }
@@ -118,7 +118,7 @@ public class TestBiome extends Biome {
         for (int i = 0; i < ironcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            int height = biomeGen.getComponent(HeightSystem.class).getHeight(x, y);
             if (height - y > 12) {
                 iron.generate(tiles, x, y, rnd.getRandom(), area);
             }
@@ -127,7 +127,7 @@ public class TestBiome extends Biome {
         for (int i = 0; i < coalcount; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
             int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(HeightComponent.class).getHeight(x, y);
+            int height = biomeGen.getComponent(HeightSystem.class).getHeight(x, y);
             if (height - y > 5) {
                 coal.generate(tiles, x, y, rnd.getRandom(), area);
             }

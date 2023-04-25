@@ -11,14 +11,14 @@ import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
-public class HeightComponent implements GenerationDataComponent, IGenInt1D {
+public class HeightSystem implements GenerationDataComponent, IGenInt1D {
     
     private Module noise;
     
     private int offset;
     private double amplitude;
     
-    public HeightComponent(long seed, int offset, double amplitude) {
+    public HeightSystem(long seed, int offset, double amplitude) {
         this.offset = offset;
         this.amplitude = amplitude;
         genNoise(seed);

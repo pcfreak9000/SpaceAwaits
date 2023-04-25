@@ -1,9 +1,8 @@
 package de.pcfreak9000.spaceawaits.world.gen.biome;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.utils.Array;
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.MutableClassToInstanceMap;
 
 import de.pcfreak9000.spaceawaits.generation.FilterCollection;
 import de.pcfreak9000.spaceawaits.generation.GenFilter2D;
@@ -17,20 +16,31 @@ public class BiomeSystem {
     
     private Array<Biome> tmp = new Array<>();
     
-    private Map<Class<?>, GenerationDataComponent> components = new HashMap<>();
+    private ClassToInstanceMap<GenerationDataComponent> components;
     
     public BiomeSystem(GenFilter2D<Biome> initialFilter, Array<Biome> availableBiomes) {
         this.initialFilter = initialFilter;
         this.availableBiomes = availableBiomes;
         this.filterCol = new FilterCollection<>(this.availableBiomes);
+        this.components = MutableClassToInstanceMap.create();
     }
     
-    public <T extends GenerationDataComponent> void setComponent(Class<T> key, T comp) {
-        this.components.put(key, comp);
+    //maybe change this and allow the Class to be a supertype of T
+    public <T extends GenerationDataComponent> void setComponent(Class<T> clazz, T comp) {
+        this.components.put(clazz, comp);
     }
     
-    public <T extends GenerationDataComponent> T getComponent(Class<T> key) {
-        return (T) components.get(key);
+    public <T extends GenerationDataComponent> T getComponent(Class<T> clazz) {
+        T data = this.components.getInstance(clazz);
+        return data;
+    }
+    
+    public boolean hasComponent(Class<? extends GenerationDataComponent> clazz) {
+        return this.components.containsKey(clazz);
+    }
+    
+    public <T extends GenFilter2D<Biome>> T getSubFilter(int tx, int ty, Class<T> clazz, String tag) {
+        return this.initialFilter.getSubFilter2D(tx, ty, clazz, tag);
     }
     
     public Biome getBiome(int tx, int ty) {

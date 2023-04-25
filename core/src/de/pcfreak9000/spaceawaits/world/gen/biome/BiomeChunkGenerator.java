@@ -30,10 +30,6 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     @Override
     public void generateChunk(Chunk chunk) {
         rnd.set(seed, 1 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
-        
-        //m = source;
-        //int[][] caves = Util.smoothCA(m, chunk.getGlobalTileX(), chunk.getGlobalTileY(), (Chunk.CHUNK_SIZE),
-        //      (Chunk.CHUNK_SIZE), Direction.MOORE_NEIGHBOURS, 4, 20, -0.1);
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = i + chunk.getGlobalTileX();
