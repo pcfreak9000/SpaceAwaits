@@ -18,6 +18,7 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 import de.omnikryptec.math.Mathd;
+import de.pcfreak9000.spaceawaits.util.InterpolationInterpolation;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -97,13 +98,29 @@ public class TestScreen extends ScreenAdapter {
     private static final Color[] COLORS = { Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN,
             Color.BLUE, Color.CHARTREUSE, Color.BROWN, Color.CYAN, Color.FIREBRICK };
     
-    private static final int interpconst = 30;
-    private static final double size = 60.0;
+    private static final int interpconstleft = 20;
+    private static final int interpconstright = 20;
+    
+    private static final int interpconstmax = 30;
+    
+    private static final double size = 80.0;
+    
+    private double lim = 0.5;
+    
+    private int interpconst(double x) {
+        return randomAt(x) <= lim ? 30 : 30;
+    }
+    
+    private Interpolation interpol(double x) {
+        return randomAt(x) <= lim ? Interpolation.smooth : Interpolation.bounce;
+    }
     
     private double interp(int x) {
+        int interpconstleft = interpconst((x + interpconstmax) / size);
+        int interpconstright = interpconst((x - interpconstmax - 1) / size);
         double tx = randomAt(x / size);
-        double txd0 = randomAt((x + interpconst) / size);
-        double txd1 = randomAt((x - interpconst - 1) / size);
+        double txd0 = randomAt((x + interpconstright) / size);
+        double txd1 = randomAt((x - interpconstleft - 1) / size);
         if (tx != txd0) {
             double runv = tx;
             int intx = x;
@@ -111,17 +128,54 @@ public class TestScreen extends ScreenAdapter {
                 intx++;
                 runv = randomAt(intx / size);
             }
-            return Interpolation.smooth.apply((float) tx, (float) txd0,
-                    (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
+            InterpolationInterpolation ii = new InterpolationInterpolation(interpol(x / size),
+                    interpol((x + interpconstright) / size), Interpolation.linear);
+            return ii.apply((float) tx, (float) txd0,
+                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright));
         } else if (tx != txd1) {
+            double runv = txd1;
+            int intx = x - interpconstleft - 1;
+            while (runv != tx) {//Hier irgendeine binäre Suche benutzen?
+                intx++;
+                runv = randomAt(intx / size);
+            }
+            InterpolationInterpolation ii = new InterpolationInterpolation(interpol((x - interpconstleft - 1) / size),
+                    interpol(x / size), Interpolation.linear);
+            return ii.apply((float) txd1, (float) tx,
+                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright));
+        }
+        return tx;
+    }
+    
+    private double interp(int x, double size, int interpconst, Interpolation interpol) {
+        //value at x
+        double tx = randomAt(x / size);
+        //right-most value
+        double txd0 = randomAt((x + interpconst) / size);
+        //left-most value
+        double txd1 = randomAt((x - interpconst - 1) / size);
+        if (tx != txd0) {
+            //x is on the left of some step
+            //we need to find where the step occurs
+            //we start at x and find the distance to the step
+            double runv = tx;
+            int intx = x;
+            while (runv == tx) {//Hier irgendeine binäre Suche benutzen?
+                intx++;
+                runv = randomAt(intx / size);
+            }
+            return interpol.apply((float) tx, (float) txd0, (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
+        } else if (tx != txd1) {
+            //x is on the right of some step
+            //we need to find where the step occurs
+            //we start at x and find the distance to the step, but reversed
             double runv = txd1;
             int intx = x - interpconst - 1;
             while (runv != tx) {//Hier irgendeine binäre Suche benutzen?
                 intx++;
                 runv = randomAt(intx / size);
             }
-            return Interpolation.smooth.apply((float) txd1, (float) tx,
-                    (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
+            return interpol.apply((float) txd1, (float) tx, (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
         }
         return tx;
     }
@@ -141,7 +195,11 @@ public class TestScreen extends ScreenAdapter {
                 double d = randomAt(x / 20.0, y / 20.0);
                 d = d * 0.5 + 0.5;
                 //int index = Mathd.floori(d * COLORS.length);
-                pix.setColor((float) d, (float) d, (float) d, 1);
+                if (randomAt(x / size) <= lim) {
+                    pix.setColor(1, (float) d, (float) d, 1);
+                } else {
+                    pix.setColor((float) d, (float) d, (float) d, 1);
+                }
                 //pix.setColor(COLORS[index]);
                 pix.drawPixel(x, y);
                 //pix.setColor(COLORS[toInt(x, y)]);
