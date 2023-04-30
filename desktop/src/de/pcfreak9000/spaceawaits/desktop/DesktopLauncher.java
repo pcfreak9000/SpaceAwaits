@@ -21,6 +21,7 @@ public class DesktopLauncher {
         config.useVsync(!SpaceAwaits.DEBUG);
         config.setTitle(SpaceAwaits.NAME + " " + SpaceAwaits.VERSION);
         config.enableGLDebugOutput(SpaceAwaits.DEBUG, System.out);
+        config.setBackBufferConfig(8, 8, 8, 8, 16, 0, 4);
         new Lwjgl3Application(instance = new SpaceAwaits(), config);
     }
     

@@ -3,8 +3,11 @@ package de.pcfreak9000.spaceawaits.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.omnikryptec.event.EventSubscription;
@@ -69,7 +72,11 @@ public class TextureProvider implements ITextureProvider {
         if (name != null) {
             FileHandle filehandle = ev.assetMgr.getFileHandleResolver().resolve(name);
             if (filehandle.exists()) {
-                ev.assetMgr.load(name, Texture.class);
+                TextureLoader.TextureParameter texpam = new TextureParameter();//Inefficient, doesnt need to be created each time, also what about other textures?
+                texpam.genMipMaps = true;
+                texpam.magFilter = TextureFilter.Nearest;
+                texpam.minFilter = TextureFilter.MipMapLinearLinear;
+                ev.assetMgr.load(name, Texture.class, texpam);
                 registered = true;
             } else {
                 registered = false;
@@ -85,6 +92,7 @@ public class TextureProvider implements ITextureProvider {
         Texture t = null;
         if (registered) {
             t = ev.assetMgr.get(name == null ? "missing_texture.png" : name, Texture.class);
+            t.setAnisotropicFilter(16f);//TODO Write my own TextureLoader to incorporate this into it
         }
         if (t == null) {
             t = ev.assetMgr.get("missing_texture.png", Texture.class);

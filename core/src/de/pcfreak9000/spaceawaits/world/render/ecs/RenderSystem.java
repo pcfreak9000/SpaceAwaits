@@ -94,6 +94,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             this.sceneBuffer.dispose();
         }
         this.sceneBuffer = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        //this.sceneBuffer.getColorBufferTexture().setAnisotropicFilter(16f);
+        //this.sceneBuffer.getColorBufferTexture().setFilter(TextureFilter.MipMap, TextureFilter.Linear);
     }
     
     @Override
