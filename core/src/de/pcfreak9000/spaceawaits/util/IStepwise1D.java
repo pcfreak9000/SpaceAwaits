@@ -1,5 +1,5 @@
 package de.pcfreak9000.spaceawaits.util;
 
-public interface IStepwise1D {
-    double getValueAt(int x);
+public interface IStepwise1D<R extends IStepWiseComponent> {
+    R getAt(int x);
 }

@@ -20,6 +20,8 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 import de.omnikryptec.math.Mathd;
+import de.pcfreak9000.spaceawaits.util.IPropertyGetter;
+import de.pcfreak9000.spaceawaits.util.IStepWiseComponent;
 import de.pcfreak9000.spaceawaits.util.IStepwise1D;
 import de.pcfreak9000.spaceawaits.util.InterpolationInterpolation;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -118,18 +120,18 @@ public class TestScreen extends ScreenAdapter {
         return randomAt(x) <= lim ? Interpolation.smooth : Interpolation.smooth;
     }
     
-    private double interpolateStepwise(int x, IStepwise1D stepwise, IntFunction<Interpolation> interpol,
-            IntUnaryOperator interpconst, Interpolation interpolinterpol, int interpconstmax) {
+    private <T extends IStepWiseComponent> double interpolateStepwise(int x, IStepwise1D<T> stepwise,
+            IPropertyGetter<T> tointerpolate, Interpolation interpolinterpol, int interpconstmax) {
         if (interpconstmax == 0) {
-            return stepwise.getValueAt(x);
+            return tointerpolate.applyAsDouble(x, stepwise);
         }
-        int interpconstleft = interpconst.applyAsInt(x + interpconstmax);
-        int interpconstright = interpconst.applyAsInt(x - interpconstmax - 1);
+        int interpconstleft = stepwise.getAt(x + interpconstmax).getInterpolationDistance();
+        int interpconstright = stepwise.getAt(x - interpconstmax - 1).getInterpolationDistance();
         interpconstleft = Math.min(interpconstleft, interpconstmax);
         interpconstright = Math.min(interpconstright, interpconstmax);
-        double tx = stepwise.getValueAt(x);
-        double txd0 = stepwise.getValueAt(x + interpconstright);
-        double txd1 = stepwise.getValueAt(x - interpconstleft - 1);
+        double tx = tointerpolate.applyAsDouble(x, stepwise);
+        double txd0 = tointerpolate.applyAsDouble(x + interpconstright, stepwise);
+        double txd1 = tointerpolate.applyAsDouble(x - interpconstleft - 1, stepwise);
         if (tx != txd0) {
             //x is on the left of some step
             //we need to find where the step occurs
@@ -138,11 +140,12 @@ public class TestScreen extends ScreenAdapter {
             int intx = x;
             while (runv == tx) {//Use some binary search here instead?
                 intx++;
-                runv = stepwise.getValueAt(intx);
+                runv = tointerpolate.applyAsDouble(intx, stepwise);
             }
             return InterpolationInterpolation.apply((float) tx, (float) txd0,
-                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright), interpol.apply(x),
-                    interpol.apply(x + interpconstright), interpolinterpol);
+                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
+                    stepwise.getAt(x).getInterpolation(), stepwise.getAt(x + interpconstright).getInterpolation(),
+                    interpolinterpol);
         } else if (tx != txd1) {
             //x is on the right of some step
             //we need to find where the step occurs
@@ -151,44 +154,12 @@ public class TestScreen extends ScreenAdapter {
             int intx = x - interpconstleft - 1;
             while (runv != tx) {//Use some binary search here instead?
                 intx++;
-                runv = stepwise.getValueAt(intx);
+                runv = tointerpolate.applyAsDouble(intx, stepwise);
             }
             return InterpolationInterpolation.apply((float) txd1, (float) tx,
                     (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
-                    interpol.apply(x - interpconstleft - 1), interpol.apply(x), interpolinterpol);
-        }
-        return tx;
-    }
-    
-    private double interp(int x, double size, int interpconst, Interpolation interpol) {
-        //value at x
-        double tx = randomAt(x / size);
-        //right-most value
-        double txd0 = randomAt((x + interpconst) / size);
-        //left-most value
-        double txd1 = randomAt((x - interpconst - 1) / size);
-        if (tx != txd0) {
-            //x is on the left of some step
-            //we need to find where the step occurs
-            //we start at x and find the distance to the step
-            double runv = tx;
-            int intx = x;
-            while (runv == tx) {//Hier irgendeine binäre Suche benutzen?
-                intx++;
-                runv = randomAt(intx / size);
-            }
-            return interpol.apply((float) tx, (float) txd0, (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
-        } else if (tx != txd1) {
-            //x is on the right of some step
-            //we need to find where the step occurs
-            //we start at x and find the distance to the step, but reversed
-            double runv = txd1;
-            int intx = x - interpconst - 1;
-            while (runv != tx) {//Hier irgendeine binäre Suche benutzen?
-                intx++;
-                runv = randomAt(intx / size);
-            }
-            return interpol.apply((float) txd1, (float) tx, (float) ((x - (intx - interpconst)) / (2.0 * interpconst)));
+                    stepwise.getAt(x - interpconstleft - 1).getInterpolation(), stepwise.getAt(x).getInterpolation(),
+                    interpolinterpol);
         }
         return tx;
     }
@@ -197,13 +168,14 @@ public class TestScreen extends ScreenAdapter {
     public void show() {
         super.show();
         createNoise();
-        IStepwise1D stepwise = (x) -> randomAt(x / size);
+        IStepwise1D<?> stepwise = (x) -> randomAt(x / size) <= lim ? null : null;
         IntFunction<Interpolation> interpol = (x) -> interpol(x / size);
         IntUnaryOperator interpconst = (x) -> interpconst(x / size);
         this.batch = new SpriteBatchImpr(1000);
         Pixmap pix = new Pixmap(400, 400, Format.RGBA8888);
         for (int x = 0; x < pix.getWidth(); x++) {
-            double d1 = interpolateStepwise(x, stepwise, interpol, interpconst, Interpolation.linear, interpconstmax) * 0.5 + 0.5;
+            double d1 = interpolateStepwise(x, stepwise, (xyz, stepwisearg) -> stepwisearg.getAt(xyz).stuff(xyz),
+                    Interpolation.linear, interpconstmax) * 0.5 + 0.5;
             for (int y = 0; y < pix.getHeight(); y++) {
                 if (y > d1 * pix.getHeight()) {
                     continue;
