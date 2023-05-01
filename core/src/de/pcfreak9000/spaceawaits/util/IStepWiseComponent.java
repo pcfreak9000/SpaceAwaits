@@ -6,8 +6,5 @@ public interface IStepWiseComponent {
     Interpolation getInterpolation();
     
     int getInterpolationDistance();
-    
-    default double stuff(int x) {
-        return x / 6.0;
-    }
+
 }

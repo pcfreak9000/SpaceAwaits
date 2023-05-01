@@ -24,6 +24,50 @@ public class Util {
         }
     };
     
+    public static <T extends IStepWiseComponent> float interpolateStepwise(int x, IStepwise1D<T> stepwise,
+            IPropertyGetter<T> tointerpolate, Interpolation interpolinterpol, int interpconstmax) {
+        if (interpconstmax == 0) {
+            return tointerpolate.getValue(x, stepwise.getAt(x));
+        }
+        int interpconstleft = stepwise.getAt(x + interpconstmax).getInterpolationDistance();
+        int interpconstright = stepwise.getAt(x - interpconstmax - 1).getInterpolationDistance();
+        interpconstleft = Math.min(interpconstleft, interpconstmax);
+        interpconstright = Math.min(interpconstright, interpconstmax);
+        float tx = tointerpolate.getValue(x, stepwise.getAt(x));
+        float txd0 = tointerpolate.getValue(x + interpconstright, stepwise.getAt(x + interpconstright));
+        float txd1 = tointerpolate.getValue(x - interpconstleft - 1, stepwise.getAt(x - interpconstleft - 1));
+        if (tx != txd0) {
+            //x is on the left of some step
+            //we need to find where the step occurs
+            //we start at x and find the distance to the step
+            double runv = tx;
+            int intx = x;
+            while (runv == tx) {//Use some binary search here instead?
+                intx++;
+                runv = tointerpolate.getValue(intx, stepwise.getAt(intx));
+            }
+            return InterpolationInterpolation.apply(tx, txd0,
+                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
+                    stepwise.getAt(x).getInterpolation(), stepwise.getAt(x + interpconstright).getInterpolation(),
+                    interpolinterpol);
+        } else if (tx != txd1) {
+            //x is on the right of some step
+            //we need to find where the step occurs
+            //we start at x and find the distance to the step, but reversed
+            double runv = txd1;
+            int intx = x - interpconstleft - 1;
+            while (runv != tx) {//Use some binary search here instead?
+                intx++;
+                runv = tointerpolate.getValue(intx, stepwise.getAt(intx));
+            }
+            return InterpolationInterpolation.apply(txd1, tx,
+                    (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
+                    stepwise.getAt(x - interpconstleft - 1).getInterpolation(), stepwise.getAt(x).getInterpolation(),
+                    interpolinterpol);
+        }
+        return tx;
+    }
+    
     public static int interpolate(float x, float y, int[][] array, Interpolation interpolator) {
         int x0 = Mathf.floori(x);
         int y0 = Mathf.floori(y);
