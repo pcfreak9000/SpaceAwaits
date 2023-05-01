@@ -1,7 +1,5 @@
 package de.pcfreak9000.spaceawaits.core;
 
-import java.util.Random;
-
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,7 +15,6 @@ import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
-import de.omnikryptec.math.Mathd;
 import de.pcfreak9000.spaceawaits.util.IPropertyGetter;
 import de.pcfreak9000.spaceawaits.util.IStepwise1D;
 import de.pcfreak9000.spaceawaits.util.Util;
@@ -32,50 +29,12 @@ public class TestScreen extends ScreenAdapter {
     private Module[] noise = new Module[2];
     private Module noise1;
     
-    private Random random = new RandomXS128();
-    
-    private double randomAt(double x, double y) {
-        int xint = Mathd.floori(x);
-        int yint = Mathd.floori(y);
-        
-        int samplex = xint;
-        int sampley = yint;
-        double curDist2 = Double.POSITIVE_INFINITY;
-        for (int i = -3; i <= 3; i++) {
-            for (int j = -3; j <= 3; j++) {
-                random.setSeed(RndHelper.getSeedAt(555534, xint + i, yint + j));
-                double xpos = xint + i + random.nextDouble() * 2.0 - 1;
-                random.setSeed(RndHelper.getSeedAt(555534 + 1, xint + i, yint + j));
-                double ypos = yint + j + random.nextDouble() * 2.0 - 1;
-                double dist2 = Mathd.square(xpos - x) + Mathd.square(ypos - y);
-                if (dist2 < curDist2) {
-                    curDist2 = dist2;
-                    samplex = Mathd.floori(xpos);
-                    sampley = Mathd.floori(ypos);
-                }
-            }
-        }
-        random.setSeed(RndHelper.getSeedAt(4563, samplex, sampley));
-        return random.nextDouble() * 2.0 - 1.0;
+    private float randomAt(double x, double y) {
+        return RndHelper.randomAt(x, y, 555534) * 2f - 1f;
     }
     
     private float randomAt(double x) {
-        int xint = Mathd.floori(x);
-        
-        int samplex = xint;
-        double curDist = Double.POSITIVE_INFINITY;
-        for (int i = -3; i <= 3; i++) {
-            random.setSeed(RndHelper.getSeedAt(555534, xint + i));
-            double xpos = xint + i + random.nextDouble() * 2.0 - 1.0;
-            double dist = Mathd.abs(xpos - x);
-            if (dist < curDist) {
-                curDist = dist;
-                samplex = Mathd.floori(xpos);
-            }
-        }
-        random.setSeed(RndHelper.getSeedAt(3, samplex));
-        return (float) (random.nextDouble() * 2.0 - 1.0);
-        
+        return RndHelper.randomAt(x, 656473343423L) * 2f - 1f;
     }
     
     private void createNoise() {
