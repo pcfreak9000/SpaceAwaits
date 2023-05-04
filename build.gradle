@@ -22,10 +22,10 @@ allprojects {
     version = '1.0'
     ext {
         appName = "space-awaits"
-        gdxVersion = '1.9.14'
+        gdxVersion = '1.11.0'
         roboVMVersion = '2.3.11'
         box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.3'
+        ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
         cjpbaseVersion = "v1.8.0_172-alpha.56"
     }

@@ -67,6 +67,7 @@ public class WorldCombined extends World {
         chunkProvider.unloadAll();
         unchunkProvider.unload();
         ecsEngine.removeAllEntities();
+        //can't use ecsEngine.removeAllSystems(); because systems need to be unregistered
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
         for (EntitySystem es : syss) {
             ecsEngine.removeSystem(es);

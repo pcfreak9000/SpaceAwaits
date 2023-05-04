@@ -19,7 +19,8 @@ public class CoreRes {
     
     public static enum EnumInputIds {
         Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
-        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud, INV_MOD, MovMod;
+        DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud, INV_MOD,
+        MovMod;
     }
     
     public static final void init() {
