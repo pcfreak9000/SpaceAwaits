@@ -19,7 +19,7 @@ public class DesktopLauncher {
         //        });
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         //config.useOpenGL3(true, 3, 3);
-        config.setOpenGLEmulation(GLEmulation.GL20, 3, 3);
+        config.setOpenGLEmulation(GLEmulation.GL20, 3, 3);//GL30 somehow creates errors with the texture of the default BitmapFont
         config.useVsync(!SpaceAwaits.DEBUG);
         config.setTitle(SpaceAwaits.NAME + " " + SpaceAwaits.VERSION);
         config.enableGLDebugOutput(SpaceAwaits.DEBUG, System.out);
