@@ -108,9 +108,9 @@ public class SpaceAwaits extends Game {
         this.screenManager = new ScreenManager(this);
         this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()), this.screenManager);
         
-        this.setScreen(new TestScreen());
+        //this.setScreen(new TestScreen());
         
-        //this.screenManager.setMainMenuScreen();
+        this.screenManager.setMainMenuScreen();
     }
     
     public GameManager getGameManager() {

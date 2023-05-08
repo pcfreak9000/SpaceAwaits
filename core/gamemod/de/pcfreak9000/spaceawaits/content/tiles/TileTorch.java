@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.TextureProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
+import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TileTorch extends Tile {
@@ -40,6 +41,11 @@ public class TileTorch extends Tile {
         AnimatedTextureProvider antp = new AnimatedTextureProvider(
                 new Animation<>(0.11f, new Array<>(ar), PlayMode.LOOP));
         setTextureProvider(antp);
+    }
+    
+    @Override
+    public boolean canBeReplacedBy(Tile t) {
+        return t instanceof TileLiquid;
     }
     
     @Override

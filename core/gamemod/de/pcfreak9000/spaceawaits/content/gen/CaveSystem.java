@@ -11,6 +11,7 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
+import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.util.Util;
@@ -20,11 +21,11 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
 public class CaveSystem implements GenerationDataComponent {
     
-    private Module noise;
+    private NoiseGenerator noiseGen;
     private Map<IntCoordKey, int[][]> cache = new HashMap<>();
     
     public CaveSystem(long seed) {
-        genNoise(seed);
+        this.noiseGen = new NoiseGenerator(() -> genNoise(seed));
     }
     
     public boolean isCave(int tx, int ty) {
@@ -34,15 +35,15 @@ public class CaveSystem implements GenerationDataComponent {
         IntCoordKey key = new IntCoordKey(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
         int[][] ints = cache.get(key);
         if (ints == null) {
-            ints = Util.smoothCA(noise, key.getX() * Chunk.CHUNK_SIZE, key.getY() * Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE,
-                    Chunk.CHUNK_SIZE, Direction.MOORE_NEIGHBOURS, 4, 20, -0.1);
+            ints = Util.smoothCA(noiseGen, key.getX() * Chunk.CHUNK_SIZE, key.getY() * Chunk.CHUNK_SIZE,
+                    Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE, Direction.MOORE_NEIGHBOURS, 4, 20, -0.1);
             cache.put(key, ints);
         }
         //int[][] ints = Util.smoothCA(noise, tx, ty, 1, 1, Direction.MOORE_NEIGHBOURS, 4, 20, -0.1);
         return ints[tx - key.getX() * Chunk.CHUNK_SIZE][ty - key.getY() * Chunk.CHUNK_SIZE] == 0;
     }
     
-    private void genNoise(long seed) {
+    private Module genNoise(long seed) {
         //        ModuleFractal gen = new ModuleFractal(FractalType.FBM, BasisType.SIMPLEX, InterpolationType.LINEAR);
         //        gen.setSeed(seed);
         //        gen.setNumOctaves(3);
@@ -82,7 +83,7 @@ public class CaveSystem implements GenerationDataComponent {
         source.setSampleScale(Chunk.CHUNK_SIZE * 2);
         source.setSamples(10000);
         source.calculate2D();
-        this.noise = m;
+        return m;
     }
     
 }

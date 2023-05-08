@@ -11,6 +11,7 @@ import com.sudoplay.joise.module.Module;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.composer.Recorder;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
+import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
@@ -26,7 +27,7 @@ public class Util {
     
     public static <T extends IStepWiseComponent> float interpolateStepwise(int x, IStepwise1D<T> stepwise,
             IPropertyGetter<T> tointerpolate, Interpolation interpolinterpol, int interpconstmax) {
-        if (interpconstmax == 0) {
+        if (interpconstmax == 0 || stepwise.isConstant()) {
             return tointerpolate.getValue(x, stepwise.getAt(x));
         }
         int interpconstleft = stepwise.getAt(x + interpconstmax).getInterpolationDistance();
@@ -141,6 +142,7 @@ public class Util {
      * @return the converted Color
      */
     public static Color ofTemperature(float colTemperature) {
+        colTemperature = MathUtils.clamp(colTemperature, 0, 50000);
         float red = 0;
         float green = 0;
         float blue = 0;
@@ -172,8 +174,9 @@ public class Util {
         return new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1f);
     }
     
-    public static int[][] smoothCA(Module noise, double x, double y, int width, int height, Direction[] rule,
+    public static int[][] smoothCA(NoiseGenerator noiseGen, double x, double y, int width, int height, Direction[] rule,
             int minSolidCount, int iterations, double thresh) {
+        Module noise = noiseGen.get();
         int[][] result = new int[width][height];
         if (iterations == 0) {
             for (int i = 0; i < width; i++) {

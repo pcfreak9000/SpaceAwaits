@@ -53,16 +53,18 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         int someint = params.getHeight() / 3;
         HeightVariation layer = new HeightVariation(someint,
                 new LayerHeightVariation(params.getSeed() + 1, 8 + r.nextInt(5)));
-        HeightSystem height = new HeightSystem(params.getSeed(),
+        HeightGenerator height = new HeightGenerator(params.getSeed(),
                 params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
         CaveSystem caves = new CaveSystem(params.getSeed());
+        ShapeSystem shape = new ShapeSystem(height);
         
         GenFilter2DLayer layerfilter = new GenFilter2DLayer(layer, null, null, "lower", "higher");
-        GenFilter2DLayer airgroundfilter = new GenFilter2DLayer(height, layerfilter, null, null, new Object());
+        //GenFilter2DLayer airgroundfilter = new GenFilter2DLayer(height, layerfilter, null, null, new Object());
         
-        BiomeSystem biomes = new BiomeSystem(airgroundfilter, biomea);
-        biomes.setComponent(HeightSystem.class, height);
+        BiomeSystem biomes = new BiomeSystem(layerfilter, biomea);
+        //biomes.setComponent(HeightSystem.class, height);
         biomes.setComponent(CaveSystem.class, caves);
+        biomes.setComponent(ShapeSystem.class, shape);
         
         //setup worldprimer
         WorldPrimer p = new WorldPrimer();
@@ -111,7 +113,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
         });
         p.setWorldBounds(new WorldBounds(params.getWidth(), params.getHeight()));
-        p.setChunkGenerator(new BiomeChunkGenerator(biomes, caves, params.getSeed()));
+        p.setChunkGenerator(new BiomeChunkGenerator(shape, biomes, caves, params.getSeed()));
         return p;
     }
     

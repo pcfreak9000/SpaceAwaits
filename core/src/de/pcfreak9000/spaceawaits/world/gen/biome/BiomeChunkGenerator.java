@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.gen.biome;
 
 import de.pcfreak9000.spaceawaits.content.gen.CaveSystem;
+import de.pcfreak9000.spaceawaits.content.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
@@ -14,13 +15,15 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     private static final int POPULATE_DIV = 16;
     private static final int POPULATE_COUNT = Chunk.CHUNK_SIZE / POPULATE_DIV;
     
+    private ShapeSystem shapeSystem;
     private BiomeSystem biomeGen;
     private CaveSystem caveGen;
     
     private RndHelper rnd;
     private final long seed;
     
-    public BiomeChunkGenerator(BiomeSystem biomeGenerator, CaveSystem caves, long seedMaster) {
+    public BiomeChunkGenerator(ShapeSystem shapeSystem, BiomeSystem biomeGenerator, CaveSystem caves, long seedMaster) {
+        this.shapeSystem = shapeSystem;
         this.biomeGen = biomeGenerator;
         this.caveGen = caves;
         this.seed = seedMaster;
@@ -37,7 +40,10 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (!chunk.inBounds(x, y)) {
                     continue;
                 }
-                Biome biome = biomeGen.getBiome(x, y);
+                if (!this.shapeSystem.hasTile(x, y)) {
+                    continue;
+                }
+                Biome biome = biomeGen.getBiome(x, y);//Allow null biomes? Maybe for the vacuum of space on an asteroid?
                 if (biome != null) {
                     boolean cave = caveGen == null ? false : caveGen.isCave(x, y);
                     Tile front = biome.genTileAt(x, y, TileLayer.Front, biomeGen, rnd);
