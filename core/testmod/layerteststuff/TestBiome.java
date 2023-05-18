@@ -2,26 +2,18 @@ package layerteststuff;
 
 import java.util.Random;
 
-import com.badlogic.ashley.core.Entity;
-
-import de.pcfreak9000.spaceawaits.content.entities.Entities;
-import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
+import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
-import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Decorator;
 import de.pcfreak9000.spaceawaits.world.gen.biome.SurfaceDecorator;
-import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenData;
 import de.pcfreak9000.spaceawaits.world.gen.feature.IFeature;
 import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
 import de.pcfreak9000.spaceawaits.world.gen.feature.OreGenTileFeature;
@@ -55,13 +47,15 @@ public class TestBiome extends Biome {
         this.surfaceDeco = sub ? null : new SurfaceDecorator();
         this.deco = new Decorator();
         if (!sub) {
-            surfaceDeco.addFeature(new FeatureGenerator(0.1f, fgen, null));
+            surfaceDeco.addFeature(new FeatureGenData(0.01f, fgen, null));
+            surfaceDeco.addFeature(new FeatureGenData(0.1f, new TreeFeature(),
+                    (tiles, b, param, x, y) -> tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS));
         }
-        this.deco.addFeature(new FeatureGenerator(0.003f, coal,
+        this.deco.addFeature(new FeatureGenData(0.003f, coal,
                 (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 5));
-        this.deco.addFeature(new FeatureGenerator(0.003f, copper,
+        this.deco.addFeature(new FeatureGenData(0.003f, copper,
                 (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 19));
-        this.deco.addFeature(new FeatureGenerator(0.003f, iron,
+        this.deco.addFeature(new FeatureGenData(0.003f, iron,
                 (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 12));
     }
     
@@ -71,7 +65,7 @@ public class TestBiome extends Biome {
         
         Tile t = Tile.NOTHING;
         if (ty == 0) {
-            t = Tiles.BEDROCK;
+            t = Tiles.BEDROCK;//<----
         } else {
             if (sub) {
                 return Tiles.STONE_DARK;
@@ -79,7 +73,7 @@ public class TestBiome extends Biome {
             if (ty == value) {
                 t = Tiles.GRASS;
             } else if (ty >= value - 3) {
-                t = Tiles.DIRT;
+                t = Tiles.DIRT;//<----
             } else {
                 t = Tiles.STONE;
             }
@@ -113,27 +107,7 @@ public class TestBiome extends Biome {
     @Override
     public void populate(TileSystem tiles, World world, GenerationParameters biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
-        if (sub)
-            return;
         
-        //this algorithm is f*cking slow
-        for (int i = 0; i < 50; i++) {
-            int x = rnd.getRandom().nextInt(area) + tx;
-            int y = rnd.getRandom().nextInt(area) + ty;
-            if (tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS) {
-                //tiles.setTile(x, y, TileLayer.Front, DMod.instance.torch);
-                //fgen.generate(tiles, world, x, y, rand, area);
-                //this.bp.generate(tiles, world, x, y, 0, 0, bp.getWidth(), bp.getHeight(), rand);
-                Entity tree = Entities.TREE.createEntity();
-                TransformComponent tc = Components.TRANSFORM.get(tree);
-                tc.position.set(x - 0.5f, y + 1);
-                world.getSystem(EntityInteractSystem.class).spawnEntity(tree, false);
-                if (rnd.getRandom().nextDouble() < 0.3) {
-                    ItemStack s = new ItemStack(Items.TWIG, rnd.getRandom().nextInt(1) + 1);
-                    s.dropRandomInTile(world, x, y + 1);
-                }
-            }
-        }
     }
     
     @Override

@@ -1,14 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.gen.feature;
 
-import de.pcfreak9000.spaceawaits.world.gen.biome.IConditions;
-
-public class FeatureGenerator {
+public class FeatureGenData {
     
     private float chancePerTile;
     private IFeature feature;
     private IConditions conditions;
     
-    public FeatureGenerator(float chancePerTile, IFeature feature, IConditions cond) {
+    public FeatureGenData(float chancePerTile, IFeature feature, IConditions cond) {
         this.chancePerTile = chancePerTile;
         this.feature = feature;
         this.conditions = cond;

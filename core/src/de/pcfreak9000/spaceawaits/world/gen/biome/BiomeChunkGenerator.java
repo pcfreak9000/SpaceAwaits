@@ -2,13 +2,13 @@ package de.pcfreak9000.spaceawaits.world.gen.biome;
 
 import com.badlogic.gdx.utils.IntArray;
 
+import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGen2D;
+import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
-import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;

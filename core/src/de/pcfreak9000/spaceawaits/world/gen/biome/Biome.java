@@ -3,9 +3,9 @@ package de.pcfreak9000.spaceawaits.world.gen.biome;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
+import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
-import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;

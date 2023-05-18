@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.generation.Gen2DDivider;
-import de.pcfreak9000.spaceawaits.generation.HeightVariation;
+import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -21,7 +21,8 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
-import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
+import de.pcfreak9000.spaceawaits.world.gen.HeightGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;

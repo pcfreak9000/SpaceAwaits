@@ -1,9 +1,7 @@
-package de.pcfreak9000.spaceawaits.world.gen;
+package de.pcfreak9000.spaceawaits.generation;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
-
-import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
 public class GenerationParameters {
     private ClassToInstanceMap<GenerationDataComponent> components;

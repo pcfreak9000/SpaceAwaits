@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.gen;
+package de.pcfreak9000.spaceawaits.world.gen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,6 @@ import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.util.IStepwise1D;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.gen.HeightBiome;
 
 public class HeightGenerator implements IGenInt1D {
     
@@ -73,7 +72,7 @@ public class HeightGenerator implements IGenInt1D {
             return hb.getHeight(atx, minheight, maxheight, seed, noiseGens);
         }, Interpolation.linear, 30));
         height = MathUtils.clamp(height, minheight, maxheight);
-        return height;//Proper queued cache would be nice here
+        return height;//TODO Proper queued cache would be nice here
         //return offset + (int) Math.round(amplitude * noise.get().get(tx, 0.5));
     }
     

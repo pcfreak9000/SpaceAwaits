@@ -11,12 +11,13 @@ import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 import com.sudoplay.joise.module.SeededModule;
 
+import de.pcfreak9000.spaceawaits.generation.GenerationDataComponent;
+import de.pcfreak9000.spaceawaits.generation.ModuleRandom;
 import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
 public class CaveSystem implements GenerationDataComponent {
     

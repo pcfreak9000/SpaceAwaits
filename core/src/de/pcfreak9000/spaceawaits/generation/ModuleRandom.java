@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.gen;
+package de.pcfreak9000.spaceawaits.generation;
 
 import java.util.Random;
 

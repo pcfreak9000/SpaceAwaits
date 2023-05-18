@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.generation;
+package de.pcfreak9000.spaceawaits.world.gen;
 
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
@@ -7,6 +7,8 @@ import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
+import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
+import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class HeightVariation implements IGenInt1D {
