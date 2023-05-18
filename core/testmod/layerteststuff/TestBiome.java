@@ -5,7 +5,6 @@ import java.util.Random;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.content.entities.Entities;
-import de.pcfreak9000.spaceawaits.content.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.TileEntityStorageDrawer;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
@@ -16,10 +15,14 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
 import de.pcfreak9000.spaceawaits.world.gen.RndHelper;
+import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeSystem;
+import de.pcfreak9000.spaceawaits.world.gen.biome.Decorator;
+import de.pcfreak9000.spaceawaits.world.gen.biome.SurfaceDecorator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.feature.IFeature;
 import de.pcfreak9000.spaceawaits.world.gen.feature.ITilePlacer;
 import de.pcfreak9000.spaceawaits.world.gen.feature.OreGenTileFeature;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
@@ -47,10 +50,23 @@ public class TestBiome extends Biome {
         this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
         this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
         this.addTag(sub ? "lower" : "higher");
+        this.tile = sub ? Tiles.STONE_DARK : Tiles.STONE;
+        this.topTile = sub ? Tiles.STONE_DARK : Tiles.GRASS;
+        this.surfaceDeco = sub ? null : new SurfaceDecorator();
+        this.deco = new Decorator();
+        if (!sub) {
+            surfaceDeco.addFeature(new FeatureGenerator(0.1f, fgen, null));
+        }
+        this.deco.addFeature(new FeatureGenerator(0.003f, coal,
+                (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 5));
+        this.deco.addFeature(new FeatureGenerator(0.003f, copper,
+                (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 19));
+        this.deco.addFeature(new FeatureGenerator(0.003f, iron,
+                (a, b, params, x, y) -> params.getComponent(ShapeSystem.class).getHeight(x) - y > 12));
     }
     
     @Override
-    public Tile genTileAt(int tx, int ty, TileLayer layer, BiomeSystem biomeGen, RndHelper rnd) {
+    public Tile genTileAt(int tx, int ty, TileLayer layer, GenerationParameters biomeGen, RndHelper rnd) {
         int value = biomeGen.getComponent(ShapeSystem.class).getHeight(tx);
         
         Tile t = Tile.NOTHING;
@@ -71,19 +87,12 @@ public class TestBiome extends Biome {
         return t;
     }
     
-    private FeatureGenerator fgen = new FeatureGenerator() {
+    private IFeature fgen = new IFeature() {
         
         @Override
-        public boolean generate(TileSystem tiles, World world, int tx, int ty, Random rand, int area) {
-            if (tiles.getTile(tx, ty, TileLayer.Front) == Tiles.BRICKS_OLD) {
-                tiles.setTile(tx, ty + 1, TileLayer.Front, Tiles.BRICKS_OLD);
-                tiles.setTile(tx, ty + 2, TileLayer.Front, Tiles.BRICKS_OLD);
-                tiles.setTile(tx, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
-                tiles.setTile(tx - 1, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
-                tiles.setTile(tx + 1, ty + 3, TileLayer.Front, Tiles.BRICKS_OLD);
-                return true;
-            }
-            return false;
+        public boolean generate(World world, ITileArea tiles, int tx, int ty, Random rand) {
+            bp.generate((TileSystem) tiles, world, tx, ty, 0, 0, bp.getWidth(), bp.getHeight(), rand);
+            return true;
         }
     };
     
@@ -102,36 +111,11 @@ public class TestBiome extends Biome {
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10);
     
     @Override
-    public void populate(TileSystem tiles, World world, BiomeSystem biomeGen, int tx, int ty, int area, RndHelper rnd) {
+    public void populate(TileSystem tiles, World world, GenerationParameters biomeGen, int tx, int ty, int area,
+            RndHelper rnd) {
         if (sub)
             return;
-        int coppercount = rnd.getRandom().nextFloat() > 0.7f ? 1 : 0;
-        for (int i = 0; i < coppercount; i++) {
-            int x = rnd.getRandom().nextInt(area) + tx;
-            int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(ShapeSystem.class).getHeight(x);
-            if (height - y > 19) {
-                copper.generate(tiles, x, y, rnd.getRandom(), area);
-            }
-        }
-        int ironcount = rnd.getRandom().nextFloat() > 0.6f ? 1 : 0;
-        for (int i = 0; i < ironcount; i++) {
-            int x = rnd.getRandom().nextInt(area) + tx;
-            int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(ShapeSystem.class).getHeight(x);
-            if (height - y > 12) {
-                iron.generate(tiles, x, y, rnd.getRandom(), area);
-            }
-        }
-        int coalcount = rnd.getRandom().nextFloat() > 0.5f ? 1 : 0;
-        for (int i = 0; i < coalcount; i++) {
-            int x = rnd.getRandom().nextInt(area) + tx;
-            int y = rnd.getRandom().nextInt(area) + ty;
-            int height = biomeGen.getComponent(ShapeSystem.class).getHeight(x);
-            if (height - y > 5) {
-                coal.generate(tiles, x, y, rnd.getRandom(), area);
-            }
-        }
+        
         //this algorithm is f*cking slow
         for (int i = 0; i < 50; i++) {
             int x = rnd.getRandom().nextInt(area) + tx;
@@ -153,7 +137,8 @@ public class TestBiome extends Biome {
     }
     
     @Override
-    public void genStructureTiles(TileSystem tiles, BiomeSystem biomeGen, int tx, int ty, int area, RndHelper rnd) {
+    public void genStructureTiles(TileSystem tiles, GenerationParameters biomeGen, int tx, int ty, int area,
+            RndHelper rnd) {
         //FIXME tiles is null...
     }
     

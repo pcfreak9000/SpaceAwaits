@@ -110,6 +110,12 @@ public class MathUtil {
         return (bits & bit) == bit;
     }
     
+    public static int randomRound(float f, Random random) {
+        int i = Mathf.floori(f);
+        float addchance = f - i;
+        return i + (random.nextFloat() <= addchance ? 1 : 0);
+    }
+    
     /**
      * 
      * Test whether the given ray with the origin

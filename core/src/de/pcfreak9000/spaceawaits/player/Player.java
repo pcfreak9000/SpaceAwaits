@@ -11,6 +11,7 @@ import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.gui.ContainerInventoryPlayer;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.science.Science;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
@@ -32,6 +33,8 @@ public class Player implements INBTSerializable {
     
     private InventoryPlayer inventory;
     
+    private Science science;
+    
     private GameMode gameMode = GameMode.Survival;
     
     private Array<ItemStack> toDrop = new Array<>(false, 10);
@@ -39,6 +42,7 @@ public class Player implements INBTSerializable {
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
+        this.science = new Science();
     }
     
     public GameMode getGameMode() {
@@ -55,6 +59,10 @@ public class Player implements INBTSerializable {
     
     public InventoryPlayer getInventory() {
         return this.inventory;
+    }
+    
+    public Science getScience() {
+        return this.science;
     }
     
     public void dropWhenPossible(ItemStack stack) {
@@ -91,6 +99,7 @@ public class Player implements INBTSerializable {
     public void readNBT(NBTCompound pc) {
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.inventory.readNBT(pc.getCompound("inventory"));
+        this.science.readNBT(pc.getCompound("science"));
         NBTList todropl = pc.getListOrDefault("todrop", new NBTList(NBTType.Compound));
         for (int i = 0; i < todropl.size(); i++) {
             toDrop.add(ItemStack.readNBT(todropl.getCompound(i)));
@@ -101,6 +110,7 @@ public class Player implements INBTSerializable {
     public void writeNBT(NBTCompound pc) {
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
         pc.put("inventory", INBTSerializable.writeNBT(inventory));
+        pc.put("science", INBTSerializable.writeNBT(science));
         NBTList todropl = new NBTList(NBTType.Compound);
         for (ItemStack s : toDrop) {
             if (!ItemStack.isEmptyOrNull(s)) {

@@ -95,11 +95,11 @@ public class AnnotationSerializer {
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
                 }
-                if (!f.getType().isPrimitive()) {
+                Class<?> type = f.getType();
+                if (!type.isPrimitive()) {
                     throw new IllegalStateException("Cant serialize complex types");
                 }
                 String key = an.key();
-                Class<?> type = f.getType();
                 try {
                     if (type == Integer.TYPE) {
                         int innt = f.getInt(ser);

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.gen;
+package de.pcfreak9000.spaceawaits.world.gen;
 
 import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
 import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;

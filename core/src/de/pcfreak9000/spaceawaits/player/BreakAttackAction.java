@@ -97,7 +97,7 @@ public class BreakAttackAction implements Action {
             player.getInventory().setSlotContent(player.getInventory().getSelectedSlot(), cp);
             current = cp;
         }
-        if (!player.isInReachFromHand(mousex, mousey,
+        if (!used && !player.isInReachFromHand(mousex, mousey,
                 (ItemStack.isEmptyOrNull(stack) ? player.getReach() : stack.getItem().getReach(player, stack)))) {
             return false;
         }

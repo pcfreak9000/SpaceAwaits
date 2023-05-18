@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.generation.Gen2DDivider;
 import de.pcfreak9000.spaceawaits.generation.HeightVariation;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
@@ -19,13 +20,14 @@ import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
+import de.pcfreak9000.spaceawaits.world.gen.GenerationParameters;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
+import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeSystem;
-import de.pcfreak9000.spaceawaits.world.gen.biome.GenFilter2DLayer;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import layerteststuff.TestBiome;
 import mod.ComponentInventoryShip;
@@ -51,20 +53,20 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         Random r = new RandomXS128(params.getSeed());
         //int higherlevelthick = Math.min(40, params.getHeight() / 3);
         int someint = params.getHeight() / 3;
-        HeightVariation layer = new HeightVariation(someint,
-                new LayerHeightVariation(params.getSeed() + 1, 8 + r.nextInt(5)));
+        HeightVariation layer = new HeightVariation(someint, params.getSeed() + 1, 8 + r.nextInt(5));
         HeightGenerator height = new HeightGenerator(params.getSeed(),
                 params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
         CaveSystem caves = new CaveSystem(params.getSeed());
         ShapeSystem shape = new ShapeSystem(height);
         
-        GenFilter2DLayer layerfilter = new GenFilter2DLayer(layer, null, null, "lower", "higher");
-        //GenFilter2DLayer airgroundfilter = new GenFilter2DLayer(height, layerfilter, null, null, new Object());
+        Gen2DDivider<Biome> upperLowerDivider = new Gen2DDivider<>(layer, (x, y) -> biomea.get(1),
+                (x, y) -> biomea.get(0));
+        //Gen2DDivider<Biome> atmoGroundDivider = new Gen2DDivider<>(height, upperLowerDivider, null);
         
-        BiomeSystem biomes = new BiomeSystem(layerfilter, biomea);
-        //biomes.setComponent(HeightSystem.class, height);
-        biomes.setComponent(CaveSystem.class, caves);
-        biomes.setComponent(ShapeSystem.class, shape);
+        GenerationParameters genParams = new GenerationParameters();
+        
+        genParams.setComponent(CaveSystem.class, caves);
+        genParams.setComponent(ShapeSystem.class, shape);
         
         //setup worldprimer
         WorldPrimer p = new WorldPrimer();
@@ -113,7 +115,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
         });
         p.setWorldBounds(new WorldBounds(params.getWidth(), params.getHeight()));
-        p.setChunkGenerator(new BiomeChunkGenerator(shape, biomes, caves, params.getSeed()));
+        p.setChunkGenerator(new BiomeChunkGenerator(shape, upperLowerDivider, caves, params.getSeed(), genParams));
         return p;
     }
     

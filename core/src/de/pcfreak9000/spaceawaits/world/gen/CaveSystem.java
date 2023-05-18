@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.content.gen;
+package de.pcfreak9000.spaceawaits.world.gen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,6 @@ import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.gen.ModuleRandom;
 import de.pcfreak9000.spaceawaits.world.gen.biome.GenerationDataComponent;
 
 public class CaveSystem implements GenerationDataComponent {
