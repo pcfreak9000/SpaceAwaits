@@ -14,7 +14,7 @@ public class Gen2DDivider<T> implements IGen2D<T> {
     @Override
     public T generate(int tx, int ty) {
         IGen2D<T> selected;
-        if (divider.generate(ty) - ty <= 0) {
+        if (divider.generate(tx) - ty <= 0) {
             selected = higher;
         } else {
             selected = lower;
