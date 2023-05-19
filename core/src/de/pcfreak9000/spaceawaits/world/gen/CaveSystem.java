@@ -29,7 +29,7 @@ public class CaveSystem implements GenerationDataComponent {
     }
     
     public boolean isCave(int tx, int ty) {
-        if (cache.size() > 40) {//This sucks. ChunkProvider(?) also has some cache, maybe create a special cache class?
+        if (cache.size() > 40) {//TODO This sucks. ChunkProvider(?) also has some cache, maybe create a special cache class?
             cache.clear();
         }
         IntCoordKey key = new IntCoordKey(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
