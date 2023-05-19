@@ -3,12 +3,10 @@ package de.pcfreak9000.spaceawaits.world;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
-
-import com.badlogic.gdx.utils.Queue;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoordKey;
+import de.pcfreak9000.spaceawaits.util.SpecialCache;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
@@ -21,35 +19,29 @@ public class ChunkProvider implements IChunkProvider {
     
     private Chunk cached = null;
     
-    private Queue<IntCoordKey> chunkUsagePrioQueue = new Queue<>();
-    
     private int populationModeLevel = 0;
-    private Map<IntCoordKey, Chunk> chunks = new HashMap<>();
     private Map<IntCoordKey, Chunk> genChunks = new HashMap<>();
+    
+    private SpecialCache<IntCoordKey, Chunk> chunkCache;
     
     public ChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkGen) {
         this.world = world;
         this.loader = loader;
         this.chunkGen = chunkGen;
+        this.chunkCache = new SpecialCache<>(152, 145, (key) -> loader.loadChunk(key), (chunk) -> {
+            if (cached == chunk) {
+                invalidateCache();
+            }
+            if (chunk.isActive()) {
+                world.removeChunk(chunk);
+            }
+            loader.unloadChunk(chunk);
+        });
     }
     
     @Override
     public Chunk getChunk(int x, int y) {
         return getChunk(x, y, false);
-    }
-    
-    private void checkQueue() {
-        if (chunkUsagePrioQueue.size > 152) {
-            while (chunkUsagePrioQueue.size > 145) {
-                IntCoordKey k = chunkUsagePrioQueue.removeFirst();
-                Chunk toUnload = chunks.remove(k);
-                if (toUnload.isActive()) {
-                    world.removeChunk(toUnload);
-                }
-                loader.unloadChunk(toUnload);
-            }
-            invalidateCache();
-        }
     }
     
     private Chunk ensureChunk(int x, int y, ChunkGenStage stage) {
@@ -58,29 +50,15 @@ public class ChunkProvider implements IChunkProvider {
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
         IntCoordKey key = new IntCoordKey(x, y);
-        Chunk chunk = chunks.get(key);
-        //Recently used chunks are prioritized higher (meaning they are unloaded later)
-        if (chunk != null && !isTmpMode()) {
-            if (!Objects.equals(key, chunkUsagePrioQueue.last())) {
-                chunkUsagePrioQueue.removeValue(key, false);
-                chunkUsagePrioQueue.addLast(key);
-                checkQueue();
-            }
+        Chunk chunk = null;//chunks.get(key);
+        if (!isTmpMode() || chunkCache.hasKey(key)) {
+            chunk = chunkCache.getOrFresh(key);
         }
-        if (chunk == null) {
-            if (isTmpMode()) {
-                chunk = genChunks.get(key);
-            }
+        if (isTmpMode() && chunk == null) {
+            chunk = genChunks.get(key);
             if (chunk == null) {
                 chunk = loader.loadChunk(key);
-            }
-            if (isTmpMode()) {
                 genChunks.put(key, chunk);
-            } else {
-                chunks.put(key, chunk);
-                chunkUsagePrioQueue.removeValue(key, false);
-                chunkUsagePrioQueue.addLast(key);
-                checkQueue();
             }
         }
         if (chunk.getGenStage().level >= stage.level) {
@@ -125,7 +103,7 @@ public class ChunkProvider implements IChunkProvider {
         }
         if (isTmpMode()) {
             IntCoordKey key = new IntCoordKey(x, y);
-            Chunk chunk = chunks.get(key);
+            Chunk chunk = chunkCache.getFromCache(key);//chunks.get(key);
             if (chunk == null) {
                 chunk = genChunks.get(key);
             }
@@ -149,7 +127,7 @@ public class ChunkProvider implements IChunkProvider {
         while (it.hasNext()) {
             IntCoordKey k = it.next();
             Chunk toRem = genChunks.get(k);
-            if (!chunks.containsKey(k)) {
+            if (!chunkCache.hasKey(k)) {
                 loader.unloadChunk(toRem);
             }
             it.remove();
@@ -163,23 +141,16 @@ public class ChunkProvider implements IChunkProvider {
     public void unloadAll() {
         unloadTemporaryChunks();
         invalidateCache();
-        for (Chunk c : chunks.values()) {
-            if (c.isActive()) {
-                world.removeChunk(c);
-            }
-            this.loader.unloadChunk(c);
-        }
-        this.chunks.clear();
-        this.chunkUsagePrioQueue.clear();
+        this.chunkCache.clear();
     }
     
     @Override
     public int getLoadedChunkCount() {
-        return chunks.size();
+        return chunkCache.size();
     }
     
     public void saveAll() {
-        for (Chunk c : chunks.values()) {
+        for (Chunk c : chunkCache.values()) {
             this.loader.saveChunk(c);
         }
     }

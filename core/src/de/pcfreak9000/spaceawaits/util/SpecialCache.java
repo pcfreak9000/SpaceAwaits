@@ -42,8 +42,21 @@ public class SpecialCache<K, V> {
         }
     }
     
-    public V get(K key) {
+    public int size() {
+        return cache.size();
+    }
+    
+    public boolean hasKey(K key) {
+        return cache.containsKey(key);
+    }
+    
+    public V getFromCache(K key) {
         V v = cache.get(key);
+        return v;
+    }
+    
+    public V getOrFresh(K key) {
+        V v = getFromCache(key);
         if (v == null) {
             v = freshSupply.apply(key);
             cache.put(key, v);
