@@ -60,9 +60,10 @@ public class SpecialCache<K, V> {
         if (v == null) {
             v = freshSupply.apply(key);
             cache.put(key, v);
-        }
-        if (!Objects.equals(key, keyUsagePrioQueue.last())) {
-            keyUsagePrioQueue.removeValue(key, false);
+            keyUsagePrioQueue.addLast(key);
+            checkCacheSize();
+        } else if (!Objects.equals(key, keyUsagePrioQueue.last())) {
+            keyUsagePrioQueue.removeValue(key, false); //<- TODO this could potentially decrease the performance....
             keyUsagePrioQueue.addLast(key);
             checkCacheSize();
         }
