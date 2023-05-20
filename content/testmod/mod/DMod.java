@@ -59,6 +59,9 @@ public class DMod {
     
     public TileLiquid water = new TileLiquid();
     
+    
+    
+    
     public SpaceshipFactory fac = new SpaceshipFactory();
     public static final Item MININGLASER = new ItemMininglaser();
     
@@ -102,7 +105,6 @@ public class DMod {
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
-        
     }
     
     @EventSubscription

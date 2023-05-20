@@ -15,7 +15,7 @@ public class ShapeSystem implements GenerationDataComponent {
     public int getHeight(int tx) {
         return height.generate(tx);
     }
-    
+    //FIXME this isn't really the distance to the nearest surface... right now its the distance to the nearest surface directly *above*
     public float getNextSurfaceDistance(int tx, int ty) {
         return getHeight(tx) - ty;
     }

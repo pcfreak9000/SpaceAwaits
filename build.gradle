@@ -40,6 +40,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
     	maven { url 'https://maven.izzel.io/releases' }
     }
+    
 }
 
 project(":desktop") {
@@ -71,6 +72,25 @@ project(":core") {
         implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
         implementation 'info.picocli:picocli:4.6.1'
        	implementation files('lib/Java-NBT.jar')    
+       	implementation "com.cyphercove.flexbatch:flexbatch:1.2.3"
+       	implementation "com.sudoplay.joise:joise:1.1.0"
+    }
+}
+
+project(":content") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+    	implementation project(":core")
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
+        implementation 'info.picocli:picocli:4.6.1'
+       	implementation files('../core/lib/Java-NBT.jar')    
        	implementation "com.cyphercove.flexbatch:flexbatch:1.2.3"
        	implementation "com.sudoplay.joise:joise:1.1.0"
     }

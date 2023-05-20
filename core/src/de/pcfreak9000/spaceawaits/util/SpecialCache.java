@@ -72,8 +72,10 @@ public class SpecialCache<K, V> {
     
     //clear/dump all
     public void clear() {
-        for (V v : cache.values()) {
-            dump.accept(v);
+        if (dump != null) {
+            for (V v : cache.values()) {
+                dump.accept(v);
+            }
         }
         cache.clear();
         keyUsagePrioQueue.clear();

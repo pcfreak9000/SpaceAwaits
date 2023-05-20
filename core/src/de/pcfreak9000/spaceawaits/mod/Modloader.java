@@ -226,42 +226,43 @@ public class Modloader {
         Set<Class<?>> mods = refl.getTypesAnnotatedWith(Mod.class);
         this.modClasses.addAll(mods);
         this.classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
-        //        for (int i = 0; i < candidates.size(); i++) {
-        //            JarFile jarfile = null;
-        //            try {
-        //                jarfile = new JarFile(candidates.get(i));
-        //                //                LoadingScreen.LOADING_STAGE_BUS
-        //                //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
-        //                for (final JarEntry entry : Collections.list(jarfile.entries())) {
-        //                    if (entry.getName().toLowerCase().endsWith(".class")) {
-        //                        Class<?> clazz = null;
-        //                        try {
-        //                            clazz = modClassLoader.loadClass(entry.getName().replace("/", ".").replace(".class", ""));
-        //                        } catch (final ClassNotFoundException e) {
-        //                            LOGGER.error("ClassNotFoundException: " + entry.getName());
-        //                            continue;
-        //                        } catch (final LinkageError e) {
-        //                            LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
-        //                            continue;
-        //                        }
-        //                        if (clazz.isAnnotationPresent(Mod.class)) {
-        //                            this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
-        //                        }
-        //                    }
-        //                }
-        //            } catch (final IOException e) {
-        //                LOGGER.warn("Could not read mod container: " + candidates.get(i));
-        //                continue;
-        //            } finally {
-        //                if (jarfile != null) {
+        //                for (int i = 0; i < candidates.size(); i++) {
+        //                    JarFile jarfile = null;
         //                    try {
-        //                        jarfile.close();
+        //                        jarfile = new JarFile(candidates.get(i));
+        //                        //                LoadingScreen.LOADING_STAGE_BUS
+        //                        //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
+        //                        for (final JarEntry entry : Collections.list(jarfile.entries())) {
+        //                            if (entry.getName().toLowerCase().endsWith(".class")) {
+        //                                Class<?> clazz = null;
+        //                                try {
+        //                                    clazz = modClassLoader.loadClass(entry.getName().replace("/", ".").replace(".class", ""));
+        //                                    System.out.println(clazz);
+        //                                } catch (final ClassNotFoundException e) {
+        //                                    LOGGER.error("ClassNotFoundException: " + entry.getName());
+        //                                    continue;
+        //                                } catch (final LinkageError e) {
+        //                                    LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
+        //                                    continue;
+        //                                }
+        ////                                if (clazz.isAnnotationPresent(Mod.class)) {
+        ////                                    this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
+        ////                                }
+        //                            }
+        //                        }
         //                    } catch (final IOException e) {
-        //                        e.printStackTrace();
+        //                        LOGGER.warn("Could not read mod container: " + candidates.get(i));
+        //                        continue;
+        //                    } finally {
+        //                        if (jarfile != null) {
+        //                            try {
+        //                                jarfile.close();
+        //                            } catch (final IOException e) {
+        //                                e.printStackTrace();
+        //                            }
+        //                        }
         //                    }
         //                }
-        //            }
-        //        }
         this.modClasses.sort(COMP);
         LOGGER.infof("Found %d mod candidate(s)!", this.modClasses.size());
     }

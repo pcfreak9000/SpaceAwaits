@@ -23,7 +23,7 @@ public class HeightGenerator implements IGenInt1D {
     private int minheight, maxheight;
     
     private long seed;
-    private Map<Class<? extends HeightBiome>, NoiseGenerator[]> noiseGenCache;
+    private Map<Class<? extends HeightBiome>, NoiseGenerator[]> noiseGens;
     
     private IStepwise1D<HeightBiome> heightBiomeSelector;
     
@@ -31,7 +31,7 @@ public class HeightGenerator implements IGenInt1D {
         this.seed = seed;
         this.minheight = offset - (int) amplitude;
         this.maxheight = offset + (int) amplitude;
-        this.noiseGenCache = new HashMap<>();
+        this.noiseGens = new HashMap<>();
         HeightBiome hb = new HeightBiome() {
             
             @Override
@@ -64,15 +64,15 @@ public class HeightGenerator implements IGenInt1D {
     
     public int getHeight(int tx, int ty) {
         int height = (int) Math.round(Util.interpolateStepwise(tx, heightBiomeSelector, (atx, hb) -> {
-            NoiseGenerator[] noiseGens = noiseGenCache.get(hb.getClass());
-            if (noiseGens == null) {
-                noiseGens = hb.createNoiseGenerators(seed);
-                noiseGenCache.put(hb.getClass(), noiseGens);
+            NoiseGenerator[] noiseGen = noiseGens.get(hb.getClass());
+            if (noiseGen == null) {
+                noiseGen = hb.createNoiseGenerators(seed);
+                noiseGens.put(hb.getClass(), noiseGen);
             }
-            return hb.getHeight(atx, minheight, maxheight, seed, noiseGens);
+            return hb.getHeight(atx, minheight, maxheight, seed, noiseGen);
         }, Interpolation.linear, 30));
         height = MathUtils.clamp(height, minheight, maxheight);
-        return height;//TODO Proper queued cache would be nice here
+        return height;
         //return offset + (int) Math.round(amplitude * noise.get().get(tx, 0.5));
     }
     

@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.content.gen;
 
 import java.util.Random;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -11,15 +10,12 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.generation.Gen2DDivider;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
-import de.pcfreak9000.spaceawaits.item.loot.LootTable;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
 import de.pcfreak9000.spaceawaits.world.gen.HeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
@@ -31,8 +27,6 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import layerteststuff.TestBiome;
-import mod.ComponentInventoryShip;
-import mod.DMod;
 
 public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, SpaceSurfaceParams> {
     
@@ -74,17 +68,17 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         p.setWorldGenerator(new IWorldGenerator() {
             @Override
             public void generate(World world) {
-                Entity ship = DMod.instance.fac.createEntity();
-                TransformComponent tc = ship.getComponent(TransformComponent.class);
-                Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
-                Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),
-                        params.getHeight(), params.getSeed());
-                spawn = s;
-                tc.position.set(s);
-                //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
-                Components.STATS.get(ship).get("mechHealth").current = 1;
-                LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
-                        ship.getComponent(ComponentInventoryShip.class).invShip);
+//                Entity ship = DMod.instance.fac.createEntity();
+//                TransformComponent tc = ship.getComponent(TransformComponent.class);
+//                Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
+//                Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),
+//                        params.getHeight(), params.getSeed());
+//                spawn = s;
+//                tc.position.set(s);
+//                //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
+//                Components.STATS.get(ship).get("mechHealth").current = 1;
+//                LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
+//                        ship.getComponent(ComponentInventoryShip.class).invShip);
                 //world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
             }
             
