@@ -15,9 +15,9 @@ import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
+import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.util.IPropertyGetter;
-import de.pcfreak9000.spaceawaits.util.IStepwise1D;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -71,7 +71,7 @@ public class TestScreen extends ScreenAdapter {
         createNoise();
         TestStepwiseComponent a = new TestStepwiseComponent(Interpolation.smooth, 30);
         TestStepwiseComponent b = new TestStepwiseComponent(Interpolation.bounce, 30);
-        IStepwise1D<TestStepwiseComponent> stepwise = (x) -> randomAt(x / size) <= lim ? a : b;
+        IGen1D<TestStepwiseComponent> stepwise = (x) -> randomAt(x / size) <= lim ? a : b;
         IPropertyGetter<TestStepwiseComponent> propget = (xyz, swcomp) -> randomAt(xyz / size);
         //IntFunction<Interpolation> interpol = (x) -> interpol(x / size);
         //IntUnaryOperator interpconst = (x) -> interpconst(x / size);

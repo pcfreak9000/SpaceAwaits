@@ -12,9 +12,9 @@ import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
+import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.IGenInt1D;
 import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
-import de.pcfreak9000.spaceawaits.util.IStepwise1D;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
@@ -22,39 +22,38 @@ public class HeightGenerator implements IGenInt1D {
     
     private int minheight, maxheight;
     
+    private float offset;
+    private float maxamplitude;
+    
     private long seed;
-    private Map<Class<? extends HeightBiome>, NoiseGenerator[]> noiseGens;
+    private Map<Class<? extends HeightBiome>, Data> noiseGens;
     
-    private IStepwise1D<HeightBiome> heightBiomeSelector;
+    private IGen1D<HeightBiome> heightBiomeGen;
     
-    public HeightGenerator(long seed, int offset, double amplitude) {
+    private Interpolation interpolinterpolation = Interpolation.linear;
+    private int interpconstmax = 30;
+    
+    private static class Data {
+        NoiseGenerator noiseGen;
+        float amplitude;
+        float offset;
+    }
+    
+    public HeightGenerator(long seed, int minheight, int maxheight) {
         this.seed = seed;
-        this.minheight = offset - (int) amplitude;
-        this.maxheight = offset + (int) amplitude;
         this.noiseGens = new HashMap<>();
-        HeightBiome hb = new HeightBiome() {
-            
-            @Override
-            public int getInterpolationDistance() {
-                return 10;
-            }
-            
-            @Override
-            public Interpolation getInterpolation() {
-                return Interpolation.linear;
-            }
-            
-            @Override
-            public int getHeight(int x, int minHeight, int maxHeight, long seed, NoiseGenerator[] noises) {
-                return offset + (int) Math.round(amplitude * noises[0].get().get(x, 0.5));
-            }
-            
-            @Override
-            public NoiseGenerator[] createNoiseGenerators(long seed) {
-                return new NoiseGenerator[] { new NoiseGenerator(() -> genNoise(seed)) };
-            }
-        };
-        this.heightBiomeSelector = (x) -> hb;
+        
+        this.minheight = minheight;
+        this.maxheight = maxheight;
+        
+        this.maxamplitude = (maxheight - minheight) / 2f;
+        this.offset = minheight + maxamplitude;
+        
+        HeightBiome hb = new HeightBiome();
+        hb.defaultAmplitude = maxamplitude;
+        hb.noiseGenCreator = (seeds) -> new NoiseGenerator(() -> genNoise(seeds));
+        
+        this.heightBiomeGen = (x) -> hb;
     }
     
     @Override
@@ -63,17 +62,21 @@ public class HeightGenerator implements IGenInt1D {
     }
     
     public int getHeight(int tx, int ty) {
-        int height = (int) Math.round(Util.interpolateStepwise(tx, heightBiomeSelector, (atx, hb) -> {
-            NoiseGenerator[] noiseGen = noiseGens.get(hb.getClass());
+        int height = (int) Math.round(Util.interpolateStepwise(tx, heightBiomeGen, (atx, hb) -> {
+            Data noiseGen = noiseGens.get(hb.getClass());
             if (noiseGen == null) {
-                noiseGen = hb.createNoiseGenerators(seed);
+                noiseGen = new Data();
+                noiseGen.noiseGen = hb.getNoiseGenProvider().apply(seed);
+                noiseGen.amplitude = hb.getAmplitude(maxamplitude);
+                noiseGen.offset = hb.getOffset(maxamplitude, noiseGen.amplitude);
                 noiseGens.put(hb.getClass(), noiseGen);
             }
-            return hb.getHeight(atx, minheight, maxheight, seed, noiseGen);
-        }, Interpolation.linear, 30));
+            float amplitude = noiseGen.amplitude;
+            float offset = noiseGen.offset;
+            return (int) Math.round(this.offset + offset + amplitude * noiseGen.noiseGen.get().get(tx, 0.5));
+        }, interpolinterpolation, interpconstmax));
         height = MathUtils.clamp(height, minheight, maxheight);
         return height;
-        //return offset + (int) Math.round(amplitude * noise.get().get(tx, 0.5));
     }
     
     private Module genNoise(long seed) {

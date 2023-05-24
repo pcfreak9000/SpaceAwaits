@@ -11,6 +11,7 @@ import com.sudoplay.joise.module.Module;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.composer.Recorder;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
+import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
@@ -25,18 +26,18 @@ public class Util {
         }
     };
     
-    public static <T extends IStepWiseComponent> float interpolateStepwise(int x, IStepwise1D<T> stepwise,
+    public static <T extends IStepWiseComponent> float interpolateStepwise(int x, IGen1D<T> stepwise,
             IPropertyGetter<T> tointerpolate, Interpolation interpolinterpol, int interpconstmax) {
-        if (interpconstmax == 0 || stepwise.isConstant()) {
-            return tointerpolate.getValue(x, stepwise.getAt(x));
+        if (interpconstmax == 0) {
+            return tointerpolate.getValue(x, stepwise.generate(x));
         }
-        int interpconstleft = stepwise.getAt(x + interpconstmax).getInterpolationDistance();
-        int interpconstright = stepwise.getAt(x - interpconstmax - 1).getInterpolationDistance();
+        int interpconstleft = stepwise.generate(x + interpconstmax).getInterpolationDistance();
+        int interpconstright = stepwise.generate(x - interpconstmax - 1).getInterpolationDistance();
         interpconstleft = Math.min(interpconstleft, interpconstmax);
         interpconstright = Math.min(interpconstright, interpconstmax);
-        float tx = tointerpolate.getValue(x, stepwise.getAt(x));
-        float txd0 = tointerpolate.getValue(x + interpconstright, stepwise.getAt(x + interpconstright));
-        float txd1 = tointerpolate.getValue(x - interpconstleft - 1, stepwise.getAt(x - interpconstleft - 1));
+        float tx = tointerpolate.getValue(x, stepwise.generate(x));
+        float txd0 = tointerpolate.getValue(x + interpconstright, stepwise.generate(x + interpconstright));
+        float txd1 = tointerpolate.getValue(x - interpconstleft - 1, stepwise.generate(x - interpconstleft - 1));
         if (tx != txd0) {
             //x is on the left of some step
             //we need to find where the step occurs
@@ -45,11 +46,11 @@ public class Util {
             int intx = x;
             while (runv == tx) {//Use some binary search here instead?
                 intx++;
-                runv = tointerpolate.getValue(intx, stepwise.getAt(intx));
+                runv = tointerpolate.getValue(intx, stepwise.generate(intx));
             }
             return InterpolationInterpolation.apply(tx, txd0,
                     (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
-                    stepwise.getAt(x).getInterpolation(), stepwise.getAt(x + interpconstright).getInterpolation(),
+                    stepwise.generate(x).getInterpolation(), stepwise.generate(x + interpconstright).getInterpolation(),
                     interpolinterpol);
         } else if (tx != txd1) {
             //x is on the right of some step
@@ -59,11 +60,11 @@ public class Util {
             int intx = x - interpconstleft - 1;
             while (runv != tx) {//Use some binary search here instead?
                 intx++;
-                runv = tointerpolate.getValue(intx, stepwise.getAt(intx));
+                runv = tointerpolate.getValue(intx, stepwise.generate(intx));
             }
             return InterpolationInterpolation.apply(txd1, tx,
                     (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
-                    stepwise.getAt(x - interpconstleft - 1).getInterpolation(), stepwise.getAt(x).getInterpolation(),
+                    stepwise.generate(x - interpconstleft - 1).getInterpolation(), stepwise.generate(x).getInterpolation(),
                     interpolinterpol);
         }
         return tx;

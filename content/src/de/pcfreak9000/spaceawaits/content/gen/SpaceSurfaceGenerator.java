@@ -49,8 +49,9 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         //int higherlevelthick = Math.min(40, params.getHeight() / 3);
         int someint = params.getHeight() / 3;
         HeightVariation layer = new HeightVariation(someint, params.getSeed() + 1, 8 + r.nextInt(5));
-        HeightGenerator height = new HeightGenerator(params.getSeed(),
-                params.getHeight() / 3 + Math.min(40, params.getHeight() / 3), 30);//Not nice
+        int offset = params.getHeight() / 3 + Math.min(40, params.getHeight() / 3);
+        int amplitude = 30;
+        HeightGenerator height = new HeightGenerator(params.getSeed(), offset - amplitude, offset + amplitude);//Not nice
         CaveSystem caves = new CaveSystem(params.getSeed());
         ShapeSystem shape = new ShapeSystem(height);
         
@@ -68,17 +69,17 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         p.setWorldGenerator(new IWorldGenerator() {
             @Override
             public void generate(World world) {
-//                Entity ship = DMod.instance.fac.createEntity();
-//                TransformComponent tc = ship.getComponent(TransformComponent.class);
-//                Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
-//                Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),
-//                        params.getHeight(), params.getSeed());
-//                spawn = s;
-//                tc.position.set(s);
-//                //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
-//                Components.STATS.get(ship).get("mechHealth").current = 1;
-//                LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
-//                        ship.getComponent(ComponentInventoryShip.class).invShip);
+                //                Entity ship = DMod.instance.fac.createEntity();
+                //                TransformComponent tc = ship.getComponent(TransformComponent.class);
+                //                Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
+                //                Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),
+                //                        params.getHeight(), params.getSeed());
+                //                spawn = s;
+                //                tc.position.set(s);
+                //                //WorldUtil.simImpact(world.getSystem(TileSystem.class), s.x + 2, s.y + 4, 10, 0, 0, 0);
+                //                Components.STATS.get(ship).get("mechHealth").current = 1;
+                //                LootTable.getFor("shipspawn").generate(new RandomXS128(params.getSeed()),
+                //                        ship.getComponent(ComponentInventoryShip.class).invShip);
                 //world.getSystem(EntityInteractSystem.class).spawnEntity(ship, false);
             }
             
