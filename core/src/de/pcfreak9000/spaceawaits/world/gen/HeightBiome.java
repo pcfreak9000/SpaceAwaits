@@ -15,6 +15,12 @@ public class HeightBiome implements IStepWiseComponent {
     protected float defaultAmplitude;
     protected float defaultOffset;
     
+    //spline transform -> no, this number manipulation stuff and doesn't belong into the height biome. maybe its own Module?
+    //Module supplier for noisegen or default noise?? this isnt so nice?
+    //TODO can we find a better way to supply the NoiseGenerator??
+    //TODO replace NoiseGenerator with something more abstract for generating doubles?
+    protected LongFunction<NoiseGenerator> noiseGenCreator;
+    
     //heightgen has (planetary) scale
     
     //heightgen which doesnt want a plane just doesnt put it into its selection structures. this replaces the interval of applicability
@@ -29,10 +35,6 @@ public class HeightBiome implements IStepWiseComponent {
     public float getOffset(float maxamplitude, float amplitude) {
         return defaultOffset;
     }
-    
-    //spline transform -> no, this number manipulation stuff and doesn't belong into the height biome. maybe its own Module?
-    //Module supplier for noisegen or default noise?? this isnt so nice?
-    protected LongFunction<NoiseGenerator> noiseGenCreator;
     
     public LongFunction<NoiseGenerator> getNoiseGenProvider() {
         return noiseGenCreator;

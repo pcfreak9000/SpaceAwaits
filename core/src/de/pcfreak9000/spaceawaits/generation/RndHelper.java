@@ -32,10 +32,12 @@ public class RndHelper {
     
     public static long getSeedAt(long seedMaster, double x, double y) {
         long l = seedMaster;
-        l += 6793451682347862416L;
-        l ^= Double.hashCode(x);
-        l += 6793451682347862416L;
-        l ^= Double.hashCode(y);
+        l ^= Double.hashCode(x) * 73856093L;
+        l ^= Double.hashCode(y) * 83492791L;
+        //        l += 6793451682347862416L;
+        //        l ^= Double.hashCode(x);
+        //        l += 6793451682347862416L;
+        //        l ^= Double.hashCode(y);
         return l;
     }
     

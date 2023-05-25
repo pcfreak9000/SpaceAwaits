@@ -16,8 +16,8 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
+import de.pcfreak9000.spaceawaits.world.gen.BiomeHeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
-import de.pcfreak9000.spaceawaits.world.gen.HeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
@@ -27,6 +27,8 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import layerteststuff.TestBiome;
+import layerteststuff.TestCaveBiome;
+import layerteststuff.TestHeightBiome;
 
 public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, SpaceSurfaceParams> {
     
@@ -51,8 +53,12 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         HeightVariation layer = new HeightVariation(someint, params.getSeed() + 1, 8 + r.nextInt(5));
         int offset = params.getHeight() / 3 + Math.min(40, params.getHeight() / 3);
         int amplitude = 30;
-        HeightGenerator height = new HeightGenerator(params.getSeed(), offset - amplitude, offset + amplitude);//Not nice
-        CaveSystem caves = new CaveSystem(params.getSeed());
+        TestHeightBiome thbiome = new TestHeightBiome();
+        BiomeHeightGenerator height = new BiomeHeightGenerator(params.getSeed(), offset - amplitude, offset + amplitude,
+                (x) -> thbiome);//Not nice
+        
+        TestCaveBiome tcbiome = new TestCaveBiome();
+        CaveSystem caves = new CaveSystem(params.getSeed(), (x, y) -> tcbiome);
         ShapeSystem shape = new ShapeSystem(height);
         
         Gen2DDivider<Biome> upperLowerDivider = new Gen2DDivider<>(layer, (x, y) -> biomea.get(1),

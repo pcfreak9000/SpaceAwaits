@@ -6,7 +6,7 @@ public class FeatureGenData {
     private IFeature feature;
     private IConditions conditions;
     
-    public FeatureGenData(float chancePerTile, IFeature feature, IConditions cond) {
+    public FeatureGenData(float chancePerTile, IFeature feature, IConditions cond) {//TODO max retry ratio?
         this.chancePerTile = chancePerTile;
         this.feature = feature;
         this.conditions = cond;
