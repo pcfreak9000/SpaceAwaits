@@ -27,7 +27,6 @@ import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import layerteststuff.TestBiome;
-import layerteststuff.TestCaveBiome;
 import layerteststuff.TestHeightBiome;
 
 public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, SpaceSurfaceParams> {
@@ -57,13 +56,12 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         BiomeHeightGenerator height = new BiomeHeightGenerator(params.getSeed(), offset - amplitude, offset + amplitude,
                 (x) -> thbiome);//Not nice
         
-        TestCaveBiome tcbiome = new TestCaveBiome();
-        CaveSystem caves = new CaveSystem(params.getSeed(), (x, y) -> tcbiome);
         ShapeSystem shape = new ShapeSystem(height);
         
-        Gen2DDivider<Biome> upperLowerDivider = new Gen2DDivider<>(layer, (x, y) -> biomea.get(1),
-                (x, y) -> biomea.get(0));
+        Gen2DDivider<Biome> upperLowerDivider = new Gen2DDivider<>(layer, biomea.get(1), biomea.get(0));
         //Gen2DDivider<Biome> atmoGroundDivider = new Gen2DDivider<>(height, upperLowerDivider, null);
+        
+        CaveSystem caves = new CaveSystem(params.getSeed(), (x, y) -> upperLowerDivider.generate(x, y).getCaveBiome());
         
         GenerationParameters genParams = new GenerationParameters();
         

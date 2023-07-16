@@ -4,10 +4,11 @@ import java.util.function.LongFunction;
 
 import com.badlogic.gdx.math.Interpolation;
 
+import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
 import de.pcfreak9000.spaceawaits.util.IStepWiseComponent;
 
-public class HeightBiome implements IStepWiseComponent {
+public class HeightBiome implements IStepWiseComponent, IGen1D<HeightBiome> {
     
     protected Interpolation interpolation = Interpolation.linear;
     protected int interpolationDistance = 10;
@@ -48,5 +49,10 @@ public class HeightBiome implements IStepWiseComponent {
     @Override
     public int getInterpolationDistance() {
         return interpolationDistance;
+    }
+    
+    @Override
+    public HeightBiome generate(int i) {
+        return this;
     }
 }
