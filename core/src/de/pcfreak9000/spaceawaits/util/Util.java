@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.sudoplay.joise.module.Module;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.composer.Recorder;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
 import de.pcfreak9000.spaceawaits.generation.IGen1D;
-import de.pcfreak9000.spaceawaits.generation.NoiseGenerator;
+import de.pcfreak9000.spaceawaits.generation.IGenDouble2D;
+import de.pcfreak9000.spaceawaits.generation.IGenInt2D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
@@ -22,9 +22,30 @@ public class Util {
         
         @Override
         public float apply(float a) {
-            return a > 0.5f ? 1 : 0;
+            return a > 0.5f ? 1f : 0f;
         }
     };
+    
+    @Deprecated
+    public static float interpolateStepwise2Ddirect(int x, int y, IGenInt2D stepwise, Interpolation interpolinterpol,
+            int interpconstmax) {
+        if (interpconstmax == 0) {
+            return stepwise.generate(x, y);
+        }
+        int radius = interpconstmax;
+        float cumIntVal = 0;
+        float value = 0;
+        for (int iy = -radius; iy <= radius; iy++) {
+            int dx = (int) Math.sqrt(radius * radius - iy * iy);
+            for (int ix = -dx; ix <= dx; ix++) {
+                double radCoord = Math.sqrt(ix * ix + iy * iy);
+                float interpolValue = interpolinterpol.apply((float) (1 - (radCoord / (double) radius)));
+                cumIntVal += interpolValue;
+                value += stepwise.generate(x + ix, y + iy) * interpolValue;
+            }
+        }
+        return value / cumIntVal;
+    }
     
     public static <T extends IStepWiseComponent> float interpolateStepwise(int x, IGen1D<T> stepwise,
             IPropertyGetter<T> tointerpolate, Interpolation interpolinterpol, int interpconstmax) {
@@ -64,8 +85,8 @@ public class Util {
             }
             return InterpolationInterpolation.apply(txd1, tx,
                     (x - (intx - interpconstright)) / (float) (interpconstleft + interpconstright),
-                    stepwise.generate(x - interpconstleft - 1).getInterpolation(), stepwise.generate(x).getInterpolation(),
-                    interpolinterpol);
+                    stepwise.generate(x - interpconstleft - 1).getInterpolation(),
+                    stepwise.generate(x).getInterpolation(), interpolinterpol);
         }
         return tx;
     }
@@ -175,14 +196,14 @@ public class Util {
         return new Color(red / 255.0f, green / 255.0f, blue / 255.0f, 1f);
     }
     
-    public static int[][] smoothCA(NoiseGenerator noiseGen, double x, double y, int width, int height, Direction[] rule,
+    public static int[][] smoothCA(IGenDouble2D src, int x, int y, int width, int height, Direction[] rule,
             int minSolidCount, int iterations, double thresh) {
-        Module noise = noiseGen.get();
+        //Module noise = noiseGen.get();
         int[][] result = new int[width][height];
         if (iterations == 0) {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    result[i][j] = noise.get((x + i + 0.5), (y + j + 0.5)) >= thresh ? 1 : 0;
+                    result[i][j] = src.generate((x + i), (y + j)) >= thresh ? 1 : 0;
                 }
             }
             return result;
@@ -198,7 +219,7 @@ public class Util {
                     int count = 0;
                     for (Direction d : rule) {
                         if (i == 0) {
-                            if (noise.get((x + j + d.dx + 0.5), (y + k + d.dy + 0.5)) >= thresh) {
+                            if (src.generate((x + j + d.dx), (y + k + d.dy)) >= thresh) {
                                 count++;
                                 write[j][k] = 1;
                                 //read[j][k] = 1;

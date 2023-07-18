@@ -54,8 +54,10 @@ public class TestBiome extends Biome {
                 tiles.setTile(x, y + 1, TileLayer.Front, Tiles.LOOSEROCKS);
                 return true;
             }, (tiles, b, param, x, y) -> tiles.getTile(x, y, TileLayer.Front) == Tiles.GRASS));
+            TestCaveBiome tcbiome = new TestCaveBiome(true, -0.3);
+            this.caveBiome = tcbiome;
         } else {
-            TestCaveBiome tcbiome = new TestCaveBiome();
+            TestCaveBiome tcbiome = new TestCaveBiome(false, -0.1);
             this.caveBiome = tcbiome;
         }
         this.deco.addFeature(new FeatureGenData(0.003f, coal,

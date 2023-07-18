@@ -14,10 +14,10 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.CaveBiome;
 
 public class TestCaveBiome extends CaveBiome {
-    public TestCaveBiome() {
+    public TestCaveBiome(boolean offset, double thresh) {
         iterations = 20;
-        threshold = -0.1;
-        noiseGenCreator = (seed) -> new NoiseGenerator(() -> genNoise(seed));
+        threshold = thresh;//-0.1
+        noiseGenCreator = (seed) -> new NoiseGenerator(() -> genNoise(seed + (offset ? 156 : 0)));
     }
     
     private Module genNoise(long seed) {
