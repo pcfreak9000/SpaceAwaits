@@ -136,6 +136,7 @@ public abstract class GameScreen extends ScreenAdapter {
         ScreenUtils.clear(0, 0, 0, 1);
         applyViewport();
         updateMouseWorldPosCache();
+        //oh boi, this is updating all loaded animations, not just the ones on the screen, not really efficient
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
         updateAndRenderContent(delta, showGui);
         if (showGui) {

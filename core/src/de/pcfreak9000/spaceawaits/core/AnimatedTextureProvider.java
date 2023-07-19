@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-//maybe define animations in files instead of this, so a resourcepack could animate anything in theory...
+//TODO? maybe define animations in files instead of this, so a resourcepack could animate anything in theory...
 public class AnimatedTextureProvider implements ITextureProvider {
     
     private Animation<ITextureProvider> animation;
