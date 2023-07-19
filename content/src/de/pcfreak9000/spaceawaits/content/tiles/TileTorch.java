@@ -1,22 +1,17 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.AnimatedTextureProvider;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
-import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.RegionedTextureProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TileTorch extends Tile {
-    
-    private TextureProvider all = TextureProvider.get("torchAnimated.png");
     
     public TileTorch() {
         setDisplayName("Simple Torch");
@@ -25,21 +20,12 @@ public class TileTorch extends Tile {
         setFullTile(false);
         setLightColor(Color.WHITE);
         setHardness(0);
-        //THIS IS GARBAGE:
+        //THIS IS SLIGHTLY LESS GARBAGE THAN BEFORE:
         ITextureProvider[] ar = new ITextureProvider[7];
         for (int i = 0; i < ar.length; i++) {
-            final int x = i;
-            ar[i] = new ITextureProvider() {
-                
-                @Override
-                public TextureRegion getRegion() {
-                    TextureRegion tr = new TextureRegion(all.getRegion(), 0, x * 32, 32, 32);
-                    return tr;
-                }
-            };
+            ar[i] = new RegionedTextureProvider("torchAnimated.png", 0, i * 32, 32, 32);
         }
-        AnimatedTextureProvider antp = new AnimatedTextureProvider(
-                new Animation<>(0.11f, new Array<>(ar), PlayMode.LOOP));
+        AnimatedTextureProvider antp = new AnimatedTextureProvider(0.11f, ar, PlayMode.LOOP);
         setTextureProvider(antp);
     }
     
