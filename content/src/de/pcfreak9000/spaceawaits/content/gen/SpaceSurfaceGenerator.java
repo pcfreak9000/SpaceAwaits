@@ -59,7 +59,6 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         ShapeSystem shape = new ShapeSystem(height);
         
         Gen2DDivider<Biome> upperLowerDivider = new Gen2DDivider<>(layer, biomea.get(1), biomea.get(0));
-        //Gen2DDivider<Biome> atmoGroundDivider = new Gen2DDivider<>(height, upperLowerDivider, null);
         
         CaveSystem caves = new CaveSystem(params.getSeed(), (x, y) -> upperLowerDivider.generate(x, y).getCaveBiome());
         

@@ -53,19 +53,19 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 }
                 Biome biome = biomeGen.generate(x, y);//Allow null biomes? Maybe for the vacuum of space on an asteroid?
                 if (biome != null) {
-                    Tile tile;
-                    if (shapeSystem.getNextSurfaceDistance(x, y) == 0) {
-                        tile = biome.getTopTile();
-                    } else {
-                        tile = biome.getTile();
+                    Tile tile = null;
+                    //what about null tiles? or null tileconfigs? -> default to world default tile?
+                    ITileConfiguration tileConfig = biome.getTileConfig();
+                    if (tileConfig != null) {
+                        tile = tileConfig.getTile(x, y, shapeSystem, caveGen, genParams, rnd);
                     }
-                    boolean cave = caveGen == null ? false : caveGen.isCave(x, y);
-                    //Tile front = biome.genTileAt(x, y, TileLayer.Front, biomeGen, rnd);
-                    //Tile back = biome.genTileAt(x, y, TileLayer.Back, biomeGen, rnd);
-                    if (!cave || !tile.canBreak()) {
-                        chunk.setTile(x, y, TileLayer.Front, tile);
+                    if (tile != null) {
+                        boolean cave = caveGen == null ? false : caveGen.isCave(x, y);
+                        if (!cave || !tile.canBreak()) {
+                            chunk.setTile(x, y, TileLayer.Front, tile);
+                        }
+                        chunk.setTile(x, y, TileLayer.Back, tile);
                     }
-                    chunk.setTile(x, y, TileLayer.Back, tile);
                 }
             }
         }
@@ -109,7 +109,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                 if (biome != null && biome.getDeco() != null) {
                     biome.getDeco().decorate(ts, world, genParams, sampletx, samplety, POPULATE_DIV, rnd);
                 }
-               
+                
             }
         }
         IntArray iarr = new IntArray(Chunk.CHUNK_SIZE);

@@ -12,6 +12,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Decorator;
+import de.pcfreak9000.spaceawaits.world.gen.biome.SimpleTileConfig;
 import de.pcfreak9000.spaceawaits.world.gen.biome.SurfaceDecorator;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenData;
 import de.pcfreak9000.spaceawaits.world.gen.feature.IFeature;
@@ -42,8 +43,8 @@ public class TestBiome extends Biome {
         this.bp.setFront(leet, '#', Tiles.BRICKS_OLD, 'X', storageDrawer);
         this.bp.setBack(leet, '#', Tiles.BRICKS_OLD, 'X', Tiles.BRICKS_OLD);
         this.addTag(sub ? "lower" : "higher");
-        this.tile = sub ? Tiles.STONE_DARK : Tiles.STONE;
-        this.topTile = sub ? Tiles.STONE_DARK : Tiles.GRASS;
+        this.tileConfig = sub ? new SimpleTileConfig(Tiles.STONE_DARK)
+                : new SimpleTileConfig(Tiles.GRASS, Tiles.DIRT, Tiles.STONE);
         this.surfaceDeco = sub ? null : new SurfaceDecorator();
         this.deco = new Decorator();
         if (!sub) {

@@ -16,9 +16,7 @@ public abstract class Biome implements IGen2D<Biome> {
     
     //At some point we probably need Biome variations
     
-    //Maybe replace with more complicated TileConfiguration or whatever
-    protected Tile topTile;
-    protected Tile tile;
+    protected ITileConfiguration tileConfig;
     
     protected SurfaceDecorator surfaceDeco;
     protected Decorator deco;
@@ -29,12 +27,8 @@ public abstract class Biome implements IGen2D<Biome> {
         return caveBiome;
     }
     
-    public Tile getTopTile() {
-        return topTile;
-    }
-    
-    public Tile getTile() {
-        return tile;
+    public ITileConfiguration getTileConfig() {
+        return tileConfig;
     }
     
     public SurfaceDecorator getSurfaceDeco() {
