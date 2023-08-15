@@ -135,6 +135,7 @@ public class Item {
         return player.getReach();
     }
     
+    //-> SpecialBreakAttackModule?
     public boolean isSpecialBreakAttack() {
         return false;
     }

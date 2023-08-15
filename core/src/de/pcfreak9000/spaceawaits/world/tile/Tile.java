@@ -254,6 +254,7 @@ public class Tile extends Destructible {
     public void randomTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
     }
     
+    //-> RandomTickModule?
     public boolean receivesRandomTick() {
         return false;
     }
@@ -276,6 +277,7 @@ public class Tile extends Destructible {
             Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
     }
     
+    //-> CustomHitboxModule?
     public boolean hasCustomHitbox() {
         return false;
     }

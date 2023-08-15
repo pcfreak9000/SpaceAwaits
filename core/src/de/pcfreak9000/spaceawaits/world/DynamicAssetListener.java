@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Family;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetComponent;
 
+//What about hot reload of resources?
 public class DynamicAssetListener implements EntityListener {
     
     private static final Family FAMILY = Family.all(DynamicAssetComponent.class).get();

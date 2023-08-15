@@ -1,18 +1,11 @@
 package mod;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.composer.ComposedTextureProvider;
-import de.pcfreak9000.spaceawaits.composer.Composer;
+import de.pcfreak9000.spaceawaits.composer.GeneratedTexture;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceGenerator;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceParams;
 import de.pcfreak9000.spaceawaits.content.items.Items;
@@ -27,7 +20,6 @@ import de.pcfreak9000.spaceawaits.mod.Instance;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
-import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
@@ -59,9 +51,6 @@ public class DMod {
     
     public TileLiquid water = new TileLiquid();
     
-    
-    
-    
     public SpaceshipFactory fac = new SpaceshipFactory();
     public static final Item MININGLASER = new ItemMininglaser();
     
@@ -87,16 +76,11 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
+        BigBackground backbig = new BigBackground(new GeneratedTexture(WorldScreen.VISIBLE_TILES_MAX * 40,
+                WorldScreen.VISIBLE_TILES_MAX * 40, 2048, 2048, new StarfieldTexGen()),
+                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         
-        Background back = new Background(new ComposedTextureProvider(
-                new Composer(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40) {
-                    @Override
-                    protected void render() {
-                        super.render();
-                        reee();
-                    }
-                }), WorldScreen.VISIBLE_TILES_MAX, WorldScreen.VISIBLE_TILES_MAX);
-        GameRegistry.registerWorldEntity("background.stars", back);
+        GameRegistry.registerWorldEntity("background.stars", backbig);
         Background b2 = new Background(planet, 5, 5);
         b2.xoff = -20;
         b2.yoff = 15;
@@ -167,24 +151,4 @@ public class DMod {
         return e;
     }
     
-    private void reee() {
-        Camera cam = new OrthographicCamera(1, 1);
-        ScreenUtils.clear(0, 0, 0, 0);
-        ShapeRenderer s = new ShapeRenderer();
-        s.setProjectionMatrix(cam.combined);
-        s.begin(ShapeType.Filled);
-        RandomXS128 r = new RandomXS128();
-        for (int i = 0; i < 20000; i++) {
-            float x = r.nextFloat();
-            float y = r.nextFloat();
-            Color c = Util.ofTemperature(20000 * r.nextFloat() + 800);
-            c.mul(r.nextFloat() * 0.8f);
-            c.a = 1;
-            s.setColor(c);
-            s.circle(x - 0.5f, y - 0.5f, 0.0006f * (0.75f + r.nextFloat()) / 4, 20);
-        }
-        s.end();
-        
-        s.dispose();
-    }
 }

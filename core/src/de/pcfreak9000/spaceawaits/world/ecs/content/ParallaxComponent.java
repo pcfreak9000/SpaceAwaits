@@ -6,5 +6,5 @@ public class ParallaxComponent implements Component {
     
     public float xOffset, yOffset;
     public float widthScroll, heightScroll;
-    
+    public float width, height;
 }

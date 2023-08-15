@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
+import de.pcfreak9000.spaceawaits.world.render.strategy.RenderBigTextureStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderFogStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentStrategy;
@@ -20,6 +21,7 @@ public class WorldSetupHandler {
     @EventSubscription
     private void setupRenderStrategeies(RenderSystem.RegisterRenderStrategiesEvent ev) {
         ev.renderStrategies.register("entity", new RenderTextureStrategy(ev.renderer));
+        ev.renderStrategies.register("entityBig", new RenderBigTextureStrategy(ev.renderer));
         ev.renderStrategies.register("tileDefault", new RenderTileDefaultStrategy(ev.renderer));
         ev.renderStrategies.register("item", new RenderItemStrategy(ev.renderer));
         ev.renderStrategies.register("break", new RenderTileBreakingStrategy(ev.renderer));

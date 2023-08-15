@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.GameScreen;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
 
 public class ParallaxSystem extends IteratingSystem {
     
@@ -27,11 +26,10 @@ public class ParallaxSystem extends IteratingSystem {
         Vector3 positionState = camera.position;
         float xratio = positionState.x / (this.tileWorld.getBounds().getWidth());
         float yratio = positionState.y / (this.tileWorld.getBounds().getHeight());
-        RenderTextureComponent rc = Components.RENDER_TEXTURE.get(entity);
         float possibleW = pc.widthScroll;
         float possibleH = pc.widthScroll;
-        Components.TRANSFORM.get(entity).position.set(positionState.x - rc.width / 2f - xratio * possibleW + pc.xOffset,
-                positionState.y - rc.height / 2f - yratio * possibleH + pc.yOffset);
+        Components.TRANSFORM.get(entity).position.set(positionState.x - pc.width / 2f - xratio * possibleW + pc.xOffset,
+                positionState.y - pc.height / 2f - yratio * possibleH + pc.yOffset);
     }
     
 }

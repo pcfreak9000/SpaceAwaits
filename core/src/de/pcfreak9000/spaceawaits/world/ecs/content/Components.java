@@ -8,6 +8,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderBigTextureComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
@@ -66,6 +67,8 @@ public class Components {
     
     public static final ComponentMapper<RenderTextureComponent> RENDER_TEXTURE = ComponentMapper
             .getFor(RenderTextureComponent.class);
+    public static final ComponentMapper<RenderBigTextureComponent> RENDER_BIG_TEXTURE = ComponentMapper
+            .getFor(RenderBigTextureComponent.class);
     
     public static final ComponentMapper<ParallaxComponent> PARALLAX = ComponentMapper.getFor(ParallaxComponent.class);
     
