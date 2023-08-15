@@ -4,15 +4,15 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.ItemStackComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.ContactListenerComponent;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 
 public class ItemEntityFactory implements WorldEntityFactory {

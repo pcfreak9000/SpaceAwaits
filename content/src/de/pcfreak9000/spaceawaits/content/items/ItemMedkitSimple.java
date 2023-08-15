@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent.StatData;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class ItemMedkitSimple extends Item {

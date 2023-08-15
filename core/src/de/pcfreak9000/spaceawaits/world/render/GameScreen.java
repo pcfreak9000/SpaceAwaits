@@ -14,9 +14,9 @@ import de.pcfreak9000.spaceawaits.command.ICommandContext;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
-import de.pcfreak9000.spaceawaits.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
 //TODO Maybe have a GameScreen2D in the hierachy as well?
@@ -32,7 +32,7 @@ public abstract class GameScreen extends ScreenAdapter {
     private GuiOverlay guiContainerCurrent;
     
     private boolean showDebugScreen;
-    private DebugScreen debugScreen;
+    private DebugOverlay debugScreen;
     
     private float renderTime = 0;
     
@@ -41,7 +41,7 @@ public abstract class GameScreen extends ScreenAdapter {
     public GameScreen(GuiHelper guiHelper) {
         this.guiHelper = guiHelper;
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
-        this.debugScreen = new DebugScreen(this);
+        this.debugScreen = new DebugOverlay(this);
         this.fbostack = new FrameBufferStack();
     }
     

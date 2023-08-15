@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.screen;
+package de.pcfreak9000.spaceawaits.core.screen;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.player.Player;

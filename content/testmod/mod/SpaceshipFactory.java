@@ -8,7 +8,6 @@ import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
@@ -20,8 +19,9 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.RenderStatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent.StatData;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 

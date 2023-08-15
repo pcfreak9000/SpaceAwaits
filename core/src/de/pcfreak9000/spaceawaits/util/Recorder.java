@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.composer;
+package de.pcfreak9000.spaceawaits.util;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;

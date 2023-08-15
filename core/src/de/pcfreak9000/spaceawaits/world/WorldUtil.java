@@ -9,9 +9,9 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
-import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.AABBBodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 

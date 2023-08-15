@@ -7,7 +7,6 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.world.DynamicAssetListener;
 
 public class WatchDynamicAssetAnnotationProcessor {
     

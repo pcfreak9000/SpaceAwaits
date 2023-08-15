@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.screen;
+package de.pcfreak9000.spaceawaits.core.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;

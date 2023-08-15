@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
-public interface BreakableEntity {
+public interface IBreakableEntity {
     
     //Does this seperation even make sense here?
     

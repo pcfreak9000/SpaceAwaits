@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.composer.GeneratedTexture;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceGenerator;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceParams;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
+import de.pcfreak9000.spaceawaits.core.assets.GeneratedTexture;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.item.Item;

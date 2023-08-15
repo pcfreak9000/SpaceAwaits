@@ -25,7 +25,7 @@ import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
 import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import layerteststuff.TestBiome;
 import layerteststuff.TestHeightBiome;
 

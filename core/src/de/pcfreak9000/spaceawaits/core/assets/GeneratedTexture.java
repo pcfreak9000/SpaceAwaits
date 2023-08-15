@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.composer;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.core.assets.DynamicAsset;
-import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
+import de.pcfreak9000.spaceawaits.util.Recorder;
 import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
 public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvider, IRenderable {

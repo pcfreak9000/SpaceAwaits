@@ -17,8 +17,7 @@ import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.BreakableEntity;
-import de.pcfreak9000.spaceawaits.world.RenderLayers;
+import de.pcfreak9000.spaceawaits.world.IBreakableEntity;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
@@ -27,9 +26,10 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.OnNeighbourChangeComponent.OnNeighbourTileChange;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
@@ -69,7 +69,7 @@ public class TreeFactory implements WorldEntityFactory {
         BreakableComponent bc = new BreakableComponent();
         bc.setRequired(Components.TRANSFORM);
         bc.destructable.setMaterialLevel(1f).setRequiredTool(Tools.AXE);
-        bc.breakable = new BreakableEntity() {
+        bc.breakable = new IBreakableEntity() {
             
             @Override
             public void collectDrops(World world, Random random, Entity entity, Array<ItemStack> drops) {

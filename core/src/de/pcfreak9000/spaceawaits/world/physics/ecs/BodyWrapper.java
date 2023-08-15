@@ -1,7 +1,9 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
 public class BodyWrapper {
     

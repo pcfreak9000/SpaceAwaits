@@ -3,10 +3,10 @@ package de.pcfreak9000.spaceawaits.core;
 import java.io.IOException;
 import java.util.List;
 
+import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.ISaveManager;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
-import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 
 /**
  * Basiacally the backend to a level selector. Creates new gamesaves, and loads

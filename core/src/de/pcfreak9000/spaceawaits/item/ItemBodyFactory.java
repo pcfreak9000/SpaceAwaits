@@ -4,13 +4,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
+
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
-import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
-
-public class ItemBodyFactory implements BodyFactory {
+public class ItemBodyFactory implements IBodyFactory {
     private static final Vector2 OFFSET = new Vector2(Item.WORLD_SIZE / 2, Item.WORLD_SIZE / 2);
     private static final Vector2 WH = new Vector2(Item.WORLD_SIZE, Item.WORLD_SIZE);
     

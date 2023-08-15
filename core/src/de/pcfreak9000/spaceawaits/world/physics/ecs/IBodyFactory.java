@@ -1,11 +1,13 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 
-public interface BodyFactory {
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+
+public interface IBodyFactory {
     
     //If this class is reused for space as well this isn't suitable anymore
     public static final UnitConversion METER_CONV = PhysicsSystem.METER_CONV;

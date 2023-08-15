@@ -10,10 +10,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.content.components.Components;
-import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
 
-public class TreeBodyFactory implements BodyFactory {
+public class TreeBodyFactory implements IBodyFactory {
     
     private static final Vector2 WH = new Vector2(50 / 16f, 222 / 16f);
     

@@ -1,6 +1,8 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Component;
+
+import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 
 public class ContactListenerComponent implements Component {
     

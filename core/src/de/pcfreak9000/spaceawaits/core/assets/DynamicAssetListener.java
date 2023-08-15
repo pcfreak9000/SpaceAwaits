@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 import java.util.function.Function;
 
@@ -7,8 +7,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
-
-import de.pcfreak9000.spaceawaits.core.assets.DynamicAsset;
 
 //What about hot reload of resources?
 //Perhaps create an annotation for Fields to just register clazz+assetRetriever directly?

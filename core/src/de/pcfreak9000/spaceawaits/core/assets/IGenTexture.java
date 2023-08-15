@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.composer;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 public interface IGenTexture {
     void setup(int widthTotal, int heightTotal);

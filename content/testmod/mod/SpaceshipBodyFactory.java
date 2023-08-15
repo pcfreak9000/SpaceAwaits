@@ -8,10 +8,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
 
-public class SpaceshipBodyFactory implements BodyFactory {
+public class SpaceshipBodyFactory implements IBodyFactory {
     
     private static final Vector2 WH = new Vector2(159 / 32f, 72 / 32f);
     

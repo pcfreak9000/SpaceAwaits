@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.composer.Recorder;
 import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
 import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.IGenDouble2D;

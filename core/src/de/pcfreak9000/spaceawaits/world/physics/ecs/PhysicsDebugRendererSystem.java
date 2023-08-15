@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;

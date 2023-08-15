@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Component;
 
@@ -9,7 +9,7 @@ public class PhysicsComponent implements Component {
     
     public boolean considerSensorsAsBlocking = false;
     public BodyWrapper body;
-    public BodyFactory factory;
+    public IBodyFactory factory;
     
     boolean tmpadded = false;
     

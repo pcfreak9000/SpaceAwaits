@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.render;
 
 public final class RenderLayers {
     public static final float TILE_FRONT = 0.1f;

@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.RandomXS128;
 
-import de.pcfreak9000.spaceawaits.composer.IGenTexture;
+import de.pcfreak9000.spaceawaits.core.assets.IGenTexture;
 import de.pcfreak9000.spaceawaits.util.Util;
 
 public class StarfieldTexGen implements IGenTexture {

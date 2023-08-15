@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.physics;
+package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -21,6 +21,12 @@ import de.pcfreak9000.spaceawaits.world.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.physics.IQueryCallback;
+import de.pcfreak9000.spaceawaits.world.physics.IQueryFilter;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastEntityCallback;
+import de.pcfreak9000.spaceawaits.world.physics.IRaycastFixtureCallback;
+import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
+import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;

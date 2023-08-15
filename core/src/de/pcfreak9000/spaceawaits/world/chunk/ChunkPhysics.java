@@ -10,11 +10,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
-import de.pcfreak9000.spaceawaits.world.physics.BodyFactory;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
-public class ChunkPhysics implements BodyFactory {
+public class ChunkPhysics implements IBodyFactory {
     
     private static final Vector2 BODY_OFFSET = new Vector2(0.5f, 0.5f);
     
@@ -67,7 +67,7 @@ public class ChunkPhysics implements BodyFactory {
             }
         }
         this.body = null;
-        BodyFactory.super.destroyBody(body, world);
+        IBodyFactory.super.destroyBody(body, world);
     }
     
     private void createFixture(Tile tile, int gtx, int gty) { //This could be more memory efficient

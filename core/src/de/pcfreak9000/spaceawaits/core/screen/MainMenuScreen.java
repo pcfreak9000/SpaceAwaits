@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.screen;
+package de.pcfreak9000.spaceawaits.core.screen;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;

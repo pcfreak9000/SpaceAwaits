@@ -15,8 +15,8 @@ import de.pcfreak9000.spaceawaits.world.IUnchunkProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.SystemCache;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.physics.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public class EntityInteractSystem extends EntitySystem {
