@@ -73,7 +73,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
     }
     
-    private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;//TODO make light disableable
+    private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;
     private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
     
     private final OrderedSet<IRenderStrategy> renderStrategies;
@@ -119,6 +119,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntityListener(FAMILY, this);
+        //TODO eh... this needs to happen outside of RenderSystem, higher up in the "hierarchy" to make sure a DynamicAsset is destroyed in the end
+        for (DynamicAssetListener<? extends Component> dal : dals) {
+            engine.addEntityListener(dal.getFamily(), dal);
+        }
         ImmutableArray<Entity> engineEntities = engine.getEntitiesFor(FAMILY);
         this.entities.ensureCapacity(Math.max(0, engineEntities.size() - this.entities.size));
         for (Entity e : engineEntities) {
@@ -131,16 +135,11 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
                 ast.addedToEngineInternal(engine);
             }
         }
-        for (DynamicAssetListener<? extends Component> dal : dals) {
-            engine.addEntityListener(dal.getFamily(), dal);
-        }
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
-        for (DynamicAssetListener<? extends Component> dal : dals) {
-            engine.removeEntityListener(dal);
-        }
+        
         for (IRenderStrategy strat : this.renderStrategies) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
@@ -148,12 +147,15 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             }
         }
         super.removedFromEngine(engine);
-        engine.removeEntityListener(this);
         for (Entity e : entities) {
             removeEntityPrep(e);
         }
         this.entities.clear();
         this.entities.shrink();
+        engine.removeEntityListener(this);
+        for (DynamicAssetListener<? extends Component> dal : dals) {
+            engine.removeEntityListener(dal);
+        }
     }
     
     @Override
