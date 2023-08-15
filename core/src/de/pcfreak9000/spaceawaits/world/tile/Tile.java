@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.comp.Composite;
-import de.pcfreak9000.spaceawaits.core.ITextureProvider;
-import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.module.IModule;

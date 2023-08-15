@@ -14,7 +14,7 @@ import de.pcfreak9000.spaceawaits.content.components.Components;
 import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
-import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.BreakableEntity;

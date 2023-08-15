@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.cyphercove.flexbatch.FlexBatch;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.CoreRes;
-import de.pcfreak9000.spaceawaits.core.ShaderProvider;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;

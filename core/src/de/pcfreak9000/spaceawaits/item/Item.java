@@ -6,8 +6,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
 import de.pcfreak9000.spaceawaits.comp.Composite;
-import de.pcfreak9000.spaceawaits.core.ITextureProvider;
-import de.pcfreak9000.spaceawaits.core.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.module.IModule;
 import de.pcfreak9000.spaceawaits.module.ModuleHolder;
 import de.pcfreak9000.spaceawaits.module.ModuleID;

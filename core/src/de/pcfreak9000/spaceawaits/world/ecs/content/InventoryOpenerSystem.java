@@ -3,8 +3,8 @@ package de.pcfreak9000.spaceawaits.world.ecs.content;
 import com.badlogic.ashley.core.EntitySystem;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;

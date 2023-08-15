@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 public interface DynamicAsset {
     

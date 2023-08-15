@@ -3,9 +3,9 @@ package de.pcfreak9000.spaceawaits.content.tiles;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
-import de.pcfreak9000.spaceawaits.core.AnimatedTextureProvider;
-import de.pcfreak9000.spaceawaits.core.ITextureProvider;
-import de.pcfreak9000.spaceawaits.core.RegionedTextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.AnimatedTextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
+import de.pcfreak9000.spaceawaits.core.assets.RegionedTextureProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;

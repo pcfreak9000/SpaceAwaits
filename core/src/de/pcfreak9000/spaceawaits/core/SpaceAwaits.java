@@ -24,6 +24,8 @@ import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAsset;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
 import de.pcfreak9000.spaceawaits.screen.ScreenManager;
@@ -65,6 +67,8 @@ public class SpaceAwaits extends Game {
             .unmodifiableSet(componentsWithSerialize);
     private Map<String, Class<? extends Component>> componentsByKey = new HashMap<>();
     
+    private Set<Class<?>> classesWithWatchDynamicAsset = new LinkedHashSet<>();
+    
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
             throw new IllegalStateException("singleton violation");
@@ -89,8 +93,8 @@ public class SpaceAwaits extends Game {
         //setScreen(new LoadingScreen());
         //...
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
-        doReflectionStuff();
         LOGGER.info("Init...");
+        doReflectionStuff();
         CoreRes.init();
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
@@ -157,12 +161,18 @@ public class SpaceAwaits extends Game {
         Reflections refl = new Reflections("de.pcfreak9000.spaceawaits");
         classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
         classesWithSerialize.addAll(this.modloader.getModClassesWithSerialize());
+        classesWithWatchDynamicAsset.addAll(refl.getTypesAnnotatedWith(WatchDynamicAsset.class));
+        classesWithWatchDynamicAsset.addAll(this.modloader.getModClassesWithWatchDynamicAsset());
         for (Class<?> c : classesWithSerialize) {
             if (Component.class.isAssignableFrom(c)) {
                 componentsWithSerialize.add((Class<? extends Component>) c);
                 componentsByKey.put(c.getAnnotation(NBTSerialize.class).key(), (Class<? extends Component>) c);
             }
         }
+    }
+    
+    public Set<Class<?>> getClassesWithWatchDynamicAsset() {
+        return classesWithWatchDynamicAsset;
     }
     
     public Set<Class<?>> getClassesWithSerialize() {

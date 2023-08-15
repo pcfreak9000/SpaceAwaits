@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.event.EventSubscription;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 //TODO? maybe define animations in files instead of this, so a resourcepack could animate anything in theory...
 public class AnimatedTextureProvider implements ITextureProvider {

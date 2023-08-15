@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.item;
 
 import com.badlogic.ashley.core.Entity;
 
-import de.pcfreak9000.spaceawaits.core.CoreRes;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;

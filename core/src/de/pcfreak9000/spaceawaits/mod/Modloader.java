@@ -21,6 +21,7 @@ import org.reflections.Reflections;
 import de.codemakers.io.file.AdvancedFile;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAsset;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 
 /**
@@ -69,6 +70,7 @@ public class Modloader {
     private final List<ModContainer> readOnlyModList = Collections.unmodifiableList(this.modList);
     
     private Set<Class<?>> classesWithSerialize = new LinkedHashSet<>();
+    private Set<Class<?>> classesWithWatchDynamicAsset = new LinkedHashSet<>();
     
     private URLClassLoader modClassLoader;
     
@@ -226,57 +228,17 @@ public class Modloader {
         Set<Class<?>> mods = refl.getTypesAnnotatedWith(Mod.class);
         this.modClasses.addAll(mods);
         this.classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
-        //                for (int i = 0; i < candidates.size(); i++) {
-        //                    JarFile jarfile = null;
-        //                    try {
-        //                        jarfile = new JarFile(candidates.get(i));
-        //                        //                LoadingScreen.LOADING_STAGE_BUS
-        //                        //                        .post(new LoadingScreen.LoadingSubEvent(candidates.get(i).getName(), i + 1, candidates.size()));
-        //                        for (final JarEntry entry : Collections.list(jarfile.entries())) {
-        //                            if (entry.getName().toLowerCase().endsWith(".class")) {
-        //                                Class<?> clazz = null;
-        //                                try {
-        //                                    clazz = modClassLoader.loadClass(entry.getName().replace("/", ".").replace(".class", ""));
-        //                                    System.out.println(clazz);
-        //                                } catch (final ClassNotFoundException e) {
-        //                                    LOGGER.error("ClassNotFoundException: " + entry.getName());
-        //                                    continue;
-        //                                } catch (final LinkageError e) {
-        //                                    LOGGER.warn("LinkageError: " + entry.getName().replace("/", ".").replace(".class", ""));
-        //                                    continue;
-        //                                }
-        ////                                if (clazz.isAnnotationPresent(Mod.class)) {
-        ////                                    this.modClasses.add(new ModClassFileHolder(clazz, candidates.get(i)));
-        ////                                }
-        //                            }
-        //                        }
-        //                    } catch (final IOException e) {
-        //                        LOGGER.warn("Could not read mod container: " + candidates.get(i));
-        //                        continue;
-        //                    } finally {
-        //                        if (jarfile != null) {
-        //                            try {
-        //                                jarfile.close();
-        //                            } catch (final IOException e) {
-        //                                e.printStackTrace();
-        //                            }
-        //                        }
-        //                    }
-        //                }
+        this.classesWithWatchDynamicAsset.addAll(refl.getTypesAnnotatedWith(WatchDynamicAsset.class));
         this.modClasses.sort(COMP);
         LOGGER.infof("Found %d mod candidate(s)!", this.modClasses.size());
     }
     
-    //    public void disposeModClassLoader() {
-    //        try {
-    //            modClassLoader.close();
-    //        } catch (final IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //    }
-    
     public Set<Class<?>> getModClassesWithSerialize() {
         return Collections.unmodifiableSet(classesWithSerialize);
+    }
+    
+    public Set<Class<?>> getModClassesWithWatchDynamicAsset() {
+        return Collections.unmodifiableSet(classesWithWatchDynamicAsset);
     }
     
     private void discover(final List<File> files, final File f) {

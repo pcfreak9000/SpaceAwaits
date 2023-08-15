@@ -1,7 +1,6 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderFogStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderItemStrategy;
@@ -23,7 +22,6 @@ public class WorldSetupHandler {
         ev.addStrategy(new RenderLiquidTransparentStrategy(ev.renderer, ev.world));
         ev.addStrategy(new RenderStatsStrategy(ev.renderer));
         
-        ev.addDynamicAssetListener(RenderRenderableComponent.class, (rc) -> rc.renderable);
     }
     
 }

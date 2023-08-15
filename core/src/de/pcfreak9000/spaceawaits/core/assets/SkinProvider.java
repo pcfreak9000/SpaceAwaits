@@ -1,8 +1,10 @@
-package de.pcfreak9000.spaceawaits.core;
+package de.pcfreak9000.spaceawaits.core.assets;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import de.omnikryptec.event.EventSubscription;
+import de.pcfreak9000.spaceawaits.core.CoreEvents;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.QueueResourcesEvent;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.UpdateResourcesEvent;
 

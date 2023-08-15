@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 
-import de.pcfreak9000.spaceawaits.core.CoreRes;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.gui.GuiInventory;
 import de.pcfreak9000.spaceawaits.gui.ResultSlot;
 import de.pcfreak9000.spaceawaits.gui.Slot;

@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.cyphercove.flexbatch.FlexBatch;
 
 import de.pcfreak9000.spaceawaits.command.ICommandContext;
-import de.pcfreak9000.spaceawaits.core.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.screen.GuiHelper;

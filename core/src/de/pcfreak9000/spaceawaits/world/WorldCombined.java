@@ -1,11 +1,13 @@
 package de.pcfreak9000.spaceawaits.world;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAssetAnnotationProcessor;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
@@ -78,9 +80,15 @@ public class WorldCombined extends World {
             }
         }
         SpaceAwaits.BUS.unregister(eventBus);
+        for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
+            ecsEngine.removeEntityListener(dal);
+        }
     }
     
     private void setupECS(Engine engine, WorldScreen gameScreen) {
+        for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
+            engine.addEntityListener(dal.getFamily(), dal);
+        }
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new InventoryOpenerSystem(gameScreen, this));
         ecs.addSystem(new EntityInteractSystem(this, chunkProvider, unchunkProvider));
