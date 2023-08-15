@@ -8,8 +8,9 @@ import com.badlogic.gdx.utils.Disposable;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.DynamicAsset;
 import de.pcfreak9000.spaceawaits.core.ITextureProvider;
+import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
-public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvider {
+public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvider, IRenderable {
     
     private Texture[][] textures;
     private int tcountw, tcounth;
@@ -74,11 +75,15 @@ public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvi
         }
     }
     
-    public void render(SpriteBatch batch, float x, float y, float w, float h) {
-        this.render(batch, x, y, w, h, 0, 0, widthTotal, heightTotal);
+    @Override
+    public void render(SpriteBatch batch, float x, float y, float rotoffx, float rotoffy, float width, float height,
+            float scaleX, float scaleY, float rotation) {
+        this.render(batch, x, y, rotoffx, rotoffy, width, height, scaleX, scaleY, rotation, 0, 0, widthTotal,
+                heightTotal);
     }
     
-    public void render(SpriteBatch batch, float x, float y, float w, float h, int px, int py, int pw, int ph) {
+    public void render(SpriteBatch batch, float x, float y, float rotoffx, float rotoffy, float w, float h,
+            float scalex, float scaley, float rotation, int px, int py, int pw, int ph) {
         if (supportsSingleRegion()) {
             batch.draw(textures[0][0], x, y, w, h, px, py, pw, ph, false, true);
             return;
@@ -98,7 +103,8 @@ public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvi
                 float currenty = y + h * (this.theight * j / (float) ph);
                 float currentw = w * srcw / (float) pw;
                 float currenth = h * srch / (float) ph;
-                batch.draw(t, currentx, currenty, currentw, currenth, srcx, srcy, srcw, srch, false, true);
+                batch.draw(t, currentx, currenty, x - currentx + rotoffx, y - currenty + rotoffy, currentw, currenth,
+                        scalex, scaley, rotation, srcx, srcy, srcw, srch, false, true);
             }
         }
     }

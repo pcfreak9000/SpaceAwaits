@@ -103,7 +103,6 @@ public class WorldCombined extends World {
         //this one needs some stuff with topological sort anyways to resolve dependencies etc
         //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
-        new DynamicAssetListener().register(engine);
     }
     
     @Override

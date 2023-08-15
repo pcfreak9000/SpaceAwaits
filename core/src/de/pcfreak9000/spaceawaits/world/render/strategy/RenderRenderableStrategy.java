@@ -5,19 +5,20 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.GameScreen;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderBigTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
-public class RenderBigTextureStrategy extends AbstractRenderStrategy {
+public class RenderRenderableStrategy extends AbstractRenderStrategy {
     
     private GameScreen renderer;
     
-    public RenderBigTextureStrategy(GameScreen renderer) {
-        super(Family.all(RenderBigTextureComponent.class, TransformComponent.class).get());
+    public RenderRenderableStrategy(GameScreen renderer) {
+        super(Family.all(RenderRenderableComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
         this.cam = renderer.getCamera();
         this.renderer = renderer;
@@ -39,7 +40,7 @@ public class RenderBigTextureStrategy extends AbstractRenderStrategy {
     
     @Override
     public void render(Entity entity, float deltaTime) {
-        RenderBigTextureComponent rec = Components.RENDER_BIG_TEXTURE.get(entity);//Maybe make this a RENDER_SELF_COMPONENT or something and use an interface with render(...)
+        RenderRenderableComponent rec = Components.RENDER_RENDERABLE.get(entity);
         TransformComponent tc = Components.TRANSFORM.get(entity);
         Vector2 p = tc.position;
         if (!cam.frustum.sphereInFrustum(p.x, p.y, 0, Math.max(rec.width, rec.height))) {
@@ -50,8 +51,7 @@ public class RenderBigTextureStrategy extends AbstractRenderStrategy {
         } else {
             b.setColor(Color.WHITE);
         }
-        rec.texture.render(b, p.x, p.y, rec.width, rec.height);
-        //        b.draw(rec.texture.getRegion(), p.x, p.y, tc.originx, tc.originy, rec.width, rec.height, 1, 1,
-        //                MathUtils.radiansToDegrees * tc.rotation);
+        rec.renderable.render(b, p.x, p.y, tc.rotoffx, tc.rotoffy, rec.width, rec.height, 1, 1,
+                MathUtils.radiansToDegrees * tc.rotation);
     }
 }

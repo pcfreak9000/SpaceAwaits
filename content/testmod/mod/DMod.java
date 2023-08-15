@@ -76,7 +76,7 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
-        BigBackground backbig = new BigBackground(new GeneratedTexture(WorldScreen.VISIBLE_TILES_MAX * 40,
+        Background backbig = new Background(new GeneratedTexture(WorldScreen.VISIBLE_TILES_MAX * 40,
                 WorldScreen.VISIBLE_TILES_MAX * 40, 2048, 2048, new StarfieldTexGen()),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         

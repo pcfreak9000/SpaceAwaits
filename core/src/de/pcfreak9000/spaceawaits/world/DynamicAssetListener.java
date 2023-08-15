@@ -1,30 +1,47 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import com.badlogic.ashley.core.Engine;
+import java.util.function.Function;
+
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
 import com.badlogic.ashley.core.Family;
 
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.DynamicAssetComponent;
+import de.pcfreak9000.spaceawaits.core.DynamicAsset;
 
 //What about hot reload of resources?
-public class DynamicAssetListener implements EntityListener {
+//Perhaps create an annotation for Fields to just register clazz+assetRetriever directly?
+public class DynamicAssetListener<T extends Component> implements EntityListener {
     
-    private static final Family FAMILY = Family.all(DynamicAssetComponent.class).get();
+    private ComponentMapper<T> mapper;
+    private Function<T, Object> assetRetriever;
+    private Family family;
     
-    public void register(Engine engine) {
-        engine.addEntityListener(FAMILY, this);
+    public DynamicAssetListener(Class<T> clazz, Function<T, Object> assetRetriever) {
+        this.mapper = ComponentMapper.getFor(clazz);
+        this.assetRetriever = assetRetriever;
+        this.family = Family.all(clazz).get();
+    }
+    
+    public Family getFamily() {
+        return family;
     }
     
     @Override
     public void entityAdded(Entity entity) {
-        Components.DYNAMIC_ASSET.get(entity).dynamicAsset.create();
+        Object tocheck = assetRetriever.apply(mapper.get(entity));
+        if (tocheck instanceof DynamicAsset) {
+            ((DynamicAsset) tocheck).create();
+        }
     }
     
     @Override
     public void entityRemoved(Entity entity) {
-        Components.DYNAMIC_ASSET.get(entity).dynamicAsset.dispose();
+        Object tocheck = assetRetriever.apply(mapper.get(entity));
+        if (tocheck instanceof DynamicAsset) {
+            ((DynamicAsset) tocheck).dispose();
+        }
     }
     
 }

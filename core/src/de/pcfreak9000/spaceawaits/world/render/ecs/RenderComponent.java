@@ -35,10 +35,4 @@ public class RenderComponent implements Component {
         return layer;
     }
     
-    @Deprecated
-    public RenderComponent(float layer, String rDecId) {
-        this.layer = layer;
-        //this.renderStratId = rDecId;
-    }
-    
 }

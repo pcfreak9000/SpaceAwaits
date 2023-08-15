@@ -8,18 +8,12 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderBigTextureComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
 public class Components {
-    @Deprecated
-    public static void registerComponents() {
-        
-        //What? Why? ????: GameRegistry.WORLD_COMPONENT_REGISTRY.register("spaceawaitsBreakable", BreakableComponent.class);
-    }
     
     public static final ComponentMapper<RandomTickComponent> RANDOM_TICK = ComponentMapper
             .getFor(RandomTickComponent.class);
@@ -65,10 +59,8 @@ public class Components {
     public static final ComponentMapper<ItemStackComponent> ITEM_STACK = ComponentMapper
             .getFor(ItemStackComponent.class);
     
-    public static final ComponentMapper<RenderTextureComponent> RENDER_TEXTURE = ComponentMapper
-            .getFor(RenderTextureComponent.class);
-    public static final ComponentMapper<RenderBigTextureComponent> RENDER_BIG_TEXTURE = ComponentMapper
-            .getFor(RenderBigTextureComponent.class);
+    public static final ComponentMapper<RenderRenderableComponent> RENDER_RENDERABLE = ComponentMapper
+            .getFor(RenderRenderableComponent.class);
     
     public static final ComponentMapper<ParallaxComponent> PARALLAX = ComponentMapper.getFor(ParallaxComponent.class);
     
@@ -90,9 +82,6 @@ public class Components {
     
     public static final ComponentMapper<BreakingTilesComponent> TILES_BREAKING = ComponentMapper
             .getFor(BreakingTilesComponent.class);
-    
-    public static final ComponentMapper<DynamicAssetComponent> DYNAMIC_ASSET = ComponentMapper
-            .getFor(DynamicAssetComponent.class);
     
     public static final ComponentMapper<ContactListenerComponent> CONTACT_LISTENER = ComponentMapper
             .getFor(ContactListenerComponent.class);

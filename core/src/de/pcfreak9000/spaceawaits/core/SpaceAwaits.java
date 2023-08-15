@@ -30,7 +30,6 @@ import de.pcfreak9000.spaceawaits.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -93,7 +92,6 @@ public class SpaceAwaits extends Game {
         doReflectionStuff();
         LOGGER.info("Init...");
         CoreRes.init();
-        Components.registerComponents();
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
         BUS.post(new CoreEvents.QueueResourcesEvent(assetManager));

@@ -1,7 +1,9 @@
 package de.pcfreak9000.spaceawaits.world.render.ecs;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
+import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntityListener;
@@ -15,12 +17,13 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.OrderedSet;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.Event;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.registry.Registry;
+import de.pcfreak9000.spaceawaits.world.DynamicAssetListener;
 import de.pcfreak9000.spaceawaits.world.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderSystemMarker;
@@ -47,21 +50,34 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     };
     
     public static final class RegisterRenderStrategiesEvent extends Event {
-        public final Registry<IRenderStrategy> renderStrategies;
+        private final OrderedSet<IRenderStrategy> renderStrategies;
         public final World world;
         public final GameScreen renderer;
         
-        public RegisterRenderStrategiesEvent(Registry<IRenderStrategy> rendstrat, World world, GameScreen renderer) {
+        private final OrderedSet<DynamicAssetListener<? extends Component>> dals;
+        
+        public RegisterRenderStrategiesEvent(OrderedSet<IRenderStrategy> rendstrat, World world, GameScreen renderer,
+                OrderedSet<DynamicAssetListener<? extends Component>> dals) {
             this.renderStrategies = rendstrat;
             this.world = world;
             this.renderer = renderer;
+            this.dals = dals;
+        }
+        
+        public <T extends Component> void addDynamicAssetListener(Class<T> clazz, Function<T, Object> assetRetriever) {
+            dals.add(new DynamicAssetListener<T>(clazz, assetRetriever));
+        }
+        
+        public void addStrategy(IRenderStrategy strat) {
+            this.renderStrategies.add(strat);
         }
     }
     
     private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;//TODO make light disableable
     private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
     
-    private final Registry<IRenderStrategy> renderStrategies;
+    private final OrderedSet<IRenderStrategy> renderStrategies;
+    private final OrderedSet<DynamicAssetListener<? extends Component>> dals;
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
     private GameScreen renderer;
@@ -76,12 +92,13 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public RenderSystem(World world, GameScreen renderer) {
         world.getWorldBus().register(this);
         this.entities = new Array<>();
-        this.renderStrategies = new Registry<>();
+        this.renderStrategies = new OrderedSet<>();
+        this.dals = new OrderedSet<>();
         this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
         this.batch = renderer.getSpriteBatch();//new SpriteBatchImpr(100);
         resize();
-        SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
+        SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer, dals));
     }
     
     @EventSubscription
@@ -108,17 +125,23 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             addEntityInternal(e);
         }
         forceLayerSort();
-        for (IRenderStrategy strat : this.renderStrategies.getAll()) {
+        for (IRenderStrategy strat : this.renderStrategies) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
                 ast.addedToEngineInternal(engine);
             }
         }
+        for (DynamicAssetListener<? extends Component> dal : dals) {
+            engine.addEntityListener(dal.getFamily(), dal);
+        }
     }
     
     @Override
     public void removedFromEngine(Engine engine) {
-        for (IRenderStrategy strat : this.renderStrategies.getAll()) {
+        for (DynamicAssetListener<? extends Component> dal : dals) {
+            engine.removeEntityListener(dal);
+        }
+        for (IRenderStrategy strat : this.renderStrategies) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
                 ast.removedFromEngineInternal(engine);
@@ -148,7 +171,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
         rc.renSys = this;
-        for (IRenderStrategy r : this.renderStrategies.getAll()) {
+        for (IRenderStrategy r : this.renderStrategies) {
             if (r.getFamily().matches(entity)) {
                 rc.renderStrategies.add(r);
                 if (r instanceof EntityListener) {
@@ -253,7 +276,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void dispose() {
         this.lightRenderer.dispose();
         this.sceneBuffer.dispose();
-        for (IRenderStrategy irs : this.renderStrategies.getAll()) {
+        for (IRenderStrategy irs : this.renderStrategies) {
             if (irs instanceof Disposable) {
                 Disposable d = (Disposable) irs;
                 d.dispose();

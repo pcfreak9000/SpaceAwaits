@@ -24,7 +24,7 @@ import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
@@ -177,8 +177,8 @@ public class PlayerInputSystem extends EntitySystem {
         RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD);
         rc.considerAsGui = true;
         e.add(rc);
-        RenderTextureComponent tex = new RenderTextureComponent();
-        tex.texture = CoreRes.TILEMARKER_DEF;
+        RenderRenderableComponent tex = new RenderRenderableComponent();
+        tex.renderable = CoreRes.TILEMARKER_DEF;
         tex.width = 1;
         tex.height = 1;
         tex.color = Color.GRAY;

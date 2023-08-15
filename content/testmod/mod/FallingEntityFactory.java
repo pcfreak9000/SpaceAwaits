@@ -11,7 +11,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class FallingEntityFactory implements WorldEntityFactory {
     @Override
@@ -19,7 +19,7 @@ public class FallingEntityFactory implements WorldEntityFactory {
         Entity entity = new EntityImproved();
         entity.flags = 3;
         entity.add(new ChunkComponent());
-        RenderTextureComponent rec = new RenderTextureComponent();
+        RenderRenderableComponent rec = new RenderRenderableComponent();
         Sprite s = new Sprite();
         s.setSize(200 / 16, 100 / 16);
         //rec.sprite = s;

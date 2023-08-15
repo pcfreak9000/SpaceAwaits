@@ -18,7 +18,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerEntityFactory implements WorldEntityFactory {
     
@@ -39,7 +39,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         pic.maxYv = 9.16f;
         e.add(pic);
         PhysicsComponent pc = new PhysicsComponent();
-        RenderTextureComponent rc = new RenderTextureComponent();
+        RenderRenderableComponent rc = new RenderRenderableComponent();
         rc.width = 1.1f;
         rc.height = 1.9f;
         pic.offx = rc.width / 2f;
@@ -47,7 +47,7 @@ public class PlayerEntityFactory implements WorldEntityFactory {
         
         //rc.sprite = sprite;
         //rc.action = new TextureSpriteAction(CoreRes.HUMAN);
-        rc.texture = CoreRes.HUMAN;
+        rc.renderable = CoreRes.HUMAN;
         e.add(rc);
         TransformComponent tc = new TransformComponent();
         e.add(tc);

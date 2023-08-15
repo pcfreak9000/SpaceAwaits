@@ -14,7 +14,7 @@ public class TransformComponent implements Component, INBTSerializable {
     public float rotation;
     
     //dont touch this
-    public float originx, originy;
+    public float rotoffx, rotoffy;
     
     public TransformComponent() {
         this.position = new Vector2();
@@ -25,8 +25,8 @@ public class TransformComponent implements Component, INBTSerializable {
         this.position.set(comp.getFloat("x"), comp.getFloat("y"));
         if (comp.hasKey("r")) {
             this.rotation = comp.getFloat("r");
-            this.originx = comp.getFloat("rx");
-            this.originy = comp.getFloat("ry");
+            this.rotoffx = comp.getFloat("rx");
+            this.rotoffy = comp.getFloat("ry");
         }
     }
     
@@ -36,8 +36,8 @@ public class TransformComponent implements Component, INBTSerializable {
         comp.putFloat("y", position.y);
         if (rotation != 0) {
             comp.putFloat("r", rotation);
-            comp.putFloat("rx", originx);
-            comp.putFloat("ry", originy);
+            comp.putFloat("rx", rotoffx);
+            comp.putFloat("ry", rotoffy);
         }
     }
 }

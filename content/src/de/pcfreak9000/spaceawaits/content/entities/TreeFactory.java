@@ -31,7 +31,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.content.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderTextureComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -45,8 +45,8 @@ public class TreeFactory implements WorldEntityFactory {
     public Entity createEntity() {
         Entity entity = new EntityImproved();
         entity.add(new ChunkComponent());
-        RenderTextureComponent rec = new RenderTextureComponent();
-        rec.texture = tex;
+        RenderRenderableComponent rec = new RenderRenderableComponent();
+        rec.renderable = tex;
         rec.color = Color.WHITE;
         
         rec.width = 50 / 16f;

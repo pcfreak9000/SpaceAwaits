@@ -43,8 +43,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             Vector2 pos = pc.body.getPositionW();
             tc.position.set(pos.x - pc.factory.bodyOffset().x, pos.y - pc.factory.bodyOffset().y);
-            tc.originx = pc.factory.bodyOffset().x;
-            tc.originy = pc.factory.bodyOffset().y;
+            tc.rotoffx = pc.factory.bodyOffset().x;
+            tc.rotoffy = pc.factory.bodyOffset().y;
             tc.rotation = pc.body.getRotation();
             Vector2 vel = pc.body.getLinearVelocityPh();
             pc.xVel = vel.x;
