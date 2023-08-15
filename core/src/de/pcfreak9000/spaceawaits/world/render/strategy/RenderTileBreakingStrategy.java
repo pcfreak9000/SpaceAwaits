@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;

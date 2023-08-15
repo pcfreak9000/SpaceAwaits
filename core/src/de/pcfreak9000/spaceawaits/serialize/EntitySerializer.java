@@ -9,8 +9,8 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.registry.Registry;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
 
 public class EntitySerializer {
     

@@ -8,12 +8,12 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
 import de.pcfreak9000.spaceawaits.generation.IGen1D;
 import de.pcfreak9000.spaceawaits.generation.IGenDouble2D;
 import de.pcfreak9000.spaceawaits.generation.IGenInt2D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
 public class Util {
     

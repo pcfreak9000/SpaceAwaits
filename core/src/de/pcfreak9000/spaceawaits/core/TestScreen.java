@@ -20,7 +20,6 @@ import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.util.IPropertyGetter;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 
 public class TestScreen extends ScreenAdapter {
     

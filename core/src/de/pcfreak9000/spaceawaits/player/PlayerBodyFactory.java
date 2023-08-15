@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import de.pcfreak9000.spaceawaits.core.SolidGroundContactListener;
+import de.pcfreak9000.spaceawaits.world.physics.SolidGroundContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UserData;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
 

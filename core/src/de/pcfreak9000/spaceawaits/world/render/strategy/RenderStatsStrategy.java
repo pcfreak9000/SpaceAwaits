@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
-import de.pcfreak9000.spaceawaits.world.ecs.content.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.content.RenderStatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent.StatData;
-import de.pcfreak9000.spaceawaits.world.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.RenderStatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent.StatData;
 
 public class RenderStatsStrategy extends AbstractRenderStrategy {
     

@@ -6,13 +6,14 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.pcfreak9000.spaceawaits.command.ICommandContext;
-import de.pcfreak9000.spaceawaits.command.WorldCommandContext;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.gui.Hud;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
+import de.pcfreak9000.spaceawaits.world.command.WorldCommandContext;
 
 public class WorldScreen extends GameScreen {
     public static final int VISIBLE_TILES_MIN = 35;

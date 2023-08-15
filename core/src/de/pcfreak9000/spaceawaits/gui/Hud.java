@@ -10,7 +10,7 @@ import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.ecs.content.StatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
 
 public class Hud {
     

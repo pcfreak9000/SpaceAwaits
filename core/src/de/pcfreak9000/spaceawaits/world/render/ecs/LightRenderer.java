@@ -12,11 +12,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
+import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-import de.pcfreak9000.spaceawaits.world.render.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 

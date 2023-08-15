@@ -2,8 +2,8 @@ package de.pcfreak9000.spaceawaits.world;
 
 import de.omnikryptec.event.Event;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 
 public class WorldEvents {

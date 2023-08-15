@@ -15,7 +15,7 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
-import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.gen.BiomeHeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
 import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;

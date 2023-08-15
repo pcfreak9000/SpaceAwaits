@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
-import de.pcfreak9000.spaceawaits.world.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.content.WorldGlobalComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;

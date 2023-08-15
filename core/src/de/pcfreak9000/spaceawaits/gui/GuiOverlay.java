@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Disposable;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.render.GameScreen;
 
 public class GuiOverlay implements Disposable {
     //Table? Actor? Stage!

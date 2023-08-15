@@ -1,6 +1,7 @@
 package de.pcfreak9000.spaceawaits.world.render;
 
 import de.omnikryptec.event.Event;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 
 public class RendererEvents {

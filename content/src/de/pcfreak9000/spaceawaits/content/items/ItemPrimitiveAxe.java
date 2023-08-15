@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.module.ModuleBar;
 import de.pcfreak9000.spaceawaits.module.ModuleUsage;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.ecs.content.EntityInteractSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 

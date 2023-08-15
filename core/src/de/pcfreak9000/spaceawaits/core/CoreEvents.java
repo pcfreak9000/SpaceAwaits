@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.core;
 import com.badlogic.gdx.assets.AssetManager;
 
 import de.omnikryptec.event.Event;
-import de.pcfreak9000.spaceawaits.command.WorldCommandContext;
+import de.pcfreak9000.spaceawaits.world.command.WorldCommandContext;
 
 public class CoreEvents {
     
