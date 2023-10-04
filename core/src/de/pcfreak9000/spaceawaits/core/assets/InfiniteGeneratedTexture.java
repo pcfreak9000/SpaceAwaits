@@ -27,7 +27,7 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
     
     @Override
     public void create() {
-        gen.setup(-1, -1);//eh
+        gen.setup(twidth, theight);
     }
     
     private Texture genArrayIndex(int i, int j) {
@@ -35,7 +35,7 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
         int height = theight;
         Recorder recorder = new Recorder(width, height);
         recorder.begin();
-        gen.render(i * twidth, j * theight, width, height);
+        gen.render(i, j, width, height);
         Texture t = recorder.end();
         recorder.dispose();
         return t;

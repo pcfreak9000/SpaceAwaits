@@ -79,7 +79,7 @@ public class DMod {
         GameRegistry.registerTile("water", water);
         Background backbig = new Background(
                 new GeneratedTexture(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40, 2048, 2048,
-                        new StarfieldTexGen(20000, 2048)),
+                        new StarfieldTexGen(2000, 1024 * 1.5f)),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         
         GameRegistry.registerWorldEntity("background.stars", backbig);

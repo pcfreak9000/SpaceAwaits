@@ -60,7 +60,7 @@ public class DynamicGeneratedTexture implements Disposable, DynamicAsset, ITextu
     
     @Override
     public void create() {
-        gen.setup(widthTotal, heightTotal);
+        gen.setup(twidth, theight);
         this.creationActive = true;
     }
     
@@ -72,7 +72,7 @@ public class DynamicGeneratedTexture implements Disposable, DynamicAsset, ITextu
         int height = Math.min((j + 1) * theight, heightTotal) - j * theight;
         Recorder recorder = new Recorder(width, height);
         recorder.begin();
-        gen.render(i * twidth, j * theight, width, height);
+        gen.render(i, j, width, height);
         Texture t = recorder.end();
         recorder.dispose();
         return t;

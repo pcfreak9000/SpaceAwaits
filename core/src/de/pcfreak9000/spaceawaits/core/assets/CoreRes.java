@@ -81,7 +81,7 @@ public class CoreRes {
         p.drawPixel(0, 0);
         WHITE = new Texture(p);
         p.dispose();
-        SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1000, 1024 * 1.5f));
+        SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1500, 1024*1.3f));
         SPACE_BACKGROUND_2.create();
     }
     

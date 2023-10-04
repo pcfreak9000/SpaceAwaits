@@ -34,7 +34,8 @@ public class GuiHelper implements Disposable {
         guiSpriteBatch.begin();
         float w = backgroundVp.getWorldWidth();
         float h = backgroundVp.getWorldHeight();
-        guiSpriteBatch.draw(CoreRes.SPACE_BACKGROUND_2.getRegion(), 0, 0, w, h);
+        CoreRes.SPACE_BACKGROUND_2.render(guiSpriteBatch, 0, 0, w, h);
+        //guiSpriteBatch.draw(CoreRes.SPACE_BACKGROUND_2.getRegion(), 0, 0, w, h);
         guiSpriteBatch.end();
     }
     

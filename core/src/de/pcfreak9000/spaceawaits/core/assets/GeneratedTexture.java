@@ -56,14 +56,14 @@ public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvi
     }
     
     private void generate(IGenTexture gen) {
-        gen.setup(widthTotal, heightTotal);
+        gen.setup(twidth, theight);
         for (int i = 0; i < tcountw; i++) {
             for (int j = 0; j < tcounth; j++) {
                 int width = Math.min((i + 1) * twidth, widthTotal) - i * twidth;
                 int height = Math.min((j + 1) * theight, heightTotal) - j * theight;
                 Recorder recorder = new Recorder(width, height);
                 recorder.begin();
-                gen.render(i * twidth, j * theight, width, height);
+                gen.render(i, j, width, height);
                 textures[i][j] = recorder.end();
                 recorder.dispose();
             }

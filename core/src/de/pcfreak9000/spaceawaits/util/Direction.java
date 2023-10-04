@@ -13,6 +13,10 @@ public enum Direction {
      */
     public static final Direction[] VONNEUMANN_NEIGHBOURS = { Up, Down, Left, Right };
     
+    public static final Direction[] MOORE_ZERO = values();
+    
+    public static final Direction[] VONNEUMANN_ZERO = { Up, Down, Left, Right, Zero };
+    
     public final int dx;
     public final int dy;
     
