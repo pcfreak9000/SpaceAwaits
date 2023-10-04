@@ -23,6 +23,9 @@ public class SpecialCache<K, V> {
     private final Collection<V> unmodValues;
     
     public SpecialCache(int max, int reducedMax, Function<K, V> freshsupply, Consumer<V> dump) {
+        if (reducedMax > max) {
+            throw new IllegalArgumentException("reducedMax > max");
+        }
         this.max = max;
         this.reducedMax = reducedMax;
         this.freshSupply = freshsupply;

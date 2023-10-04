@@ -24,6 +24,33 @@ public class CoreRes {
         MovMod;
     }
     
+    public static final BitmapFont FONT = new BitmapFont();//TODO font provider
+    public static final SkinProvider SKIN = new SkinProvider();
+    
+    public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
+    public static final ShaderProvider LIQUID_TRANSPARENT_SHADER = new ShaderProvider("liquid.vert");
+    
+    public static final Texture WHITE;
+    
+    public static final TextureProvider ITEM_HIGHLIGHT = TextureProvider.get("itemhighlight.png");
+    
+    public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
+    public static final GeneratedTexture SPACE_BACKGROUND_2;//If this is used ingame, the game tries to create/dispose this
+                                                            //which is problematic as this is handled here (even though that is ugly as well)
+    
+    public static final TextureProvider HUMAN = TextureProvider.get("Astronaut.png");
+    
+    public static final TextureProvider TILEMARKER_DEF = TextureProvider.get("backport.png");
+    public static final TextureProvider ITEM_SLOT = TextureProvider.get("item_slot.png");
+    
+    public static final TextureProvider[] BREAK_OVERLAY = new TextureProvider[] { TextureProvider.get("brst1.png"),
+            TextureProvider.get("brst2.png"), TextureProvider.get("brst3.png"), TextureProvider.get("brst4.png") };
+    
+    public static final WorldEntityFactory PLAYER_FACTORY = Registry.WORLD_ENTITY_REGISTRY
+            .register("player", new PlayerEntityFactory()).get("player");//Meh...
+    public static final WorldEntityFactory ITEM_FACTORY = Registry.WORLD_ENTITY_REGISTRY
+            .register("item", new ItemEntityFactory()).get("item");
+    
     public static final void init() {
         Logger.getLogger(CoreRes.class).info("Creating core resource hooks");
         InptMgr.register(EnumInputIds.Left, Keys.A, false);
@@ -54,34 +81,13 @@ public class CoreRes {
         p.drawPixel(0, 0);
         WHITE = new Texture(p);
         p.dispose();
+        SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1000, 1024 * 1.5f));
+        SPACE_BACKGROUND_2.create();
     }
-    
-    public static final BitmapFont FONT = new BitmapFont();//TODO font provider
-    public static final SkinProvider SKIN = new SkinProvider();
-    
-    public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
-    public static final ShaderProvider LIQUID_TRANSPARENT_SHADER = new ShaderProvider("liquid.vert");
-    
-    public static final Texture WHITE;
-    
-    public static final TextureProvider ITEM_HIGHLIGHT = TextureProvider.get("itemhighlight.png");
-    
-    public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
-    public static final TextureProvider HUMAN = TextureProvider.get("Astronaut.png");
-    
-    public static final TextureProvider TILEMARKER_DEF = TextureProvider.get("backport.png");
-    public static final TextureProvider ITEM_SLOT = TextureProvider.get("item_slot.png");
-    
-    public static final TextureProvider[] BREAK_OVERLAY = new TextureProvider[] { TextureProvider.get("brst1.png"),
-            TextureProvider.get("brst2.png"), TextureProvider.get("brst3.png"), TextureProvider.get("brst4.png") };
-    
-    public static final WorldEntityFactory PLAYER_FACTORY = Registry.WORLD_ENTITY_REGISTRY
-            .register("player", new PlayerEntityFactory()).get("player");//Meh...
-    public static final WorldEntityFactory ITEM_FACTORY = Registry.WORLD_ENTITY_REGISTRY
-            .register("item", new ItemEntityFactory()).get("item");
     
     public static void dispose() {
         FONT.dispose();
         WHITE.dispose();
+        SPACE_BACKGROUND_2.dispose();
     }
 }

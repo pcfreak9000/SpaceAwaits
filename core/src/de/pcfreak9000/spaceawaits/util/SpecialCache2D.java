@@ -20,6 +20,9 @@ public class SpecialCache2D<V> {
     }
     
     public SpecialCache2D(int max, int reducedMax, Int2DFunction<V> freshsupply, Consumer<V> dump) {
+        if (reducedMax > max) {
+            throw new IllegalArgumentException("reducedMax > max");
+        }
         this.max = max;
         this.reducedMax = reducedMax;
         this.freshSupply = freshsupply;

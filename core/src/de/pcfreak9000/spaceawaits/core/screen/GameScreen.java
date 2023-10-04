@@ -20,10 +20,6 @@ import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 import de.pcfreak9000.spaceawaits.world.render.DebugOverlay;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents.CloseGuiOverlay;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents.OpenGuiOverlay;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents.ResizeWorldRendererEvent;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents.UpdateAnimationEvent;
 
 //TODO Maybe have a GameScreen2D in the hierachy as well?
 public abstract class GameScreen extends ScreenAdapter {
@@ -110,6 +106,7 @@ public abstract class GameScreen extends ScreenAdapter {
     public void applyViewport() {
         Viewport vp = getViewport();
         vp.apply();
+        this.spriteBatch.setCamera(vp.getCamera());
         this.spriteBatch.setProjectionMatrix(vp.getCamera().combined);
     }
     

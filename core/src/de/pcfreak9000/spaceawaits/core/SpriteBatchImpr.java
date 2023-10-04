@@ -1,13 +1,24 @@
 package de.pcfreak9000.spaceawaits.core;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SpriteBatchImpr extends SpriteBatch {
     
+    private Camera camera;
+    
     public SpriteBatchImpr(int i) {
         super(i);
+    }
+    
+    public Camera getCamera() {
+        return camera;
+    }
+    
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
     
     public void setAdditiveBlending() {
