@@ -16,11 +16,16 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
     private SpecialCache2D<Texture> textures;
     private int twidth, theight;
     
+    private float wbypw;
+    private float hbyph;
+    
     private final IGenTexture gen;
     
-    public InfiniteGeneratedTexture(int tw, int th, IGenTexture gen, int max, int mincount) {
+    public InfiniteGeneratedTexture(float wbypw, float hbyph, int tw, int th, IGenTexture gen, int max, int mincount) {
         this.twidth = tw;
         this.theight = th;
+        this.wbypw = wbypw;
+        this.hbyph = hbyph;
         this.textures = new SpecialCache2D<>(max, mincount, (i, j) -> genArrayIndex(i, j), (t) -> t.dispose());
         this.gen = gen;
     }
@@ -48,8 +53,6 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
     }
     
     public void render(SpriteBatch batch, float x, float y, int px, int py) {
-        float wbypw = 1;
-        float hbyph = 1;
         Camera cam = ((SpriteBatchImpr) batch).getCamera(); //Was ist denn mit casten los?
         //Convert from cam pos into relevant texels and then directly into texture indices
         int starti = Mathf.floori(((cam.position.x - x - cam.viewportWidth / 2f) / wbypw) / (float) this.twidth);//pw/w-scale

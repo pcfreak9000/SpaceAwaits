@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceGenerator;
 import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceParams;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
-import de.pcfreak9000.spaceawaits.core.assets.GeneratedTexture;
+import de.pcfreak9000.spaceawaits.core.assets.InfiniteGeneratedTexture;
 import de.pcfreak9000.spaceawaits.core.assets.StarfieldTexGen;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
@@ -77,10 +77,9 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
-        Background backbig = new Background(
-                new GeneratedTexture(WorldScreen.VISIBLE_TILES_MAX * 40, WorldScreen.VISIBLE_TILES_MAX * 40, 2048, 2048,
-                        new StarfieldTexGen(2000, 1024 * 1.5f)),
-                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
+        Background backbig = new Background(new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048,
+                new StarfieldTexGen(2000, 1024 * 1.5f), 105, 100), WorldScreen.VISIBLE_TILES_MAX * 2,
+                WorldScreen.VISIBLE_TILES_MAX * 2);
         
         GameRegistry.registerWorldEntity("background.stars", backbig);
         Background b2 = new Background(planet, 5, 5);
