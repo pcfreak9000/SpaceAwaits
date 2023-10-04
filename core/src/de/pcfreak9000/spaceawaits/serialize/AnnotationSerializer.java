@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import com.badlogic.gdx.utils.Array;
+import com.google.common.base.Objects;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
@@ -96,9 +97,6 @@ public class AnnotationSerializer {
                     throw new IllegalStateException("Blank keys are not allowed");
                 }
                 Class<?> type = f.getType();
-                if (!type.isPrimitive()) {
-                    throw new IllegalStateException("Cant serialize complex types");
-                }
                 String key = an.key();
                 try {
                     if (type == Integer.TYPE) {
@@ -136,6 +134,11 @@ public class AnnotationSerializer {
                         if (dooble != an.dDouble() || an.disableDefaults()) {
                             nbt.putDouble(key, dooble);
                         }
+                    } else if (type == String.class) {
+                        String string = (String) f.get(ser);
+                        if (!Objects.equal(string, an.dString()) || an.disableDefaults()) {
+                            nbt.putString(key, string);
+                        }
                     } else {
                         throw new IllegalArgumentException("Type not supported: " + type);
                     }
@@ -159,7 +162,7 @@ public class AnnotationSerializer {
     }
     
     //TODO if the Fields type is Serializable just serialize that?? and deserialization???
-    //TODO enums can be saved as ints/ids, strings can be saved
+    //TODO enums can be saved as ints/ids?
     private static void deserializeAnnotatedFields(NBTCompound nbt, Object ser, Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field f : fields) {
@@ -178,9 +181,6 @@ public class AnnotationSerializer {
                 }
                 if (an.key().isBlank()) {
                     throw new IllegalStateException("Blank keys are not allowed");
-                }
-                if (!f.getType().isPrimitive()) {
-                    throw new IllegalStateException("Cant serialize complex types");
                 }
                 String key = an.key();
                 Class<?> type = f.getType();
@@ -213,6 +213,10 @@ public class AnnotationSerializer {
                         double dooble = an.disableDefaults() ? nbt.getDouble(key)
                                 : nbt.getDoubleOrDefault(key, an.dDouble());
                         f.setDouble(ser, dooble);
+                    } else if (type == String.class) {
+                        String string = an.disableDefaults() ? nbt.getString(key)
+                                : nbt.getStringOrDefault(key, an.dString());
+                        f.set(ser, string);
                     } else {
                         throw new IllegalArgumentException("Type not supported: " + type);
                     }
@@ -235,6 +239,8 @@ public class AnnotationSerializer {
                             f.setFloat(ser, an.dFloat());
                         } else if (type == Double.TYPE) {
                             f.setDouble(ser, an.dDouble());
+                        } else if (type == String.class) {
+                            f.set(ser, an.dString());
                         } else {
                             throw new IllegalArgumentException("Type not supported: " + type);
                         }

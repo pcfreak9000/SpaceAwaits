@@ -30,4 +30,6 @@ public @interface NBTSerialize {
     double dDouble() default 0;
     
     boolean dBool() default false;
+    
+    String dString() default "";
 }
