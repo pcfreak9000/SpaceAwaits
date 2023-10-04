@@ -35,8 +35,7 @@ public class CoreRes {
     public static final TextureProvider ITEM_HIGHLIGHT = TextureProvider.get("itemhighlight.png");
     
     public static final TextureProvider SPACE_BACKGROUND = TextureProvider.get("Space.png");
-    public static final GeneratedTexture SPACE_BACKGROUND_2;//If this is used ingame, the game tries to create/dispose this
-                                                            //which is problematic as this is handled here (even though that is ugly as well)
+    public static final GeneratedTexture SPACE_BACKGROUND_2;
     
     public static final TextureProvider HUMAN = TextureProvider.get("Astronaut.png");
     
@@ -81,7 +80,7 @@ public class CoreRes {
         p.drawPixel(0, 0);
         WHITE = new Texture(p);
         p.dispose();
-        SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1500, 1024*1.3f));
+        SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1500, 1024 * 1.3f));
         SPACE_BACKGROUND_2.create();
     }
     

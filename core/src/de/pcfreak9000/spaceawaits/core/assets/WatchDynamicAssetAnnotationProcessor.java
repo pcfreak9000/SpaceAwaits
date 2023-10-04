@@ -17,7 +17,7 @@ public class WatchDynamicAssetAnnotationProcessor {
             return stuff;
         }
         Set<Class<?>> stuff = SpaceAwaits.getSpaceAwaits().getClassesWithWatchDynamicAsset();
-        OrderedSet<DynamicAssetListener<Component>> out = new OrderedSet<>();
+        OrderedSet<DynamicAssetListener<Component>> out = new OrderedSet<>();//TODO put this reflection stuff into a dedicated place and don't lazy load
         for (Class<?> cl : stuff) {
             if (!Component.class.isAssignableFrom(cl)) {
                 continue;

@@ -3,13 +3,12 @@ package de.pcfreak9000.spaceawaits.core.assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.util.Recorder;
 import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
-public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvider, IRenderable {
+public class GeneratedTexture extends DynamicAsset implements ITextureProvider, IRenderable {
     
     private Texture[][] textures;
     private int tcountw, tcounth;
@@ -51,7 +50,7 @@ public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvi
     }
     
     @Override
-    public void create() {
+    public void createInternal() {
         this.generate(gen);
     }
     
@@ -109,7 +108,7 @@ public class GeneratedTexture implements Disposable, DynamicAsset, ITextureProvi
     }
     
     @Override
-    public void dispose() {
+    protected void disposeInternal() {
         this.reg = null;
         if (textures != null) {
             for (int i = 0; i < textures.length; i++) {

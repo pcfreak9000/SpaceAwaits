@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
@@ -12,7 +11,7 @@ import de.pcfreak9000.spaceawaits.util.Recorder;
 import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
 import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
-public class DynamicGeneratedTexture implements Disposable, DynamicAsset, ITextureProvider, IRenderable {
+public class DynamicGeneratedTexture extends DynamicAsset implements ITextureProvider, IRenderable {
     
     private SpecialCache2D<Texture> textures;
     private int tcountw, tcounth;
@@ -59,7 +58,7 @@ public class DynamicGeneratedTexture implements Disposable, DynamicAsset, ITextu
     }
     
     @Override
-    public void create() {
+    public void createInternal() {
         gen.setup(twidth, theight);
         this.creationActive = true;
     }
@@ -122,7 +121,7 @@ public class DynamicGeneratedTexture implements Disposable, DynamicAsset, ITextu
     }
     
     @Override
-    public void dispose() {
+    protected void disposeInternal() {
         creationActive = false;
         this.reg = null;
         this.textures.clear();

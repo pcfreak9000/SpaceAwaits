@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.core.assets;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
@@ -11,7 +10,7 @@ import de.pcfreak9000.spaceawaits.util.Recorder;
 import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
 import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
-public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRenderable {
+public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderable {
     
     private SpecialCache2D<Texture> textures;
     private int twidth, theight;
@@ -31,7 +30,7 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
     }
     
     @Override
-    public void create() {
+    public void createInternal() {
         gen.setup(twidth, theight);
     }
     
@@ -79,7 +78,7 @@ public class InfiniteGeneratedTexture implements Disposable, DynamicAsset, IRend
     }
     
     @Override
-    public void dispose() {
+    protected void disposeInternal() {
         this.textures.clear();
         gen.end();
     }
