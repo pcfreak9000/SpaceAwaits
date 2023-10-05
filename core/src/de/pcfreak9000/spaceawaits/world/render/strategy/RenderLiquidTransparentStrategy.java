@@ -140,6 +140,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
                 topLayer = Float.POSITIVE_INFINITY;
                 height = 1;
             }
+            //FIXME distortion strength is independent of viewport which mkes zooming weird
             batch.draw().time(this.rend.getRenderTime() * 1.8f).distortionStrength(1 / 250f)
                     .levelDistortionModifier(20f).lvlThickness(0.4f).shore(topLayer).base(base).color(tile.getColor())
                     .texture(refl.getColorBufferTexture()).region(0, 0, 1, 1).position(gtx, gty).size(1, height);

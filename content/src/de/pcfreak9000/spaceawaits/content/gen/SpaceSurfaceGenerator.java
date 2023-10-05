@@ -92,6 +92,8 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
                         .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
                 world.getSystem(EntityInteractSystem.class)
                         .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(), false);
+                world.getSystem(EntityInteractSystem.class)
+                        .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.mounts").createEntity(), false);
                 //world.spawnEntity(testFogEntity(), false);
             }
         });

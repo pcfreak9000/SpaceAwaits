@@ -15,6 +15,8 @@ public class SpecialCache2D<V> {
     private Int2DFunction<V> freshSupply;
     private Consumer<V> dump;
     
+    public boolean autocheckSize = true;
+    
     public static interface Int2DFunction<V> {
         V apply(int x, int y);
     }
@@ -38,6 +40,12 @@ public class SpecialCache2D<V> {
                     dump.accept(removed);
                 }
             }
+        }
+    }
+    
+    private void checkCacheSizeInt() {
+        if (autocheckSize) {
+            checkCacheSize();
         }
     }
     
@@ -66,11 +74,11 @@ public class SpecialCache2D<V> {
             v = freshSupply.apply(x, y);
             cache.put(key, v);
             keyUsagePrioQueue.addLast(key);
-            checkCacheSize();
+            checkCacheSizeInt();
         } else if (!Objects.equals(key, keyUsagePrioQueue.last())) {
             keyUsagePrioQueue.removeValue(key); //<- TODO this could potentially decrease the performance....
             keyUsagePrioQueue.addLast(key);
-            checkCacheSize();
+            checkCacheSizeInt();
         }
         return v;
     }

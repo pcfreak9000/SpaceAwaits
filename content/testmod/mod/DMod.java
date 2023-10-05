@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.content.gen.SpaceSurfaceParams;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.core.CoreEvents;
 import de.pcfreak9000.spaceawaits.core.assets.InfiniteGeneratedTexture;
+import de.pcfreak9000.spaceawaits.core.assets.SillouetteTexGen;
 import de.pcfreak9000.spaceawaits.core.assets.StarfieldTexGen;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
@@ -25,6 +26,7 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
+import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -77,9 +79,9 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
-        Background backbig = new Background(new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048,
-                new StarfieldTexGen(2000, 1024 * 1.5f), 105, 100), WorldScreen.VISIBLE_TILES_MAX * 2,
-                WorldScreen.VISIBLE_TILES_MAX * 2);
+        Background backbig = new Background(
+                new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048, 20, 14, new StarfieldTexGen(2000, 1024 * 1.5f)),
+                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         
         GameRegistry.registerWorldEntity("background.stars", backbig);
         Background b2 = new Background(planet, 5, 5);
@@ -90,6 +92,15 @@ public class DMod {
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
+        Background mounts = new Background(
+                new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048, 20, 14,
+                        new SillouetteTexGen(new HeightVariation(4400, 1, 100))),
+                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
+        mounts.layer = -980;
+        mounts.w = 1000;
+        
+        GameRegistry.registerWorldEntity("background.mounts", mounts);
+        
     }
     
     @EventSubscription

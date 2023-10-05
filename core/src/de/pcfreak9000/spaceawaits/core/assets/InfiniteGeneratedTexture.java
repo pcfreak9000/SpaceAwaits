@@ -20,7 +20,7 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
     
     private final IGenTexture gen;
     
-    public InfiniteGeneratedTexture(float wbypw, float hbyph, int tw, int th, IGenTexture gen, int max, int mincount) {
+    public InfiniteGeneratedTexture(float wbypw, float hbyph, int tw, int th, int max, int mincount, IGenTexture gen) {
         this.twidth = tw;
         this.theight = th;
         this.wbypw = wbypw;
@@ -52,7 +52,8 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
     }
     
     public void render(SpriteBatch batch, float x, float y, int px, int py) {
-        Camera cam = ((SpriteBatchImpr) batch).getCamera(); //Was ist denn mit casten los?
+        SpriteBatchImpr batchi = (SpriteBatchImpr) batch; //Was ist denn mit casten los?
+        Camera cam = batchi.getCamera();
         //Convert from cam pos into relevant texels and then directly into texture indices
         int starti = Mathf.floori(((cam.position.x - x - cam.viewportWidth / 2f) / wbypw) / (float) this.twidth);//pw/w-scale
         int startj = Mathf.floori(((cam.position.y - y - cam.viewportHeight / 2f) / hbyph) / (float) this.theight);//ph/h-scale
@@ -64,6 +65,7 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
         for (int i = starti; i < endi; i++) {
             for (int j = startj; j < endj; j++) {
                 Texture t = this.textures.getOrFresh(i + tx, j + ty);
+                batchi.rebindBatchState();
                 int srcx = Math.max(0, px - (i + tx) * this.twidth);//in the infinite case, sry-xy becomes an offset
                 int srcy = Math.max(0, py - (j + ty) * this.theight);
                 int srcw = this.twidth;

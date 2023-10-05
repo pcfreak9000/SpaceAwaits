@@ -10,7 +10,13 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public class FrameBufferStack {
     
+    public static final FrameBufferStack GLOBAL = new FrameBufferStack();
+    
     private final Deque<FrameBuffer> fbstack = new ArrayDeque<>();
+    
+    private FrameBufferStack() {
+        
+    }
     
     public void push(FrameBuffer fb) {
         if (fbstack.peek() != fb) {
@@ -27,6 +33,7 @@ public class FrameBufferStack {
         if (fbstack.isEmpty()) {
             fb.end();
         } else {
+            fb.end();
             fbstack.peek().begin();
         }
     }

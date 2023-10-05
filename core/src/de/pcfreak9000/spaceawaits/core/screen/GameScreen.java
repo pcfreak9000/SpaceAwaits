@@ -44,7 +44,7 @@ public abstract class GameScreen extends ScreenAdapter {
         this.guiHelper = guiHelper;
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
         this.debugScreen = new DebugOverlay(this);
-        this.fbostack = new FrameBufferStack();
+        this.fbostack = FrameBufferStack.GLOBAL;
     }
     
     //Always takes a new GuiContainer. Is that the way to go?

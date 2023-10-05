@@ -27,7 +27,7 @@ public class ParallaxSystem extends IteratingSystem {
         float xratio = positionState.x / (this.tileWorld.getBounds().getWidth());
         float yratio = positionState.y / (this.tileWorld.getBounds().getHeight());
         float possibleW = pc.widthScroll;
-        float possibleH = pc.widthScroll;
+        float possibleH = pc.heightScroll;
         Components.TRANSFORM.get(entity).position.set(positionState.x - pc.width / 2f - xratio * possibleW + pc.xOffset,
                 positionState.y - pc.height / 2f - yratio * possibleH + pc.yOffset);
     }

@@ -23,7 +23,7 @@ public class Recorder implements Disposable {
         if (recording) {
             throw new IllegalStateException();
         }
-        fbo.begin();
+        FrameBufferStack.GLOBAL.push(fbo);
         ScreenUtils.clear(0, 0, 0, 0);
         recording = true;
     }
@@ -33,9 +33,9 @@ public class Recorder implements Disposable {
             throw new IllegalStateException();
         }
         Pixmap pix = Pixmap.createFromFrameBuffer(0, 0, w, h);
-        fbo.end();
         Texture t = new Texture(pix);
         pix.dispose();
+        FrameBufferStack.GLOBAL.pop(fbo);
         recording = false;
         return t;
     }

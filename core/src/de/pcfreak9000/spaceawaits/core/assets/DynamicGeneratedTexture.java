@@ -24,10 +24,10 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
     private TextureRegion reg;
     
     public DynamicGeneratedTexture(int width, int height, IGenTexture gen) {
-        this(width, height, width, height, gen, 1, 1);
+        this(width, height, width, height, 1, 1, gen);
     }
     
-    public DynamicGeneratedTexture(int pwidth, int pheight, int tw, int th, IGenTexture gen, int max, int mincount) {
+    public DynamicGeneratedTexture(int pwidth, int pheight, int tw, int th, int max, int mincount, IGenTexture gen) {
         this.widthTotal = pwidth;
         this.heightTotal = pheight;
         this.twidth = tw;
@@ -88,7 +88,8 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
             batch.draw(this.textures.getOrFresh(0, 0), x, y, w, h, px, py, pw, ph, false, true);
             return;
         }
-        Camera cam = ((SpriteBatchImpr) batch).getCamera(); //Was ist denn mit casten los?
+        SpriteBatchImpr batchi = (SpriteBatchImpr) batch; //Was ist denn mit casten los?
+        Camera cam = batchi.getCamera();
         //Convert from cam pos into relevant texels and then directly into texture indices
         int starti = Mathf.floori(((cam.position.x - x - cam.viewportWidth / 2f) * pw / w) / (float) this.twidth);
         int startj = Mathf.floori(((cam.position.y - y - cam.viewportHeight / 2f) * ph / h) / (float) this.theight);
@@ -107,6 +108,7 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
         for (int i = starti; i < tw; i++) {
             for (int j = startj; j < th; j++) {
                 Texture t = this.textures.getOrFresh(i + tx, j + ty);
+                batchi.rebindBatchState();
                 int srcx = Math.max(0, px - (i + tx) * this.twidth);
                 int srcy = Math.max(0, py - (j + ty) * this.theight);
                 int srcw = Math.min(t.getWidth(), pw - (i + tx) * this.twidth);
