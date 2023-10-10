@@ -83,8 +83,8 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
         for (int i = starti; i < endi; i++) {
             for (int j = startj; j < endj; j++) {
                 Texture t = this.textures.getOrFresh(i + tx, j + ty);
-                int srcx = Math.max(0, px - (i + tx) * this.twidth);//in the infinite case, sry-xy becomes an offset
-                int srcy = Math.max(0, py - (j + ty) * this.theight);
+                int srcx = 0;//Math.max(0, px - (i + tx) * this.twidth);//in the infinite case, sry-xy becomes an offset
+                int srcy = 0;//Math.max(0, py - (j + ty) * this.theight); //this causes bugs for negative i and j. Not sure if this is useful for "infinite" textures anyways
                 int srcw = this.twidth;
                 int srch = this.theight;
                 float currentx = x + (this.twidth * i * wbypw);

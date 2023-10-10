@@ -16,7 +16,7 @@ public class Background implements WorldEntityFactory {
     private final float width;
     private final float height;
     
-    public float xoff, yoff, w, h;
+    public float xoff, yoff, zdist;
     
     public float layer = -1000f;
     
@@ -33,16 +33,14 @@ public class Background implements WorldEntityFactory {
         RenderRenderableComponent tex = new RenderRenderableComponent();
         TransformComponent tc = new TransformComponent();
         tex.renderable = texture;
-        tex.width = width*100000;
-        tex.height = height*100000;
+        tex.width = width;
+        tex.height = height;
+        tex.dofrustumcheck = false;
         pc.xOffset = xoff;
         pc.yOffset = yoff;
-        pc.widthScroll = w;
-        pc.heightScroll = h;
-        pc.width = width;
-        pc.height = height;
+        pc.zdist = zdist;
         e.add(tc);
-        //e.add(pc);
+        e.add(pc);
         e.add(tex);
         e.add(new WorldGlobalComponent());
         e.add(new RenderComponent(layer));

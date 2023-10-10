@@ -15,17 +15,19 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
+import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.gen.BiomeHeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
 import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
+import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
-import de.pcfreak9000.spaceawaits.world.gen.biome.BiomeChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
+import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 import layerteststuff.TestBiome;
 import layerteststuff.TestHeightBiome;
 
@@ -116,7 +118,21 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
         });
         p.setWorldBounds(new WorldBounds(params.getWidth(), params.getHeight()));
-        p.setChunkGenerator(new BiomeChunkGenerator(shape, upperLowerDivider, caves, params.getSeed(), genParams));
+        //p.setChunkGenerator(new BiomeChunkGenerator(shape, upperLowerDivider, caves, params.getSeed(), genParams));
+        p.setChunkGenerator(new IChunkGenerator() {
+            
+            @Override
+            public void structureChunk(Chunk chunk, TileSystem tiles) {
+            }
+            
+            @Override
+            public void populateChunk(Chunk chunk, World world) {
+            }
+            
+            @Override
+            public void generateChunk(Chunk chunk) {
+            }
+        });
         return p;
     }
     

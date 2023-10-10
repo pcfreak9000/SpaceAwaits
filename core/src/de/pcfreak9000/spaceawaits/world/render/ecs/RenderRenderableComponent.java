@@ -10,6 +10,8 @@ public class RenderRenderableComponent implements Component {
     @WatchDynamicAsset
     public IRenderable renderable;
     
+    public boolean dofrustumcheck = true;
+    
     public float width, height;
     public Color color;
 }

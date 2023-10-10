@@ -80,26 +80,22 @@ public class DMod {
         GameRegistry.registerTile("water", water);
         Background backbig = new Background(
                 new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                        new StarfieldTexGen(2000, 1024 * 1.5f)),
+                        new StarfieldTexGen(2000, 32 * 0.0288f)),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
-        
+        backbig.zdist = Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.stars", backbig);
         Background b2 = new Background(planet, 5, 5);
-        b2.xoff = -20;
-        b2.yoff = 15;
-        b2.w = 1;
-        b2.h = 1;
+        b2.layer = -900;
+        b2.zdist = Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
-        //TODO the resolution related numbers in GeneratedTexture etc seem kind of arbitrary and weird, make it related to rendered pixels or something 
         Background mounts = new Background(
                 new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                        new SillouetteTexGen((x) -> 32*856)),
+                        new SillouetteTexGen((x) -> 32 * 856)),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         mounts.layer = -980;
-        mounts.w = 1000;
-        mounts.h = 0;
+        mounts.zdist = 200;
         GameRegistry.registerWorldEntity("background.mounts", mounts);
         
     }

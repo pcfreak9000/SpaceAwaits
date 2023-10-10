@@ -43,7 +43,7 @@ public class RenderRenderableStrategy extends AbstractRenderStrategy {
         RenderRenderableComponent rec = Components.RENDER_RENDERABLE.get(entity);
         TransformComponent tc = Components.TRANSFORM.get(entity);
         Vector2 p = tc.position;
-        if (!cam.frustum.sphereInFrustum(p.x, p.y, 0, Math.max(rec.width, rec.height))) {
+        if (rec.dofrustumcheck && !cam.frustum.sphereInFrustum(p.x, p.y, 0, Math.max(rec.width, rec.height))) {
             return;
         }
         if (rec.color != null) {

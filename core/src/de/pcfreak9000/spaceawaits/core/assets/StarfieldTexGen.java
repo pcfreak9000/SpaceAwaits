@@ -46,7 +46,7 @@ public class StarfieldTexGen implements IGenTexture {
         for (int i = 0; i < starsPerPatch; i++) {
             float x = r.nextFloat() * patchWidthMax + pi * patchWidthMax;
             float y = r.nextFloat() * patchHeightMax + pj * patchHeightMax;
-            float radius = 0.0006f * (0.75f + r.nextFloat());
+            float radius = (0.75f + r.nextFloat());
             radius *= scale;
             float colorIndex = r.nextFloat();
             if (!cam.frustum.sphereInFrustum(x, y, 0, radius)) {
@@ -54,7 +54,7 @@ public class StarfieldTexGen implements IGenTexture {
             }
             Color c = Util.ofTemperature(37500 * colorIndex + 2500);
             s.setColor(c);
-            s.circle(x, y, radius, 20);
+            s.circle(x, y, radius, 15);
         }
     }
     
