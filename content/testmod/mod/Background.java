@@ -16,6 +16,8 @@ public class Background implements WorldEntityFactory {
     private final float width;
     private final float height;
     
+    private boolean frust;
+    
     public float xoff, yoff, zdist;
     
     public float layer = -1000f;
@@ -24,6 +26,14 @@ public class Background implements WorldEntityFactory {
         this.texture = texture;
         this.width = width;
         this.height = height;
+        this.frust = true;
+    }
+    
+    public Background(IRenderable texture) {
+        this.texture = texture;
+        this.frust = false;
+        this.width = -1f;
+        this.height = -1f;
     }
     
     @Override
@@ -35,7 +45,7 @@ public class Background implements WorldEntityFactory {
         tex.renderable = texture;
         tex.width = width;
         tex.height = height;
-        tex.dofrustumcheck = false;
+        tex.dofrustumcheck = frust;
         pc.xOffset = xoff;
         pc.yOffset = yoff;
         pc.zdist = zdist;

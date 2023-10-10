@@ -27,7 +27,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
-import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
@@ -78,22 +77,18 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
-        Background backbig = new Background(
-                new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                        new StarfieldTexGen(2000, 32 * 0.0288f)),
-                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
+        Background backbig = new Background(new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
+                new StarfieldTexGen(2000, 32 * 0.0288f)));
         backbig.zdist = Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.stars", backbig);
-        Background b2 = new Background(planet, 5, 5);
+        Background b2 = new Background(planet, 10, 10);
         b2.layer = -900;
-        b2.zdist = 100;//Float.POSITIVE_INFINITY;
+        b2.zdist = Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
-        Background mounts = new Background(
-                new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                        new SillouetteTexGen((x) -> 32 * 856)),
-                WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
+        Background mounts = new Background(new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
+                new SillouetteTexGen((x) -> 0 * 856)));
         mounts.layer = -980;
         mounts.zdist = 200;
         GameRegistry.registerWorldEntity("background.mounts", mounts);
