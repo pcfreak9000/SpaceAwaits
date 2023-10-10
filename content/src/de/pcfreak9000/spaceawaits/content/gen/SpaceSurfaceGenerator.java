@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.content.gen;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -17,6 +18,7 @@ import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.MoveTestComponent;
 import de.pcfreak9000.spaceawaits.world.gen.BiomeHeightGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
 import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
@@ -92,8 +94,10 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             public void onLoading(World world) {
                 world.getSystem(EntityInteractSystem.class)
                         .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
-                world.getSystem(EntityInteractSystem.class)
-                        .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(), false);
+                Entity pent = null;
+                world.getSystem(EntityInteractSystem.class).spawnEntity(
+                        pent = Registry.WORLD_ENTITY_REGISTRY.get("background.planet").createEntity(), false);
+                pent.add(new MoveTestComponent());
                 world.getSystem(EntityInteractSystem.class)
                         .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.mounts").createEntity(), false);
                 //world.spawnEntity(testFogEntity(), false);

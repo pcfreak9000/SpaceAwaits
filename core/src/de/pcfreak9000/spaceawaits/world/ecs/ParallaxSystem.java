@@ -4,22 +4,20 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 
 public class ParallaxSystem extends IteratingSystem {
     
     private static final float R0 = WorldScreen.VISIBLE_TILES_MIN;
     
-    private World tileWorld;
     private Camera camera;
     
-    public ParallaxSystem(World world, GameScreen renderer) {
+    public ParallaxSystem(GameScreen renderer) {
         super(Family.all(ParallaxComponent.class, TransformComponent.class).get());
-        this.tileWorld = world;
         this.camera = renderer.getCamera();
     }
     
@@ -27,17 +25,18 @@ public class ParallaxSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         ParallaxComponent pc = Components.PARALLAX.get(entity);
         Vector3 positionState = camera.position;
-        //        float xratio = positionState.x / (this.tileWorld.getBounds().getWidth());
-        //        float yratio = positionState.y / (this.tileWorld.getBounds().getHeight());
-        //        float possibleW = pc.widthScroll;
-        //        float possibleH = pc.heightScroll;
-        //        Components.TRANSFORM.get(entity).position.set(positionState.x - pc.width / 2f - xratio * possibleW + pc.xOffset,
-        //                positionState.y - pc.height / 2f - yratio * possibleH + pc.yOffset);
-        
         float factor = 1.0f - R0 / (R0 + pc.zdist);
-        float x = factor * positionState.x;
-        float y = factor * positionState.y;
-        Components.TRANSFORM.get(entity).position.set(x + pc.xOffset, y + pc.yOffset);
+        float xadd = factor * positionState.x + pc.xOffset;
+        float yadd = factor * positionState.y + pc.yOffset;
+        Vector2 pos = Components.TRANSFORM.get(entity).position;
+        //This is some wild fuckery. But at least this way this stuff stays entirely seperated from the transform (except for the above line of course)
+        //It allows moving stuff via the transform even though the stuff is parallaxed.
+        pos.x -= pc.prevxadd;
+        pos.y -= pc.prevyadd;
+        pc.prevxadd = xadd;
+        pc.prevyadd = yadd;
+        pos.x += xadd;
+        pos.y += yadd;
     }
     
 }

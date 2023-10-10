@@ -86,7 +86,7 @@ public class DMod {
         GameRegistry.registerWorldEntity("background.stars", backbig);
         Background b2 = new Background(planet, 5, 5);
         b2.layer = -900;
-        b2.zdist = Float.POSITIVE_INFINITY;
+        b2.zdist = 100;//Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);

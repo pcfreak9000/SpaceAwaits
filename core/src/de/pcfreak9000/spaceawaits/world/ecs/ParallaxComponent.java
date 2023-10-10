@@ -8,4 +8,6 @@ public class ParallaxComponent implements Component {
     
     public float xOffset, yOffset;
     
+    //Don't touch! Also this "solution" sucks giant ass.
+    public float prevxadd, prevyadd;
 }

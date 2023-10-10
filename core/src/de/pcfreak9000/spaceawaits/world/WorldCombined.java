@@ -97,6 +97,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new PlayerInputSystem(this, gameScreen));
         ecs.addSystem(new ActivatorSystem(gameScreen, this));
         ecs.addSystem(new FollowMouseSystem(gameScreen));
+        //ecs.addSystem(new MoveTestSystem());
         ecs.addSystem(new BreakingSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystem phsys = new PhysicsSystem(this, chunkProvider);
@@ -104,7 +105,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
         ecs.addSystem(new CameraSystem(this, gameScreen));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, chunkProvider));
-        ecs.addSystem(new ParallaxSystem(this, gameScreen));
+        ecs.addSystem(new ParallaxSystem(gameScreen));
         ecs.addSystem(new RenderSystem(this, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, gameScreen));
         ecs.addSystem(new TickCounterSystem(this));
