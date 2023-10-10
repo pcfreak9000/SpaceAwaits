@@ -10,6 +10,12 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
 public class GeneratedTexture extends DynamicAsset implements ITextureProvider, IRenderable {
     
+    private static int staticCount = 0;
+    
+    public static int getCachedTextureCount() {
+        return staticCount;
+    }
+    
     private Texture[][] textures;
     private int tcountw, tcounth;
     private int widthTotal, heightTotal;
@@ -52,6 +58,7 @@ public class GeneratedTexture extends DynamicAsset implements ITextureProvider, 
     @Override
     public void createInternal() {
         this.generate(gen);
+        staticCount += tcountw * tcounth;
     }
     
     private void generate(IGenTexture gen) {
@@ -109,6 +116,7 @@ public class GeneratedTexture extends DynamicAsset implements ITextureProvider, 
     
     @Override
     protected void disposeInternal() {
+        staticCount -= tcountw * tcounth;
         this.reg = null;
         if (textures != null) {
             for (int i = 0; i < textures.length; i++) {

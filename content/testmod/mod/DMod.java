@@ -26,7 +26,6 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
-import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -80,7 +79,8 @@ public class DMod {
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
         Background backbig = new Background(
-                new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048, 20, 14, new StarfieldTexGen(2000, 1024 * 1.5f)),
+                new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
+                        new StarfieldTexGen(2000, 1024 * 1.5f)),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         
         GameRegistry.registerWorldEntity("background.stars", backbig);
@@ -92,13 +92,14 @@ public class DMod {
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
+        //TODO the resolution related numbers in GeneratedTexture etc seem kind of arbitrary and weird, make it related to rendered pixels or something 
         Background mounts = new Background(
-                new InfiniteGeneratedTexture(0.05f, 0.05f, 2048, 2048, 20, 14,
-                        new SillouetteTexGen(new HeightVariation(4400, 1, 100))),
+                new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
+                        new SillouetteTexGen((x) -> 32*856)),
                 WorldScreen.VISIBLE_TILES_MAX * 2, WorldScreen.VISIBLE_TILES_MAX * 2);
         mounts.layer = -980;
         mounts.w = 1000;
-        
+        mounts.h = 0;
         GameRegistry.registerWorldEntity("background.mounts", mounts);
         
     }

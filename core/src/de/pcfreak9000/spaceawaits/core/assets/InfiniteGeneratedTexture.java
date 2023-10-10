@@ -12,6 +12,12 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
 public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderable {
     
+    private static int staticCount = 0;
+    
+    public static int getCachedTextureCount() {
+        return staticCount;
+    }
+    
     private SpecialCache2D<Texture> textures;
     private int twidth, theight;
     
@@ -25,7 +31,13 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
         this.theight = th;
         this.wbypw = wbypw;
         this.hbyph = hbyph;
-        this.textures = new SpecialCache2D<>(max, mincount, (i, j) -> genArrayIndex(i, j), (t) -> t.dispose());
+        this.textures = new SpecialCache2D<>(max, mincount, (i, j) -> {
+            staticCount++;
+            return genArrayIndex(i, j);
+        }, (t) -> {
+            t.dispose();
+            staticCount--;
+        });
         this.gen = gen;
     }
     
@@ -33,6 +45,8 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
     public void createInternal() {
         gen.setup(twidth, theight);
     }
+    
+    private SpriteBatchImpr tmpForRebind;
     
     private Texture genArrayIndex(int i, int j) {
         int width = twidth;
@@ -42,6 +56,9 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
         gen.render(i, j, width, height);
         Texture t = recorder.end();
         recorder.dispose();
+        if (tmpForRebind != null) {
+            tmpForRebind.rebindBatchState();
+        }
         return t;
     }
     
@@ -62,10 +79,10 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
         //srcxywh as given in the parameters
         int tx = px / this.twidth;
         int ty = py / this.theight;
+        tmpForRebind = batchi;
         for (int i = starti; i < endi; i++) {
             for (int j = startj; j < endj; j++) {
                 Texture t = this.textures.getOrFresh(i + tx, j + ty);
-                batchi.rebindBatchState();
                 int srcx = Math.max(0, px - (i + tx) * this.twidth);//in the infinite case, sry-xy becomes an offset
                 int srcy = Math.max(0, py - (j + ty) * this.theight);
                 int srcw = this.twidth;
@@ -77,6 +94,7 @@ public class InfiniteGeneratedTexture extends DynamicAsset implements IRenderabl
                 batch.draw(t, currentx, currenty, currentw, currenth, srcx, srcy, srcw, srch, false, true);
             }
         }
+        tmpForRebind = null;
     }
     
     @Override

@@ -13,6 +13,12 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 
 public class DynamicGeneratedTexture extends DynamicAsset implements ITextureProvider, IRenderable {
     
+    private static int staticCount = 0;
+    
+    public static int getCachedTextureCount() {
+        return staticCount;
+    }
+    
     private SpecialCache2D<Texture> textures;
     private int tcountw, tcounth;
     private int widthTotal, heightTotal;
@@ -34,7 +40,13 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
         this.theight = th;
         this.tcountw = Mathf.ceili(pwidth / (float) tw);
         this.tcounth = Mathf.ceili(pheight / (float) th);
-        this.textures = new SpecialCache2D<>(max, mincount, (i, j) -> genArrayIndex(i, j), (t) -> t.dispose());
+        this.textures = new SpecialCache2D<>(max, mincount, (i, j) -> {
+            staticCount++;
+            return genArrayIndex(i, j);
+        }, (t) -> {
+            t.dispose();
+            staticCount--;
+        });
         this.gen = gen;
     }
     
@@ -63,6 +75,8 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
         this.creationActive = true;
     }
     
+    private SpriteBatchImpr tmpForRebind;
+    
     private Texture genArrayIndex(int i, int j) {
         if (!creationActive) {
             throw new IllegalStateException("Not created");
@@ -74,6 +88,9 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
         gen.render(i, j, width, height);
         Texture t = recorder.end();
         recorder.dispose();
+        if (tmpForRebind != null) {
+            tmpForRebind.rebindBatchState();
+        }
         return t;
     }
     
@@ -105,10 +122,10 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
         th = Math.min(endj, th);
         starti = Math.max(starti, 0);
         startj = Math.max(startj, 0);
+        tmpForRebind = batchi;
         for (int i = starti; i < tw; i++) {
             for (int j = startj; j < th; j++) {
                 Texture t = this.textures.getOrFresh(i + tx, j + ty);
-                batchi.rebindBatchState();
                 int srcx = Math.max(0, px - (i + tx) * this.twidth);
                 int srcy = Math.max(0, py - (j + ty) * this.theight);
                 int srcw = Math.min(t.getWidth(), pw - (i + tx) * this.twidth);
@@ -120,6 +137,7 @@ public class DynamicGeneratedTexture extends DynamicAsset implements ITexturePro
                 batch.draw(t, currentx, currenty, currentw, currenth, srcx, srcy, srcw, srch, false, true);
             }
         }
+        tmpForRebind = null;
     }
     
     @Override

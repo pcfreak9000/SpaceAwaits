@@ -17,6 +17,8 @@ public class SillouetteTexGen implements IGenTexture {
     private int patchWidthMax, patchHeightMax;
     private ShapeRenderer s;
     
+    //TODO Could do some interpolation stuff for IGenInt1D, so the same generators as for terrain could be used generating the same mountains but at a higher resolution????
+    //the above might not(!) work nicely
     public SillouetteTexGen(IGenInt1D heightGen) {
         this.heightGen = heightGen;
     }

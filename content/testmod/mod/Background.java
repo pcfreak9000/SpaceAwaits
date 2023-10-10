@@ -33,8 +33,8 @@ public class Background implements WorldEntityFactory {
         RenderRenderableComponent tex = new RenderRenderableComponent();
         TransformComponent tc = new TransformComponent();
         tex.renderable = texture;
-        tex.width = width*100;
-        tex.height = height*100;
+        tex.width = width*100000;
+        tex.height = height*100000;
         pc.xOffset = xoff;
         pc.yOffset = yoff;
         pc.widthScroll = w;
@@ -42,7 +42,7 @@ public class Background implements WorldEntityFactory {
         pc.width = width;
         pc.height = height;
         e.add(tc);
-        e.add(pc);
+        //e.add(pc);
         e.add(tex);
         e.add(new WorldGlobalComponent());
         e.add(new RenderComponent(layer));
