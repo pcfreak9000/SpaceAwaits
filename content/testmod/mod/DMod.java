@@ -90,11 +90,13 @@ public class DMod {
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
+        
+        //That the heightvariation is based around yoff and not around 0 is a bit cumbersome and unintuitive
         Background mounts = new Background(new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                new SillouetteTexGen(new HeightVariation(0, 1, 10*32))));
+                new SillouetteTexGen(new HeightVariation(5 * 32, 1, 4 * 32))));
         mounts.layer = -980;
-        mounts.zdist = 3000;
-        mounts.yoff = 850;
+        mounts.zdist = 30000;
+        mounts.yoff = 1000;
         GameRegistry.registerWorldEntity("background.mounts", mounts);
         
     }

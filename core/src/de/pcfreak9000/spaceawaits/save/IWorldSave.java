@@ -1,7 +1,9 @@
 package de.pcfreak9000.spaceawaits.save;
 
 import de.pcfreak9000.nbt.NBTCompound;
-
+/**
+ * Interface between File layer and NBT layer
+ */
 public interface IWorldSave {
     
     WorldMeta getWorldMeta();

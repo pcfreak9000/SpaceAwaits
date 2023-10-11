@@ -47,6 +47,7 @@ public class TileStorage implements Tickable {
         this.tickables = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
+                //TileState could be pooled?
                 this.tileArray[i][j] = new TileState();
                 this.tileArray[i][j].setTile(Tile.NOTHING);
             }

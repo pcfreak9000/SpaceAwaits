@@ -45,7 +45,7 @@ public class SillouetteTexGen implements IGenTexture {
         cam.update();
         s.setProjectionMatrix(cam.combined);
         s.begin(ShapeType.Filled);
-        s.setColor(Color.CORAL);
+        s.setColor(Color.GRAY);
         for (int i = 0; i < width; i++) {
             int x = pi * patchWidthMax + i;
             int h = this.heightGen.generate(x);
