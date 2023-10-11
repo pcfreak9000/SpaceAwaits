@@ -22,6 +22,8 @@ public class Background implements WorldEntityFactory {
     
     public float layer = -1000f;
     
+    public float x, y;
+    
     public Background(IRenderable texture, float width, float height) {
         this.texture = texture;
         this.width = width;
@@ -46,9 +48,10 @@ public class Background implements WorldEntityFactory {
         tex.width = width;
         tex.height = height;
         tex.dofrustumcheck = frust;
-        pc.xOffset = xoff;
-        pc.yOffset = yoff;
+        pc.xEquiv = xoff;
+        pc.yEquiv = yoff;
         pc.zdist = zdist;
+        tc.position.set(x, y);
         e.add(tc);
         e.add(pc);
         e.add(tex);

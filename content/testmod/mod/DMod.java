@@ -26,6 +26,7 @@ import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
+import de.pcfreak9000.spaceawaits.world.gen.HeightVariation;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
@@ -81,16 +82,19 @@ public class DMod {
                 new StarfieldTexGen(2000, 32 * 0.0288f)));
         backbig.zdist = Float.POSITIVE_INFINITY;
         GameRegistry.registerWorldEntity("background.stars", backbig);
-        Background b2 = new Background(planet, 10, 10);
-        b2.layer = -900;
+        Background b2 = new Background(planet, 15, 15);
+        b2.layer = -990;
         b2.zdist = Float.POSITIVE_INFINITY;
+        b2.x = -15;
+        b2.y = 10;
         GameRegistry.registerWorldEntity("background.planet", b2);
         //GameRegistry.WORLD_ENTITY_REGISTRY.register("fallingthing", new FallingEntityFactory());
         GameRegistry.registerItem("mininglaser", MININGLASER);
         Background mounts = new Background(new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
-                new SillouetteTexGen((x) -> 0 * 856)));
+                new SillouetteTexGen(new HeightVariation(0, 1, 10*32))));
         mounts.layer = -980;
-        mounts.zdist = 200;
+        mounts.zdist = 3000;
+        mounts.yoff = 850;
         GameRegistry.registerWorldEntity("background.mounts", mounts);
         
     }

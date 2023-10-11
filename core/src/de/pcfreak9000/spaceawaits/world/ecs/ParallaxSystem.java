@@ -24,11 +24,12 @@ public class ParallaxSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         ParallaxComponent pc = Components.PARALLAX.get(entity);
-        Vector3 positionState = camera.position;
-        float factor = 1.0f - R0 / (R0 + pc.zdist);
-        float xadd = factor * positionState.x + pc.xOffset;
-        float yadd = factor * positionState.y + pc.yOffset;
         Vector2 pos = Components.TRANSFORM.get(entity).position;
+        Vector3 camPos = camera.position;
+        float factor = 1.0f - R0 / (R0 + pc.zdist);
+        //this somehow works, but not perfectly. Is it even correct???? 
+        float xadd = factor * camPos.x + (1.0f - factor) * pc.xEquiv;
+        float yadd = factor * camPos.y + (1.0f - factor) * pc.yEquiv;
         //This is some wild fuckery. But at least this way this stuff stays entirely seperated from the transform (except for the above line of course)
         //It allows moving stuff via the transform even though the stuff is parallaxed.
         pos.x -= pc.prevxadd;

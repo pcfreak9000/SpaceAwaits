@@ -58,12 +58,15 @@ public class Game {
         this.readPlayer();
     }
     
+    //Why does this not simply use saveGame()?
     public void unloadGame() {
+        LOGGER.info("Unloading...");
         saveAndLeaveCurrentWorld();
         writePlayer();
     }
     
     public void saveGame() {
+        LOGGER.info("Saving...");
         WorldCombined w = (WorldCombined) world;
         w.saveWorld();
         writePlayer();

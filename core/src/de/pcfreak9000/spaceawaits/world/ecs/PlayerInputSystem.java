@@ -16,7 +16,6 @@ import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
@@ -99,7 +98,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (enableInput && InptMgr.isJustPressed(EnumInputIds.TestButton)) {
             Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
-        if (player.getGameMode() == GameMode.Testing) {
+        if (player.getGameMode().isTesting) {
             if (up) {
                 vy += play.maxXv;
             }

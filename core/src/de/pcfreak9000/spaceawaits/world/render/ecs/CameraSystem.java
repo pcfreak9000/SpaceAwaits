@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Camera;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
@@ -33,7 +32,7 @@ public class CameraSystem extends IteratingSystem {
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
         Camera camera = screen.getCamera();
-        if (pc.player.getGameMode() != GameMode.Testing) {
+        if (!pc.player.getGameMode().isTesting) {
             x = Mathf.max(camera.viewportWidth / 2, x);
             y = Mathf.max(camera.viewportHeight / 2, y);
             x = Mathf.min(world.getBounds().getWidth() - camera.viewportWidth / 2, x);

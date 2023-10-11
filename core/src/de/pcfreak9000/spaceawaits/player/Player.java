@@ -25,7 +25,13 @@ import de.pcfreak9000.spaceawaits.world.ecs.Components;
 public class Player implements INBTSerializable {
     
     public static enum GameMode {
-        Survival, Testing;
+        Survival(false), Testing(true), TestingGhost(true);
+        
+        public final boolean isTesting;
+        
+        private GameMode(boolean istesting) {
+            this.isTesting = istesting;
+        }
     }
     
     private final Entity playerEntity;
@@ -75,7 +81,7 @@ public class Player implements INBTSerializable {
     }
     
     public float getReach() {
-        return getGameMode() == GameMode.Testing ? 200 : 10;
+        return getGameMode().isTesting ? 200 : 10;
     }
     
     //have reach component??? maybe move this into hand component or so? and then as parameter have an entity?
@@ -103,6 +109,7 @@ public class Player implements INBTSerializable {
         for (int i = 0; i < todropl.size(); i++) {
             toDrop.add(ItemStack.readNBT(todropl.getCompound(i)));
         }
+        this.gameMode = GameMode.values()[(int) pc.getIntegerSmartOrDefault("gamemode", GameMode.Survival.ordinal())];
     }
     
     @Override
@@ -117,6 +124,7 @@ public class Player implements INBTSerializable {
             }
         }
         pc.put("todrop", todropl);
+        pc.putIntegerSmart("gamemode", gameMode.ordinal());
     }
     
 }

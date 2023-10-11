@@ -32,6 +32,8 @@ public class DebugOverlay {
     private Label meta;
     private Label seed;
     
+    private Label gamemode;
+    
     private Label time;
     
     public DebugOverlay(GameScreen renderer) {
@@ -63,6 +65,9 @@ public class DebugOverlay {
         this.table.row();
         this.time = new Label("", CoreRes.SKIN.getSkin());
         this.table.add(this.time).align(Align.left);
+        this.table.row();
+        this.gamemode = new Label("", CoreRes.SKIN.getSkin());
+        this.table.add(this.gamemode).align(Align.left);
         this.stage.addActor(table);
     }
     
@@ -87,9 +92,12 @@ public class DebugOverlay {
         this.tile.setText(
                 "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));//Hmmm
         this.meta.setText("Not displaying meta");
-        this.seed.setText("Master Seed: "+SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getMasterSeed());
-        //this.time.setText(String.format("time: %d", time));
+        this.seed.setText(
+                "Master Seed: " + SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getMasterSeed());
+        this.time.setText(String.format("time: %d", 0));
         renderer.getGuiHelper().actAndDraw(stage, dt);
+        this.gamemode.setText("Gamemode: "
+                + SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getGameMode().toString());
     }
     
     private String getDisplayName(Tile t) {
