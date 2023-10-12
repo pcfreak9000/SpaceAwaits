@@ -53,6 +53,7 @@ public class SpecialCache<K, V> {
         return cache.containsKey(key);
     }
     
+    //Should this update the queue?
     public V getFromCache(K key) {
         V v = cache.get(key);
         return v;

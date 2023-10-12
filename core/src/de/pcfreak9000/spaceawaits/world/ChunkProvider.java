@@ -22,6 +22,7 @@ public class ChunkProvider implements IChunkProvider {
     private int populationModeLevel = 0;
     private Map<IntCoordKey, Chunk> genChunks = new HashMap<>();
     
+    //SpecialCache2D would be better suited
     private SpecialCache<IntCoordKey, Chunk> chunkCache;
     
     public ChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkGen) {
@@ -37,6 +38,39 @@ public class ChunkProvider implements IChunkProvider {
             }
             loader.unloadChunk(chunk);
         });
+        //clear opposing tasks, or let them finish if necessary, then
+        //submit -> run -> get, to prioritize the right now needed stuff. run runs it if it isnt already running.
+        //get makes sure the result is available (if it ran on another thread run would be non blocking and the result might not yet be available)
+        //then remove this stuff from the ResultQueue and add it or do whatever with it here
+        
+        //Results are placed in ConcurrentLinkedQueue, which adds (or whatever) its content at a certain point in the main thread
+        //Results can have different actions? Adding it to the world, doing nothing, ...?
+        //What about caching it and making it available for others?
+        
+        //requestChunk: x/y? now? active? genstage?
+        //what happens if this function is not called on the main thread?? for example, the cache might indeed change because the mainthread is doing something
+        //non-mainthread -> force now! doesn't solve all problems but might make things simpler...??
+        //STILL! two non-mainthreads could require the same chunk to be generated at a certain genstage
+        //population stage with world-patches, a singular thread for population if not currently in the mainthread, block if mainthread needs this, do on mainthread if active
+        //population stage, previously force surrounding chunks to be a level below but now!
+        //old tasks executed far into the future even though not needed anymore, what to do???
+        //only tile chunks not involved in this pipeline anymore can be considered to be available, so the above comment has to wait for this
+        //check if already requested/somewhere in the pipeline already:
+        //0. Remove opposing actions, (finish blocking actions?)
+        //1. check cached variable
+        //2. check cache
+        //3. check available results
+        //4. check task queue, if found:
+        //4a. if now, run and get
+        //4b. if not now, do nothing/upgrade active/genstage
+        //5. otherwise:
+        //5a. if now, load/gen chunk
+        //5b. if not now, create task
+        //if genstage isn't reached by the chunk, upgrade it. If now, do it now, if not now, remove the chunk from any caches/queues and queue the upgrade task
+        //only fully generated chunks should be active...
+        //what about threaded access on the neighbouring chunk for generation? which might need this chunk in turn??
+        
+        //cancelChunk, for chunks which are enqueued but not needed anymore??
     }
     
     @Override
