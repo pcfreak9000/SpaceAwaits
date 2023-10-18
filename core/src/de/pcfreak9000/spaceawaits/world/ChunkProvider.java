@@ -52,7 +52,7 @@ public class ChunkProvider implements IChunkProvider {
         //non-mainthread -> force now! doesn't solve all problems but might make things simpler...??
         //STILL! two non-mainthreads could require the same chunk to be generated at a certain genstage
         //population stage with world-patches, a singular thread for population if not currently in the mainthread, block if mainthread needs this, do on mainthread if active
-        //population stage, previously force surrounding chunks to be a level below but now!
+        //population stage, force surrounding chunks to be a level below beforehand but now!
         //old tasks executed far into the future even though not needed anymore, what to do???
         //only tile chunks not involved in this pipeline anymore can be considered to be available, so the above comment has to wait for this
         //check if already requested/somewhere in the pipeline already:
@@ -69,8 +69,16 @@ public class ChunkProvider implements IChunkProvider {
         //if genstage isn't reached by the chunk, upgrade it. If now, do it now, if not now, remove the chunk from any caches/queues and queue the upgrade task
         //only fully generated chunks should be active...
         //what about threaded access on the neighbouring chunk for generation? which might need this chunk in turn??
+
+        //determine if a chunk can even be processed async or requires the main thread
         
+        //somewhere note which chunk is currently used by which thread and in what way -> synchronizedMap?
+
         //cancelChunk, for chunks which are enqueued but not needed anymore??
+        
+        //Task with parentTask to wait for complete completion? Task: tasktype, parent
+        
+        //chunk.populate with IEntityArea or something with a "local" physics world maybe to check for collisions...
     }
     
     @Override
