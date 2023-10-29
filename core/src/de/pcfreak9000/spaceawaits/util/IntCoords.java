@@ -40,7 +40,7 @@ public class IntCoords {
         return y;
     }
     
-    public IntCoordKey createKey() {
-        return new IntCoordKey(x, y);
+    public long createKey() {
+        return toLong(x, y);
     }
 }

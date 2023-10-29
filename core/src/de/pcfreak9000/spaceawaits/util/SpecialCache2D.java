@@ -11,6 +11,7 @@ public class SpecialCache2D<V> {
     private int reducedMax;
     private LongQueue keyUsagePrioQueue = new LongQueue();
     private LongMap<V> cache = new LongMap<>();
+    private LongMap<V> frozen = new LongMap<>();
     
     private Int2DFunction<V> freshSupply;
     private Consumer<V> dump;
@@ -83,13 +84,38 @@ public class SpecialCache2D<V> {
         return v;
     }
     
+    public V freeze(int x, int y) {
+        long key = IntCoords.toLong(x, y);
+        V v = cache.remove(key);
+        if (v != null) {
+            keyUsagePrioQueue.removeValue(key);
+            frozen.put(key, v);
+        }
+        return v;
+    }
+    
+    public V unfreeze(int x, int y) {
+        long key = IntCoords.toLong(x, y);
+        V v = frozen.remove(key);
+        if (v != null) {
+            cache.put(key, v);
+            keyUsagePrioQueue.addLast(key);
+            checkCacheSize();
+        }
+        return v;
+    }
+    
     //clear/dump all
     public void clear() {
         if (dump != null) {
             for (V v : cache.values()) {
                 dump.accept(v);
             }
+            for (V v : frozen.values()) {
+                dump.accept(v);
+            }
         }
+        frozen.clear();
         cache.clear();
         keyUsagePrioQueue.clear();
     }
@@ -102,8 +128,12 @@ public class SpecialCache2D<V> {
     //remove
     public V remove(int x, int y) {
         long key = IntCoords.toLong(x, y);
-        V v = cache.get(key);
-        keyUsagePrioQueue.removeValue(key);
+        V v = cache.remove(key);
+        if (v != null) {
+            keyUsagePrioQueue.removeValue(key);
+        } else {
+            v = frozen.remove(key);
+        }
         return v;
     }
     

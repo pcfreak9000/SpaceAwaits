@@ -184,6 +184,7 @@ public class ChunkProvider implements IChunkProvider {
         unloadTemporaryChunks();
         invalidateCache();
         this.chunkCache.clear();
+        ((ChunkLoader) this.loader).finish();
     }
     
     @Override

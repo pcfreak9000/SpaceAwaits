@@ -1,9 +1,8 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Future;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.pcfreak9000.spaceawaits.util.Bounds;
@@ -17,26 +16,52 @@ import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 public class TestChunkProvider implements IChunkProvider {
     
     private static enum StatusEnum {
-        Ready, Generating;
+        Ready, Busy, Unloading;
     }
     
     private static class Status {
+        
         StatusEnum status;
         Future<Object> future;
-        boolean needLoading;
-        int x, y;
+        
+    }
+    
+    private static class ChunkInfo {
+        public static final int DONT_READD = 0, READD_PASSIVE = 1, READD_ACTIVE = 2;
+        
+        boolean needsLoading = false;
+        int needsReadd = DONT_READD;
         Chunk chunk;
+        int x, y;
+    }
+    
+    private static class Context {
+        LongMap<Chunk> availableChunks = new LongMap<>();
+        Array<ChunkInfo> infos = new Array<>();
     }
     
     private SpecialCache2D<Chunk> cache;
     
     private LongMap<Status> statusMap = new LongMap<>();
-    private LongMap<Chunk> genChunks = new LongMap<>();
     private World world;
     
     private IChunkLoader loader;
     
     private IChunkGenerator chunkGen;
+    
+    public TestChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkgen) {
+        this.world = world;
+        this.loader = loader;
+        this.chunkGen = chunkgen;
+        
+        //        this.cache = new SpecialCache2D<>(152, 145, (x, y) -> requestChunk(x, y, false, true), (chunk) -> {
+        //            statusMap.remove(IntCoords.toLong(chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
+        //            if (chunk.isActive()) {
+        //                world.removeChunk(chunk);
+        //            }
+        //            loader.unloadChunk(chunk);
+        //        });
+    }
     
     public void requestChunk(int x, int y, boolean blocking, boolean active) {
         if (!world.getBounds().inBoundsChunk(x, y))
@@ -46,28 +71,20 @@ public class TestChunkProvider implements IChunkProvider {
         if (status == null) {
             status = new Status();
             statusMap.put(key, status);
-            status.x = x;
-            status.y = y;
-            status.status = StatusEnum.Generating;
+            status.status = StatusEnum.Busy;
             Chunk chunk = loader.loadChunk(x, y);
-            status.chunk = chunk;
             
             ChunkGenStage genStage = chunk.getGenStage();
-            List<Status> affectedChunks = new ArrayList<>();
             if (genStage != ChunkGenStage.Populated) {
-                prepare(x, y, genStage.level + 1, affectedChunks);
+                Context context = aquireContext(x, y, blocking);
+                //***
+                loadRequired(context);
+                genRequired(x, y, context);
+                //***
+                releaseContext(context);
+                status.status = StatusEnum.Ready;
             }
-            //prep gen
-            for (Status stat : affectedChunks) {
-                if (stat.needLoading) {
-                    stat.chunk = loader.loadChunk(stat.x, stat.y);
-                    stat.needLoading = false;
-                }
-            }
-            //execute gen
-            genRequired(x, y, ChunkGenStage.Populated.level);
-            status.status = StatusEnum.Ready;
-            //readd affected chunks if required
+            
         } else if (status.status == StatusEnum.Ready) {
             Chunk chunk = cache.getFromCache(x, y);
             if (active && !chunk.isActive()) {
@@ -76,60 +93,119 @@ public class TestChunkProvider implements IChunkProvider {
         }
     }
     
-    private void genRequired(int x, int y, int genStageLevelReq) {
+    private Context aquireContext(int x, int y, boolean thisthread) {
+        Context context = new Context();
+        prepare(x, y, ChunkGenStage.Populated.level, context, thisthread);
+        return context;
+    }
+    
+    private void releaseContext(Context context) {
+        context.availableChunks.clear();
+        for (ChunkInfo info : context.infos) {
+            releaseBusyChunk(info);
+        }
+    }
+    
+    private void prepare(int x, int y, int genStageLevelReq, Context context, boolean thisthread) {
+        if (genStageLevelReq == 0)
+            return;
+        context.infos.add(aquireBusyChunk(x, y, thisthread));
+        for (Direction d : Direction.MOORE_NEIGHBOURS) {
+            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, context, thisthread);
+        }
+    }
+    
+    private void loadRequired(Context context) {
+        for (ChunkInfo info : context.infos) {
+            Chunk c = info.chunk;
+            if (info.needsLoading) {
+                c = this.loader.loadChunk(info.x, info.y);
+            }
+            context.availableChunks.put(IntCoords.toLong(info.x, info.y), c);
+        }
+    }
+    
+    private void genRequired(int x, int y, Context context) {
+        genRequired(x, y, ChunkGenStage.Populated.level, context);
+    }
+    
+    private void genRequired(int x, int y, int genStageLevelReq, Context context) {
         if (genStageLevelReq == 0)
             return;
         long key = IntCoords.toLong(x, y);
-        Status status = statusMap.get(key);
-        if (genStageLevelReq > status.chunk.getGenStage().level) {
-            genRequired(x, y, genStageLevelReq - 1);
+        Chunk chunk = context.availableChunks.get(key);
+        if (genStageLevelReq <= chunk.getGenStage().level)
+            return;
+        for (Direction d : Direction.ZERO_MOORE) {
+            genRequired(x + d.dx, y + d.dy, genStageLevelReq - 1, context);
         }
-        for (Direction d : Direction.MOORE_NEIGHBOURS) {
-            genRequired(x + d.dx, y + d.dy, genStageLevelReq - 1);
+        advanceGenStage(chunk, genStageLevelReq, context);
+    }
+    
+    private void advanceGenStage(Chunk chunk, int genStageLevelReq, Context context) {
+        Bounds bounds = null;
+        if (genStageLevelReq > ChunkGenStage.Tiled.level) {
+            bounds = new Bounds((chunk.getGlobalChunkX() - 1) * Chunk.CHUNK_SIZE,
+                    (chunk.getGlobalChunkY() - 1) * Chunk.CHUNK_SIZE, 3 * Chunk.CHUNK_SIZE, 3 * Chunk.CHUNK_SIZE);
+            bounds = Bounds.intersect(bounds, world.getBounds());
+        } else {
+            bounds = chunk.getBounds();
         }
-        Bounds bounds = new Bounds((x - 1) * Chunk.CHUNK_SIZE, (y - 1) * Chunk.CHUNK_SIZE, 3 * Chunk.CHUNK_SIZE,
-                3 * Chunk.CHUNK_SIZE);
-        bounds = Bounds.intersect(bounds, world.getBounds());
-        BoundedChunkProvider localprov = new BoundedChunkProvider(bounds);
+        BoundedChunkProvider localprov = new BoundedChunkProvider(bounds, context.availableChunks);
         WorldArea worldarea = new WorldArea(localprov, bounds, world);
-        switch (status.chunk.getGenStage()) {
+        switch (chunk.getGenStage()) {
         case Empty:
-            status.chunk.generate(chunkGen);
+            chunk.generate(chunkGen);
             break;
         case Tiled:
-            status.chunk.structure(chunkGen, worldarea);
+            chunk.structure(chunkGen, worldarea);
             break;
         case Structured:
-            status.chunk.populate(chunkGen, worldarea);
+            chunk.populate(chunkGen, worldarea);
             break;
         default:
             break;
         }
     }
     
-    private void prepare(int x, int y, int genStageLevelReq, List<Status> setfutures) {
-        if (genStageLevelReq == 0)
-            return;
+    private void releaseBusyChunk(ChunkInfo info) {
+        long key = IntCoords.toLong(info.x, info.y);
+        Status status = statusMap.get(key);
+        if (status.status != StatusEnum.Busy)
+            throw new IllegalStateException();
+        if (info.needsReadd >= ChunkInfo.READD_PASSIVE) {
+            Chunk c = cache.unfreeze(info.x, info.y);
+            if (info.needsReadd == ChunkInfo.READD_ACTIVE) {
+                world.addChunk(c);
+            }
+            status.status = StatusEnum.Ready;
+        }
+    }
+    
+    private ChunkInfo aquireBusyChunk(int x, int y, boolean thisthread) {
+        //Check bounds again?
         long key = IntCoords.toLong(x, y);
         Status status = statusMap.get(key);
+        ChunkInfo info = new ChunkInfo();
+        info.x = x;
+        info.y = y;
         if (status == null) {
             status = new Status();
             statusMap.put(key, status);
-            status.needLoading = true;
-        }
-        //If on world thread, the chunk can stay active and in the cache, otherwise it needs to be removed
-        if (status.status == StatusEnum.Ready && setfutures != null) {
-            status.needLoading = false;
-            Chunk chunk = cache.remove(x, y);
+            info.needsLoading = true;
+            info.needsReadd = ChunkInfo.READD_PASSIVE;
+        } else if (status.status == StatusEnum.Ready && !thisthread) {
+            //If on world thread, the chunk can stay active and in the cache, otherwise it needs to be removed
+            Chunk chunk = cache.freeze(x, y);
+            info.needsReadd = ChunkInfo.READD_PASSIVE;
             if (chunk.isActive()) {
                 world.removeChunk(chunk);
+                info.needsReadd = ChunkInfo.READD_ACTIVE;
             }
+            info.chunk = chunk;
         }
-        status.status = StatusEnum.Generating;
-        setfutures.add(status);
-        for (Direction d : Direction.MOORE_NEIGHBOURS) {
-            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, setfutures);
-        }
+        status.status = StatusEnum.Busy;
+        return info;
     }
     
     @Override
@@ -142,12 +218,14 @@ public class TestChunkProvider implements IChunkProvider {
         return cache.getOrFresh(x, y);
     }
     
-    private class BoundedChunkProvider implements IChunkProvider {
+    private static class BoundedChunkProvider implements IChunkProvider {
         
         private Bounds bounds;
+        private LongMap<Chunk> chunks;
         
-        public BoundedChunkProvider(Bounds bounds) {
+        public BoundedChunkProvider(Bounds bounds, LongMap<Chunk> chunks) {
             this.bounds = bounds;
+            this.chunks = chunks;
         }
         
         @Override
@@ -159,7 +237,7 @@ public class TestChunkProvider implements IChunkProvider {
         public Chunk getChunk(int x, int y) {
             if (!bounds.inBounds(x * Chunk.CHUNK_SIZE, y * Chunk.CHUNK_SIZE))
                 return null;
-            return genChunks.get(IntCoords.toLong(x, y));
+            return chunks.get(IntCoords.toLong(x, y));
         }
         
     }

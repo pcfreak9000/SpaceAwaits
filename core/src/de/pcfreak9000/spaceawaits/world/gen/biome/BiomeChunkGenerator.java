@@ -25,7 +25,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     
     private GenerationParameters genParams;
     
-    private RndHelper rnd;
+    private ThreadLocal<RndHelper> rnd;
     private final long seed;
     
     public BiomeChunkGenerator(ShapeSystem shapeSystem, IGen2D<Biome> biomeGenerator, CaveSystem caves, long seedMaster,
@@ -34,12 +34,13 @@ public class BiomeChunkGenerator implements IChunkGenerator {
         this.biomeGen = biomeGenerator;
         this.caveGen = caves;
         this.seed = seedMaster;
-        this.rnd = new RndHelper();
+        this.rnd = ThreadLocal.withInitial(() -> new RndHelper());
         this.genParams = params;
     }
     
     @Override
     public void generateChunk(Chunk chunk) {
+        RndHelper rnd = this.rnd.get();
         rnd.set(seed, 1 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
@@ -73,6 +74,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     
     @Override
     public void structureChunk(Chunk chunk, WorldArea ts) {
+        RndHelper rnd = this.rnd.get();
         rnd.set(seed, 2 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
         for (int i = 0; i < POPULATE_COUNT; i++) {
             for (int j = 0; j < POPULATE_COUNT; j++) {
@@ -92,6 +94,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     
     @Override
     public void populateChunk(Chunk chunk, WorldArea world) {
+        RndHelper rnd = this.rnd.get();
         rnd.set(seed, 3 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
         ITileArea ts = world;
         for (int j = 0; j < POPULATE_COUNT; j++) {

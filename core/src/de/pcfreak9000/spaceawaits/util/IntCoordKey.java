@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.util;
 
+@Deprecated
 public class IntCoordKey {
     
     private final int x, y;
