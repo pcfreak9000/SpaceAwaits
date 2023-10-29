@@ -1,32 +1,32 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.badlogic.gdx.utils.LongMap;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
-import de.pcfreak9000.spaceawaits.util.IntCoordKey;
+import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 
 public class ChunkLoader implements IChunkLoader {
     
-    private Map<IntCoordKey, Chunk> loadedChunks;
+    private LongMap<Chunk> loadedChunks;
     
     private World world;
     private IWorldSave save;
     
     public ChunkLoader(IWorldSave save, World world) {
-        this.loadedChunks = new HashMap<>();
+        this.loadedChunks = new LongMap<>();
         this.world = world;
         this.save = save;
     }
     
-    private Chunk loadChunkActual(IntCoordKey key) {
+    private Chunk loadChunkActual(int x, int y) {
+        long key = IntCoords.toLong(x, y);
         Chunk chunk = this.loadedChunks.get(key);
         if (chunk == null) {
-            chunk = new Chunk(key.getX(), key.getY(), this.world);
-            if (save.hasChunk(key.getX(), key.getY())) {
+            chunk = new Chunk(x, y, this.world);
+            if (save.hasChunk(x, y)) {
                 readChunk(chunk);
             }
             this.loadedChunks.put(key, chunk);
@@ -35,11 +35,11 @@ public class ChunkLoader implements IChunkLoader {
     }
     
     @Override
-    public Chunk loadChunk(IntCoordKey key) {
-        if (!world.getBounds().inBoundsChunk(key.getX(), key.getY())) {
+    public Chunk loadChunk(int x, int y) {
+        if (!world.getBounds().inBoundsChunk(x, y)) {
             return null;
         }
-        Chunk chunk = loadChunkActual(key);
+        Chunk chunk = loadChunkActual(x, y);
         return chunk;
     }
     
@@ -59,7 +59,7 @@ public class ChunkLoader implements IChunkLoader {
     @Override
     public void unloadChunk(Chunk c) {
         saveChunk(c);
-        loadedChunks.remove(new IntCoordKey(c.getGlobalChunkX(), c.getGlobalChunkY()));
+        loadedChunks.remove(IntCoords.toLong(c.getGlobalChunkX(), c.getGlobalChunkY()));
     }
     
 }

@@ -6,11 +6,11 @@ import java.util.Set;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGen2D;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.CaveBiome;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public abstract class Biome implements IGen2D<Biome> {
     
@@ -60,12 +60,14 @@ public abstract class Biome implements IGen2D<Biome> {
     //decorate Biome
     //  Ores, Plants, etc
     //  Structures
-    
+    @Deprecated
     public abstract Tile genTileAt(int tx, int ty, TileLayer layer, GenerationParameters biomeGen, RndHelper rnd);
     
-    public abstract void genStructureTiles(TileSystem tiles, GenerationParameters biomeGen, int tx, int ty,
+    @Deprecated
+    public abstract void genStructureTiles(ITileArea tiles, GenerationParameters biomeGen, int tx, int ty,
             int structureDiv, RndHelper rnd);
     
-    public abstract void populate(TileSystem tiles, World world, GenerationParameters biomeGen, int tx, int ty,
+    @Deprecated
+    public abstract void populate(ITileArea tiles, WorldArea world, GenerationParameters biomeGen, int tx, int ty,
             int populateDiv, RndHelper rnd);
 }

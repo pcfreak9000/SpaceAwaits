@@ -25,6 +25,7 @@ import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -141,20 +142,20 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         chunkGen.generateChunk(this);
     }
     
-    public void structure(IChunkGenerator chunkGen) {
+    public void structure(IChunkGenerator chunkGen, WorldArea area) {
         if (genStage != ChunkGenStage.Tiled) {
             throw new IllegalStateException();
         }
         genStage = ChunkGenStage.Structured;
-        chunkGen.structureChunk(this, this.tileSystem);
+        chunkGen.structureChunk(this, area);
     }
     
-    public void populate(IChunkGenerator chunkGen) {
+    public void populate(IChunkGenerator chunkGen, WorldArea area) {
         if (genStage != ChunkGenStage.Structured) {
             throw new IllegalStateException();
         }
         genStage = ChunkGenStage.Populated;
-        chunkGen.populateChunk(this, this.world);
+        chunkGen.populateChunk(this, area);
     }
     
     public ChunkGenStage getGenStage() {

@@ -21,6 +21,10 @@ import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public class EntityInteractSystem extends EntitySystem {
     
+    public static enum SpawnState {
+        Success, Pending, Failure;
+    }
+    
     private World world;
     private IChunkProvider chunkProvider;
     private IUnchunkProvider unchunkProvider;
@@ -75,7 +79,7 @@ public class EntityInteractSystem extends EntitySystem {
         return MathUtils.clamp(bc.progress, 0, 1);
     }
     
-    public boolean spawnEntity(Entity entity, boolean checkOccupation) {
+    public SpawnState spawnEntity(Entity entity, boolean checkOccupation) {
         //what happens if the chunk is not loaded? -> the chunk gets loaded if this World has the generating backend, but spawning should only happen there anyways
         //what happens if the coordinates are somewhere out of bounds? the entity isn't spawned and simply forgotten (return false)
         if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity) && checkOccupation) {
@@ -84,7 +88,7 @@ public class EntityInteractSystem extends EntitySystem {
             Vector2 wh = pc.factory.boundingBoxWidthAndHeight();
             if (phys.get(getEngine()).checkRectOccupation(t.position.x + wh.x / 4, t.position.y + wh.y / 4, wh.x / 2,
                     wh.y / 2, false)) {
-                return false;
+                return SpawnState.Failure;
             }
         }
         if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
@@ -93,7 +97,7 @@ public class EntityInteractSystem extends EntitySystem {
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
             if (c == null) {
-                return false;//Not so nice, this way the entity is just forgotten 
+                return SpawnState.Failure;//Not so nice, this way the entity is just forgotten 
             }
             c.addEntity(entity);
             if (c.isActive()) {
@@ -104,7 +108,7 @@ public class EntityInteractSystem extends EntitySystem {
             unchunkProvider.get().addEntity(entity);
             getEngine().addEntity(entity);
         }
-        return true;
+        return SpawnState.Success;
     }
     
     public void despawnEntity(Entity entity) {

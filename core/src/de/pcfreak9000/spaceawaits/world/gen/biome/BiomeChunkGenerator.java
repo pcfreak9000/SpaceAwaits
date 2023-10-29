@@ -5,14 +5,14 @@ import com.badlogic.gdx.utils.IntArray;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGen2D;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.CaveSystem;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class BiomeChunkGenerator implements IChunkGenerator {
     
@@ -72,7 +72,7 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     }
     
     @Override
-    public void structureChunk(Chunk chunk, TileSystem ts) {
+    public void structureChunk(Chunk chunk, WorldArea ts) {
         rnd.set(seed, 2 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
         for (int i = 0; i < POPULATE_COUNT; i++) {
             for (int j = 0; j < POPULATE_COUNT; j++) {
@@ -91,9 +91,9 @@ public class BiomeChunkGenerator implements IChunkGenerator {
     }
     
     @Override
-    public void populateChunk(Chunk chunk, World world) {
+    public void populateChunk(Chunk chunk, WorldArea world) {
         rnd.set(seed, 3 + RndHelper.getSeedAt(seed, chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
-        TileSystem ts = world.getSystem(TileSystem.class);
+        ITileArea ts = world;
         for (int j = 0; j < POPULATE_COUNT; j++) {
             for (int i = 0; i < POPULATE_COUNT; i++) {
                 int txs = chunk.getGlobalTileX() + i * POPULATE_DIV;

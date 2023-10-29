@@ -1,12 +1,10 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import com.badlogic.gdx.utils.LongMap;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
-import de.pcfreak9000.spaceawaits.util.IntCoordKey;
-import de.pcfreak9000.spaceawaits.util.SpecialCache;
+import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
@@ -20,16 +18,16 @@ public class ChunkProvider implements IChunkProvider {
     private Chunk cached = null;
     
     private int populationModeLevel = 0;
-    private Map<IntCoordKey, Chunk> genChunks = new HashMap<>();
+    private LongMap<Chunk> genChunks = new LongMap<>();
     
     //SpecialCache2D would be better suited
-    private SpecialCache<IntCoordKey, Chunk> chunkCache;
+    private SpecialCache2D<Chunk> chunkCache;
     
     public ChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkGen) {
         this.world = world;
         this.loader = loader;
         this.chunkGen = chunkGen;
-        this.chunkCache = new SpecialCache<>(152, 145, (key) -> loader.loadChunk(key), (chunk) -> {
+        this.chunkCache = new SpecialCache2D<>(152, 145, (x, y) -> loader.loadChunk(x, y), (chunk) -> {
             if (cached == chunk) {
                 invalidateCache();
             }
@@ -69,16 +67,18 @@ public class ChunkProvider implements IChunkProvider {
         //if genstage isn't reached by the chunk, upgrade it. If now, do it now, if not now, remove the chunk from any caches/queues and queue the upgrade task
         //only fully generated chunks should be active...
         //what about threaded access on the neighbouring chunk for generation? which might need this chunk in turn??
-
+        
         //determine if a chunk can even be processed async or requires the main thread
         
         //somewhere note which chunk is currently used by which thread and in what way -> synchronizedMap?
-
+        
         //cancelChunk, for chunks which are enqueued but not needed anymore??
         
         //Task with parentTask to wait for complete completion? Task: tasktype, parent
         
         //chunk.populate with IEntityArea or something with a "local" physics world maybe to check for collisions...
+        
+        //Timeout if something takes too long??
     }
     
     @Override
@@ -91,15 +91,15 @@ public class ChunkProvider implements IChunkProvider {
             return null;
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
-        IntCoordKey key = new IntCoordKey(x, y);
+        long key = IntCoords.toLong(x, y);
         Chunk chunk = null;//chunks.get(key);
-        if (!isTmpMode() || chunkCache.hasKey(key)) {
-            chunk = chunkCache.getOrFresh(key);
+        if (!isTmpMode() || chunkCache.hasKey(x, y)) {
+            chunk = chunkCache.getOrFresh(x, y);
         }
         if (isTmpMode() && chunk == null) {
             chunk = genChunks.get(key);
             if (chunk == null) {
-                chunk = loader.loadChunk(key);
+                chunk = loader.loadChunk(x, y);
                 genChunks.put(key, chunk);
             }
         }
@@ -110,16 +110,17 @@ public class ChunkProvider implements IChunkProvider {
         try {
             ensureChunk(x, y, stage.before);
             for (Direction d : Direction.MOORE_NEIGHBOURS) {
-                int nx = d.dx + key.getX();
-                int ny = d.dy + key.getY();
+                int nx = d.dx + x;
+                int ny = d.dy + y;
                 ensureChunk(nx, ny, stage.before);
             }
+            WorldArea area = new WorldArea(this, world.getBounds(), world);
             if (chunk.getGenStage() == ChunkGenStage.Empty && stage == ChunkGenStage.Tiled) {
                 chunk.generate(chunkGen);
             } else if (chunk.getGenStage() == ChunkGenStage.Tiled && stage == ChunkGenStage.Structured) {
-                chunk.structure(chunkGen);
+                chunk.structure(chunkGen, area);
             } else if (chunk.getGenStage() == ChunkGenStage.Structured && stage == ChunkGenStage.Populated) {
-                chunk.populate(chunkGen);
+                chunk.populate(chunkGen, area);
             }
         } finally {
             populationModeLevel--;
@@ -144,10 +145,9 @@ public class ChunkProvider implements IChunkProvider {
             }
         }
         if (isTmpMode()) {
-            IntCoordKey key = new IntCoordKey(x, y);
-            Chunk chunk = chunkCache.getFromCache(key);//chunks.get(key);
+            Chunk chunk = chunkCache.getFromCache(x, y);//chunks.get(key);
             if (chunk == null) {
-                chunk = genChunks.get(key);
+                chunk = genChunks.get(IntCoords.toLong(x, y));
             }
             cached = chunk;
             return chunk;
@@ -165,11 +165,11 @@ public class ChunkProvider implements IChunkProvider {
     }
     
     private void unloadTemporaryChunks() {
-        Iterator<IntCoordKey> it = genChunks.keySet().iterator();
-        while (it.hasNext()) {
-            IntCoordKey k = it.next();
+        LongMap.Keys it = genChunks.keys();
+        while (it.hasNext) {
+            long k = it.next();
             Chunk toRem = genChunks.get(k);
-            if (!chunkCache.hasKey(k)) {
+            if (!chunkCache.hasKey(IntCoords.xOfLong(k), IntCoords.yOfLong(k))) {
                 loader.unloadChunk(toRem);
             }
             it.remove();

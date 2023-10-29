@@ -7,7 +7,7 @@ import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
 import de.pcfreak9000.spaceawaits.item.loot.LootTable;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.biome.Biome;
@@ -21,7 +21,6 @@ import de.pcfreak9000.spaceawaits.world.gen.feature.OreGenTileFeature;
 import de.pcfreak9000.spaceawaits.world.gen.feature.StringBasedBlueprint;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TestBiome extends Biome {
     
@@ -94,8 +93,8 @@ public class TestBiome extends Biome {
     private IFeature fgen = new IFeature() {
         
         @Override
-        public boolean generate(World world, ITileArea tiles, int tx, int ty, Random rand) {
-            bp.generate((TileSystem) tiles, world, tx, ty, 0, 0, bp.getWidth(), bp.getHeight(), rand);
+        public boolean generate(WorldArea world, ITileArea tiles, int tx, int ty, Random rand) {
+            bp.generate(tiles, world, tx, ty, 0, 0, bp.getWidth(), bp.getHeight(), rand);
             return true;
         }
     };
@@ -115,13 +114,13 @@ public class TestBiome extends Biome {
     private OreGenTileFeature coal = new OreGenTileFeature(Tiles.ORE_COAL, 6, 10);
     
     @Override
-    public void populate(TileSystem tiles, World world, GenerationParameters biomeGen, int tx, int ty, int area,
+    public void populate(ITileArea tiles, WorldArea world, GenerationParameters biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
         
     }
     
     @Override
-    public void genStructureTiles(TileSystem tiles, GenerationParameters biomeGen, int tx, int ty, int area,
+    public void genStructureTiles(ITileArea tiles, GenerationParameters biomeGen, int tx, int ty, int area,
             RndHelper rnd) {
         //FIXME tiles is null...
     }

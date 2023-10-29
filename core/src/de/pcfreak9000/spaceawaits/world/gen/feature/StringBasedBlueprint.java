@@ -6,10 +6,10 @@ import java.util.Random;
 
 import com.badlogic.gdx.utils.Array;
 
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class StringBasedBlueprint implements Blueprint {
     
@@ -122,7 +122,7 @@ public class StringBasedBlueprint implements Blueprint {
         return rx + (height - ry - 1) * width;
     }
     
-    private void placeTile(int tx, int ty, TileLayer layer, char ch, Random random, TileSystem tiles) {
+    private void placeTile(int tx, int ty, TileLayer layer, char ch, Random random, ITileArea tiles) {
         Object o = (layer == TileLayer.Front ? tilemappings : tilemappingsBack).get(ch);
         if (o instanceof Tile) {
             Tile t = (Tile) o;
@@ -136,7 +136,7 @@ public class StringBasedBlueprint implements Blueprint {
     }
     
     @Override
-    public void generate(TileSystem tiles, World world, int txs, int tys, int rxs, int rys, int width, int height,
+    public void generate(ITileArea tiles, WorldArea world, int txs, int tys, int rxs, int rys, int width, int height,
             Random random) {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {

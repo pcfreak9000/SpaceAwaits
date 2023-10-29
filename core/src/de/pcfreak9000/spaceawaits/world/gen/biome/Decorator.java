@@ -5,9 +5,9 @@ import com.badlogic.gdx.utils.Array;
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
+import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenData;
-import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Decorator {
     private Array<FeatureGenData> features = new Array<>();
@@ -16,7 +16,7 @@ public class Decorator {
         this.features.add(fg);
     }
     
-    public void decorate(TileSystem tiles, World world, GenerationParameters biomeGen, int tx, int ty, int length,
+    public void decorate(ITileArea tiles, WorldArea world, GenerationParameters biomeGen, int tx, int ty, int length,
             RndHelper rnd) {
         //potentially shuffle features first?
         for (FeatureGenData fg : features) {

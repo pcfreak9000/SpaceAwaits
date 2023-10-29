@@ -3,7 +3,7 @@ package de.pcfreak9000.spaceawaits.world.gen.feature;
 import java.util.Random;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -27,7 +27,7 @@ public class OreGenTileFeature implements IFeature {
     }
     
     @Override
-    public boolean generate(World world, ITileArea tiles, int tx, int ty, Random rand) {
+    public boolean generate(WorldArea world, ITileArea tiles, int tx, int ty, Random rand) {
         int count = min + rand.nextInt(max - min);
         int maxloop = 3 * count;
         while (count > 0 && maxloop > 0) {
