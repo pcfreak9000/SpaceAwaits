@@ -21,8 +21,8 @@ public class TestChunkProvider implements IChunkProvider {
     
     private static class Status {
         
-        StatusEnum status;
-        Future<Object> future;
+        volatile StatusEnum status;
+        volatile Future<Object> future;
         
     }
     
@@ -38,6 +38,7 @@ public class TestChunkProvider implements IChunkProvider {
     private static class Context {
         LongMap<Chunk> availableChunks = new LongMap<>();
         Array<ChunkInfo> infos = new Array<>();
+        int xCenter, yCenter;
     }
     
     private SpecialCache2D<Chunk> cache;
@@ -76,10 +77,10 @@ public class TestChunkProvider implements IChunkProvider {
             
             ChunkGenStage genStage = chunk.getGenStage();
             if (genStage != ChunkGenStage.Populated) {
-                Context context = aquireContext(x, y, blocking);
+                Context context = aquireContext(chunk, blocking);
                 //***
                 loadRequired(context);
-                genRequired(x, y, context);
+                genRequired(context);
                 //***
                 releaseContext(context);
                 status.status = StatusEnum.Ready;
@@ -90,12 +91,26 @@ public class TestChunkProvider implements IChunkProvider {
             if (active && !chunk.isActive()) {
                 world.addChunk(chunk);
             }
+        } else if (status.status == StatusEnum.Busy) {
+            //if blocking, wait for finish, then create context, or somehow before but register required chunks to be available then
+            //if non-blocking, create context, make required chunks which are busy stay busy, in other thread wait until
+            // this chunk isn't busy anymore with the Future#get or something  
+            //then do stuff
+        } else if (status.status == StatusEnum.Unloading) {
+            //Fuck
+            //remove map from ChunkLoader, then just dont forget about the chunk which was just saved...??
         }
+        
     }
     
-    private Context aquireContext(int x, int y, boolean thisthread) {
+    private Context aquireContext(Chunk chunk, boolean thisthread) {
         Context context = new Context();
-        prepare(x, y, ChunkGenStage.Populated.level, context, thisthread);
+        int x = chunk.getGlobalChunkX();
+        int y = chunk.getGlobalChunkY();
+        context.xCenter = x;
+        context.yCenter = y;
+        context.availableChunks.put(IntCoords.toLong(x, y), chunk);
+        prepare(x, y, ChunkGenStage.Populated.level, context, thisthread, x, y);
         return context;
     }
     
@@ -106,12 +121,14 @@ public class TestChunkProvider implements IChunkProvider {
         }
     }
     
-    private void prepare(int x, int y, int genStageLevelReq, Context context, boolean thisthread) {
+    private void prepare(int x, int y, int genStageLevelReq, Context context, boolean thisthread, int xig, int yig) {
         if (genStageLevelReq == 0)
             return;
-        context.infos.add(aquireBusyChunk(x, y, thisthread));
+        if (x != xig && y != yig) {
+            context.infos.add(aquireBusyChunk(x, y, thisthread));
+        }
         for (Direction d : Direction.MOORE_NEIGHBOURS) {
-            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, context, thisthread);
+            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, context, thisthread, xig, yig);
         }
     }
     
@@ -125,8 +142,8 @@ public class TestChunkProvider implements IChunkProvider {
         }
     }
     
-    private void genRequired(int x, int y, Context context) {
-        genRequired(x, y, ChunkGenStage.Populated.level, context);
+    private void genRequired(Context context) {
+        genRequired(context.xCenter, context.yCenter, ChunkGenStage.Populated.level, context);
     }
     
     private void genRequired(int x, int y, int genStageLevelReq, Context context) {
