@@ -84,6 +84,7 @@ public class WorldCombined extends World {
         for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
             ecsEngine.removeEntityListener(dal);
         }
+        this.chunkLoader.finish();
     }
     
     private void setupECS(Engine engine, WorldScreen gameScreen) {
