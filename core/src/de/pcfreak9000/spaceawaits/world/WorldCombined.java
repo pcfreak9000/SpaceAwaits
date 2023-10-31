@@ -35,7 +35,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class WorldCombined extends World {
     
-    private final ChunkProvider chunkProvider;
+    private final TestChunkProvider chunkProvider;
     private final ChunkLoader chunkLoader;
     private final UnchunkProvider unchunkProvider;
     
@@ -48,7 +48,7 @@ public class WorldCombined extends World {
         super(primer);
         this.chunkLoader = new ChunkLoader(save, this);
         this.unchunkProvider = new UnchunkProvider(save, this, primer.getWorldGenerator());
-        this.chunkProvider = new ChunkProvider(this, chunkLoader, primer.getChunkGenerator());
+        this.chunkProvider = new TestChunkProvider(this, chunkLoader, primer.getChunkGenerator());
         
     }
     

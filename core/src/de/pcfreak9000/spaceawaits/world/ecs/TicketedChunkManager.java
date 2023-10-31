@@ -9,21 +9,21 @@ import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.LongMap.Keys;
 
 import de.pcfreak9000.spaceawaits.util.IntCoords;
-import de.pcfreak9000.spaceawaits.world.ChunkProvider;
 import de.pcfreak9000.spaceawaits.world.ITicket;
+import de.pcfreak9000.spaceawaits.world.TestChunkProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 
 public class TicketedChunkManager extends EntitySystem {
     
     private World world;
-    private ChunkProvider chunkProvider;
+    private TestChunkProvider chunkProvider;
     
     private Set<ITicket> tickets;
     
     private static final Object OBJ = new Object();
     private LongMap<Object> chunksToUpdate = new LongMap<>();
     
-    public TicketedChunkManager(World world, ChunkProvider chunkprovider) {
+    public TicketedChunkManager(World world, TestChunkProvider chunkprovider) {
         this.tickets = new LinkedHashSet<>();
         this.world = world;
         this.chunkProvider = chunkprovider;
@@ -61,7 +61,7 @@ public class TicketedChunkManager extends EntitySystem {
         Keys keys = chunksToUpdate.keys();
         while (keys.hasNext) {
             long k = keys.next();
-            this.chunkProvider.getChunk(IntCoords.xOfLong(k), IntCoords.yOfLong(k), true);
+            this.chunkProvider.getChunk(IntCoords.xOfLong(k), IntCoords.yOfLong(k));
         }
     }
     

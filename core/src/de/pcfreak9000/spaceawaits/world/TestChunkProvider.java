@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world;
 
 import java.util.concurrent.Future;
 
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.pcfreak9000.spaceawaits.util.Bounds;
@@ -20,9 +19,11 @@ public class TestChunkProvider implements IChunkProvider {
     }
     
     private static class Status {
-        
+        //Status is manipulated by the world thread, but must be visible to other threads
         volatile StatusEnum status;
-        volatile Future<Object> future;
+        volatile Future<?> future;
+        volatile int busyness;//business?
+        volatile ChunkInfo info;
         
     }
     
@@ -37,8 +38,9 @@ public class TestChunkProvider implements IChunkProvider {
     
     private static class Context {
         LongMap<Chunk> availableChunks = new LongMap<>();
-        Array<ChunkInfo> infos = new Array<>();
+        LongMap<ChunkInfo> infos = new LongMap<>();
         int xCenter, yCenter;
+        boolean forceThisthread;
     }
     
     private SpecialCache2D<Chunk> cache;
@@ -55,24 +57,25 @@ public class TestChunkProvider implements IChunkProvider {
         this.loader = loader;
         this.chunkGen = chunkgen;
         
-        //        this.cache = new SpecialCache2D<>(152, 145, (x, y) -> requestChunk(x, y, false, true), (chunk) -> {
-        //            statusMap.remove(IntCoords.toLong(chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
-        //            if (chunk.isActive()) {
-        //                world.removeChunk(chunk);
-        //            }
-        //            loader.unloadChunk(chunk);
-        //        });
+        this.cache = new SpecialCache2D<>(152, 145, (x, y) -> requestChunk(x, y, true, true), (chunk) -> {
+            statusMap.remove(IntCoords.toLong(chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
+            if (chunk.isActive()) {
+                world.removeChunk(chunk);
+            }
+            loader.unloadChunk(chunk);
+        });
     }
     
-    public void requestChunk(int x, int y, boolean blocking, boolean active) {
+    public Chunk requestChunk(int x, int y, boolean blocking, boolean active) {
         if (!world.getBounds().inBoundsChunk(x, y))
-            return;
+            return null;
         long key = IntCoords.toLong(x, y);
         Status status = statusMap.get(key);
         if (status == null) {
             status = new Status();
             statusMap.put(key, status);
             status.status = StatusEnum.Busy;
+            //TODO this could be done async, and then context creation is done in the flush or something if necessary
             Chunk chunk = loader.loadChunk(x, y);
             
             ChunkGenStage genStage = chunk.getGenStage();
@@ -83,15 +86,22 @@ public class TestChunkProvider implements IChunkProvider {
                 genRequired(context);
                 //***
                 releaseContext(context);
-                status.status = StatusEnum.Ready;
+                //***
             }
-            
+            status.status = StatusEnum.Ready;
+            if (active && !chunk.isActive()) {
+                world.addChunk(chunk);
+            }
+            return chunk;
         } else if (status.status == StatusEnum.Ready) {
             Chunk chunk = cache.getFromCache(x, y);
             if (active && !chunk.isActive()) {
                 world.addChunk(chunk);
             }
+            return chunk;
         } else if (status.status == StatusEnum.Busy) {
+            //Note on the busy context that this chunk needs to stay busy
+            
             //if blocking, wait for finish, then create context, or somehow before but register required chunks to be available then
             //if non-blocking, create context, make required chunks which are busy stay busy, in other thread wait until
             // this chunk isn't busy anymore with the Future#get or something  
@@ -100,40 +110,47 @@ public class TestChunkProvider implements IChunkProvider {
             //Fuck
             //remove map from ChunkLoader, then just dont forget about the chunk which was just saved...??
         }
-        
+        return null;
     }
     
     private Context aquireContext(Chunk chunk, boolean thisthread) {
         Context context = new Context();
+        context.forceThisthread = thisthread;
+        //TODO identify if nonblocking but required chunks need to stay active or something
         int x = chunk.getGlobalChunkX();
         int y = chunk.getGlobalChunkY();
         context.xCenter = x;
         context.yCenter = y;
+        prepare(x, y, ChunkGenStage.Populated.level, context, x, y);
         context.availableChunks.put(IntCoords.toLong(x, y), chunk);
-        prepare(x, y, ChunkGenStage.Populated.level, context, thisthread, x, y);
         return context;
     }
     
     private void releaseContext(Context context) {
         context.availableChunks.clear();
-        for (ChunkInfo info : context.infos) {
+        for (ChunkInfo info : context.infos.values()) {
             releaseBusyChunk(info);
         }
     }
     
-    private void prepare(int x, int y, int genStageLevelReq, Context context, boolean thisthread, int xig, int yig) {
+    private void prepare(int x, int y, int genStageLevelReq, Context context, int xig, int yig) {
         if (genStageLevelReq == 0)
             return;
-        if (x != xig && y != yig) {
-            context.infos.add(aquireBusyChunk(x, y, thisthread));
+        if (!world.getBounds().inBoundsChunk(x, y))
+            return;
+        if (x != xig || y != yig) {
+            long key = IntCoords.toLong(x, y);
+            if (!context.infos.containsKey(key)) {
+                context.infos.put(key, aquireBusyChunk(x, y, context.forceThisthread, context));
+            }
         }
         for (Direction d : Direction.MOORE_NEIGHBOURS) {
-            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, context, thisthread, xig, yig);
+            prepare(x + d.dx, y + d.dy, genStageLevelReq - 1, context, xig, yig);
         }
     }
     
     private void loadRequired(Context context) {
-        for (ChunkInfo info : context.infos) {
+        for (ChunkInfo info : context.infos.values()) {
             Chunk c = info.chunk;
             if (info.needsLoading) {
                 c = this.loader.loadChunk(info.x, info.y);
@@ -148,6 +165,8 @@ public class TestChunkProvider implements IChunkProvider {
     
     private void genRequired(int x, int y, int genStageLevelReq, Context context) {
         if (genStageLevelReq == 0)
+            return;
+        if (!world.getBounds().inBoundsChunk(x, y))
             return;
         long key = IntCoords.toLong(x, y);
         Chunk chunk = context.availableChunks.get(key);
@@ -190,16 +209,23 @@ public class TestChunkProvider implements IChunkProvider {
         Status status = statusMap.get(key);
         if (status.status != StatusEnum.Busy)
             throw new IllegalStateException();
+        status.busyness--;
+        if (status.busyness > 0)
+            return;
+        status.info = null;
         if (info.needsReadd >= ChunkInfo.READD_PASSIVE) {
             Chunk c = cache.unfreeze(info.x, info.y);
             if (info.needsReadd == ChunkInfo.READD_ACTIVE) {
                 world.addChunk(c);
             }
             status.status = StatusEnum.Ready;
+        } else {
+            loader.unloadChunk(info.chunk);
+            statusMap.remove(key);
         }
     }
     
-    private ChunkInfo aquireBusyChunk(int x, int y, boolean thisthread) {
+    private ChunkInfo aquireBusyChunk(int x, int y, boolean thisthread, Context context) {
         //Check bounds again?
         long key = IntCoords.toLong(x, y);
         Status status = statusMap.get(key);
@@ -211,28 +237,48 @@ public class TestChunkProvider implements IChunkProvider {
             statusMap.put(key, status);
             info.needsLoading = true;
             info.needsReadd = ChunkInfo.READD_PASSIVE;
-        } else if (status.status == StatusEnum.Ready && !thisthread) {
+        } else if (status.status == StatusEnum.Ready) {
             //If on world thread, the chunk can stay active and in the cache, otherwise it needs to be removed
-            Chunk chunk = cache.freeze(x, y);
-            info.needsReadd = ChunkInfo.READD_PASSIVE;
-            if (chunk.isActive()) {
-                world.removeChunk(chunk);
-                info.needsReadd = ChunkInfo.READD_ACTIVE;
+            if (!thisthread) {
+                Chunk chunk = cache.freeze(x, y);
+                info.needsReadd = ChunkInfo.READD_PASSIVE;
+                if (chunk.isActive()) {
+                    world.removeChunk(chunk);
+                    info.needsReadd = ChunkInfo.READD_ACTIVE;
+                }
+                info.chunk = chunk;
+            } else {
+                info.chunk = cache.getFromCache(x, y);
+                if(info.chunk==null)System.out.println(info.chunk);
             }
-            info.chunk = chunk;
+        } else if (status.status == StatusEnum.Busy) {
+            status.busyness++;
+            info.chunk = status.info.chunk;
+            return info;
         }
+        status.info = info;
         status.status = StatusEnum.Busy;
         return info;
     }
     
     @Override
     public int getLoadedChunkCount() {
-        return 0;
+        return 0;//TODO loaded chunk count
     }
     
     @Override
     public Chunk getChunk(int x, int y) {
         return cache.getOrFresh(x, y);
+    }
+    
+    public void unloadAll() {
+        this.cache.clear();
+    }
+    
+    public void saveAll() {
+        for (Chunk c : cache.values()) {
+            this.loader.saveChunk(c);
+        }
     }
     
     private static class BoundedChunkProvider implements IChunkProvider {
