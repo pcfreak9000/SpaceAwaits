@@ -247,7 +247,7 @@ public class TestChunkProvider implements IChunkProvider {
         
         @Override
         public int getLoadedChunkCount() {
-            return 0;
+            return chunks.size;
         }
         
         @Override

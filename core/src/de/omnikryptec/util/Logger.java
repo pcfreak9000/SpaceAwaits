@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class Logger {
     
-    public enum LogType {
+    public static enum LogType {
         /* Verbose(-2, false, 0), */ Debug(-1, false, 2), Info(0, false, 3), Warning(1, true, 0), Error(2, true, 2);
         
         private final int importance;
