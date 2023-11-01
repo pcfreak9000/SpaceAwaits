@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 
-public class ChunkProvider implements IChunkProvider {
+public class ChunkProvider implements IWorldChunkProvider {
     
     private World world;
     private IChunkLoader loader;
@@ -86,6 +86,11 @@ public class ChunkProvider implements IChunkProvider {
         return getChunk(x, y, false);
     }
     
+    @Override
+    public void requestChunk(int x, int y, boolean active) {
+        getChunk(x, y, active);
+    }
+    
     private Chunk ensureChunk(int x, int y, ChunkGenStage stage) {
         if (stage == null || stage == ChunkGenStage.Empty)
             return null;
@@ -132,7 +137,7 @@ public class ChunkProvider implements IChunkProvider {
         return chunk;
     }
     
-    public Chunk getChunk(int x, int y, boolean active) {
+    private Chunk getChunk(int x, int y, boolean active) {
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
         if (cached != null) {
@@ -180,6 +185,7 @@ public class ChunkProvider implements IChunkProvider {
         cached = null;
     }
     
+    @Override
     public void unloadAll() {
         unloadTemporaryChunks();
         invalidateCache();
@@ -191,6 +197,7 @@ public class ChunkProvider implements IChunkProvider {
         return chunkCache.size();
     }
     
+    @Override
     public void saveAll() {
         for (Chunk c : chunkCache.values()) {
             this.loader.saveChunk(c);

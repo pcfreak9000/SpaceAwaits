@@ -32,12 +32,15 @@ public class OreGenTileFeature implements IFeature {
         int maxloop = 3 * count;
         while (count > 0 && maxloop > 0) {
             maxloop--;
-            Tile front = tiles.getTile(tx, ty, TileLayer.Front);
-            if (front.canBeReplacedByOre(ore) || front == replace) {
-                tiles.setTile(tx, ty, TileLayer.Front, ore);
-                count--;
-            }
-            for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
+            //            Tile front = tiles.getTile(tx, ty, TileLayer.Front);
+            //            if (front.canBeReplacedByOre(ore) || front == replace) {
+            //                tiles.setTile(tx, ty, TileLayer.Front, ore);
+            //                count--;
+            //            }
+            for (Direction d : Direction.ZERO_VONNEUMANN) {
+                if (!world.inBounds(tx + d.dx, ty + d.dy)) {
+                    continue;//Hmmm...
+                }
                 Tile frontfor = tiles.getTile(tx + d.dx, ty + d.dy, TileLayer.Front);
                 if (count > 0 && (frontfor.canBeReplacedByOre(ore) || frontfor == replace)) {
                     tiles.setTile(tx + d.dx, ty + d.dy, TileLayer.Front, ore);

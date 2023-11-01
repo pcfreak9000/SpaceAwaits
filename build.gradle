@@ -25,7 +25,7 @@ allprojects {
         gdxVersion = '1.11.0'
         roboVMVersion = '2.3.11'
         box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
+        ashleyVersion = '1.8.0'
         aiVersion = '1.8.2'
         cjpbaseVersion = "v1.8.0_172-alpha.56"
     }
@@ -67,7 +67,8 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        //api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        implementation files('lib/ashley-1.8.0.jar')
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
         implementation 'info.picocli:picocli:4.6.1'
@@ -86,7 +87,8 @@ project(":content") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        //api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        implementation files('../core/lib/ashley-1.8.0.jar')
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "com.github.Panzer1119:CJP-Base:$cjpbaseVersion"
         implementation 'info.picocli:picocli:4.6.1'

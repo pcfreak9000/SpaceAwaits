@@ -10,4 +10,7 @@ public interface IChunkProvider {
     
     Chunk getChunk(int x, int y);
     
+    //is this a IWorldChunkProvider or a IChunkProvider functionality, actually?
+    void requestChunk(int x, int y, boolean active);
+    
 }

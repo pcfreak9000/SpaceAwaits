@@ -11,8 +11,6 @@ public class SpecialCache2D<V> {
     private int reducedMax;
     private LongQueue keyUsagePrioQueue = new LongQueue();
     private LongMap<V> cache = new LongMap<>();
-    @Deprecated
-    private LongMap<V> frozen = new LongMap<>();
     
     private Int2DFunction<V> freshSupply;
     private Consumer<V> dump;
@@ -66,18 +64,7 @@ public class SpecialCache2D<V> {
     
     private V getFromCacheInternal(long key) {
         V v = cache.get(key);
-        return v;
-    }
-    
-    public V getOrFresh(int x, int y) {
-        long key = IntCoords.toLong(x, y);
-        V v = getFromCacheInternal(key);
-        if (v == null) {
-            v = freshSupply.apply(x, y);
-            cache.put(key, v);
-            keyUsagePrioQueue.addLast(key);
-            checkCacheSizeInt();
-        } else if (!Objects.equals(key, keyUsagePrioQueue.last())) {
+        if (v != null && !Objects.equals(key, keyUsagePrioQueue.last())) {
             keyUsagePrioQueue.removeValue(key); //<- TODO this could potentially decrease the performance....
             keyUsagePrioQueue.addLast(key);
             checkCacheSizeInt();
@@ -85,37 +72,57 @@ public class SpecialCache2D<V> {
         return v;
     }
     
+    public V getOrFresh(int x, int y) {
+        long key = IntCoords.toLong(x, y);
+        V v = getFromCacheInternal(key);
+        if (v == null && freshSupply != null) {
+            v = freshSupply.apply(x, y);
+            cache.put(key, v);
+            keyUsagePrioQueue.addLast(key);
+            checkCacheSizeInt();
+        }
+        return v;
+    }
+    
+    /**
+     * put into cache. existing element is replaced and dumped
+     * @param x
+     * @param y
+     * @param v
+     */
     public void put(int x, int y, V v) {
         long key = IntCoords.toLong(x, y);
-        if (getFromCacheInternal(key) != null) {
-            remove(x, y);
-        }
+        remove(x, y);
         cache.put(key, v);
         keyUsagePrioQueue.addLast(key);
         checkCacheSizeInt();
     }
     
-    @Deprecated
-    public V freeze(int x, int y) {
+    /**
+     * remove from cache, but dont dump
+     * @param x
+     * @param y
+     * @return
+     */
+    public V take(int x, int y) {
         long key = IntCoords.toLong(x, y);
         V v = cache.remove(key);
         if (v != null) {
             keyUsagePrioQueue.removeValue(key);
-            frozen.put(key, v);
         }
         return v;
     }
     
-    @Deprecated
-    public V unfreeze(int x, int y) {
-        long key = IntCoords.toLong(x, y);
-        V v = frozen.remove(key);
-        if (v != null) {
-            cache.put(key, v);
-            keyUsagePrioQueue.addLast(key);
-            checkCacheSize();
+    /**
+     * remove from cache and dump
+     * @param x
+     * @param y
+     */
+    public void remove(int x, int y) {
+        V v = take(x, y);
+        if (v != null && dump != null) {
+            dump.accept(v);
         }
-        return v;
     }
     
     //clear/dump all
@@ -124,11 +131,7 @@ public class SpecialCache2D<V> {
             for (V v : cache.values()) {
                 dump.accept(v);
             }
-            for (V v : frozen.values()) {
-                dump.accept(v);
-            }
         }
-        frozen.clear();
         cache.clear();
         keyUsagePrioQueue.clear();
     }
@@ -136,18 +139,6 @@ public class SpecialCache2D<V> {
     //values() is not immutable :/
     public LongMap.Values<V> values() {
         return cache.values();
-    }
-    
-    //remove
-    public V remove(int x, int y) {
-        long key = IntCoords.toLong(x, y);
-        V v = cache.remove(key);
-        if (v != null) {
-            keyUsagePrioQueue.removeValue(key);
-        } else {
-            v = frozen.remove(key);
-        }
-        return v;
     }
     
     //setmax/setreducedmax

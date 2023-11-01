@@ -9,6 +9,7 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -73,6 +74,7 @@ public class SpaceAwaits extends Game {
         if (SpaceAwaits.singleton != null) {
             throw new IllegalStateException("singleton violation");
         }
+        Engine.debug = DEBUG;
         SpaceAwaits.singleton = this;
     }
     
