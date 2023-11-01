@@ -57,7 +57,7 @@ public class TestChunkProvider implements IChunkProvider {
         this.loader = loader;
         this.chunkGen = chunkgen;
         
-        this.cache = new SpecialCache2D<>(152, 145, (x, y) -> requestChunk(x, y, true, true), (chunk) -> {
+        this.cache = new SpecialCache2D<>(152, 145, (x, y) -> requestChunk(x, y, true, true, false), (chunk) -> {
             statusMap.remove(IntCoords.toLong(chunk.getGlobalChunkX(), chunk.getGlobalChunkY()));
             if (chunk.isActive()) {
                 world.removeChunk(chunk);
@@ -66,7 +66,7 @@ public class TestChunkProvider implements IChunkProvider {
         });
     }
     
-    public Chunk requestChunk(int x, int y, boolean blocking, boolean active) {
+    public Chunk requestChunk(int x, int y, boolean blocking, boolean active, boolean add) {
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
         long key = IntCoords.toLong(x, y);
@@ -91,6 +91,9 @@ public class TestChunkProvider implements IChunkProvider {
             status.status = StatusEnum.Ready;
             if (active && !chunk.isActive()) {
                 world.addChunk(chunk);
+            }
+            if (add) {
+                cache.put(x, y, chunk);
             }
             return chunk;
         } else if (status.status == StatusEnum.Ready) {
@@ -154,6 +157,7 @@ public class TestChunkProvider implements IChunkProvider {
             Chunk c = info.chunk;
             if (info.needsLoading) {
                 c = this.loader.loadChunk(info.x, info.y);
+                info.chunk = c;
             }
             context.availableChunks.put(IntCoords.toLong(info.x, info.y), c);
         }
@@ -214,12 +218,15 @@ public class TestChunkProvider implements IChunkProvider {
             return;
         status.info = null;
         if (info.needsReadd >= ChunkInfo.READD_PASSIVE) {
-            Chunk c = cache.unfreeze(info.x, info.y);
+            Chunk c = info.chunk;
+            cache.unfreeze(info.x, info.y);
+            cache.put(info.x, info.y, c);
             if (info.needsReadd == ChunkInfo.READD_ACTIVE) {
                 world.addChunk(c);
             }
             status.status = StatusEnum.Ready;
         } else {
+            Chunk c = cache.remove(info.x, info.y);
             loader.unloadChunk(info.chunk);
             statusMap.remove(key);
         }
@@ -236,7 +243,7 @@ public class TestChunkProvider implements IChunkProvider {
             status = new Status();
             statusMap.put(key, status);
             info.needsLoading = true;
-            info.needsReadd = ChunkInfo.READD_PASSIVE;
+            //info.needsReadd = ChunkInfo.READD_PASSIVE;
         } else if (status.status == StatusEnum.Ready) {
             //If on world thread, the chunk can stay active and in the cache, otherwise it needs to be removed
             if (!thisthread) {
@@ -249,7 +256,8 @@ public class TestChunkProvider implements IChunkProvider {
                 info.chunk = chunk;
             } else {
                 info.chunk = cache.getFromCache(x, y);
-                if(info.chunk==null)System.out.println(info.chunk);
+                if (info.chunk == null)
+                    System.out.println(info.chunk);
             }
         } else if (status.status == StatusEnum.Busy) {
             status.busyness++;
