@@ -11,9 +11,11 @@ import com.badlogic.gdx.utils.OrderedSet;
 
 public class TaskScheduler {
     
+   // private static final Object DUMMY = new Object();
+    
     private ExecutorService executorService;
     private LongMap<Task> taskMap = new LongMap<>();
-    //private LongMap<Object> force
+    //private LongMap<Object> forceBlocking = new LongMap<>();
     
     public TaskScheduler(ExecutorService service) {
         this.executorService = service;
