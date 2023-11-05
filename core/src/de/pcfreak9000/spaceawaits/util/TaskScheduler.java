@@ -18,13 +18,19 @@ public class TaskScheduler {
         this.executorService = service;
     }
     
+    public boolean isBusy(long id) {
+        synchronized (taskMap) {
+            return taskMap.containsKey(id);
+        }
+    }
+    
     public Task submit(long id, boolean blocking, Runnable runnable) {
         Task task = blocking ? new Task() : new AsyncTask();
         Task previous = null;
         synchronized (taskMap) {
             previous = taskMap.put(id, task);
         }
-        task.submit(id, runnable, previous);
+        task.submit(id, runnable, previous, null);
         return task;
     }
     
@@ -44,7 +50,7 @@ public class TaskScheduler {
                 }
             }
         }
-        task.submit(id, runnable, new Finishables(previous));
+        task.submit(id, runnable, new Finishables(previous), await);
         return task;
     }
     
@@ -108,18 +114,26 @@ public class TaskScheduler {
         }
         
         @Override
-        void submit(long id, Runnable runnable, Finishable previous) {
+        void submit(long id, Runnable runnable, Finishable previous, LongArray others) {
             Future<?> future = executorService.submit(() -> {
-                this.awaitReady();
+                //this.awaitReady();
                 if (previous != null) {
                     previous.awaitFinished();
                 }
                 runnable.run();
-                this.signalFinished();
                 synchronized (taskMap) {
                     if (taskMap.get(id) == this) {
                         taskMap.remove(id);
                     }
+                    if (others != null) {
+                        for (int i = 0; i < others.size; i++) {
+                            long l = others.get(i);
+                            if (taskMap.get(l) == this) {
+                                taskMap.remove(l);
+                            }
+                        }
+                    }
+                    this.signalFinished();
                 }
             });
             this.future = future;
@@ -145,16 +159,24 @@ public class TaskScheduler {
             this.taskLatch.countDown();
         }
         
-        void submit(long id, Runnable runnable, Finishable previous) {
+        void submit(long id, Runnable runnable, Finishable previous, LongArray others) {
             if (previous != null) {
                 previous.awaitFinished();
             }
             runnable.run();
-            signalFinished();
             synchronized (taskMap) {
                 if (taskMap.get(id) == this) {
                     taskMap.remove(id);
                 }
+                if (others != null) {
+                    for (int i = 0; i < others.size; i++) {
+                        long l = others.get(i);
+                        if (taskMap.get(l) == this) {
+                            taskMap.remove(l);
+                        }
+                    }
+                }
+                signalFinished();
             }
         }
         
