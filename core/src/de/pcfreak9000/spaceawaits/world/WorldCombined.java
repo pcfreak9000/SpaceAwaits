@@ -48,7 +48,7 @@ public class WorldCombined extends World {
         super(primer);
         this.chunkLoader = new ChunkLoader(save, this);
         this.unchunkProvider = new UnchunkProvider(save, this, primer.getWorldGenerator());
-        this.chunkProvider = new TestChunkProvider(this, chunkLoader, primer.getChunkGenerator());
+        this.chunkProvider = new TestChunkProvider2(this, chunkLoader, primer.getChunkGenerator());
     }
     
     public void initRenderableWorld(WorldScreen screen) {
