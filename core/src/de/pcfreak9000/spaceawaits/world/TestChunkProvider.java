@@ -111,10 +111,10 @@ public class TestChunkProvider implements IWorldChunkProvider {
     }
     
     private Chunk requestChunk(int x, int y, boolean blocking, boolean active, boolean add) {
-        blocking = true;
-        long timerbegin00 = System.currentTimeMillis();
+        //blocking = true;
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
+        flush();
         long key = IntCoords.toLong(x, y);
         final Status status = getOrCreateStatus(key);
         Chunk chunk = null;
@@ -123,6 +123,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             //TODO this could be done async, and then context creation is done in the flush or something if necessary
             chunk = loader.loadChunk(x, y);
             checkgen = true;
+            System.out.println("null");
         } else if (status.status == StatusEnum.Busy) {
             //Note on the busy context that this chunk needs to stay busy
             if (!status.primary) {
@@ -132,7 +133,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             if (blocking) {
                 awaitSingle(status.future, status.latch);
             }
-            
+            System.out.println("busy");
             //if blocking, wait for finish, then create context, or somehow before but register required chunks to be available then
             //if non-blocking, create context, make required chunks which are busy stay busy, in other thread wait until
             // this chunk isn't busy anymore with the Future#get or something  
@@ -140,13 +141,16 @@ public class TestChunkProvider implements IWorldChunkProvider {
         } else if (status.status == StatusEnum.Dangling) {
             chunk = cacheDangling.take(x, y);
             checkgen = true;
+            System.out.println("dangling");
         } else if (status.status == StatusEnum.Ready) {
             chunk = cacheReady.getFromCache(x, y);
             blocking = true;
             add = false;
+            System.out.println("ready");
         } else if (status.status == StatusEnum.Unloading) {
             //Fuck
             //remove map from ChunkLoader, then just dont forget about the chunk which was just saved...??
+            System.out.println("unloading");
         }
         
         if (checkgen) {
@@ -155,21 +159,46 @@ public class TestChunkProvider implements IWorldChunkProvider {
                 blocking = true;
             } else {
                 status.status = StatusEnum.Busy;
+                status.busyness++;
                 status.primary = true;
+                
+                //                info.latchAwaitRequired = status.latch;
+                //                info.future = status.future;
+                //                info.latchCountdownFinished = new CountDownLatch(1);
+                //                status.latch = info.latchCountdownFinished;
+                
+                //ChunkInfo oldInfo = status.info;
+                ChunkInfo info = new ChunkInfo(x, y);
+                info.chunk = chunk;
+                info.latchAwaitRequired = status.latch;
+                info.future = status.future;
+                CountDownLatch busylatch = new CountDownLatch(1);
+                info.latchCountdownFinished = busylatch;
+                status.latch = busylatch;
+                //status.info = info;
                 Context context = aquireContext(chunk, blocking);
                 if (blocking) {
                     doGenTask(context);
+                    busylatch.countDown();
                     releaseContext(context);
+                    status.busyness--;
+                    dealWithNewChunk(status, chunk, active, add);
+                    return chunk;
                 } else {
                     CountDownLatch latch = new CountDownLatch(1);
                     Chunk useChunk = chunk;
                     Future<?> f = ex.submit(() -> {
                         try {
+                            System.out.println("awaitSub");
                             latch.await();
+                            System.out.println("awaitSubDone");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        awaitSingle(info.future, info.latchAwaitRequired);
                         doGenTask(context);
+                        busylatch.countDown();
+                        status.busyness--;
                         runOnMainThread.add(() -> {
                             releaseContext(context);
                             dealWithNewChunk(status, useChunk, active, true);
@@ -179,12 +208,11 @@ public class TestChunkProvider implements IWorldChunkProvider {
                     latch.countDown();
                 }
             }
-            long timerend11 = System.currentTimeMillis();
-            System.out.println(timerend11 - timerbegin00);
         }
         
         if (blocking) {
-            return dealWithNewChunk(status, chunk, active, add);
+            dealWithNewChunk(status, chunk, active, add);
+            return chunk;
         }
         return null;
     }
@@ -203,18 +231,20 @@ public class TestChunkProvider implements IWorldChunkProvider {
         notifyRequired(context);
     }
     
-    private Chunk dealWithNewChunk(Status status, Chunk chunk, boolean active, boolean add) {
-        status.status = StatusEnum.Ready;
+    private void dealWithNewChunk(Status status, Chunk chunk, boolean active, boolean add) {
         status.primary = false;
-        int x = chunk.getGlobalChunkX();
-        int y = chunk.getGlobalChunkY();
-        if (active && !chunk.isActive()) {
-            world.addChunk(chunk);
+        if (status.busyness == 0) {
+            System.out.println("ah yes");
+            status.status = StatusEnum.Ready;
+            int x = chunk.getGlobalChunkX();
+            int y = chunk.getGlobalChunkY();
+            if (active && !chunk.isActive()) {
+                world.addChunk(chunk);
+            }
+            if (add && !cacheReady.hasKey(x, y)) {
+                cacheReady.put(x, y, chunk);
+            }
         }
-        if (add && !cacheReady.hasKey(x, y)) {
-            cacheReady.put(x, y, chunk);
-        }
-        return chunk;
     }
     
     private Context aquireContext(Chunk chunk, boolean thisthread) {
@@ -245,7 +275,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
         if (x != xig || y != yig) {
             long key = IntCoords.toLong(x, y);
             if (!context.infos.containsKey(key)) {
-                context.infos.put(key, aquireBusyChunk(x, y, context.forceThisthread, context));
+                context.infos.put(key, aquireBusyChunk(x, y, context.forceThisthread));
             }
         }
         for (Direction d : Direction.MOORE_NEIGHBOURS) {
@@ -256,7 +286,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void loadRequired(Context context) {
         for (ChunkInfo info : context.infos.values()) {
             Chunk c = info.chunk;
-            if (info.needsLoading) {
+            if (info.needsLoading && c == null) {
                 c = this.loader.loadChunk(info.x, info.y);
                 info.chunk = c;
             }
@@ -275,15 +305,20 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void awaitSingle(Future<?> future, CountDownLatch latch) {
         if (future != null) {
             RunnableFuture<?> rf = (RunnableFuture<?>) future;
+            System.out.println("futureRun");
             rf.run();//Make sure computation starts asap
             try {
+                System.out.println("futureGet");
                 rf.get();//Wait for computation to finish
+                System.out.println("futureDone");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         try {
+            System.out.println("awaitSingle");
             latch.await();
+            System.out.println("awaitSingleDone");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -373,13 +408,14 @@ public class TestChunkProvider implements IWorldChunkProvider {
         }
     }
     
-    private ChunkInfo aquireBusyChunk(int x, int y, boolean thisthread, Context context) {
+    private ChunkInfo aquireBusyChunk(int x, int y, boolean thisthread) {
         //Check bounds again?
         long key = IntCoords.toLong(x, y);
         Status status = getOrCreateStatus(key);
         ChunkInfo info = new ChunkInfo(x, y);
         if (status.status == StatusEnum.Null) {
             info.needsLoading = true;
+            info.chunk = this.loader.loadChunk(x, y);
             //info.needsReadd = ChunkInfo.READD_ACTIVE;
         } else if (status.status == StatusEnum.Dangling) {
             info.chunk = cacheDangling.take(x, y);
@@ -403,6 +439,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
         }
         status.info = info;
         status.status = StatusEnum.Busy;
+        status.busyness++;
         
         info.latchAwaitRequired = status.latch;
         info.future = status.future;
