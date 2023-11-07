@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.OrderedSet;
 
 public class TaskScheduler {
     
-   // private static final Object DUMMY = new Object();
+    // private static final Object DUMMY = new Object();
     
     private ExecutorService executorService;
     private LongMap<Task> taskMap = new LongMap<>();
@@ -47,6 +47,8 @@ public class TaskScheduler {
             }
             for (int i = 0; i < await.size; i++) {
                 long l = await.get(i);
+                if (l == id)
+                    continue;
                 Task prevTaskI = taskMap.put(l, task);
                 if (prevTaskI != null) {
                     previous.add(prevTaskI);
@@ -107,7 +109,7 @@ public class TaskScheduler {
                 }
                 future.get();//Wait for computation to finish
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
             super.awaitFinished();
         }
