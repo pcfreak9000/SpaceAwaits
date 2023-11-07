@@ -5,11 +5,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongArray;
 import com.badlogic.gdx.utils.LongMap;
+import com.badlogic.gdx.utils.OrderedSet;
 
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
+import de.pcfreak9000.spaceawaits.util.Pipeline;
+import de.pcfreak9000.spaceawaits.util.Pipeline.PipelineEntry;
 import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
 import de.pcfreak9000.spaceawaits.util.TaskScheduler;
 import de.pcfreak9000.spaceawaits.util.TaskScheduler.Task;
@@ -28,6 +33,27 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         volatile int busyness;//business?
         volatile ChunkInfo info;
         volatile Task task;
+        volatile Pipeline<PipeContext> currentPipeline;
+    }
+    
+    private static class PipeContext {
+        final long key;
+        final int x, y;
+        
+        Chunk chunk;
+        boolean requestActive;
+        Status status;
+        Context context;
+        
+        public PipeContext(long key, int x, int y) {
+            this.key = key;
+            this.x = x;
+            this.y = y;
+        }
+        
+        public void requestActive(boolean b) {
+            this.requestActive = this.requestActive || b;
+        }
     }
     
     private static class ChunkInfo {
@@ -38,7 +64,7 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
             this.y = y;
         }
         
-        boolean needsLoading = false;
+        // boolean needsLoading = false;
         int needsReadd = DONT_READD;
         Chunk chunk;
         final int x, y;
@@ -49,13 +75,10 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         LongMap<ChunkInfo> infos = new LongMap<>();
         int xCenter, yCenter;
         boolean forceThisthread;
+        LongArray affectedChunks = new LongArray();
     }
     
-    private static final Object OBJ = new Object();
-    
     private SpecialCache2D<Chunk> cacheReady, cacheDangling;
-    private LongMap<Chunk> inGen = new LongMap<>();
-    private LongMap<Object> forceBlocking = new LongMap<>();
     private LongMap<Status> statusMap = new LongMap<>();
     private World world;
     
@@ -67,6 +90,10 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
     private ExecutorService ex;
     
     private ConcurrentLinkedQueue<Runnable> runOnMainThread = new ConcurrentLinkedQueue<>();
+    
+    private OrderedSet<Pipeline<?>> pipelines = new OrderedSet<>();
+    
+    //public Pipelin
     
     public TestChunkProvider2(World world, IChunkLoader loader, IChunkGenerator chunkgen) {
         this.scheduler = new TaskScheduler(ex = Executors.newFixedThreadPool(4));
@@ -105,88 +132,124 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         return status;
     }
     
-    //    private static class ChainLink {
-    //        private boolean mainthread;
-    //        private Runnable runnable;
-    //        
-    //        private ChainLink(boolean blocking, Runnable runnable) {
-    //            this.mainthread = blocking;
-    //            this.runnable = runnable;
-    //        }
-    //        
-    //    }
-    //    
-    //    private void submitNestedChain(long key, boolean blocking, int subindex, ChainLink... chainLinks) {
-    //        for (int i = subindex; i < chainLinks.length; i++) {
-    //            ChainLink link = chainLinks[i];
-    //            boolean block = link.mainthread || blocking;
-    //            if (i + 1 < chainLinks.length && chainLinks[i + 1].mainthread) {
-    //                final int subi = i + 1;
-    //                scheduler.submit(key, block, () -> {
-    //                    link.runnable.run();
-    //                    runOnMainThread.add(() -> submitNestedChain(key, blocking, subi, chainLinks));
-    //                });
-    //            } else {
-    //                scheduler.submit(key, block, link.runnable);
-    //            }
-    //        }
-    //    }
-    
-    private void checkGeneration(Status status, Chunk chunk, boolean blocking, boolean active) {
-        int x = chunk.getGlobalChunkX();
-        int y = chunk.getGlobalChunkY();
-        if (forceBlocking.containsKey(IntCoords.toLong(x, y))) {
-            blocking = true;
+    private class PELoad implements PipelineEntry<PipeContext> {
+        
+        @Override
+        public boolean mainthread() {
+            return false;
         }
-        ChunkGenStage genStage = chunk.getGenStage();
-        if (genStage != ChunkGenStage.Populated) {
-            status.status = StatusEnum.Generating;
-            Context context = aquireContext(chunk, blocking);
-            status.task = scheduler.submit(IntCoords.toLong(x, y), blocking, () -> {
-                loadRequired(context);
-                genRequired(context);
-                runOnMainThread.add(() -> {
-                    releaseContext(context);
-                    status.status = StatusEnum.Ready;
-                    forceBlocking.remove(IntCoords.toLong(x, y));
-                    if (active && !chunk.isActive()) {
-                        world.addChunk(chunk);
-                    }
-                    cacheReady.put(x, y, chunk);
-                });
-            });
-        } else {
-            status.status = StatusEnum.Ready;
-            forceBlocking.remove(IntCoords.toLong(x, y));
-            if (active && !chunk.isActive()) {
-                world.addChunk(chunk);
-            }
-            cacheReady.put(x, y, chunk);
+        
+        @Override
+        public void run(Pipeline<PipeContext> pipeline, PipeContext context) {
+            context.chunk = loader.loadChunk(context.x, context.y);
         }
-        flush();
     }
     
-    private void requestChunk(int x, int y, boolean blocking, boolean active) {
+    private class PECheckGenerationStatus implements PipelineEntry<PipeContext> {
+        
+        @Override
+        public boolean mainthread() {
+            return true;
+        }
+        
+        @Override
+        public void run(Pipeline<PipeContext> pipeline, PipeContext pcontext) {
+            ChunkGenStage genStage = pcontext.chunk.getGenStage();
+            if (genStage != ChunkGenStage.Populated) {
+                pcontext.status.status = StatusEnum.Generating;
+                Context context = aquireContext(pcontext.chunk, pipeline.isForceNow());
+                pcontext.context = context;
+                pipeline.submit(pegen, context.affectedChunks);
+                pipeline.submit(peadd);
+            } else {
+                peadd.run(pipeline, pcontext);
+            }
+            flush();
+        }
+    }
+    
+    private class PEAdd implements PipelineEntry<PipeContext> {
+        
+        @Override
+        public boolean mainthread() {
+            return true;
+        }
+        
+        @Override
+        public void run(Pipeline<PipeContext> pipeline, PipeContext context) {
+            if (context.context != null) {
+                releaseContext(context.context);
+                context.context = null;
+            }
+            context.status.status = StatusEnum.Ready;
+            pipelines.remove(context.status.currentPipeline);
+            context.status.currentPipeline = null;
+            if (context.requestActive && !context.chunk.isActive()) {
+                world.addChunk(context.chunk);
+            }
+            cacheReady.put(context.x, context.y, context.chunk);
+        }
+        
+    }
+    
+    private class PEGenerate implements PipelineEntry<PipeContext> {
+        
+        @Override
+        public boolean mainthread() {
+            return false;
+        }
+        
+        @Override
+        public void run(Pipeline<PipeContext> pipeline, PipeContext context) {
+            loadRequired(context.context);
+            genRequired(context.context);
+        }
+        
+    }
+    
+    private final PELoad peload = new PELoad();
+    private final PECheckGenerationStatus pecheckgenstat = new PECheckGenerationStatus();
+    private final PEGenerate pegen = new PEGenerate();
+    private final PEAdd peadd = new PEAdd();
+    private final PEAddToContext peatcontext = new PEAddToContext();
+    
+    private void requestChunk(int x, int y, boolean blockingg, boolean active) {
         if (!world.getBounds().inBoundsChunk(x, y))
             return;
         flush();
+        boolean blocking = true;
         long key = IntCoords.toLong(x, y);
         Status status = getOrCreateStatus(key);
         if (status.status == StatusEnum.Null) {
             status.status = StatusEnum.Generating;
-            scheduler.submit(key, blocking, () -> {
-                Chunk chunk = loader.loadChunk(x, y);
-                runOnMainThread.add(() -> {
-                    //check generation, add chunk to system
-                    checkGeneration(status, chunk, blocking, active);
-                });
-            });
+            if (status.currentPipeline == null) {
+                status.currentPipeline = new Pipeline<>(new PipeContext(key, x, y), key, scheduler);
+                status.currentPipeline.getContext().status = status;
+                pipelines.add(status.currentPipeline);
+            }
+            status.currentPipeline.getContext().requestActive(active);
+            status.currentPipeline.submit(peload);
+            status.currentPipeline.submit(pecheckgenstat);
+            //            scheduler.submit(key, blocking, () -> {
+            //                Chunk chunk = loader.loadChunk(x, y);
+            //                runOnMainThread.add(() -> {
+            //                    //check generation, add chunk to system
+            //                    checkGeneration(status, chunk, blocking, active);
+            //                });
+            //            });
         } else if (status.status == StatusEnum.Dangling) {
             Chunk chunk = cacheDangling.take(x, y);
+            if (status.currentPipeline == null) {
+                status.currentPipeline = new Pipeline<>(new PipeContext(key, x, y), key, scheduler);
+                status.currentPipeline.getContext().status = status;
+                pipelines.add(status.currentPipeline);
+            }
+            status.currentPipeline.getContext().requestActive(active);
+            status.currentPipeline.getContext().chunk = chunk;
+            status.currentPipeline.submit(pecheckgenstat);
             //check generation, add chunk to system
-            checkGeneration(status, chunk, blocking, active);
+            //checkGeneration(status, chunk, blocking, active);
         } else if (status.status == StatusEnum.Ready) {
-            forceBlocking.remove(IntCoords.toLong(x, y));
             Chunk chunk = cacheReady.getFromCache(x, y);
             if (active && !chunk.isActive()) {
                 world.addChunk(chunk);
@@ -194,36 +257,58 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         } else if (status.status == StatusEnum.Unloading) {
             
         } else if (status.status == StatusEnum.Generating) {
-            if (blocking) {
-                forceBlocking.put(key, OBJ);
-                status.task.awaitFinished();
-                flush();
-                Chunk chunk = cacheReady.getFromCache(x, y);
-                if (active && !chunk.isActive()) {
-                    world.addChunk(chunk);
-                }
-            } else {
-                scheduler.submit(key, blocking, () -> {
-                    runOnMainThread.add(() -> {
-                        Chunk chunk = cacheReady.getFromCache(x, y);
-                        if (active && !chunk.isActive()) {
-                            world.addChunk(chunk);
-                        }
-                    });
-                });
+            if (status.currentPipeline == null) {
+                throw new IllegalStateException();
+                //status.currentPipeline = new Pipeline<>(new PipeContext(key, x, y), key, scheduler);
             }
+            status.currentPipeline.getContext().requestActive(active);
+            //            if (blocking) {
+            //                forceBlocking.put(key, OBJ);
+            //                status.task.awaitFinished();
+            //                flush();
+            //                Chunk chunk = cacheReady.getFromCache(x, y);
+            //                if (active && !chunk.isActive()) {
+            //                    world.addChunk(chunk);
+            //                }
+            //            } else {
+            //                scheduler.submit(key, true, () -> {
+            //                    runOnMainThread.add(() -> {
+            //                        Chunk chunk = cacheReady.getFromCache(x, y);
+            //                        if (active && !chunk.isActive()) {
+            //                            world.addChunk(chunk);
+            //                        }
+            //                    });
+            //                });
+            //            }
         } else if (status.status == StatusEnum.Assisting) {
-            scheduler.submit(key, blocking, () -> {
-                runOnMainThread.add(() -> {
-                    checkGeneration(status, status.info.chunk, blocking, active);
-                });
-            });
+            if (status.currentPipeline == null) {
+                throw new IllegalStateException();
+            }
+            status.currentPipeline.getContext().requestActive(active);
+            status.currentPipeline.submit(pecheckgenstat);
+            //            scheduler.submit(key, blocking, () -> {
+            //                runOnMainThread.add(() -> {
+            //                    checkGeneration(status, status.info.chunk, blocking, active);
+            //                });
+            //            });
+        }
+        if (status.currentPipeline != null) {
+            if (!status.currentPipeline.isRunning()) {
+                status.currentPipeline.run();
+            }
+            if (blocking) {
+                status.currentPipeline.forceNow();
+            }
         }
         flush();//if blocking make sure runOnMainThread is run asap
     }
     
     @Override
     public void flush() {
+        Array<Pipeline<?>> pips = pipelines.orderedItems();
+        for (int i = 0; i < pips.size; i++) {
+            pips.get(i).flush();
+        }
         while (!runOnMainThread.isEmpty()) {
             runOnMainThread.poll().run();
         }
@@ -238,6 +323,7 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         context.xCenter = x;
         context.yCenter = y;
         prepare(x, y, ChunkGenStage.Populated.level, context, x, y);
+        context.affectedChunks.add(IntCoords.toLong(x, y));
         context.availableChunks.put(IntCoords.toLong(x, y), chunk);
         return context;
     }
@@ -257,6 +343,7 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         if (x != xig || y != yig) {
             long key = IntCoords.toLong(x, y);
             if (!context.infos.containsKey(key)) {
+                context.affectedChunks.add(key);
                 context.infos.put(key, aquireBusyChunk(x, y, context.forceThisthread, context));
             }
         }
@@ -268,12 +355,31 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
     private void loadRequired(Context context) {
         for (ChunkInfo info : context.infos.values()) {
             Chunk c = info.chunk;
-            if (info.needsLoading) {
-                c = this.loader.loadChunk(info.x, info.y);
-                info.chunk = c;
-            }
+            //            if (info.needsLoading) {
+            //                c = this.loader.loadChunk(info.x, info.y);
+            //                info.chunk = c;
+            //            }
+            if (c == null)
+                continue;
             context.availableChunks.put(IntCoords.toLong(info.x, info.y), c);
         }
+    }
+    
+    private static class PEAddToContext implements PipelineEntry<PipeContext> {
+        
+        @Override
+        public boolean mainthread() {
+            return false;
+        }
+        
+        @Override
+        public void run(Pipeline<PipeContext> pipeline, PipeContext context) {
+            synchronized (context.context.availableChunks) {
+                context.context.infos.get(context.key).chunk = context.chunk;
+                context.context.availableChunks.put(context.key, context.chunk);
+            }
+        }
+        
     }
     
     private void genRequired(Context context) {
@@ -329,6 +435,8 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         status.busyness--;
         if (status.busyness > 0)
             return;
+        status.currentPipeline = null;
+        pipelines.remove(status.currentPipeline);
         status.info = null;
         if (info.needsReadd >= ChunkInfo.READD_PASSIVE) {
             if (cacheReady.hasKey(info.x, info.y)) {
@@ -359,7 +467,16 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         Status status = getOrCreateStatus(key);
         ChunkInfo info = new ChunkInfo(x, y);
         if (status.status == StatusEnum.Null) {
-            info.needsLoading = true;
+            if (status.currentPipeline == null) {
+                status.currentPipeline = new Pipeline<>(new PipeContext(key, x, y), key, scheduler);
+                status.currentPipeline.getContext().status = status;
+                pipelines.add(status.currentPipeline);
+            }
+            status.currentPipeline.submit(peload);
+            status.currentPipeline.submit(peatcontext);
+            if (!status.currentPipeline.isRunning()) {
+                status.currentPipeline.run();
+            }
             //info.needsReadd = ChunkInfo.READD_ACTIVE;
         } else if (status.status == StatusEnum.Dangling) {
             info.chunk = cacheDangling.take(x, y);

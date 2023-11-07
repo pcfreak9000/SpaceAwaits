@@ -5,12 +5,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.badlogic.gdx.utils.LongMap;
 
 import de.pcfreak9000.spaceawaits.util.TaskScheduler.Task;
-
+@Deprecated
 public class ChainedScheduler {
     
     private TaskScheduler scheduler;
     private LongMap<Chain> chainMap = new LongMap<>();
     private ConcurrentLinkedQueue<Runnable> runOnMainThread = new ConcurrentLinkedQueue<>();
+    
+    public ChainedScheduler(TaskScheduler taskScheduler) {
+        this.scheduler = taskScheduler;
+    }
     
     public void flush() {
         while (!runOnMainThread.isEmpty()) {
@@ -33,13 +37,12 @@ public class ChainedScheduler {
     }
     
     private void submitNestedChain(long key, int subindex, Chain chain) {
-        //TODO dear god....... does this work as intended?
         //TODO dynamic chains
         for (int i = subindex; i < chain.links.length; i++) {
             ChainLink link = chain.links[i];
-            boolean prevBlocking = i == 0 ? true : chain.links[i - 1].waitForPrevious;
             boolean block = link.waitForPrevious || chain.mainthread;
-            if (i + 1 < chain.links.length && (chain.links[i + 1].waitForPrevious || chain.mainthread) && !prevBlocking) {
+            if (i + 1 < chain.links.length && (chain.links[i + 1].waitForPrevious || chain.mainthread)
+                    && !link.waitForPrevious) {
                 final int subi = i + 1;
                 chain.latestTask = scheduler.submit(key, block, () -> {
                     link.runnable.run();
@@ -53,6 +56,7 @@ public class ChainedScheduler {
             flush();
         }
         if (chain.next != null) {
+            chain.awaitFinished();
             submitNestedChain(key, 0, chain.next);
         }
     }
