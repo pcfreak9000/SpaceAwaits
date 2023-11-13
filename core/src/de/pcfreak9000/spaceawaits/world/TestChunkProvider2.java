@@ -46,13 +46,23 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         boolean requestActive;
         Status status;
         Context context;
-        LongMap<Chunk> avlChunks;
-        LongMap<ChunkInfo> infos;
+        volatile LongMap<Chunk> avlChunks;
+        volatile LongMap<ChunkInfo> infos;
+        //  volatile AtomicReference<LongMap<ChunkInfo>> infos = new AtomicReference<>();
         
         public PipeContext(long key, int x, int y) {
             this.key = key;
             this.x = x;
             this.y = y;
+        }
+        
+        public LongMap<ChunkInfo> getInfos() {
+            return infos;
+        }
+        
+        public void setInfos(LongMap<ChunkInfo> infos) {
+            Objects.requireNonNull(infos);
+            this.infos = infos;
         }
         
         public void requestActive(boolean b) {
@@ -228,10 +238,12 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         
         @Override
         public void run(Pipeline<PipeContext> pipeline, PipeContext context) {
-            synchronized (context.infos) {
-                context.infos.get(context.key).chunk = context.chunk;
-                context.avlChunks.put(context.key, context.chunk);
-            }
+            //synchronized (context.infos.get()) {
+            System.out.println(context.x + "///" + context.y);
+            System.out.println(context);
+            context.getInfos().get(context.key).chunk = context.chunk;
+            context.avlChunks.put(context.key, context.chunk);
+            //}
         }
         
     }
@@ -246,6 +258,7 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         if (!world.getBounds().inBoundsChunk(x, y))
             return;
         flush();
+        blocking = true;
         long key = IntCoords.toLong(x, y);
         Status status = getOrCreateStatus(key);
         if (status.status == StatusEnum.Null) {
@@ -462,7 +475,11 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
                 pipelines.add(status.currentPipeline);
             }
             status.currentPipeline.getContext().avlChunks = context.availableChunks;
-            status.currentPipeline.getContext().infos = context.infos;
+            status.currentPipeline.getContext().setInfos(context.infos);
+            Objects.requireNonNull(context.infos);
+            Objects.requireNonNull(status.currentPipeline.getContext().getInfos());
+            System.out.println(status.currentPipeline.getContext());
+            System.out.println(x + "-" + y);
             status.currentPipeline.submit(peload);
             status.currentPipeline.submit(peatcontext);
             if (!status.currentPipeline.isRunning()) {
@@ -490,10 +507,16 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
             }
         } else if (status.status == StatusEnum.Assisting) {
             Objects.requireNonNull(status.info);
+            Objects.requireNonNull(context.infos);
+            status.currentPipeline.getContext().avlChunks = context.availableChunks;
+            status.currentPipeline.getContext().setInfos(context.infos);
             status.busyness++;
             info = status.info;
             return info;
         } else if (status.status == StatusEnum.Generating) {
+            Objects.requireNonNull(context.infos);
+            status.currentPipeline.getContext().avlChunks = context.availableChunks;
+            status.currentPipeline.getContext().setInfos(context.infos);
             status.busyness++;
             status.info = info;
             return info;
