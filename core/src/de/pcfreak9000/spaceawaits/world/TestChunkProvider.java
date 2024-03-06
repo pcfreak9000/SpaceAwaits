@@ -111,7 +111,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     }
     
     private Chunk requestChunk(int x, int y, boolean blocking, boolean active, boolean add) {
-        //blocking = true;
+        blocking = true;
         if (!world.getBounds().inBoundsChunk(x, y))
             return null;
         flush();
@@ -123,7 +123,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             //TODO this could be done async, and then context creation is done in the flush or something if necessary
             chunk = loader.loadChunk(x, y);
             checkgen = true;
-            System.out.println("null");
+            //System.out.println("null");
         } else if (status.status == StatusEnum.Busy) {
             //Note on the busy context that this chunk needs to stay busy
             if (!status.primary) {
@@ -133,7 +133,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             if (blocking) {
                 awaitSingle(status.future, status.latch);
             }
-            System.out.println("busy");
+            //System.out.println("busy");
             //if blocking, wait for finish, then create context, or somehow before but register required chunks to be available then
             //if non-blocking, create context, make required chunks which are busy stay busy, in other thread wait until
             // this chunk isn't busy anymore with the Future#get or something  
@@ -141,16 +141,16 @@ public class TestChunkProvider implements IWorldChunkProvider {
         } else if (status.status == StatusEnum.Dangling) {
             chunk = cacheDangling.take(x, y);
             checkgen = true;
-            System.out.println("dangling");
+            //System.out.println("dangling");
         } else if (status.status == StatusEnum.Ready) {
             chunk = cacheReady.getFromCache(x, y);
             blocking = true;
             add = false;
-            System.out.println("ready");
+            //System.out.println("ready");
         } else if (status.status == StatusEnum.Unloading) {
             //Fuck
             //remove map from ChunkLoader, then just dont forget about the chunk which was just saved...??
-            System.out.println("unloading");
+            //System.out.println("unloading");
         }
         
         if (checkgen) {
@@ -234,7 +234,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void dealWithNewChunk(Status status, Chunk chunk, boolean active, boolean add) {
         status.primary = false;
         if (status.busyness == 0) {
-            System.out.println("ah yes");
+            //System.out.println("ah yes");
             status.status = StatusEnum.Ready;
             int x = chunk.getGlobalChunkX();
             int y = chunk.getGlobalChunkY();
@@ -305,20 +305,20 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void awaitSingle(Future<?> future, CountDownLatch latch) {
         if (future != null) {
             RunnableFuture<?> rf = (RunnableFuture<?>) future;
-            System.out.println("futureRun");
+            //System.out.println("futureRun");
             rf.run();//Make sure computation starts asap
             try {
-                System.out.println("futureGet");
+                //System.out.println("futureGet");
                 rf.get();//Wait for computation to finish
-                System.out.println("futureDone");
+                //System.out.println("futureDone");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         try {
-            System.out.println("awaitSingle");
+            //System.out.println("awaitSingle");
             latch.await();
-            System.out.println("awaitSingleDone");
+            //System.out.println("awaitSingleDone");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
