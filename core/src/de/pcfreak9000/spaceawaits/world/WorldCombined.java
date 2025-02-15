@@ -80,7 +80,7 @@ public class WorldCombined extends World {
                 d.dispose();
             }
         }
-        SpaceAwaits.BUS.unregister(eventBus);
+        SpaceAwaits.BUS.unregister(getWorldBus());
         for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
             ecsEngine.removeEntityListener(dal);
         }
@@ -109,7 +109,7 @@ public class WorldCombined extends World {
         ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
         ecs.addSystem(new RenderSystem(this, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, gameScreen));
-        ecs.addSystem(new TickCounterSystem(this.getWorldBus()));
+        ecs.addSystem(new TickCounterSystem());
         ecs.addSystem(new RandomTickSystem(getWorldRandom(), this));
         ecs.addSystem(new GuiOverlaySystem(gameScreen));
         //this one needs some stuff with topological sort anyways to resolve dependencies etc

@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import de.omnikryptec.event.EventBus;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
@@ -16,9 +15,8 @@ public class TickCounterSystem extends IteratingSystem {
     
     private long tick;
     
-    public TickCounterSystem(EventBus bus) {
+    public TickCounterSystem() {
         super(Family.all(TickComponent.class).get());
-        bus.register(this);
     }
     
     @Override

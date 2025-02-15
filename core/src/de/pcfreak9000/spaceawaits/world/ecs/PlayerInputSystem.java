@@ -41,7 +41,6 @@ public class PlayerInputSystem extends EntitySystem {
         this.worldRend = renderer;
         this.tileSelectorEntity = createTileSelectorEntity();
         this.world = world;
-        world.getWorldBus().register(this);
     }
     
     @EventSubscription

@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.OrderedSet;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.omnikryptec.event.Event;
-import de.omnikryptec.event.EventBus;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
@@ -79,11 +78,6 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     private boolean dolightsetting = true;
     
     public RenderSystem(World world, GameScreen renderer) {
-        this(world, renderer, world.getWorldBus());
-    }
-    
-    public RenderSystem(World world, GameScreen renderer, EventBus bus) {
-        bus.register(this);
         this.entities = new Array<>();
         this.renderStrategies = new OrderedSet<>();
         this.lightRenderer = new LightRenderer(world, renderer);

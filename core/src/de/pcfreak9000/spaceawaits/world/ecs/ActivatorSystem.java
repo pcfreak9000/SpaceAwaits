@@ -40,7 +40,6 @@ public class ActivatorSystem extends EntitySystem {
     public ActivatorSystem(GameScreen rend, World world) {
         this.gameRend = rend;
         this.world = world;
-        this.world.getWorldBus().register(this);
     }
     
     @EventSubscription

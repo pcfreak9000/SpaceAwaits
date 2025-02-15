@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world;
 
 import java.util.Random;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.math.RandomXS128;
 
@@ -25,8 +24,7 @@ public abstract class World {
     protected final IWorldProperties worldProperties;
     private AmbientLightProvider ambientLightProvider;
     
-    protected final Engine ecsEngine;
-    protected final EventBus eventBus;
+    protected final ModifiedEngine ecsEngine;
     
     //Used for random item drops etc, not terrain gen etc
     private final RandomXS128 worldRandom;
@@ -36,8 +34,7 @@ public abstract class World {
     public World(WorldPrimer primer) {
         //initialize fields
         this.ecsEngine = new ModifiedEngine(STEPLENGTH_SECONDS);
-        this.eventBus = new EventBus();
-        SpaceAwaits.BUS.register(eventBus);//Not too sure about this
+        SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
         this.worldRandom = new RandomXS128();
         
         //do priming stuff
@@ -98,7 +95,7 @@ public abstract class World {
     }
     
     public EventBus getWorldBus() {
-        return this.eventBus;
+        return this.ecsEngine.getEventBus();
     }
     
     public IWorldProperties getWorldProperties() {

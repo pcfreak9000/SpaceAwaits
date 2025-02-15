@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
+import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 
 public class ModifiedEngine extends Engine {
@@ -29,9 +30,16 @@ public class ModifiedEngine extends Engine {
     private final Array<EntitySystem> rendersystems = new Array<>();
     private final Array<EntitySystem> logicsystems = new Array<>();
     
+    private EventBus eventBus;
+    
     public ModifiedEngine(float stepsize) {
         setupReflectionStuff();
         this.stepsize = stepsize;
+        this.eventBus = new EventBus();
+    }
+    
+    public EventBus getEventBus() {
+        return this.eventBus;
     }
     
     @Override
@@ -68,6 +76,7 @@ public class ModifiedEngine extends Engine {
             container.removeValue(old, true);
         }
         container.add(system);
+        eventBus.register(system);
     }
     
     @Override
@@ -75,6 +84,7 @@ public class ModifiedEngine extends Engine {
         super.removeSystem(system);
         Array<EntitySystem> container = system instanceof RenderSystemMarker ? this.rendersystems : this.logicsystems;
         container.removeValue(system, true);
+        eventBus.unregister(system);
     }
     
     @Override
