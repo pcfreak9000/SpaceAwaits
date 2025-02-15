@@ -1,14 +1,14 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import de.omnikryptec.event.EventBus;
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.WorldMetaNBTEvent.Type;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.TickComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 
 //Maybe this whole system is just a waste, so small
 //Also, this isn't the proper ECS way of doing stuff but creating one entity with a tickcomponent and then retrieving that somewhere else is pretty ugly and stupid
@@ -16,9 +16,9 @@ public class TickCounterSystem extends IteratingSystem {
     
     private long tick;
     
-    public TickCounterSystem(World world) {
+    public TickCounterSystem(EventBus bus) {
         super(Family.all(TickComponent.class).get());
-        world.getWorldBus().register(this);
+        bus.register(this);
     }
     
     @Override

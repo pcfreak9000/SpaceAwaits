@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
-import de.pcfreak9000.spaceawaits.flat.FlatPlayer;
-import de.pcfreak9000.spaceawaits.flat.FlatWorld;
 import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.ISaveManager;
 import de.pcfreak9000.spaceawaits.save.SaveMeta;
@@ -42,19 +40,19 @@ public class GameManager {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-//        Game game = new Game(save, fresh, screenManager);
-//        game.loadGame();
-//        game.joinGame();
-//        this.gameCurrent = game;
-        screenManager.setFlatWorldScreen(new FlatWorld(), new FlatPlayer());
+        Game game = new Game(save, fresh, screenManager);
+        game.loadGame();
+        game.joinGame();
+        this.gameCurrent = game;
+ //       screenManager.setFlatWorldScreen(new FlatWorld(), new FlatPlayer());
     }
 
     public void unloadGame() {
         if (!isInGame()) {
             throw new IllegalStateException();
         }
-//        this.gameCurrent.unloadGame();
-//        this.gameCurrent = null;
+        this.gameCurrent.unloadGame();
+        this.gameCurrent = null;
         this.screenManager.setMainMenuScreen();
     }
 

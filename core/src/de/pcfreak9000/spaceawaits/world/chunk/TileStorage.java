@@ -10,13 +10,13 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTSmartIntList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
+import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
 import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ChunkDict;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
-import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 

@@ -11,10 +11,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.player.PlayerEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.Registry;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 
 public class CoreRes {
     
@@ -45,9 +45,9 @@ public class CoreRes {
     public static final TextureProvider[] BREAK_OVERLAY = new TextureProvider[] { TextureProvider.get("brst1.png"),
             TextureProvider.get("brst2.png"), TextureProvider.get("brst3.png"), TextureProvider.get("brst4.png") };
     
-    public static final WorldEntityFactory PLAYER_FACTORY = Registry.WORLD_ENTITY_REGISTRY
+    public static final EntityFactory PLAYER_FACTORY = Registry.WORLD_ENTITY_REGISTRY
             .register("player", new PlayerEntityFactory()).get("player");//Meh...
-    public static final WorldEntityFactory ITEM_FACTORY = Registry.WORLD_ENTITY_REGISTRY
+    public static final EntityFactory ITEM_FACTORY = Registry.WORLD_ENTITY_REGISTRY
             .register("item", new ItemEntityFactory()).get("item");
     
     public static final void init() {

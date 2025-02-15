@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import de.pcfreak9000.spaceawaits.comp.CompositeInventory;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -17,15 +19,13 @@ import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderStatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent.StatData;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
-public class SpaceshipFactory implements WorldEntityFactory {
+public class SpaceshipFactory implements EntityFactory {
     
     private static final TextureProvider tex = TextureProvider.get("spaceship2_final.png");
     

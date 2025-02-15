@@ -13,6 +13,8 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseComponent;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
@@ -21,7 +23,7 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
@@ -150,7 +152,7 @@ public class PlayerInputSystem extends EntitySystem {
             player.getInventory().setSelectedSlot(hotbarChecked);
         } else if (enableInput) {
             float scroll = InptMgr.getScrollY() * 0.1f;
-            ((WorldScreen) worldRend).changeZoom(scroll);
+            getEngine().getSystem(CameraSystem.class).changeZoom(scroll);
         }
         
     }

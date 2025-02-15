@@ -9,24 +9,24 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.tile.BreakTileProgress;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.BreakingTilesComponent;
 
 public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
+    private SpriteBatch b;
+    private Camera cam;
     
     public RenderTileBreakingStrategy(GameScreen renderer) {
         super(Family.all(BreakingTilesComponent.class).get());
         this.b = renderer.getSpriteBatch();
-        this.cam = renderer.getCamera();
     }
-    
-    private SpriteBatch b;
-    private Camera cam;
     
     @Override
     public void begin() {
         this.b.begin();
+        this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
     }
     
     @Override

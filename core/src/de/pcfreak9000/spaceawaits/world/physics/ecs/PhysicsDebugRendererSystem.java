@@ -9,8 +9,9 @@ import com.badlogic.gdx.utils.Disposable;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystemMarker;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable, RenderSystemMarker {
     
@@ -25,7 +26,6 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     public PhysicsDebugRendererSystem(PhysicsSystem sys, GameScreen renderer) {
         this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
         this.phsystem = sys;
-        this.cam = renderer.getCamera();
     }
     
     @Override
@@ -34,6 +34,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
             enabled = !enabled;
         }
         if (enabled) {
+            this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
             OrthographicCamera cam = new OrthographicCamera();
             cam.setToOrtho(false, PhysicsSystem.METER_CONV.in(this.cam.viewportWidth),
                     PhysicsSystem.METER_CONV.in(this.cam.viewportHeight));

@@ -1,31 +1,28 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 public class ParallaxSystem extends IteratingSystem {
     
-    private static final float R0 = WorldScreen.VISIBLE_TILES_MIN;
+    private float R0;
     
-    private Camera camera;
-    
-    public ParallaxSystem(GameScreen renderer) {
+    public ParallaxSystem(float R0) {
         super(Family.all(ParallaxComponent.class, TransformComponent.class).get());
-        this.camera = renderer.getCamera();
+        this.R0 = R0;
     }
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         ParallaxComponent pc = Components.PARALLAX.get(entity);
         Vector2 pos = Components.TRANSFORM.get(entity).position;
-        Vector3 camPos = camera.position;
+        Vector3 camPos = getEngine().getSystem(CameraSystem.class).getCamera().position;
         float factor = 1.0f - R0 / (R0 + pc.zdist);
         //this somehow works, but not perfectly. Is it even correct???? 
         float xadd = factor * camPos.x + (1.0f - factor) * pc.xEquiv;

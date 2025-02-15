@@ -1,7 +1,7 @@
 package de.pcfreak9000.spaceawaits.crafting;
 
+import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
-import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 
 public abstract class MachineBase implements Tickable {
     

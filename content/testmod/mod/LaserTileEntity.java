@@ -1,10 +1,10 @@
 package mod;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
-import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;

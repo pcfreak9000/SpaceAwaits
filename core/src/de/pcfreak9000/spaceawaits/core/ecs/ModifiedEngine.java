@@ -9,7 +9,6 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystemMarker;
 
 public class ModifiedEngine extends Engine {
     

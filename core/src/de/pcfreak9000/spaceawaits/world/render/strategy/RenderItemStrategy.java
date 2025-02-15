@@ -10,12 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class RenderItemStrategy implements IRenderStrategy {
     
@@ -38,7 +38,6 @@ public class RenderItemStrategy implements IRenderStrategy {
     public RenderItemStrategy(GameScreen renderer) {
         this.render = renderer;
         this.batch = this.render.getSpriteBatch();
-        this.cam = renderer.getCamera();
     }
     
     private GameScreen render;
@@ -49,6 +48,7 @@ public class RenderItemStrategy implements IRenderStrategy {
     
     @Override
     public void begin() {
+        //        this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
         mod = MathUtils.sin(render.getRenderTime() * 3) * 0.045f + 0.0225f;//This might still be called multiple times per frame...
         batch.begin();
     }
@@ -56,10 +56,10 @@ public class RenderItemStrategy implements IRenderStrategy {
     @Override
     public void render(Entity e, float dt) {
         TransformComponent tc = Components.TRANSFORM.get(e);
-        if (!cam.frustum.boundsInFrustum(tc.position.x - Item.WORLD_SIZE * 0.5f, tc.position.y - Item.WORLD_SIZE * 0.5f,
-                0, Item.WORLD_SIZE, Item.WORLD_SIZE, 0)) {
-            return;
-        } //TODO move frustum checks somewhere else and reuse code?
+        //        if (!cam.frustum.boundsInFrustum(tc.position.x - Item.WORLD_SIZE * 0.5f, tc.position.y - Item.WORLD_SIZE * 0.5f,
+        //                0, Item.WORLD_SIZE, Item.WORLD_SIZE, 0)) {
+        //            return;
+        //        } //TODO move frustum checks somewhere else and reuse code? fix cam availability or something
         ItemStackComponent ic = Components.ITEM_STACK.get(e);
         ItemStack stack = ic.stack;
         if (stack != null && !stack.isEmpty()) {

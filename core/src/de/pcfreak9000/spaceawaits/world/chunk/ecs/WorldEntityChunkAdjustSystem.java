@@ -4,10 +4,10 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 
 public class WorldEntityChunkAdjustSystem extends IteratingSystem {
     

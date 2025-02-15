@@ -1,15 +1,15 @@
 package mod;
 
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
+import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxComponent;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.IRenderable;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
-public class Background implements WorldEntityFactory {
+public class Background implements EntityFactory {
     
     private final IRenderable texture;
     

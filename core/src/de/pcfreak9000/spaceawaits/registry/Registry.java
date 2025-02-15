@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.comp.CompositeManager;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.IRegen;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
@@ -27,7 +27,7 @@ public class Registry<T> {
     
     public static final CompositeManager COMPOSITE_MANAGER = new CompositeManager();
     
-    public static final Registry<WorldEntityFactory> WORLD_ENTITY_REGISTRY = new Registry<>();
+    public static final Registry<EntityFactory> WORLD_ENTITY_REGISTRY = new Registry<>();
     
     public static final GeneratorRegistry GENERATOR_REGISTRY = new GeneratorRegistry();
     

@@ -10,6 +10,10 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.DynamicAssetListener;
 import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAssetAnnotationProcessor;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
+import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseSystem;
+import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
+import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxSystem;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
@@ -17,12 +21,9 @@ import de.pcfreak9000.spaceawaits.world.ecs.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakingSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.InventoryOpenerSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.RandomTickSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsDebugRendererSystem;
@@ -105,11 +106,12 @@ public class WorldCombined extends World {
         ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
         ecs.addSystem(new CameraSystem(this, gameScreen));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, chunkProvider));
-        ecs.addSystem(new ParallaxSystem(gameScreen));
+        ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
         ecs.addSystem(new RenderSystem(this, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem(phsys, gameScreen));
-        ecs.addSystem(new TickCounterSystem(this));
+        ecs.addSystem(new TickCounterSystem(this.getWorldBus()));
         ecs.addSystem(new RandomTickSystem(getWorldRandom(), this));
+        ecs.addSystem(new GuiOverlaySystem(gameScreen));
         //this one needs some stuff with topological sort anyways to resolve dependencies etc
         //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);
@@ -118,6 +120,7 @@ public class WorldCombined extends World {
     @Override
     public void setPlayer(Player player) {
         super.setPlayer(player);
+        this.getSystem(GuiOverlaySystem.class).setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 2));
         SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));

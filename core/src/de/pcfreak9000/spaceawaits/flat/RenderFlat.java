@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderStatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent.StatData;
 

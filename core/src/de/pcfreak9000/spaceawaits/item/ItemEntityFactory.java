@@ -3,19 +3,19 @@ package de.pcfreak9000.spaceawaits.item;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.ContactListenerComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 
-public class ItemEntityFactory implements WorldEntityFactory {
+public class ItemEntityFactory implements EntityFactory {
     
     public static Entity setupItemEntity(ItemStack stack, float x, float y) {
         Entity e = CoreRes.ITEM_FACTORY.createEntity();

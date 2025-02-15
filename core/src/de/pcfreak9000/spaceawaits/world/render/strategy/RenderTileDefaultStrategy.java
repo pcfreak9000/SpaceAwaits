@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
@@ -29,14 +30,15 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
         super(Family.all(ChunkRenderComponent.class, RenderTileDefaultMarkerComponent.class).get());
         this.gameScreen = renderer;
         this.regionCache = new SpriteCache(5000000, false);//Somewhere get information on how many regions will be cached at once so we can find out the required cache size
-        this.camera = renderer.getCamera();
     }
     
     @Override
     public void begin() {
+        this.camera = getEngine().getSystem(CameraSystem.class).getCamera();
         this.gameScreen.setDefaultBlending();
         regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;
+        
     }
     
     @Override

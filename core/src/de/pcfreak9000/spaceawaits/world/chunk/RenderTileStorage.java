@@ -36,7 +36,7 @@ public class RenderTileStorage {
             storage.put(rendererId, array);
             Entity e = new EntityImproved();
             e.add(new RenderComponent(renderlayer + rendererId.layeroffset));//Uhoh...
-            e.add(rendererId);
+            e.add(rendererId); //TODO check if a renderer exist and use some default it none is found?
             ChunkRenderComponent crc = new ChunkRenderComponent();
             crc.chunk = this.chunk;
             crc.layer = this.tilelayer;

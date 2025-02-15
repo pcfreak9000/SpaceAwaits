@@ -1,8 +1,8 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs;
 
 import com.badlogic.ashley.core.Entity;
 
-public interface WorldEntityFactory {
+public interface EntityFactory {
     
     Entity createEntity();
     

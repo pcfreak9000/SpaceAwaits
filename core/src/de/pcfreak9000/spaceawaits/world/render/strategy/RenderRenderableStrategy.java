@@ -8,29 +8,29 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class RenderRenderableStrategy extends AbstractRenderStrategy {
     
     private GameScreen renderer;
+    private SpriteBatch b;
+    private Camera cam;
     
     public RenderRenderableStrategy(GameScreen renderer) {
         super(Family.all(RenderRenderableComponent.class, TransformComponent.class).get());
         this.b = renderer.getSpriteBatch();
-        this.cam = renderer.getCamera();
         this.renderer = renderer;
     }
-    
-    private SpriteBatch b;
-    private Camera cam;
     
     @Override
     public void begin() {
         renderer.applyViewport();
         this.b.begin();
+        this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
     }
     
     @Override

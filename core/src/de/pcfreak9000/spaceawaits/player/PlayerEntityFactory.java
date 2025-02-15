@@ -3,15 +3,15 @@ package de.pcfreak9000.spaceawaits.player;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ActionComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderStatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent.StatData;
 import de.pcfreak9000.spaceawaits.world.physics.SolidGroundContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.ContactListenerComponent;
@@ -20,7 +20,7 @@ import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
-public class PlayerEntityFactory implements WorldEntityFactory {
+public class PlayerEntityFactory implements EntityFactory {
     
     public static Entity setupPlayerEntity(Player player) {
         Entity e = CoreRes.PLAYER_FACTORY.createEntity();

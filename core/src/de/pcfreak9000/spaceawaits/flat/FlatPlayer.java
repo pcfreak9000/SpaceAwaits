@@ -3,9 +3,9 @@ package de.pcfreak9000.spaceawaits.flat;
 import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 
 public class FlatPlayer implements HudSupplier {

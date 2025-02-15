@@ -23,6 +23,7 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
+import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -32,9 +33,9 @@ import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
 
 public class RenderSystem extends EntitySystem implements EntityListener, Disposable, RenderSystemMarker {
-
+    
     private static final Family FAMILY = Family.all(RenderComponent.class).get();
-
+    
     private static final Comparator<Entity> COMPARATOR = (e1, e2) -> {
         RenderComponent r1 = Components.RENDER.get(e1);
         RenderComponent r2 = Components.RENDER.get(e2);
@@ -45,58 +46,58 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         // }
         return (int) Math.signum(maj);
     };
-
+    
     public static final class RegisterRenderStrategiesEvent extends Event {
         private final OrderedSet<IRenderStrategy> renderStrategies;
         public final World world;
         public final GameScreen renderer;
-
+        
         public RegisterRenderStrategiesEvent(OrderedSet<IRenderStrategy> rendstrat, World world, GameScreen renderer) {
             this.renderStrategies = rendstrat;
             this.world = world;
             this.renderer = renderer;
         }
-
+        
         public void addStrategy(IRenderStrategy strat) {
             this.renderStrategies.add(strat);
         }
     }
-
+    
     private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;
     private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
-
+    
     private final OrderedSet<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
     private LightRenderer lightRenderer;
     private GameScreen renderer;
-
+    
     private FrameBuffer sceneBuffer;
     private SpriteBatchImpr batch;
-
+    
     private boolean forceSort = false;
-
+    
     private boolean dolightsetting = true;
-
+    
     public RenderSystem(World world, GameScreen renderer) {
         this(world, renderer, world.getWorldBus());
     }
-
+    
     public RenderSystem(World world, GameScreen renderer, EventBus bus) {
         bus.register(this);
         this.entities = new Array<>();
         this.renderStrategies = new OrderedSet<>();
-        //this.lightRenderer = new LightRenderer(world, renderer);
+        this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
         this.batch = renderer.getSpriteBatch();// new SpriteBatchImpr(100);
         resize();
         SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
     }
-
+    
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
         resize();
     }
-
+    
     private void resize() {
         if (sceneBuffer != null) {
             this.sceneBuffer.dispose();
@@ -106,7 +107,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         // this.sceneBuffer.getColorBufferTexture().setFilter(TextureFilter.MipMap,
         // TextureFilter.Linear);
     }
-
+    
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
@@ -124,10 +125,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
             }
         }
     }
-
+    
     @Override
     public void removedFromEngine(Engine engine) {
-
+        
         for (IRenderStrategy strat : this.renderStrategies) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;
@@ -142,19 +143,19 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         this.entities.shrink();
         engine.removeEntityListener(this);
     }
-
+    
     @Override
     public void entityAdded(Entity entity) {
         addEntityInternal(entity);
         forceLayerSort();
     }
-
+    
     @Override
     public void entityRemoved(Entity entity) {
         removeEntityPrep(entity);
         this.entities.removeValue(entity, true);
     }
-
+    
     private void addEntityInternal(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
         rc.renSys = this;
@@ -169,7 +170,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
         this.entities.add(entity);
     }
-
+    
     private void removeEntityPrep(Entity entity) {
         RenderComponent rc = Components.RENDER.get(entity);
         rc.renSys = null;
@@ -181,18 +182,18 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         }
         rc.renderStrategies.clear();
     }
-
+    
     public void forceLayerSort() {
         this.forceSort = true;
     }
-
+    
     private void sortIfNecessary() {
         if (forceSort) {
             this.entities.sort(COMPARATOR);
             this.forceSort = false;
         }
     }
-
+    
     @Override
     public void update(float deltaTime) {
         boolean dolight = dolightsetting;
@@ -205,12 +206,12 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         sortIfNecessary();
         for (Entity e : entities) {
             RenderComponent rc = Components.RENDER.get(e);
-            if (!rc.enabled || (rc.considerAsGui && !renderer.showGui())) {
+            if (!rc.enabled || (rc.considerAsGui && !renderer.isShowGui())) {
                 continue;
             }
             boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.getLayer() >= BEGIN_LIGHT_LAYER && dolight;
             for (IRenderStrategy dec : rc.renderStrategies) {
-                if (dec.considerGui() && !renderer.showGui()) {
+                if (dec.considerGui() && !renderer.isShowGui()) {
                     continue;
                 }
                 if (dec != last || startLight) {
@@ -247,18 +248,18 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         renderer.applyViewport();
         batch.setDefaultBlending();
         batch.setColor(Color.WHITE);
-        Camera cam = this.renderer.getCamera();
+        Camera cam = getEngine().getSystem(CameraSystem.class).getCamera();//TODO decouple systems???
         batch.begin();
         batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.sceneBuffer.getWidth(), this.sceneBuffer.getHeight(), false, true);
         batch.end();
     }
-
+    
     public void setDoLight(boolean b) {
         this.dolightsetting = b;
     }
-
+    
     @Override
     public void dispose() {
         this.lightRenderer.dispose();

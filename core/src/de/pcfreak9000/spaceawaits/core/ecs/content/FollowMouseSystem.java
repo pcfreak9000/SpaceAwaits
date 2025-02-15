@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -7,13 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 
 public class FollowMouseSystem extends IteratingSystem {
     
     private GameScreen renderer;
     
     public FollowMouseSystem(GameScreen renderer) {
-        super(Family.all(FollowMouseComponent.class).get());
+        super(Family.all(FollowMouseComponent.class, TransformComponent.class).get());
         this.renderer = renderer;
     }
     

@@ -8,9 +8,9 @@ import com.badlogic.ashley.utils.ImmutableArray;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 
 public class EntitySerializer {
     
@@ -25,7 +25,7 @@ public class EntitySerializer {
     public static NBTCompound serializeEntity(Entity entityImproved) {
         if (isSerializable(entityImproved)) {
             NBTCompound nbt = new NBTCompound();
-            WorldEntityFactory fac = Components.SERIALIZE_ENTITY.get(entityImproved).factory;
+            EntityFactory fac = Components.SERIALIZE_ENTITY.get(entityImproved).factory;
             Registry.WORLD_ENTITY_REGISTRY.checkRegistered(fac);
             String facId = Registry.WORLD_ENTITY_REGISTRY
                     .getId(Components.SERIALIZE_ENTITY.get(entityImproved).factory);

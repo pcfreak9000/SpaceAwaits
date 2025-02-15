@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;

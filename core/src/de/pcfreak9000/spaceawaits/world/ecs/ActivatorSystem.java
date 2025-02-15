@@ -13,11 +13,13 @@ import com.badlogic.gdx.utils.Array;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 public class ActivatorSystem extends EntitySystem {
     
@@ -60,11 +62,11 @@ public class ActivatorSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
-        if (gameRend.isGuiContainerOpen()) {
-            return;
+        if (getEngine().getSystem(GuiOverlaySystem.class).isGuiContainerOpen()) {
+            return;//TODO decouple systems...
         }
         Vector2 mouse = gameRend.getMouseWorldPos();
-        if (!gameRend.getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
+        if (!getEngine().getSystem(CameraSystem.class).getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }
         Array<Object> ents = phys.get(getEngine()).queryXY(mouse.x, mouse.y,

@@ -1,8 +1,6 @@
-package de.pcfreak9000.spaceawaits.world.chunk.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import com.badlogic.ashley.core.Component;
-
-import de.pcfreak9000.spaceawaits.world.tile.Tickable;
 
 public class TickComponent implements Component {
     

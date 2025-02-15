@@ -12,9 +12,10 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
 
 public class RenderFogStrategy extends AbstractRenderStrategy implements Disposable {
@@ -47,7 +48,7 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     public void render(Entity e, float dt) {
         RenderFogComponent rfc = Components.RENDER_FOG.get(e);
         TransformComponent tc = Components.TRANSFORM.get(e);
-        Camera cam = renderer.getCamera();
+        Camera cam = getEngine().getSystem(CameraSystem.class).getCamera();
         shader.getShader().bind();
         shader.getShader().setUniformMatrix("u_projView", cam.combined);
         shader.getShader().setUniformf("time", renderer.getRenderTime());

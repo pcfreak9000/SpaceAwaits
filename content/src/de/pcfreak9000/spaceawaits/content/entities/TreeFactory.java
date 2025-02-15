@@ -15,7 +15,9 @@ import de.pcfreak9000.spaceawaits.content.components.TreeStateComponent;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.IBreakableEntity;
@@ -25,8 +27,6 @@ import de.pcfreak9000.spaceawaits.world.ecs.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.RandomTickComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent.OnNeighbourTileChange;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
@@ -37,7 +37,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class TreeFactory implements WorldEntityFactory {
+public class TreeFactory implements EntityFactory {
     
     private static final TextureProvider tex = TextureProvider.get("baum.png");
     

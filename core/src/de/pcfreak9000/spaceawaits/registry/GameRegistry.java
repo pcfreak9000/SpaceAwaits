@@ -4,9 +4,9 @@ import java.lang.reflect.Constructor;
 
 import com.google.common.collect.ObjectArrays;
 
+import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemTile;
-import de.pcfreak9000.spaceawaits.world.ecs.WorldEntityFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 
 public class GameRegistry {
@@ -55,7 +55,7 @@ public class GameRegistry {
         }
     }
     
-    public static void registerWorldEntity(String id, WorldEntityFactory wef) {
+    public static void registerWorldEntity(String id, EntityFactory wef) {
         Registry.WORLD_ENTITY_REGISTRY.register(id, wef);
     }
     

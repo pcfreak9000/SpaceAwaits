@@ -221,6 +221,11 @@ public class InptMgr {
             scrolledY = amountY;
             return false;
         }
+
+        @Override
+        public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+            return false;
+        }
         
     }
 }

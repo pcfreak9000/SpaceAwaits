@@ -4,13 +4,13 @@ import java.util.Random;
 
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;

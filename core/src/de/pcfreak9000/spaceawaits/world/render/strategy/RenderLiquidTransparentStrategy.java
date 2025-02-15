@@ -24,6 +24,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.water.LiquidQuad2D;
 import de.pcfreak9000.spaceawaits.world.tile.LiquidState;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -48,7 +49,6 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     public RenderLiquidTransparentStrategy(GameScreen rend, World world) {
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
-        this.camera = this.rend.getCamera();
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);
         this.batchSimple = rend.getSpriteBatch();
         this.batch.setShader(shader.getShader());
@@ -81,6 +81,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     
     @Override
     public void begin() {
+        this.camera = getEngine().getSystem(CameraSystem.class).getCamera();
         this.batchSimple.resetSettings();
         this.refl.begin();
         ScreenUtils.clear(0, 0, 0, 0);
