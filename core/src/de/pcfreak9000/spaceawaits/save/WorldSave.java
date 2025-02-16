@@ -12,6 +12,10 @@ import de.pcfreak9000.nbt.NbtReader;
 import de.pcfreak9000.nbt.NbtWriter;
 import de.pcfreak9000.nbt.TagReader;
 import de.pcfreak9000.spaceawaits.save.regionfile.RegionFileCache;
+import de.pcfreak9000.spaceawaits.world.ChunkLoader;
+import de.pcfreak9000.spaceawaits.world.GlobalLoader;
+import de.pcfreak9000.spaceawaits.world.IChunkLoader;
+import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 
 public class WorldSave implements IWorldSave {
     
@@ -31,12 +35,10 @@ public class WorldSave implements IWorldSave {
         return meta;
     }
     
-    @Override
     public boolean hasGlobal() {
         return globalFile.exists() && globalFile.isFile();
     }
     
-    @Override
     public NBTCompound readGlobal() {
         try (CompressedNbtReader reader = new CompressedNbtReader(new FileInputStream(globalFile))) {
             return reader.toCompoundTag();
@@ -45,7 +47,6 @@ public class WorldSave implements IWorldSave {
         }
     }
     
-    @Override
     public void writeGlobal(NBTCompound nbtc) {
         try {
             TagReader.toCompressedBinaryNBTFile(globalFile, nbtc);
@@ -54,12 +55,10 @@ public class WorldSave implements IWorldSave {
         }
     }
     
-    @Override
     public boolean hasChunk(int cx, int cy) {
         return RegionFileCache.hasChunk(myDir, cx, cy);
     }
     
-    @Override
     public NBTCompound readChunk(int cx, int cy) {
         DataInputStream is = RegionFileCache.getChunkDataInputStream(myDir, cx, cy);
         try (NbtReader reader = new NbtReader(is)) {
@@ -69,7 +68,6 @@ public class WorldSave implements IWorldSave {
         }
     }
     
-    @Override
     public void writeChunk(int cx, int cy, NBTCompound nbtc) {
         DataOutputStream os = RegionFileCache.getChunkDataOutputStream(myDir, cx, cy);
         try (NbtWriter writer = new NbtWriter(os)) {
@@ -77,6 +75,16 @@ public class WorldSave implements IWorldSave {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public IChunkLoader createChunkLoader() {
+        return new ChunkLoader(this, meta.getBounds());
+    }
+    
+    @Override
+    public IGlobalLoader createGlobalLoader() {
+        return new GlobalLoader(this);
     }
     
 }

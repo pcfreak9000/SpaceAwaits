@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.content.gen;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Rectangle;
@@ -73,7 +74,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
         WorldPrimer p = new WorldPrimer();
         p.setWorldGenerator(new IWorldGenerator() {
             @Override
-            public void generate(World world) {
+            public void generate(Engine world) {
                 //                Entity ship = DMod.instance.fac.createEntity();
                 //                TransformComponent tc = ship.getComponent(TransformComponent.class);
                 //                Vector2 dim = ship.getComponent(PhysicsComponent.class).factory.boundingBoxWidthAndHeight();
@@ -89,7 +90,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
             
             @Override
-            public void onLoading(World world) {
+            public void onLoading(Engine world) {
                 world.getSystem(EntityInteractSystem.class)
                         .spawnEntity(Registry.WORLD_ENTITY_REGISTRY.get("background.stars").createEntity(), false);
                 Entity pent = null;

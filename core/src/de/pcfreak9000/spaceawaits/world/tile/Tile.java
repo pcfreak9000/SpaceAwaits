@@ -249,10 +249,10 @@ public class Tile extends Destructible {
     public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
     }
     
-    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
+    public void updateTick(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem, long tick) {
     }
     
-    public void randomTick(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem, long tick) {
+    public void randomTick(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem, long tick) {
     }
     
     //-> RandomTickModule?

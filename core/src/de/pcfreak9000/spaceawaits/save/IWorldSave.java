@@ -1,6 +1,8 @@
 package de.pcfreak9000.spaceawaits.save;
 
-import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.world.IChunkLoader;
+import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
+
 /**
  * Interface between File layer and NBT layer
  */
@@ -8,16 +10,20 @@ public interface IWorldSave {
     
     WorldMeta getWorldMeta();
     
-    boolean hasGlobal();
+    IGlobalLoader createGlobalLoader();
     
-    NBTCompound readGlobal();
+    //boolean hasGlobal();
     
-    void writeGlobal(NBTCompound nbtc);
+    //NBTCompound readGlobal();
     
-    boolean hasChunk(int cx, int cy);
+    //void writeGlobal(NBTCompound nbtc);
     
-    NBTCompound readChunk(int cx, int cy);
+    IChunkLoader createChunkLoader();
     
-    void writeChunk(int cx, int cy, NBTCompound nbtc);
+    //boolean hasChunk(int cx, int cy);
+    
+    //NBTCompound readChunk(int cx, int cy);
+    
+    //void writeChunk(int cx, int cy, NBTCompound nbtc);
     
 }

@@ -13,14 +13,15 @@ import com.badlogic.gdx.utils.LongMap;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
-import de.pcfreak9000.spaceawaits.world.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
@@ -37,16 +38,16 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 public class TileSystem extends EntitySystem implements ITileArea {
     
     private World world;
-    private IChunkProvider chunkProvider;
     private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     private final Entity entity;
     
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
+    private SystemCache<ChunkSystem> chunks = new SystemCache<>(ChunkSystem.class);
+    
     private UserDataHelper ud = new UserDataHelper();
     
-    public TileSystem(World world, IChunkProvider ch) {
+    public TileSystem(World world) {
         this.world = world;
-        this.chunkProvider = ch;
         this.entity = createInfoEntity();
     }
     
@@ -143,11 +144,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     }
     
     private Chunk getChunkForTile(int tx, int ty) {
-        if (world.getBounds().inBounds(tx, ty)) {
-            Chunk c = chunkProvider.getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
-            return c;
-        }
-        return null;
+        return chunks.get(getEngine()).getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
     }
     
     @Override
@@ -162,7 +159,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
-            c.scheduleTick(tx, ty, layer, tile, waitticks);
+            c.scheduleTick(getEngine().getSystem(TickCounterSystem.class), tx, ty, layer, tile, waitticks);
         }
         //do something if this fails?
     }

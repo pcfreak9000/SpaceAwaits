@@ -4,18 +4,17 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.LongMap.Keys;
 
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.ITicket;
 import de.pcfreak9000.spaceawaits.world.IWorldChunkProvider;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 
-public class TicketedChunkManager extends EntitySystem {
+public class TicketedChunkManager {
     
-    private World world;
+    private WorldBounds bounds;
     private IWorldChunkProvider chunkProvider;
     
     private Set<ITicket> tickets;
@@ -23,9 +22,9 @@ public class TicketedChunkManager extends EntitySystem {
     private static final Object OBJ = new Object();
     private LongMap<Object> chunksToUpdate = new LongMap<>();
     
-    public TicketedChunkManager(World world, IWorldChunkProvider chunkprovider) {
+    public TicketedChunkManager(WorldBounds bounds, IWorldChunkProvider chunkprovider) {
         this.tickets = new LinkedHashSet<>();
-        this.world = world;
+        this.bounds = bounds;
         this.chunkProvider = chunkprovider;
     }
     
@@ -37,21 +36,20 @@ public class TicketedChunkManager extends EntitySystem {
         this.tickets.remove(t);
     }
     
-    @Override
-    public void update(float dt) {
+    public void update() {
         chunksToUpdate.clear();
         Iterator<ITicket> it = tickets.iterator();
         while (it.hasNext()) {
             ITicket t = it.next();
             if (t.isValid()) {
-                t.update(world, dt);
+                t.update();
             }
             if (!t.isValid()) {
                 it.remove();
             }
             IntCoords[] chunks = t.getLoadChunks();
             for (IntCoords cc : chunks) {
-                if (world.getBounds().inBoundsChunk(cc.getX(), cc.getY())) {
+                if (bounds.inBoundsChunk(cc.getX(), cc.getY())) {
                     chunksToUpdate.put(cc.createKey(), OBJ);
                 }
             }

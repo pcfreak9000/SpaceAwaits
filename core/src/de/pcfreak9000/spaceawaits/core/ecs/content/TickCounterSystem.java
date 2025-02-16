@@ -34,6 +34,7 @@ public class TickCounterSystem extends IteratingSystem {
         return tick;
     }
     
+    //TODO move into entity??
     @EventSubscription
     private void metanbtev(WorldEvents.WorldMetaNBTEvent ev) {
         if (ev.type == Type.Writing) {

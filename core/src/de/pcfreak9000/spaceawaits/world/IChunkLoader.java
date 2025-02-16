@@ -10,4 +10,9 @@ public interface IChunkLoader {
     
     Chunk loadChunk(int x, int y);
     
+    void saveAllChunks();
+    
+    default void finish() {
+    }
+    
 }

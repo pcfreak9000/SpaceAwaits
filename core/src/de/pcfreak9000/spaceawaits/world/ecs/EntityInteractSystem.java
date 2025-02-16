@@ -13,10 +13,10 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.IChunkProvider;
-import de.pcfreak9000.spaceawaits.world.IUnchunkProvider;
+import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
@@ -28,16 +28,14 @@ public class EntityInteractSystem extends IteratingSystem {
     }
     
     private World world;
-    private IChunkProvider chunkProvider;
-    private IUnchunkProvider unchunkProvider;
+    private IGlobalLoader globalLoader;
     
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
-    public EntityInteractSystem(World world, IChunkProvider chunkProvider, IUnchunkProvider unchunkprovider) {
+    public EntityInteractSystem(World world, IGlobalLoader unchunkprovider) {
         super(Family.all(BreakingComponent.class).get());
         this.world = world;
-        this.chunkProvider = chunkProvider;
-        this.unchunkProvider = unchunkprovider;
+        this.globalLoader = unchunkprovider;
     }
     
     @Override
@@ -107,18 +105,13 @@ public class EntityInteractSystem extends IteratingSystem {
             TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
+            Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(supposedChunkX, supposedChunkY);
             if (c == null) {
                 return SpawnState.Failure;//Not so nice, this way the entity is just forgotten 
             }
-            c.addEntity(entity);
-            if (c.isActive()) {
-                getEngine().addEntity(entity);
-            }
+            c.addEntityAC(entity);
         } else {
-            //Hmmm...
-            unchunkProvider.get().addEntity(entity);
-            getEngine().addEntity(entity);
+            getEngine().getSystem(WorldSystem.class).addEntity(entity);
         }
         return SpawnState.Success;
     }
@@ -127,16 +120,16 @@ public class EntityInteractSystem extends IteratingSystem {
         if (Components.CHUNK.has(entity)) {
             Chunk c = Components.CHUNK.get(entity).currentChunk;
             if (c != null) {
-                c.removeEntity(entity);
+                c.removeEntityAC(entity);
             }
         } else if (Components.TRANSFORM.has(entity) && !Components.GLOBAL_MARKER.has(entity)) {
             TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
-            c.removeEntity(entity);
+            Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(supposedChunkX, supposedChunkY);
+            c.removeEntityAC(entity);
+        } else {
+            getEngine().getSystem(WorldSystem.class).removeEntity(entity);
         }
-        unchunkProvider.get().removeEntity(entity);
-        getEngine().removeEntity(entity);
     }
 }

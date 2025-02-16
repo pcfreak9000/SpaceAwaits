@@ -11,7 +11,7 @@ public class Bounds {
         return new Bounds(ntx0, nty0, ntx1 - ntx0, nty1 - nty0);
     }
     
-    private int tx, ty, width, height;
+    private final int tx, ty, width, height;
     
     public Bounds(int tx, int ty, int width, int height) {
         this.tx = tx;

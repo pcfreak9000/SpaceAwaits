@@ -1,10 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -72,7 +74,7 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
+    public ITileEntity createTileEntity(int gtx, int gty, TileLayer layer) {
         return new LiquidState(getMaxValue());
     }
     
@@ -95,7 +97,7 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public void updateTick(int tx, int ty, TileLayer layer, World world, TileSystem ts, long tick) {
+    public void updateTick(int tx, int ty, TileLayer layer, Engine world, TileSystem ts, long tick) {
         super.updateTick(tx, ty, layer, world, ts, tick);
         LiquidState liquiddata = (LiquidState) ts.getTileEntity(tx, ty, layer);
         liquiddata.updateLiquid(tick);
@@ -109,7 +111,8 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
             }
             int i = tx + d.dx;
             int j = ty + d.dy;
-            if (world.getBounds().inBounds(i, j)) {
+            //Hmmm
+            if (world.getSystem(ChunkSystem.class).getBounds().inBounds(i, j)) {
                 Tile ne = ts.getTile(i, j, layer);
                 if (ne != null && canFlowInto(ne)) {
                     LiquidState neighdata = null;

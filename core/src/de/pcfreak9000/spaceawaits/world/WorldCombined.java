@@ -16,15 +16,16 @@ import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.WorldEntityChunkAdjustSystem;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ActivatorSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.InventoryHandlerSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.Loadable;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.RandomTickSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.SelectorSystem;
-import de.pcfreak9000.spaceawaits.world.ecs.TicketedChunkManager;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsForcesSystem;
@@ -36,43 +37,53 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class WorldCombined extends World {
     
-    private final IWorldChunkProvider chunkProvider;
-    private final ChunkLoader chunkLoader;
-    private final UnchunkProvider unchunkProvider;
-    
     //Server side stuff
-    private TicketedChunkManager ticketHandler;
+    private IGlobalLoader globalLoader;
+    private IChunkLoader chunkLoader;
     
     private ITicket currentPlayerTicket;
+    //TMP
+    private WorldPrimer primer;
     
     public WorldCombined(WorldPrimer primer, IWorldSave save) {
         super(primer);
-        this.chunkLoader = new ChunkLoader(save, this);
-        this.unchunkProvider = new UnchunkProvider(save, this, primer.getWorldGenerator());
-        this.chunkProvider = new TestChunkProvider(this, chunkLoader, primer.getChunkGenerator());
+        this.primer = primer;
+        this.globalLoader = save.createGlobalLoader();
+        this.chunkLoader = save.createChunkLoader();
     }
     
     public void initRenderableWorld(WorldScreen screen) {
-        setupECS(ecsEngine, screen);
+        setupECS(ecsEngine, screen, primer);
         
-        unchunkProvider.load();//TODO Move this?
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            if (es instanceof Loadable) {
+                Loadable u = (Loadable) es;
+                u.load();
+            }
+        }
         if (worldProperties.autoWorldBorders()) {
-            WorldUtil.createWorldBorders(this, getBounds().getWidth(), getBounds().getHeight());
+            WorldUtil.createWorldBorders(ecsEngine, getBounds().getWidth(), getBounds().getHeight());
         }
     }
     
     public void saveWorld() {
-        chunkProvider.saveAll();
-        unchunkProvider.save();
+        chunkLoader.saveAllChunks();
+        globalLoader.save();
     }
     
     @Override
     public void unloadWorld() {
-        chunkProvider.unloadAll();
-        unchunkProvider.unload();
-        ecsEngine.removeAllEntities();
         //can't use ecsEngine.removeAllSystems(); because systems need to be unregistered
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            if (es instanceof Loadable) {
+                Loadable u = (Loadable) es;
+                u.unload();
+            }
+        }
+        ecsEngine.removeAllEntities();
+        
         //first decouple...
         for (EntitySystem es : syss) {
             ecsEngine.removeSystem(es);
@@ -90,25 +101,26 @@ public class WorldCombined extends World {
             ecsEngine.removeEntityListener(dal);
         }
         this.chunkLoader.finish();
+        this.globalLoader.finish();
     }
     
-    private void setupECS(Engine engine, WorldScreen gameScreen) {
+    private void setupECS(Engine engine, WorldScreen gameScreen, WorldPrimer primer) {
         for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
             engine.addEntityListener(dal.getFamily(), dal);
         }
         SystemResolver ecs = new SystemResolver();
+        ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator()));
         ecs.addSystem(new InventoryHandlerSystem());
-        ecs.addSystem(new TileSystem(this, chunkProvider));
+        ecs.addSystem(new TileSystem(this));
         ecs.addSystem(new PlayerInputSystem(this));
         ecs.addSystem(new SelectorSystem());
         ecs.addSystem(new ActivatorSystem());
         ecs.addSystem(new FollowMouseSystem());
-        ecs.addSystem(new EntityInteractSystem(this, chunkProvider, unchunkProvider));
+        ecs.addSystem(new EntityInteractSystem(this, globalLoader));
         ecs.addSystem(new PhysicsForcesSystem());
-        ecs.addSystem(new PhysicsSystem(this.getBounds(), chunkProvider));
-        ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
+        ecs.addSystem(new PhysicsSystem());
+        ecs.addSystem(new ChunkSystem(this, this.getBounds(), chunkLoader, primer.getChunkGenerator()));
         ecs.addSystem(new CameraSystem(this.getBounds(), gameScreen.getRenderHelper()));
-        ecs.addSystem(ticketHandler = new TicketedChunkManager(this, chunkProvider));
         ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
         ecs.addSystem(new RenderSystem(this, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem());
@@ -137,16 +149,12 @@ public class WorldCombined extends World {
         getWorldBus().post(new WorldEvents.PlayerLeftEvent(this, player));
     }
     
-    public int getLoadedChunksCount() {
-        return chunkProvider.getLoadedChunkCount();
-    }
-    
     public void addTicket(ITicket ticket) {
-        this.ticketHandler.addTicket(ticket);
+        ecsEngine.getSystem(ChunkSystem.class).addTicket(ticket);
     }
     
     public void removeTicket(ITicket ticket) {
-        this.ticketHandler.removeTicket(ticket);
+        ecsEngine.getSystem(ChunkSystem.class).removeTicket(ticket);
     }
     
 }

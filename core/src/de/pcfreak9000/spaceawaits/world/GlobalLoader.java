@@ -1,27 +1,22 @@
 package de.pcfreak9000.spaceawaits.world;
 
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.save.WorldSave;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.serialize.SerializableEntityList;
-import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 
-public class UnchunkProvider implements IUnchunkProvider {
+public class GlobalLoader implements IGlobalLoader {
     
     private SerializableEntityList data;
-    private NBTCompound nbt = new NBTCompound();
+    private NBTCompound nbt;
     
-    private World world;
-    private IWorldGenerator worldGen;
+    private WorldSave save;
     
-    private IWorldSave save;
-    
-    public UnchunkProvider(IWorldSave save, World world, IWorldGenerator worldGenerator) {
-        this.world = world;
-        this.worldGen = worldGenerator;
+    public GlobalLoader(WorldSave save) {
         this.save = save;
     }
     
+    @Override
     public void load() {//Split this up in generation and loading?? this isn't so big, so this can stay for now
         if (data != null) {
             return;
@@ -30,25 +25,28 @@ public class UnchunkProvider implements IUnchunkProvider {
         if (save.hasGlobal()) {
             NBTCompound nbt = save.readGlobal();
             data.readNBT(nbt.getCompound("entities"));
-            this.nbt = nbt.getCompound("dat");
+            this.nbt = nbt.getCompound("data");
         } else {
-            worldGen.generate(world);
+            this.nbt = new NBTCompound();
         }
-        worldGen.onLoading(world);
-        world.getWorldBus().post(new WorldEvents.WMNBTReadingEvent(nbt));
     }
     
     @Override
-    public SerializableEntityList get() {
+    public SerializableEntityList getEntities() {
         return data;
     }
     
+    @Override
+    public NBTCompound getData() {
+        return nbt;
+    }
+    
+    @Override
     public void save() {
-        world.getWorldBus().post(new WorldEvents.WMNBTWritingEvent(nbt));
         if (data != null) {
             NBTCompound nbt = new NBTCompound();
             nbt.put("entities", INBTSerializable.writeNBT(data));
-            nbt.put("dat", this.nbt);
+            nbt.put("data", this.nbt);
             save.writeGlobal(nbt);
         }
     }
@@ -57,6 +55,7 @@ public class UnchunkProvider implements IUnchunkProvider {
     public void unload() {
         save();
         data = null;
+        nbt = null;
     }
     
 }

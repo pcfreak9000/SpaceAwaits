@@ -15,14 +15,11 @@ import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.save.ChunkDict;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class TileStorage implements Tickable {
-    
-    private final World world;
     
     private int size;
     private TileState[][] tileArray;
@@ -36,10 +33,9 @@ public class TileStorage implements Tickable {
     private final Queue<Tickable> tickablesForRemoval;
     private boolean ticking = false;
     
-    public TileStorage(World world, int size, int tx, int ty, TileLayer layer) {
+    public TileStorage(int size, int tx, int ty, TileLayer layer) {
         this.tx = tx;
         this.ty = ty;
-        this.world = world;
         this.layer = layer;
         this.size = size;
         this.tileArray = new TileState[size][size];
@@ -84,7 +80,7 @@ public class TileStorage implements Tickable {
         tileArray[tileX - this.tx][tileY - this.ty].setTile(t);
         if (t.hasModule(IModuleTileEntity.ID)) {
             IModuleTileEntity temod = t.getModule(IModuleTileEntity.ID);
-            ITileEntity te = temod.createTileEntity(this.world, tx, ty, this.layer);
+            ITileEntity te = temod.createTileEntity(tx, ty, this.layer);
             state.setTileEntity(te);
             if (te instanceof Tickable) {
                 this.tickables.add((Tickable) te);

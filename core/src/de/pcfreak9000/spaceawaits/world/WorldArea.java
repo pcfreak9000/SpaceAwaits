@@ -47,13 +47,10 @@ public class WorldArea implements ITileArea {
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
             Chunk c = this.chunkProvider.getChunk(supposedChunkX, supposedChunkY);
-            if (c == null || (c.isActive() && world == null)) {
+            if (c == null) {
                 return SpawnState.Failure;//Not so nice, this way the entity is just forgotten 
             }
-            c.addEntity(entity);
-            if (c.isActive()) {
-                world.ecsEngine.addEntity(entity);
-            }
+            c.addEntityAC(entity);
             return SpawnState.Success;
         }
         entitiesToSpawn.add(entity);

@@ -17,8 +17,7 @@ public class WorldMeta implements INBTSerializable {
     private long worldSeed;
     private String worldGeneratorUsed;
     
-    private int width;
-    private int height;
+    private WorldBounds bounds;
     
     public String getDisplayName() {
         return displayName;
@@ -32,12 +31,8 @@ public class WorldMeta implements INBTSerializable {
         return worldGeneratorUsed;
     }
     
-    public int getWidth() {
-        return width;
-    }
-    
-    public int getHeight() {
-        return height;
+    public WorldBounds getBounds() {
+        return bounds;
     }
     
     public long getCreated() {
@@ -50,8 +45,9 @@ public class WorldMeta implements INBTSerializable {
         displayName = (comp.getString("displayName"));
         worldSeed = (comp.getLong("worldSeed"));
         worldGeneratorUsed = (comp.getString("worldGeneratorUsed"));
-        width = (comp.getInt("width"));
-        height = (comp.getInt("height"));
+        int width = (comp.getInt("width"));
+        int height = (comp.getInt("height"));
+        bounds = new WorldBounds(width, height);
         created = (comp.getLong("created"));
     }
     
@@ -60,8 +56,8 @@ public class WorldMeta implements INBTSerializable {
         comp.putString("displayName", displayName);
         comp.putLong("worldSeed", worldSeed);
         comp.putString("worldGeneratorUsed", worldGeneratorUsed);
-        comp.putInt("width", width);
-        comp.putInt("height", height);
+        comp.putInt("width", bounds.getWidth());
+        comp.putInt("height", bounds.getHeight());
         comp.putLong("created", created);
     }
     
@@ -89,14 +85,12 @@ public class WorldMeta implements INBTSerializable {
         }
         
         public Builder dimensions(int w, int h) {
-            this.meta.width = w;
-            this.meta.height = h;
+            this.meta.bounds = new WorldBounds(w, h);
             return this;
         }
         
         public Builder dimensions(WorldBounds bounds) {
-            this.meta.width = bounds.getWidth();
-            this.meta.height = bounds.getHeight();
+            this.meta.bounds = bounds;
             return this;
         }
         

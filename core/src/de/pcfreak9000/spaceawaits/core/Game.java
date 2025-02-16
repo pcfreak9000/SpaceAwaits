@@ -21,7 +21,6 @@ import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
@@ -111,7 +110,7 @@ public class Game {
                     .get(genId);
             WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
-            worldPrimer.setWorldBounds(new WorldBounds(meta.getWidth(), meta.getHeight()));
+            worldPrimer.setWorldBounds(meta.getBounds());
             WorldCombined world = new WorldCombined(worldPrimer, save);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.world = world;

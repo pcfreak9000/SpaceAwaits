@@ -1,6 +1,5 @@
 package de.pcfreak9000.spaceawaits.world.chunk;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.LongArray;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -43,11 +42,7 @@ public class RenderTileStorage {
             crc.tilePositions = array;
             e.add(crc);
             this.entities.put(rendererId, e);
-            this.chunk.addEntity(e);
-            Engine ecs = this.chunk.getECS();
-            if (ecs != null) {
-                ecs.addEntity(e);
-            }
+            this.chunk.addEntityAC(e);
         }
         array.add(l);
     }
@@ -61,11 +56,7 @@ public class RenderTileStorage {
                 storage.remove(rendererId);
                 Entity e = this.entities.remove(rendererId);
                 e.flags = 4206969;
-                this.chunk.removeEntity(e);
-                Engine ecs = this.chunk.getECS();
-                if (ecs != null) {
-                    ecs.removeEntity(e);
-                }
+                this.chunk.removeEntityAC(e);
                 //e.removeAll(); //oh no, delayed entity removal causes some trouble if this is used... 
             }
         }

@@ -9,7 +9,6 @@ import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
@@ -28,8 +27,6 @@ public abstract class World {
     
     //Used for random item drops etc, not terrain gen etc
     private final RandomXS128 worldRandom;
-    
-    private int countChunkActive = 0;
     
     public World(WorldPrimer primer) {
         //initialize fields
@@ -51,16 +48,6 @@ public abstract class World {
         this.ecsEngine.update(dt);
     }
     
-    protected void addChunk(Chunk c) {
-        c.addToECS(ecsEngine);
-        countChunkActive++;
-    }
-    
-    protected void removeChunk(Chunk c) {
-        c.removeFromECS();
-        countChunkActive--;
-    }
-    
     public Random getWorldRandom() {
         return worldRandom;
     }
@@ -76,10 +63,6 @@ public abstract class World {
     
     public <T extends EntitySystem> T getSystem(Class<T> clazz) {
         return ecsEngine.getSystem(clazz);
-    }
-    
-    public int getUpdatingChunksCount() {
-        return countChunkActive;
     }
     
     public WorldBounds getBounds() {

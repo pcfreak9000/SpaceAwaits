@@ -133,6 +133,7 @@ public class TestChunkProvider2 implements IWorldChunkProvider {
         });
     }
     
+    @Override
     public void requestChunk(int x, int y, boolean active) {
         requestChunk(x, y, false, true);
     }

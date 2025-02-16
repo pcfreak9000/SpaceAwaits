@@ -4,7 +4,7 @@ import de.pcfreak9000.spaceawaits.util.IntCoords;
 
 public interface ITicket {
     
-    void update(World world, float dt);
+    void update();
     
     boolean isValid();
     

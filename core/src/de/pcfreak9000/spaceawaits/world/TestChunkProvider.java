@@ -17,6 +17,7 @@ import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
+import de.pcfreak9000.spaceawaits.world.tile.ChunkECSHandler;
 
 public class TestChunkProvider implements IWorldChunkProvider {
     
@@ -67,21 +68,27 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private LongMap<Status> statusMap = new LongMap<>();
     private World world;
     
+    private WorldBounds bounds;
+    
+    private ChunkECSHandler chunkecs;
+    
     private IChunkLoader loader;
     
     private IChunkGenerator chunkGen;
     
     private ConcurrentLinkedQueue<Runnable> runOnMainThread = new ConcurrentLinkedQueue<>();
     
-    public TestChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkgen) {
+    public TestChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkgen, ChunkECSHandler cecs) {
         this.world = world;
+        this.bounds = world.getBounds();
+        this.chunkecs = cecs;
         this.loader = loader;
         this.chunkGen = chunkgen;
         this.cacheReady = new SpecialCache2D<>(90, 85, (x, y) -> requestChunk(x, y, true, false, false), (chunk) -> {
             statusMap.get(
                     IntCoords.toLong(chunk.getGlobalChunkX(), chunk.getGlobalChunkY())).status = StatusEnum.Dangling;
             if (chunk.isActive()) {
-                world.removeChunk(chunk);
+                cecs.removeChunk(chunk);
             }
             cacheDangling.put(chunk.getGlobalChunkX(), chunk.getGlobalChunkY(), chunk);
         });
@@ -96,6 +103,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
         });
     }
     
+    @Override
     public void requestChunk(int x, int y, boolean active) {
         requestChunk(x, y, false, true, true);
     }
@@ -112,7 +120,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     
     private Chunk requestChunk(int x, int y, boolean blocking, boolean active, boolean add) {
         blocking = true;
-        if (!world.getBounds().inBoundsChunk(x, y))
+        if (!bounds.inBoundsChunk(x, y))
             return null;
         flush();
         long key = IntCoords.toLong(x, y);
@@ -239,7 +247,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             int x = chunk.getGlobalChunkX();
             int y = chunk.getGlobalChunkY();
             if (active && !chunk.isActive()) {
-                world.addChunk(chunk);
+                chunkecs.addChunk(chunk);
             }
             if (add && !cacheReady.hasKey(x, y)) {
                 cacheReady.put(x, y, chunk);
@@ -270,7 +278,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void prepare(int x, int y, int genStageLevelReq, Context context, int xig, int yig) {
         if (genStageLevelReq == 0)
             return;
-        if (!world.getBounds().inBoundsChunk(x, y))
+        if (!bounds.inBoundsChunk(x, y))
             return;
         if (x != xig || y != yig) {
             long key = IntCoords.toLong(x, y);
@@ -338,7 +346,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private void genRequired(int x, int y, int genStageLevelReq, Context context) {
         if (genStageLevelReq == 0)
             return;
-        if (!world.getBounds().inBoundsChunk(x, y))
+        if (!bounds.inBoundsChunk(x, y))
             return;
         long key = IntCoords.toLong(x, y);
         Chunk chunk = context.availableChunks.get(key);
@@ -355,7 +363,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
         if (genStageLevelReq > ChunkGenStage.Tiled.level) {
             bounds = new Bounds((chunk.getGlobalChunkX() - 1) * Chunk.CHUNK_SIZE,
                     (chunk.getGlobalChunkY() - 1) * Chunk.CHUNK_SIZE, 3 * Chunk.CHUNK_SIZE, 3 * Chunk.CHUNK_SIZE);
-            bounds = Bounds.intersect(bounds, world.getBounds());
+            bounds = Bounds.intersect(bounds, bounds);
         } else {
             bounds = chunk.getBounds();
         }
@@ -392,7 +400,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             Chunk c = info.chunk;
             cacheReady.put(info.x, info.y, c);
             if (info.needsReadd == ChunkInfo.READD_ACTIVE) {
-                world.addChunk(c);
+                chunkecs.addChunk(c);
             }
             status.status = StatusEnum.Ready;
         } else {
@@ -400,7 +408,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
                 status.status = StatusEnum.Dangling;
                 cacheDangling.put(info.x, info.y, info.chunk);
                 if (info.chunk.isActive()) {
-                    world.removeChunk(info.chunk);
+                    chunkecs.removeChunk(info.chunk);
                 }
             } else {
                 status.status = StatusEnum.Ready;
@@ -425,7 +433,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
                 Chunk chunk = cacheReady.take(x, y);
                 info.needsReadd = ChunkInfo.READD_PASSIVE;
                 if (chunk.isActive()) {
-                    world.removeChunk(chunk);
+                    chunkecs.removeChunk(chunk);
                     info.needsReadd = ChunkInfo.READD_ACTIVE;
                 }
                 info.chunk = chunk;
@@ -456,6 +464,9 @@ public class TestChunkProvider implements IWorldChunkProvider {
     
     @Override
     public Chunk getChunk(int x, int y) {
+        if (!bounds.inBoundsChunk(x, y)) {
+            return null;
+        }
         return cacheReady.getOrFresh(x, y);
     }
     
@@ -470,16 +481,6 @@ public class TestChunkProvider implements IWorldChunkProvider {
         flush();
         this.cacheReady.clear();
         this.cacheDangling.clear();
-    }
-    
-    @Override
-    public void saveAll() {
-        for (Chunk c : cacheReady.values()) {
-            this.loader.saveChunk(c);
-        }
-        for (Chunk c : cacheDangling.values()) {
-            this.loader.saveChunk(c);
-        }
     }
     
     private static class BoundedChunkProvider implements IChunkProvider {

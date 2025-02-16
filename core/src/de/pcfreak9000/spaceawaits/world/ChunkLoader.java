@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.LongMap;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
-import de.pcfreak9000.spaceawaits.save.IWorldSave;
+import de.pcfreak9000.spaceawaits.save.WorldSave;
 import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -22,16 +22,16 @@ public class ChunkLoader implements IChunkLoader {
     private static final Object MARK = new Object();
     
     //Maybe have a central place where executors for different purposes live
-    private ExecutorService saveEx = Executors.newFixedThreadPool(2);
+    private ExecutorService saveEx = Executors.newFixedThreadPool(4);
     
     private LongMap<Chunk> loadedChunks = new LongMap<>();
     private LongMap<Object> markUnload = new LongMap<>();
     private LongMap<Future<?>> saving = new LongMap<>();
     
-    private World world;
-    private IWorldSave save;
+    private WorldBounds world;
+    private WorldSave save;
     
-    public ChunkLoader(IWorldSave save, World world) {
+    public ChunkLoader(WorldSave save, WorldBounds world) {
         this.world = world;
         this.save = save;
     }
@@ -64,7 +64,7 @@ public class ChunkLoader implements IChunkLoader {
     
     @Override
     public Chunk loadChunk(int x, int y) {
-        if (!world.getBounds().inBoundsChunk(x, y)) {
+        if (!world.inBoundsChunk(x, y)) {
             return null;
         }
         Chunk chunk = loadChunkActual(x, y);
@@ -97,6 +97,13 @@ public class ChunkLoader implements IChunkLoader {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void saveAllChunks() {
+        synchronized (loadedChunks) {
+            loadedChunks.values().forEach((c) -> saveChunk(c));
         }
     }
     
@@ -141,6 +148,7 @@ public class ChunkLoader implements IChunkLoader {
         }
     }
     
+    @Override
     public void finish() {
         saveEx.shutdown();
         try {

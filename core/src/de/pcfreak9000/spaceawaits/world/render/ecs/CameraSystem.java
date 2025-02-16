@@ -106,7 +106,7 @@ public class CameraSystem extends IteratingSystem {
         PlayerInputComponent pc = Components.PLAYER_INPUT.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
-        if (!pc.player.getGameMode().isTesting) {
+        if (this.bounds != null && !pc.player.getGameMode().isTesting) {
             x = Mathf.max(bounds.getTileX() + camera.viewportWidth / 2, x);
             y = Mathf.max(bounds.getTileY() + camera.viewportHeight / 2, y);
             x = Mathf.min(bounds.getWidth() - camera.viewportWidth / 2, x);

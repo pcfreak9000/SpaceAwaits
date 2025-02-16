@@ -1,11 +1,11 @@
 package de.pcfreak9000.spaceawaits.world.gen;
 
-import de.pcfreak9000.spaceawaits.world.World;
+import com.badlogic.ashley.core.Engine;
 
 public interface IWorldGenerator {
     
-    void generate(World world);
+    void generate(Engine world);
     
-    default void onLoading(World world) {
+    default void onLoading(Engine world) {
     }
 }

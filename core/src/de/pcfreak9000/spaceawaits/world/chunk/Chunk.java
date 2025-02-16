@@ -9,6 +9,7 @@ import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
@@ -27,8 +28,8 @@ import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.Bounds;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
@@ -71,8 +72,6 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     private final int tx;
     private final int ty;
     
-    private final World world;
-    
     private final TileStorage tiles;
     private final TileStorage tilesBackground;
     private final List<Entity> entities;
@@ -94,16 +93,16 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     
     private final Entity chunkEntity;
     
-    public Chunk(int rx, int ry, World world) {
+    public Chunk(int rx, int ry, WorldBounds world) {
         this.rx = rx;
         this.ry = ry;
-        this.world = world;
         this.tx = rx * CHUNK_SIZE;
         this.ty = ry * CHUNK_SIZE;
-        findAndSetActualBounds();
+        findAndSetActualBounds(world);
+        
         this.listeners = new ArrayList<>();
-        this.tiles = new TileStorage(world, CHUNK_SIZE, this.tx, this.ty, TileLayer.Front);
-        this.tilesBackground = new TileStorage(world, CHUNK_SIZE, this.tx, this.ty, TileLayer.Back);
+        this.tiles = new TileStorage(CHUNK_SIZE, this.tx, this.ty, TileLayer.Front);
+        this.tilesBackground = new TileStorage(CHUNK_SIZE, this.tx, this.ty, TileLayer.Back);
         
         this.entities = new ArrayList<>();
         this.immutableEntities = Collections.unmodifiableList(this.entities);
@@ -119,9 +118,9 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         this.tilesBckRender = new RenderTileStorage(RenderLayers.TILE_BACK, this, TileLayer.Back);
     }
     
-    private void findAndSetActualBounds() {
+    private void findAndSetActualBounds(WorldBounds wb) {
         Bounds naive = new Bounds(tx, ty, CHUNK_SIZE, CHUNK_SIZE);
-        this.chunkBounds = Bounds.intersect(naive, world.getBounds());
+        this.chunkBounds = Bounds.intersect(naive, wb);
     }
     
     private void notifyListeners(TileState state, Tile newTile, Tile oldTile, int gtx, int gty, TileLayer layer) {
@@ -184,10 +183,6 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     
     public boolean isActive() {
         return addedToEngine != null;
-    }
-    
-    Engine getECS() {
-        return addedToEngine;
     }
     
     public void addToECS(Engine ecs) {
@@ -307,12 +302,12 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
                 it.remove();
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
-                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.world, this.tileSystem, ticks);
+                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.addedToEngine, this.tileSystem, ticks);
                 }
             }
         }
         if (randomTickTileCount > 0) {
-            Random rand = this.world.getWorldRandom();
+            Random rand = new RandomXS128();//TODO this.world.getWorldRandom();
             for (int i = 0; i < 6; i++) {
                 TileLayer l = rand.nextBoolean() ? TileLayer.Front : TileLayer.Back;
                 int x = getGlobalTileX() + rand.nextInt(CHUNK_SIZE);
@@ -320,21 +315,20 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
                 if (inBounds(x, y)) {
                     Tile t = getTile(x, y, l);
                     if (t.receivesRandomTick()) {
-                        t.randomTick(x, y, l, world, tileSystem, ticks);
+                        t.randomTick(x, y, l, this.addedToEngine, tileSystem, ticks);
                     }
                 }
             }
         }
     }
     
-    public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
+    public void scheduleTick(TickCounterSystem tcs, int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
         if (inBounds(tx, ty) && tile != null && tile != Tile.NOTHING) {
-            tickTiles.add(new NextTickTile(tx, ty, layer, tile,
-                    waitticks + world.getSystem(TickCounterSystem.class).getTick()));//TODO hmm. maybe pool NextTickTile?
+            tickTiles.add(new NextTickTile(tx, ty, layer, tile, waitticks + tcs.getTick()));//TODO hmm. maybe pool NextTickTile? maybe reemove tcs from this and use tick from beginning?
         }
     }
     
-    public void addEntity(Entity e) {
+    public void addEntityStatic(Entity e) {
         if (Components.CHUNK.has(e)) {
             ChunkComponent mw = Components.CHUNK.get(e);
             if (mw.currentChunk != null) {
@@ -345,7 +339,14 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         this.entities.add(e);
     }
     
-    public void removeEntity(Entity e) {
+    public void addEntityAC(Entity e) {
+        addEntityStatic(e);
+        if (this.isActive()) {
+            this.addedToEngine.addEntity(e);
+        }
+    }
+    
+    public void removeEntityStatic(Entity e) {
         if (Components.CHUNK.has(e)) {
             ChunkComponent mw = Components.CHUNK.get(e);
             if (mw.currentChunk == null) {
@@ -354,6 +355,13 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
             mw.currentChunk = null;
         }
         this.entities.remove(e);
+    }
+    
+    public void removeEntityAC(Entity e) {
+        removeEntityStatic(e);
+        if (this.isActive()) {
+            this.addedToEngine.removeEntity(e);
+        }
     }
     
     public List<Entity> getEntities() {
@@ -382,7 +390,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         for (NBTTag t : entities.getContent()) {
             Entity e = EntitySerializer.deserializeEntity((NBTCompound) t);
             if (e != null) {
-                addEntity(e);
+                addEntityStatic(e);
             }
         }
     }

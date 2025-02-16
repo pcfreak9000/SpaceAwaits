@@ -17,10 +17,9 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.world.IChunkProvider;
-import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.physics.IQueryCallback;
 import de.pcfreak9000.spaceawaits.world.physics.IQueryFilter;
@@ -85,13 +84,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     private final SystemCache<TileSystem> tiles = new SystemCache<>(TileSystem.class);
     
-    private final IChunkProvider chunkProvider;
-    private final WorldBounds bounds;
-    
-    public PhysicsSystem(WorldBounds bounds, IChunkProvider chProv) {
+    public PhysicsSystem() {
         super(Family.all(PhysicsComponent.class).get());
-        this.chunkProvider = chProv;
-        this.bounds = bounds;
         
         this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(true);
@@ -247,7 +241,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         pc.body = null;
     }
     
-    //TODO this stuff belongs somewhere else, this is not physics relateed
+    //TODO this stuff belongs somewhere else, this is not physics related, or is it?
     
     private void unensureChunks() {
         if (tmpEntitiesDepth <= 0) {
@@ -265,7 +259,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void ensureChunksAABB(float x1, float y1, float x2, float y2) {
-        if (chunkProvider == null) {
+        if (getEngine().getSystem(ChunkSystem.class) == null) {
             return;
         }
         tmpEntitiesDepth++;
@@ -286,20 +280,18 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         //would be nice if coordinate point of things always was the lower left corner, then the upper bounds +1 could be left out
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
-                if (bounds.inBoundsChunk(i, j)) {
-                    Chunk c = chunkProvider.getChunk(i, j);
-                    if (c == null) { //hmm                        
-                        continue;
-                    }
-                    if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
-                        for (Entity e : c.getEntities()) {
-                            if (getFamily().matches(e)) {
-                                if (e.flags != EngineImproved.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
-                                    Components.PHYSICS.get(e).tmpadded = true;
-                                    tmpEntities.add(e);
-                                    entityAdded(e);
-                                    syncBodyToTransform(e);
-                                }
+                Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(i, j);
+                if (c == null) { //hmm                        
+                    continue;
+                }
+                if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
+                    for (Entity e : c.getEntities()) {
+                        if (getFamily().matches(e)) {
+                            if (e.flags != EngineImproved.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
+                                Components.PHYSICS.get(e).tmpadded = true;
+                                tmpEntities.add(e);
+                                entityAdded(e);
+                                syncBodyToTransform(e);
                             }
                         }
                     }

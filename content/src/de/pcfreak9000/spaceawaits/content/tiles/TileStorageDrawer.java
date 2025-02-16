@@ -21,7 +21,7 @@ public class TileStorageDrawer extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public ITileEntity createTileEntity(World world, int gtx, int gty, TileLayer layer) {
+    public ITileEntity createTileEntity(int gtx, int gty, TileLayer layer) {
         return new TileEntityStorageDrawer();
     }
     

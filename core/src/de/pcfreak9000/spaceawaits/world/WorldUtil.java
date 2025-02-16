@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.world;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
@@ -17,7 +18,7 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class WorldUtil {
     
-    public static void createWorldBorders(World world, int width, int height) {
+    public static void createWorldBorders(Engine world, int width, int height) {
         float wf = width;
         float hf = height;
         EntityInteractSystem eis = world.getSystem(EntityInteractSystem.class);
