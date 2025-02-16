@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.content.entities;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -26,8 +27,8 @@ import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent.OnNeighbourTileChange;
+import de.pcfreak9000.spaceawaits.world.ecs.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
@@ -72,13 +73,13 @@ public class TreeFactory implements EntityFactory {
         bc.breakable = new IBreakableEntity() {
             
             @Override
-            public void collectDrops(World world, Random random, Entity entity, Array<ItemStack> drops) {
+            public void collectDrops(Engine world, Random random, Entity entity, Array<ItemStack> drops) {
                 drops.add(new ItemStack(Tiles.WOOD.getItemDropped(), 3 + random.nextInt(4)));
                 drops.add(new ItemStack(Items.TWIG, random.nextInt(3)));
             }
             
             @Override
-            public void onEntityBreak(World world, Entity entity, IBreaker breaker) {
+            public void onEntityBreak(Engine world, Entity entity, IBreaker breaker) {
             }
         };
         entity.add(bc);

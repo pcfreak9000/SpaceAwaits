@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.RandomXS128;
 
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
-import de.pcfreak9000.spaceawaits.core.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
@@ -24,7 +24,7 @@ public abstract class World {
     protected final IWorldProperties worldProperties;
     private AmbientLightProvider ambientLightProvider;
     
-    protected final ModifiedEngine ecsEngine;
+    protected final EngineImproved ecsEngine;
     
     //Used for random item drops etc, not terrain gen etc
     private final RandomXS128 worldRandom;
@@ -33,7 +33,7 @@ public abstract class World {
     
     public World(WorldPrimer primer) {
         //initialize fields
-        this.ecsEngine = new ModifiedEngine(STEPLENGTH_SECONDS);
+        this.ecsEngine = new EngineImproved(STEPLENGTH_SECONDS);
         SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
         this.worldRandom = new RandomXS128();
         

@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.content.tiles;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -30,7 +31,7 @@ public class TileStorageDrawer extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+    public boolean onTileJustUse(Player player, Engine world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
             int gty, TileLayer layer) {
         TileEntityStorageDrawer te = (TileEntityStorageDrawer) tileSystem.getTileEntity(gtx, gty, layer);
         player.openContainer(new ContainerStorageDrawer(te));

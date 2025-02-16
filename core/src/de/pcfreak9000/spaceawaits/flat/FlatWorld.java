@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.RandomXS128;
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.assets.DynamicAssetListener;
 import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAssetAnnotationProcessor;
-import de.pcfreak9000.spaceawaits.core.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
@@ -18,7 +18,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 public class FlatWorld {
     public static final float STEPLENGTH_SECONDS = 1 / 60f;
     
-    protected final ModifiedEngine ecsEngine;
+    protected final EngineImproved ecsEngine;
     
     // Used for random item drops etc, not terrain gen etc
     private final RandomXS128 worldRandom;
@@ -27,7 +27,7 @@ public class FlatWorld {
     
     public FlatWorld() {
         // initialize fields
-        this.ecsEngine = new ModifiedEngine(STEPLENGTH_SECONDS);
+        this.ecsEngine = new EngineImproved(STEPLENGTH_SECONDS);
         this.worldRandom = new RandomXS128();
         
     }

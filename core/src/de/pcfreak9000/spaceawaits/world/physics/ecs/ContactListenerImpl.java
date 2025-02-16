@@ -1,12 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
@@ -17,12 +17,15 @@ class ContactListenerImpl implements ContactListener {
     
     private UserDataHelper userdata1 = new UserDataHelper();
     private UserDataHelper userdata2 = new UserDataHelper();
-    private final World world;
+    private Engine world;
     private final UnitConversion conv;
     
-    public ContactListenerImpl(World world, UnitConversion conv) {
-        this.world = world;
+    public ContactListenerImpl(UnitConversion conv) {
         this.conv = conv;
+    }
+    
+    public void setEngine(Engine engine) {
+        this.world = engine;
     }
     
     private IContactListener getListener(UserDataHelper in) {

@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
+import com.badlogic.ashley.core.Engine;
+
 import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.content.modules.IModuleEnergy;
 import de.pcfreak9000.spaceawaits.item.Item;
@@ -33,14 +35,14 @@ public class ItemJackhammer extends Item {
     }
     
     @Override
-    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex,
+    public boolean onItemJustUse(Player player, ItemStack stackUsed, Engine world, float x, float y, int tilex,
             int tiley, TileLayer layer) {
         player.openContainer(new ContainerJackhammer(stackUsed));
         return true;
     }
     
     @Override
-    public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
+    public boolean onItemBreakTile(Player player, ItemStack stackUsed, Engine world, float x, float y, TileSystem tiles,
             int tx, int ty, TileLayer layer) {
         ItemStack bat = ItemHelper.getNBTStoredItemStack(stackUsed, ContainerJackhammer.COMPOUNDID);
         if (ItemStack.isEmptyOrNull(bat)) {

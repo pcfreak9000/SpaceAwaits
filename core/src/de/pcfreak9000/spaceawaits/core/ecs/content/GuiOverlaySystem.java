@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
-import de.pcfreak9000.spaceawaits.core.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
@@ -39,7 +39,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        this.bus = ((ModifiedEngine) engine).getEventBus();
+        this.bus = ((EngineImproved) engine).getEventBus();
     }
     
     //    @Override

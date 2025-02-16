@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.world.tile;
 import java.util.Objects;
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
@@ -259,12 +260,12 @@ public class Tile extends Destructible {
         return false;
     }
     
-    public boolean onTileUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty,
+    public boolean onTileUse(Player player, Engine world, TileSystem tileSystem, ItemStack stackUsed, int gtx, int gty,
             TileLayer layer) {
         return false;
     }
     
-    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+    public boolean onTileJustUse(Player player, Engine world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
             int gty, TileLayer layer) {
         return false;
     }

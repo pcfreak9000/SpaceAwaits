@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 
-public class ModifiedEngine extends Engine {
+public class EngineImproved extends Engine {
     
     public static final int FLAG_ADDED = 1337;
     public static final int FLAG_NOTHING = 0;
@@ -32,7 +32,7 @@ public class ModifiedEngine extends Engine {
     
     private EventBus eventBus;
     
-    public ModifiedEngine(float stepsize) {
+    public EngineImproved(float stepsize) {
         setupReflectionStuff();
         this.stepsize = stepsize;
         this.eventBus = new EventBus();

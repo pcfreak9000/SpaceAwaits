@@ -1,11 +1,11 @@
 package de.pcfreak9000.spaceawaits.player;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.tile.InstantBreaker;
@@ -26,7 +26,7 @@ public class TestExplodeTilesAction implements Action {
     }
     
     @Override
-    public boolean handle(float mousex, float mousey, World world, Entity source) {
+    public boolean handle(float mousex, float mousey, Engine world, Entity source) {
         if (!Components.PLAYER_INPUT.get(source).player.getGameMode().isTesting) {
             return false;
         }

@@ -14,7 +14,6 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -31,14 +30,12 @@ public class ActivatorSystem extends EntitySystem {
                 .signum(Components.ACTIVATOR.get((Entity) e1).layer - Components.ACTIVATOR.get((Entity) e0).layer);
     };
     
-    private World world;
     private Player player;
     private ImmutableArray<Entity> entities;
     
     private boolean inGui;
     
-    public ActivatorSystem(World world) {
-        this.world = world;
+    public ActivatorSystem() {
     }
     
     @EventSubscription
@@ -83,11 +80,11 @@ public class ActivatorSystem extends EntitySystem {
             ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {
                 if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
-                    if (a.handle(mouse.x, mouse.y, world, e)) {
+                    if (a.handle(mouse.x, mouse.y, getEngine(), e)) {
                         return;
                     }
                 } else if (InptMgr.isJustReleased(a.getInputKey())) {
-                    if (a.handleRelease(mouse.x, mouse.y, this.world, e)) {
+                    if (a.handleRelease(mouse.x, mouse.y, getEngine(), e)) {
                         return;//Move this up to the top? What if the entity is removed from the system in the meantime? 
                         //Or leave this just here? should work fine
                     }
@@ -102,7 +99,7 @@ public class ActivatorSystem extends EntitySystem {
             ActivatorComponent ac = Components.ACTIVATOR.get(e);
             for (Activator a : ac.activators) {
                 if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
-                    if (a.handle(mouse.x, mouse.y, e, this.world, this.player.getPlayerEntity())) {
+                    if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getPlayerEntity())) {
                         return;
                     }
                 }

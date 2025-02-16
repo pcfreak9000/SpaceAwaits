@@ -247,7 +247,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (!tile.canBreak()) {
             return IBreaker.ABORTED_BREAKING;
         }
-        if (!breaker.canBreak(world, tile)) {
+        if (!breaker.canBreak(getEngine(), tile)) {
             return IBreaker.ABORTED_BREAKING;
         }
         //********************************
@@ -258,7 +258,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             t = new BreakTileProgress(tx, ty, layer);
             breakingTiles.put(l, t);
         }
-        float speedActual = breaker.breakIt(world, tile, t.getProgress());
+        float speedActual = breaker.breakIt(getEngine(), tile, t.getProgress());
         t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
         if (t.getProgress() >= IBreaker.FINISHED_BREAKING) {
             //********************************+
@@ -266,7 +266,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             Array<ItemStack> drops = new Array<>();
             tile.collectDrops(world, world.getWorldRandom(), tx, ty, layer, drops);
             tile.onTileBreak(tx, ty, layer, world, this, breaker);
-            breaker.onBreak(world, tile, drops, world.getWorldRandom());
+            breaker.onBreak(getEngine(), tile, drops, world.getWorldRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
                 ItemStack.dropRandomInTile(drops, world, tx, ty);

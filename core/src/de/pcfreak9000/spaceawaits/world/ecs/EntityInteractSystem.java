@@ -58,7 +58,7 @@ public class EntityInteractSystem extends IteratingSystem {
         if (!destr.canBreak()) {
             return IBreaker.ABORTED_BREAKING;
         }
-        if (!breaker.canBreak(world, destr)) {
+        if (!breaker.canBreak(getEngine(), destr)) {
             return IBreaker.ABORTED_BREAKING;
         }
         BreakingComponent bc = Components.BREAKING.get(entity);
@@ -66,7 +66,7 @@ public class EntityInteractSystem extends IteratingSystem {
             bc = new BreakingComponent();//Maybe pool breakingcomponent?
             entity.add(bc);
         }
-        float speedActual = breaker.breakIt(world, destr, bc.progress);
+        float speedActual = breaker.breakIt(getEngine(), destr, bc.progress);
         bc.last = bc.progress;
         bc.progress += speedActual * World.STEPLENGTH_SECONDS;
         if (bc.progress >= IBreaker.FINISHED_BREAKING) {
@@ -76,10 +76,10 @@ public class EntityInteractSystem extends IteratingSystem {
             Array<ItemStack> drops = new Array<>();
             Random worldRandom = world.getWorldRandom();
             if (validated) {
-                breakableComponent.breakable.collectDrops(world, worldRandom, entity, drops);
-                breakableComponent.breakable.onEntityBreak(world, entity, breaker);
+                breakableComponent.breakable.collectDrops(getEngine(), worldRandom, entity, drops);
+                breakableComponent.breakable.onEntityBreak(getEngine(), entity, breaker);
             }
-            breaker.onBreak(world, breakableComponent.destructable, drops, worldRandom);
+            breaker.onBreak(getEngine(), breakableComponent.destructable, drops, worldRandom);
             this.despawnEntity(entity);
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);

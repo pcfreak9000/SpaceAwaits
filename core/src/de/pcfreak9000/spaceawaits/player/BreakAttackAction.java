@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.player;
 import java.util.Comparator;
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 
@@ -10,7 +11,6 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
@@ -35,17 +35,17 @@ public class BreakAttackAction implements Action {
     private final IBreaker br = new IBreaker() {
         
         @Override
-        public float breakIt(World world, Destructible breakable, float f) {
+        public float breakIt(Engine world, Destructible breakable, float f) {
             return 1f / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(World world, Destructible breakable) {
+        public boolean canBreak(Engine world, Destructible breakable) {
             return breakable.getMaterialLevel() == 0.0f;
         }
         
         @Override
-        public void onBreak(World world, Destructible breakable, Array<ItemStack> drops, Random random) {
+        public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
         }
         
     };
@@ -63,7 +63,7 @@ public class BreakAttackAction implements Action {
     private ItemStack current;
     
     @Override
-    public boolean handle(float mousex, float mousey, World world, Entity source) {
+    public boolean handle(float mousex, float mousey, Engine world, Entity source) {
         TileSystem tiles = world.getSystem(TileSystem.class);
         Player player = Components.PLAYER_INPUT.get(source).player;
         boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
@@ -119,7 +119,7 @@ public class BreakAttackAction implements Action {
     }
     
     @Override
-    public boolean handleRelease(float mousex, float mousey, World world, Entity source) {
+    public boolean handleRelease(float mousex, float mousey, Engine world, Entity source) {
         Player player = Components.PLAYER_INPUT.get(source).player;
         ItemStack selected = player.getInventory().getSelectedStack();
         if (!ItemStack.isEmptyOrNull(current) && ItemStack.isItemEqual(current, selected)) {

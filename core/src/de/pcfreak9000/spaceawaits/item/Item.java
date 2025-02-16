@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.item;
 
 import java.util.Objects;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
 
@@ -13,7 +14,6 @@ import de.pcfreak9000.spaceawaits.module.ModuleHolder;
 import de.pcfreak9000.spaceawaits.module.ModuleID;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
@@ -100,22 +100,22 @@ public class Item {
         return textureProvider;
     }
     
-    public boolean onItemUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex, int tiley,
+    public boolean onItemUse(Player player, ItemStack stackUsed, Engine world, float x, float y, int tilex, int tiley,
             TileLayer layer) {
         return false;
     }
     
-    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex,
+    public boolean onItemJustUse(Player player, ItemStack stackUsed, Engine world, float x, float y, int tilex,
             int tiley, TileLayer layer) {
         return false;
     }
     
-    public boolean onItemBreakTile(Player player, ItemStack stackUsed, World world, float x, float y, TileSystem tiles,
+    public boolean onItemBreakTile(Player player, ItemStack stackUsed, Engine world, float x, float y, TileSystem tiles,
             int tx, int ty, TileLayer layer) {
         return false;
     }
     
-    public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, World world, float x, float y,
+    public boolean onItemBreakAttackEntity(Player player, ItemStack stackUsed, Engine world, float x, float y,
             Entity entity) {
         return false;
     }
@@ -140,7 +140,7 @@ public class Item {
         return false;
     }
     
-    public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, World world, float x, float y, int tx,
+    public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, Engine world, float x, float y, int tx,
             int ty, TileLayer layer) {
         return false;
     }

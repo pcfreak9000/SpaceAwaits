@@ -14,10 +14,11 @@ import com.badlogic.gdx.utils.Array;
 
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
-import de.pcfreak9000.spaceawaits.core.ecs.ModifiedEngine;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.IChunkProvider;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -85,15 +86,16 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final SystemCache<TileSystem> tiles = new SystemCache<>(TileSystem.class);
     
     private final IChunkProvider chunkProvider;
-    private final de.pcfreak9000.spaceawaits.world.World world;
+    private final WorldBounds bounds;
     
-    public PhysicsSystem(de.pcfreak9000.spaceawaits.world.World world, IChunkProvider chProv) {
+    public PhysicsSystem(WorldBounds bounds, IChunkProvider chProv) {
         super(Family.all(PhysicsComponent.class).get());
         this.chunkProvider = chProv;
-        this.world = world;
+        this.bounds = bounds;
+        
         this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(true);
-        this.contactEventDispatcher = new ContactListenerImpl(world, METER_CONV);
+        this.contactEventDispatcher = new ContactListenerImpl(METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);
     }
     
@@ -106,6 +108,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntityListener(getFamily(), this);
+        contactEventDispatcher.setEngine(engine);
     }
     
     @Override
@@ -216,7 +219,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
-        if (pc.tmpadded && entity.flags == ModifiedEngine.FLAG_ADDED) {
+        if (pc.tmpadded && entity.flags == EngineImproved.FLAG_ADDED) {
             tmpEntities.removeValue(entity, true);
             pc.tmpadded = false;
         }
@@ -244,6 +247,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         pc.body = null;
     }
     
+    //TODO this stuff belongs somewhere else, this is not physics relateed
+    
     private void unensureChunks() {
         if (tmpEntitiesDepth <= 0) {
             throw new IllegalStateException("Too much unensuring");
@@ -252,7 +257,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         if (tmpEntitiesDepth == 0) {
             while (tmpEntities.size > 0) {
                 Entity e = tmpEntities.pop();
-                if (e.flags != ModifiedEngine.FLAG_ADDED) {
+                if (e.flags != EngineImproved.FLAG_ADDED) {
                     entityRemoved(e);
                 }
             }
@@ -281,7 +286,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         //would be nice if coordinate point of things always was the lower left corner, then the upper bounds +1 could be left out
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
-                if (world.getBounds().inBoundsChunk(i, j)) {
+                if (bounds.inBoundsChunk(i, j)) {
                     Chunk c = chunkProvider.getChunk(i, j);
                     if (c == null) { //hmm                        
                         continue;
@@ -289,7 +294,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
                     if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
                         for (Entity e : c.getEntities()) {
                             if (getFamily().matches(e)) {
-                                if (e.flags != ModifiedEngine.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
+                                if (e.flags != EngineImproved.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
                                     Components.PHYSICS.get(e).tmpadded = true;
                                     tmpEntities.add(e);
                                     entityAdded(e);

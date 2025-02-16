@@ -2,6 +2,7 @@ package mod;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
@@ -9,7 +10,6 @@ import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
@@ -36,7 +36,7 @@ public class ItemMininglaser extends Item {
     }
     
     @Override
-    public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, World world, float x, float y, int tx,
+    public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, Engine world, float x, float y, int tx,
             int ty, TileLayer layer) {
         TransformComponent tc = Components.TRANSFORM.get(player.getPlayerEntity());
         world.getSystem(TileSystem.class).raycastTiles(tc.position.x + 1, tc.position.y + 2, x, y, TileLayer.Front,
@@ -56,17 +56,17 @@ public class ItemMininglaser extends Item {
     private final IBreaker tilebreaker = new IBreaker() {
         
         @Override
-        public float breakIt(World world, Destructible breakable, float f) {
+        public float breakIt(Engine world, Destructible breakable, float f) {
             return 15 / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(World world, Destructible breakable) {
+        public boolean canBreak(Engine world, Destructible breakable) {
             return true;
         }
         
         @Override
-        public void onBreak(World world, Destructible breakable, Array<ItemStack> drops, Random random) {
+        public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
         }
         
     };

@@ -7,16 +7,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
 import de.pcfreak9000.spaceawaits.player.Player.GameMode;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 
 public class PhysicsForcesSystem extends IteratingSystem {
     
-    private final World world;
-    
-    public PhysicsForcesSystem(World world) {
+    public PhysicsForcesSystem() {
         super(Family.all(PhysicsComponent.class).get());
-        this.world = world;
     }
     
     @Override

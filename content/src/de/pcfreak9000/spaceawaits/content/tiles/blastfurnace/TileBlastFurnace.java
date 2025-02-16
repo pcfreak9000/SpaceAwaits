@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.content.tiles.blastfurnace;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.content.Tools;
@@ -28,7 +29,7 @@ public class TileBlastFurnace extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+    public boolean onTileJustUse(Player player, Engine world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
             int gty, TileLayer layer) {
         player.openContainer(
                 new ContainerBlastFurnace((TileEntityBlastFurnace) tileSystem.getTileEntity(gtx, gty, layer)));

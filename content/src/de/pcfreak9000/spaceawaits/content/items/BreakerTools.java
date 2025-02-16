@@ -2,11 +2,11 @@ package de.pcfreak9000.spaceawaits.content.items;
 
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
 public class BreakerTools implements IBreaker {
@@ -26,17 +26,17 @@ public class BreakerTools implements IBreaker {
     }
     
     @Override
-    public float breakIt(World world, Destructible breakable, float progressCurrent) {
+    public float breakIt(Engine world, Destructible breakable, float progressCurrent) {
         return basespeed / breakable.getHardness();
     }
     
     @Override
-    public boolean canBreak(World world, Destructible breakable) {
+    public boolean canBreak(Engine world, Destructible breakable) {
         return breakable.getMaterialLevel() <= level && tool == breakable.getRequiredTool();
     }
     
     @Override
-    public void onBreak(World world, Destructible breakable, Array<ItemStack> drops, Random random) {
+    public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
     }
     
 }

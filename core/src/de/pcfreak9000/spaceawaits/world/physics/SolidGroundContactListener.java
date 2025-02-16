@@ -1,12 +1,12 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 
 public class SolidGroundContactListener implements IContactListener {
@@ -19,7 +19,7 @@ public class SolidGroundContactListener implements IContactListener {
     
     @Override
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
-            World world) {
+            Engine world) {
         if (!other.getFixture().isSensor() && contact.isTouching()) {
             backingComp.solidGroundContacts++;
         }
@@ -28,7 +28,7 @@ public class SolidGroundContactListener implements IContactListener {
     
     @Override
     public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
-            World world) {
+            Engine world) {
         if (!other.getFixture().isSensor()) {
             backingComp.solidGroundContacts--;
             if (backingComp.solidGroundContacts < 0) {
@@ -52,13 +52,13 @@ public class SolidGroundContactListener implements IContactListener {
     
     @Override
     public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
-            UnitConversion conv, World world) {
+            UnitConversion conv, Engine world) {
         return false;
     }
     
     @Override
     public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
-            UnitConversion conv, World world) {
+            UnitConversion conv, Engine world) {
         return false;
     }
     

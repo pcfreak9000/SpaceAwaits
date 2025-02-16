@@ -1,5 +1,7 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
+import com.badlogic.ashley.core.Engine;
+
 import de.pcfreak9000.spaceawaits.content.ContainerCrafter;
 import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -24,7 +26,7 @@ public class TilePrimitiveCrafting extends Tile {
     }
     
     @Override
-    public boolean onTileJustUse(Player player, World world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
+    public boolean onTileJustUse(Player player, Engine world, TileSystem tileSystem, ItemStack stackUsed, int gtx,
             int gty, TileLayer layer) {
         player.openContainer(new ContainerCrafter(3));
         return true;

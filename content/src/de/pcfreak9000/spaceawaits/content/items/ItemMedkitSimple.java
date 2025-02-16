@@ -1,12 +1,12 @@
 package de.pcfreak9000.spaceawaits.content.items;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent.StatData;
@@ -26,7 +26,7 @@ public class ItemMedkitSimple extends Item {
     }
     
     @Override
-    public boolean onItemJustUse(Player player, ItemStack stackUsed, World world, float x, float y, int tilex,
+    public boolean onItemJustUse(Player player, ItemStack stackUsed, Engine world, float x, float y, int tilex,
             int tiley, TileLayer layer) {
         PhysicsSystem phys = world.getSystem(PhysicsSystem.class);
         Array<Object> ent = phys.queryXY(x, y, (udh, uc) -> udh.isEntity() && Components.STATS.has(udh.getEntity())

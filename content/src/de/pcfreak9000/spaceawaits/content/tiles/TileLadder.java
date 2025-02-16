@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -45,7 +46,7 @@ public class TileLadder extends Tile implements IContactListener {
     
     @Override
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
-            World world) {
+            Engine world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
             Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts++;
         }
@@ -54,7 +55,7 @@ public class TileLadder extends Tile implements IContactListener {
     
     @Override
     public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
-            World world) {
+            Engine world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
             Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts--;
         }
@@ -63,13 +64,13 @@ public class TileLadder extends Tile implements IContactListener {
     
     @Override
     public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
-            UnitConversion conv, World world) {
+            UnitConversion conv, Engine world) {
         return false;
     }
     
     @Override
     public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
-            UnitConversion conv, World world) {
+            UnitConversion conv, Engine world) {
         return false;
     }
 }
