@@ -18,6 +18,11 @@ public class RendererEvents {
         }
     }
     
+    public static class PreFrameEvent extends Event {
+        
+    }
+    
+    @Deprecated
     public static class UpdateAnimationEvent extends Event {
         public final float dt;
         

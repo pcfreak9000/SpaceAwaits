@@ -20,7 +20,7 @@ public class RenderStatsStrategy extends AbstractRenderStrategy {
     
     public RenderStatsStrategy(GameScreen rend) {
         super(Family.all(TransformComponent.class, StatsComponent.class, RenderStatsComponent.class).get());
-        this.batch = rend.getSpriteBatch();
+        this.batch = rend.getRenderHelper().getSpriteBatch();
     }
     
     @Override

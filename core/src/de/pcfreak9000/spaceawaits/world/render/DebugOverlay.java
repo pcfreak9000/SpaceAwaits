@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldCombined;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -84,8 +85,8 @@ public class DebugOverlay {
         this.chunkUpdates.setText(String.format("up: %d ld: %d", updatedChunks, loadedChunks));
         this.playerPos.setText(String.format("x: %.3f y: %.3f", playerPos.x, playerPos.y));
         this.chunkPos.setText(String.format("cx: %d cy: %d", cx, cy));
-        int tx = Tile.toGlobalTile(renderer.getMouseWorldPos().x);
-        int ty = Tile.toGlobalTile(renderer.getMouseWorldPos().y);
+        int tx = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().x);
+        int ty = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().y);
         TileSystem ts = world.getSystem(TileSystem.class);
         Tile front = ts.getTile(tx, ty, TileLayer.Front);
         Tile back = ts.getTile(tx, ty, TileLayer.Back);

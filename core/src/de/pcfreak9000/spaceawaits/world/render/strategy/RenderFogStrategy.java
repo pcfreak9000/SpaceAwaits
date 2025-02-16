@@ -14,6 +14,7 @@ import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderFogComponent;
@@ -40,8 +41,8 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     @Override
     public void begin() {
         super.begin();
-        renderer.setDefaultBlending();
-        renderer.applyViewport();
+        RenderHelper.setDefaultBlending();
+        renderer.getRenderHelper().applyViewport();
     }
     
     @Override

@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -50,7 +51,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);
-        this.batchSimple = rend.getSpriteBatch();
+        this.batchSimple = rend.getRenderHelper().getSpriteBatch();
         this.batch.setShader(shader.getShader());
         world.getWorldBus().register(this);
         resize();
@@ -86,13 +87,13 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         this.refl.begin();
         ScreenUtils.clear(0, 0, 0, 0);
         this.batchSimple.begin();
-        this.rend.getFBOStack().drawAll(batchSimple, camera);
+        this.rend.getRenderHelper().getFBOStack().drawAll(batchSimple, camera);
         this.batchSimple.end();
         this.refl.end();
-        this.rend.getFBOStack().rebind();
+        this.rend.getRenderHelper().getFBOStack().rebind();
         shader.getShader().bind();
         batch.setProjectionMatrix(this.camera.combined);
-        this.rend.setDefaultBlending(batch);
+        RenderHelper.setDefaultBlending(batch);
         // batch.setDefaultBlending();
         batch.begin();
     }

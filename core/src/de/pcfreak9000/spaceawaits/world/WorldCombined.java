@@ -54,6 +54,7 @@ public class WorldCombined extends World {
     
     public void initRenderableWorld(WorldScreen screen) {
         setupECS(ecsEngine, screen);
+        
         unchunkProvider.load();//TODO Move this?
         if (worldProperties.autoWorldBorders()) {
             WorldUtil.createWorldBorders(this, getBounds().getWidth(), getBounds().getHeight());
@@ -72,9 +73,13 @@ public class WorldCombined extends World {
         ecsEngine.removeAllEntities();
         //can't use ecsEngine.removeAllSystems(); because systems need to be unregistered
         EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        //first decouple...
         for (EntitySystem es : syss) {
             ecsEngine.removeSystem(es);
-            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling 
+            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling. Systems shouldn't register to this BUS anyways, at least usually. 
+        }
+        //...then dispose
+        for (EntitySystem es : syss) {
             if (es instanceof Disposable) {
                 Disposable d = (Disposable) es;
                 d.dispose();
@@ -92,19 +97,19 @@ public class WorldCombined extends World {
             engine.addEntityListener(dal.getFamily(), dal);
         }
         SystemResolver ecs = new SystemResolver();
-        ecs.addSystem(new InventoryOpenerSystem(gameScreen, this));
+        ecs.addSystem(new InventoryOpenerSystem());
         ecs.addSystem(new EntityInteractSystem(this, chunkProvider, unchunkProvider));
         ecs.addSystem(new TileSystem(this, chunkProvider));
-        ecs.addSystem(new PlayerInputSystem(this, gameScreen));
-        ecs.addSystem(new ActivatorSystem(gameScreen, this));
-        ecs.addSystem(new FollowMouseSystem(gameScreen));
+        ecs.addSystem(new PlayerInputSystem(this));
+        ecs.addSystem(new ActivatorSystem(this));
+        ecs.addSystem(new FollowMouseSystem());
         //ecs.addSystem(new MoveTestSystem());
         ecs.addSystem(new BreakingSystem());
         ecs.addSystem(new PhysicsForcesSystem(this));
         PhysicsSystem phsys = new PhysicsSystem(this, chunkProvider);
         ecs.addSystem(phsys);
         ecs.addSystem(new WorldEntityChunkAdjustSystem(chunkProvider));
-        ecs.addSystem(new CameraSystem(this, gameScreen));
+        ecs.addSystem(new CameraSystem(this.getBounds(), gameScreen.getRenderHelper()));
         ecs.addSystem(ticketHandler = new TicketedChunkManager(this, chunkProvider));
         ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
         ecs.addSystem(new RenderSystem(this, gameScreen));
@@ -123,7 +128,7 @@ public class WorldCombined extends World {
         this.getSystem(GuiOverlaySystem.class).setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 2));
-        SpaceAwaits.BUS.post(new WorldEvents.PlayerJoinedEvent(this, player));
+        getWorldBus().post(new WorldEvents.PlayerJoinedEvent(this, player));
     }
     
     @Override
@@ -131,7 +136,7 @@ public class WorldCombined extends World {
         super.removePlayer(player);
         removeTicket(currentPlayerTicket);
         currentPlayerTicket = null;
-        SpaceAwaits.BUS.post(new WorldEvents.PlayerLeftEvent(this, player));
+        getWorldBus().post(new WorldEvents.PlayerLeftEvent(this, player));
     }
     
     public int getLoadedChunksCount() {

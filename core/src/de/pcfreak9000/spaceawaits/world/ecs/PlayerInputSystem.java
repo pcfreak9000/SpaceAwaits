@@ -15,7 +15,6 @@ import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
@@ -29,16 +28,16 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
-    private final GameScreen worldRend;
-    
     private Player player;
     
     private World world;
     
     private Entity tileSelectorEntity;
     
-    public PlayerInputSystem(World world, GameScreen renderer) {
-        this.worldRend = renderer;
+    //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
+    private boolean inGui;
+    
+    public PlayerInputSystem(World world) {
         this.tileSelectorEntity = createTileSelectorEntity();
         this.world = world;
     }
@@ -46,6 +45,16 @@ public class PlayerInputSystem extends EntitySystem {
     @EventSubscription
     public void joined(WorldEvents.PlayerJoinedEvent ev) {
         this.player = ev.player;
+    }
+    
+    @EventSubscription
+    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
+        inGui = true;
+    }
+    
+    @EventSubscription
+    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
+        inGui = false;
     }
     
     @EventSubscription
@@ -75,8 +84,7 @@ public class PlayerInputSystem extends EntitySystem {
         if (this.player == null) {
             return;
         }
-        //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
-        boolean enableInput = !worldRend.isGuiContainerOpen();
+        boolean enableInput = !this.inGui;
         Entity entity = this.player.getPlayerEntity();
         Vector2 pos = Components.TRANSFORM.get(entity).position;
         for (ItemStack s : player.getDroppingQueue()) {
@@ -87,8 +95,6 @@ public class PlayerInputSystem extends EntitySystem {
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
         float vx = 0;
-        //        Vector2 transform = transformMapper.get(entity).position;
-        //if (physicsMapper.get(entities.get(0)).onGround) {
         boolean up = enableInput && InptMgr.isPressed(EnumInputIds.Up);
         boolean left = enableInput && InptMgr.isPressed(EnumInputIds.Left);
         boolean down = enableInput && InptMgr.isPressed(EnumInputIds.Down);

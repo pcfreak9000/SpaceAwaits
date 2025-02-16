@@ -82,7 +82,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         this.renderStrategies = new OrderedSet<>();
         this.lightRenderer = new LightRenderer(world, renderer);
         this.renderer = renderer;
-        this.batch = renderer.getSpriteBatch();// new SpriteBatchImpr(100);
+        this.batch = renderer.getRenderHelper().getSpriteBatch();
         resize();
         SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
     }
@@ -192,7 +192,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public void update(float deltaTime) {
         boolean dolight = dolightsetting;
         super.update(deltaTime);
-        renderer.getFBOStack().push(sceneBuffer);
+        renderer.getRenderHelper().getFBOStack().push(sceneBuffer);
         ScreenUtils.clear(0, 0, 0, 0);
         IRenderStrategy last = null;
         float lastLayer = Float.NEGATIVE_INFINITY;
@@ -200,12 +200,12 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         sortIfNecessary();
         for (Entity e : entities) {
             RenderComponent rc = Components.RENDER.get(e);
-            if (!rc.enabled || (rc.considerAsGui && !renderer.isShowGui())) {
+            if (!rc.enabled || (rc.considerAsGui && !renderer.isShowGuiElements())) {
                 continue;
             }
             boolean startLight = lastLayer < BEGIN_LIGHT_LAYER && rc.getLayer() >= BEGIN_LIGHT_LAYER && dolight;
             for (IRenderStrategy dec : rc.renderStrategies) {
-                if (dec.considerGui() && !renderer.isShowGui()) {
+                if (dec.considerGui() && !renderer.isShowGuiElements()) {
                     continue;
                 }
                 if (dec != last || startLight) {
@@ -238,8 +238,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         if (!endedLight && dolight) {
             lightRenderer.exitAndRenderLitScene();
         }
-        renderer.getFBOStack().pop(sceneBuffer);
-        renderer.applyViewport();
+        renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
+        renderer.getRenderHelper().applyViewport();
         batch.setDefaultBlending();
         batch.setColor(Color.WHITE);
         Camera cam = getEngine().getSystem(CameraSystem.class).getCamera();//TODO decouple systems???

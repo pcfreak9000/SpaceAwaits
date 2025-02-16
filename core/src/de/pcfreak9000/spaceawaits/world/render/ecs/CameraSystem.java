@@ -3,8 +3,10 @@ package de.pcfreak9000.spaceawaits.world.render.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -12,8 +14,8 @@ import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
+import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -27,22 +29,35 @@ public class CameraSystem extends IteratingSystem {
     
     private float zoom = 1;
     
-    private World world;
-    private GameScreen screen;
+    private Bounds bounds;
+    private Vector2 mousePosVec = new Vector2();
     
-    public CameraSystem(World world, GameScreen screen) {
+    public CameraSystem(Bounds bounds, RenderHelper renderHelper) {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
-        this.world = world;
-        this.screen = screen;
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(VISIBLE_TILES_MIN, VISIBLE_TILES_MIN, VISIBLE_TILES_MAX, VISIBLE_TILES_MAX,
                 camera);
-        SpaceAwaits.BUS.register(this);
+        renderHelper.setViewport(viewport);
+    }
+    
+    @EventSubscription
+    private void ev2(RendererEvents.PreFrameEvent ev) {
+        updateMouseWorldPosCache();
     }
     
     @EventSubscription
     private void ev(RendererEvents.ResizeWorldRendererEvent ev) {
         this.viewport.update(ev.widthNew, ev.heightNew);
+    }
+    
+    //Move to some InputSystem?
+    private void updateMouseWorldPosCache() {
+        mousePosVec.set(Gdx.input.getX(), Gdx.input.getY());
+        mousePosVec = this.getViewport().unproject(mousePosVec);
+    }
+    
+    public Vector2 getMouseWorldPos() {
+        return mousePosVec;
     }
     
     public OrthographicCamera getCamera() {
@@ -78,13 +93,11 @@ public class CameraSystem extends IteratingSystem {
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
         if (!pc.player.getGameMode().isTesting) {
-            x = Mathf.max(camera.viewportWidth / 2, x);
-            y = Mathf.max(camera.viewportHeight / 2, y);
-            x = Mathf.min(world.getBounds().getWidth() - camera.viewportWidth / 2, x);
-            y = Mathf.min(world.getBounds().getHeight() - camera.viewportHeight / 2, y);
+            x = Mathf.max(bounds.getTileX() + camera.viewportWidth / 2, x);
+            y = Mathf.max(bounds.getTileY() + camera.viewportHeight / 2, y);
+            x = Mathf.min(bounds.getWidth() - camera.viewportWidth / 2, x);
+            y = Mathf.min(bounds.getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        //TODO applying viewport at correct place...
-        screen.applyViewport();
     }
 }

@@ -45,7 +45,7 @@ public class LightRenderer implements Disposable {
     }
     
     public void enterLitScene() {
-        this.renderer.getFBOStack().push(sceneBuffer);
+        this.renderer.getRenderHelper().getFBOStack().push(sceneBuffer);
         //sceneBuffer.begin();
         ScreenUtils.clear(0, 0, 0, 0);
     }
@@ -62,9 +62,9 @@ public class LightRenderer implements Disposable {
     }
     
     public void exitAndRenderLitScene() {
-        this.renderer.getFBOStack().pop(sceneBuffer);
+        this.renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
         Camera cam = world.getSystem(CameraSystem.class).getCamera();
-        SpriteBatchImpr batch = renderer.getSpriteBatch();
+        SpriteBatchImpr batch = renderer.getRenderHelper().getSpriteBatch();
         batch.resetSettings();
         
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
@@ -87,7 +87,7 @@ public class LightRenderer implements Disposable {
         }
         //}
         
-        this.renderer.getFBOStack().push(lightsBuffer);//This framebuffer is good because places where the light is not yet calculated will be pitch black
+        this.renderer.getRenderHelper().getFBOStack().push(lightsBuffer);//This framebuffer is good because places where the light is not yet calculated will be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);
             if (texture != null) {
@@ -97,16 +97,16 @@ public class LightRenderer implements Disposable {
                 batch.end();
             }
         }
-        this.renderer.getFBOStack().pop(lightsBuffer);
-        this.renderer.getFBOStack().push(sceneBuffer);
-        renderer.applyViewport();
+        this.renderer.getRenderHelper().getFBOStack().pop(lightsBuffer);
+        this.renderer.getRenderHelper().getFBOStack().push(sceneBuffer);
+        renderer.getRenderHelper().applyViewport();
         batch.setMultiplicativeBlending();
         batch.begin();
         batch.draw(this.lightsBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
                 this.lightsBuffer.getWidth(), this.lightsBuffer.getHeight(), false, true);
         batch.end();
-        this.renderer.getFBOStack().pop(sceneBuffer);
+        this.renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
         batch.setDefaultBlending();
         batch.begin();
         batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,

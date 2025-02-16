@@ -20,7 +20,7 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     
     public RenderTileBreakingStrategy(GameScreen renderer) {
         super(Family.all(BreakingTilesComponent.class).get());
-        this.b = renderer.getSpriteBatch();
+        this.b = renderer.getRenderHelper().getSpriteBatch();
     }
     
     @Override

@@ -13,12 +13,11 @@ import com.badlogic.gdx.utils.Array;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
-import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
-import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 public class ActivatorSystem extends EntitySystem {
@@ -32,19 +31,29 @@ public class ActivatorSystem extends EntitySystem {
                 .signum(Components.ACTIVATOR.get((Entity) e1).layer - Components.ACTIVATOR.get((Entity) e0).layer);
     };
     
-    private GameScreen gameRend;
     private World world;
     private Player player;
     private ImmutableArray<Entity> entities;
     
-    public ActivatorSystem(GameScreen rend, World world) {
-        this.gameRend = rend;
+    private boolean inGui;
+    
+    public ActivatorSystem(World world) {
         this.world = world;
     }
     
     @EventSubscription
     private void plEv(WorldEvents.PlayerJoinedEvent ev) {
         this.player = ev.player;
+    }
+    
+    @EventSubscription
+    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
+        inGui = true;
+    }
+    
+    @EventSubscription
+    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
+        inGui = false;
     }
     
     @Override
@@ -61,10 +70,10 @@ public class ActivatorSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
-        if (getEngine().getSystem(GuiOverlaySystem.class).isGuiContainerOpen()) {
-            return;//TODO decouple systems...
+        if (inGui) {
+            return;
         }
-        Vector2 mouse = gameRend.getMouseWorldPos();
+        Vector2 mouse = getEngine().getSystem(CameraSystem.class).getMouseWorldPos();
         if (!getEngine().getSystem(CameraSystem.class).getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }

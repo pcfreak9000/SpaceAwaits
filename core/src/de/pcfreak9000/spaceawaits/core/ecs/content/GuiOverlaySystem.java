@@ -1,10 +1,13 @@
 package de.pcfreak9000.spaceawaits.core.ecs.content;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.utils.Disposable;
 
+import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.ModifiedEngine;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
@@ -14,7 +17,7 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.render.DebugOverlay;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
-public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker {
+public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker, Disposable {
     
     private GameScreen gamescreen;
     
@@ -25,29 +28,43 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
     
     private Hud hud;
     
+    private EventBus bus;
+    
     public GuiOverlaySystem(GameScreen gs) {
         this.gamescreen = gs;
         this.debugScreen = new DebugOverlay(this.gamescreen);
         this.hud = new Hud(gs.getGuiHelper());
     }
     
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        this.bus = ((ModifiedEngine) engine).getEventBus();
+    }
+    
+    //    @Override
+    //    public void removedFromEngine(Engine engine) {
+    //        super.removedFromEngine(engine);
+    //        this.bus = null;
+    //    }
+    
     //Always takes a new GuiContainer. Is that the way to go?
     public void setGuiCurrent(GuiOverlay guicont) {
         if (guicont == null && isGuiContainerOpen()) {
-            SpaceAwaits.BUS.post(new RendererEvents.CloseGuiOverlay(this.guiContainerCurrent));
+            bus.post(new RendererEvents.CloseGuiOverlay(this.guiContainerCurrent));
             //Possibly closing logic first
             this.guiContainerCurrent.onClosed();
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
             this.guiContainerCurrent = null;
-        } else if (guicont != null) {// if (!isGuiContainerOpen())
+        } else if (guicont != null) {
             if (isGuiContainerOpen()) {
                 setGuiCurrent(null);
             }
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
             this.guiContainerCurrent.onOpened();
-            SpaceAwaits.BUS.post(new RendererEvents.OpenGuiOverlay(guicont));
+            bus.post(new RendererEvents.OpenGuiOverlay(guicont));
             //Possibly opening logic
         }
     }
@@ -62,13 +79,13 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
             showDebugScreen = !showDebugScreen;
         }
         if (InptMgr.isJustPressed(EnumInputIds.HideHud)) {
-            this.gamescreen.setShowGui(!this.gamescreen.isShowGui());
+            this.gamescreen.setShowGuiElements(!this.gamescreen.isShowGuiElements());
         }
         if (this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc)) {
             GuiEsc gesc = new GuiEsc();
             gesc.createAndOpen(null);//Hmmmmmmm
         }
-        if (this.gamescreen.isShowGui()) {
+        if (this.gamescreen.isShowGuiElements()) {
             this.hud.actAndDraw(delta);
             if (showDebugScreen) {
                 this.debugScreen.actAndDraw(delta);
@@ -82,5 +99,10 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
     @Deprecated
     public void setPlayer(Player player) {
         this.hud.setPlayer(player);
+    }
+    
+    @Override
+    public void dispose() {
+        setGuiCurrent(null);
     }
 }

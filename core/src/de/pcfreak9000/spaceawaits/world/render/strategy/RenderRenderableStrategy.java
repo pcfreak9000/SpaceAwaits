@@ -22,13 +22,13 @@ public class RenderRenderableStrategy extends AbstractRenderStrategy {
     
     public RenderRenderableStrategy(GameScreen renderer) {
         super(Family.all(RenderRenderableComponent.class, TransformComponent.class).get());
-        this.b = renderer.getSpriteBatch();
+        this.b = renderer.getRenderHelper().getSpriteBatch();
         this.renderer = renderer;
     }
     
     @Override
     public void begin() {
-        renderer.applyViewport();
+        renderer.getRenderHelper().applyViewport();
         this.b.begin();
         this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
     }
