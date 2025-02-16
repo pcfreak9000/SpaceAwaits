@@ -16,7 +16,7 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
@@ -36,12 +36,12 @@ public class CameraSystem extends IteratingSystem {
     
     private boolean inGui;
     
-    public CameraSystem(Bounds bounds, RenderHelper renderHelper) {
+    public CameraSystem(Bounds bounds, RenderHelper2D renderHelper2D) {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(VISIBLE_TILES_MIN, VISIBLE_TILES_MIN, VISIBLE_TILES_MAX, VISIBLE_TILES_MAX,
                 camera);
-        renderHelper.setViewport(viewport);
+        renderHelper2D.setViewport(viewport);
     }
     
     @EventSubscription

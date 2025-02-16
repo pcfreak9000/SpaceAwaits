@@ -24,7 +24,6 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -48,10 +47,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     public static final class RegisterRenderStrategiesEvent extends Event {
         private final OrderedSet<IRenderStrategy> renderStrategies;
-        public final World world;
+        public final Engine world;
         public final GameScreen renderer;
         
-        public RegisterRenderStrategiesEvent(OrderedSet<IRenderStrategy> rendstrat, World world, GameScreen renderer) {
+        public RegisterRenderStrategiesEvent(OrderedSet<IRenderStrategy> rendstrat, Engine world, GameScreen renderer) {
             this.renderStrategies = rendstrat;
             this.world = world;
             this.renderer = renderer;
@@ -77,14 +76,14 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private boolean dolightsetting = true;
     
-    public RenderSystem(World world, GameScreen renderer) {
+    public RenderSystem(Engine engine, GameScreen renderer) {
         this.entities = new Array<>();
         this.renderStrategies = new OrderedSet<>();
-        this.lightRenderer = new LightRenderer(renderer);//TODO getEngine is null here
+        this.lightRenderer = new LightRenderer(renderer);
         this.renderer = renderer;
         this.batch = renderer.getRenderHelper().getSpriteBatch();
         resize();
-        SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, world, renderer));
+        SpaceAwaits.BUS.post(new RegisterRenderStrategiesEvent(this.renderStrategies, engine, renderer));
     }
     
     @EventSubscription

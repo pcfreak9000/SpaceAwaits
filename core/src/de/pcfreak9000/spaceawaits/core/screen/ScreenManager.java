@@ -5,7 +5,7 @@ import de.pcfreak9000.spaceawaits.flat.FlatPlayer;
 import de.pcfreak9000.spaceawaits.flat.FlatScreen;
 import de.pcfreak9000.spaceawaits.flat.FlatWorld;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.WorldCombined;
+import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.render.WorldScreen;
 
 public class ScreenManager {
@@ -30,7 +30,7 @@ public class ScreenManager {
         this.space.setScreen(new SelectSaveScreen(this, guiHelper));
     }
 
-    public void setWorldScreen(WorldCombined world, Player player) {
+    public void setWorldScreen(World world, Player player) {
         this.space.setScreen(new WorldScreen(guiHelper, world, player));
     }
 

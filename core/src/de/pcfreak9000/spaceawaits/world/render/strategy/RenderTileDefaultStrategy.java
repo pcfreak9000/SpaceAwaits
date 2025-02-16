@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongArray;
 
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -36,7 +36,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     @Override
     public void begin() {
         this.camera = getEngine().getSystem(CameraSystem.class).getCamera();
-        RenderHelper.setDefaultBlending();
+        RenderHelper2D.setDefaultBlending();
         regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;
         

@@ -15,7 +15,7 @@ public abstract class GameScreen extends ScreenAdapter {
     /* Technical stuff */
     
     private GuiHelper guiHelper;
-    private RenderHelper renderHelper;
+    private RenderHelper2D renderHelper2D;
     
     private float renderTime = 0;
     
@@ -26,15 +26,15 @@ public abstract class GameScreen extends ScreenAdapter {
     
     public GameScreen(GuiHelper guiHelper) {
         this.guiHelper = guiHelper;
-        this.renderHelper = new RenderHelper();
+        this.renderHelper2D = new RenderHelper2D();
     }
     
     public GuiHelper getGuiHelper() {
         return guiHelper;
     }
     
-    public RenderHelper getRenderHelper() {
-        return renderHelper;
+    public RenderHelper2D getRenderHelper() {
+        return renderHelper2D;
     }
     
     public boolean isShowGuiElements() {
@@ -85,7 +85,7 @@ public abstract class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         super.dispose();
-        this.renderHelper.dispose();
+        this.renderHelper2D.dispose();
     }
     
     public float getRenderTime() {

@@ -10,14 +10,14 @@ import com.cyphercove.flexbatch.FlexBatch;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.util.FrameBufferStack;
 
-public class RenderHelper implements Disposable {
+public class RenderHelper2D implements Disposable {
     
     private SpriteBatchImpr spriteBatch;
     private FrameBufferStack fbostack;
     
     private Viewport viewport;
     
-    public RenderHelper() {
+    public RenderHelper2D() {
         this.spriteBatch = new SpriteBatchImpr(8191);//8191 is the max sadly...
         this.fbostack = FrameBufferStack.GLOBAL;
     }

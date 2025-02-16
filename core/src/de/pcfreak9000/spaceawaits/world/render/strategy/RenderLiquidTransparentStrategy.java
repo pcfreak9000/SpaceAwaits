@@ -17,11 +17,11 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
+import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.Util;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -47,13 +47,13 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     
     private FrameBuffer refl;
     
-    public RenderLiquidTransparentStrategy(GameScreen rend, World world) {
+    public RenderLiquidTransparentStrategy(GameScreen rend, Engine world) {
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
         this.rend = rend;
         this.batch = new FlexBatch<>(LiquidQuad2D.class, 32767, 0);
         this.batchSimple = rend.getRenderHelper().getSpriteBatch();
         this.batch.setShader(shader.getShader());
-        world.getWorldBus().register(this);
+        ((EngineImproved) world).getEventBus().register(this);//FIXME This is not unregistered....
         resize();
         //System.out.println(shader.getShader().getLog());
     }
@@ -93,7 +93,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         this.rend.getRenderHelper().getFBOStack().rebind();
         shader.getShader().bind();
         batch.setProjectionMatrix(this.camera.combined);
-        RenderHelper.setDefaultBlending(batch);
+        RenderHelper2D.setDefaultBlending(batch);
         // batch.setDefaultBlending();
         batch.begin();
     }

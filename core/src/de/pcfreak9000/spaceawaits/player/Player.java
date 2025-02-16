@@ -45,6 +45,7 @@ public class Player implements INBTSerializable, HudSupplier {
     
     private GameMode gameMode = GameMode.Survival;
     
+    //Hmmmmm...
     private Array<ItemStack> toDrop = new Array<>(false, 10);
     
     public Player() {
@@ -71,7 +72,7 @@ public class Player implements INBTSerializable, HudSupplier {
     }
     
     @Override
-    public StatsComponent getStats() {
+    public StatsComponent getStats() {//Move stats?
         return getPlayerEntity().getComponent(StatsComponent.class);
     }
     
@@ -94,7 +95,7 @@ public class Player implements INBTSerializable, HudSupplier {
     }
     
     public float getReach() {
-        return getGameMode().isTesting ? 200 : 10;
+        return getGameMode().isTesting ? 200 : 10;//-> ReachComponent or something...
     }
     
     // have reach component??? maybe move this into hand component or so? and then
