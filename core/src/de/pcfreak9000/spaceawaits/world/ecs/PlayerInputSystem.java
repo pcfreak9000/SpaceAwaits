@@ -1,30 +1,16 @@
 package de.pcfreak9000.spaceawaits.world.ecs;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
-import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
-import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseComponent;
-import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
-import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
-import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerInputSystem extends EntitySystem {
     
@@ -32,13 +18,10 @@ public class PlayerInputSystem extends EntitySystem {
     
     private World world;
     
-    private Entity tileSelectorEntity;
-    
     //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
     private boolean inGui;
     
     public PlayerInputSystem(World world) {
-        this.tileSelectorEntity = createTileSelectorEntity();
         this.world = world;
     }
     
@@ -48,35 +31,13 @@ public class PlayerInputSystem extends EntitySystem {
     }
     
     @EventSubscription
-    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
+    private void tsEntityHide(RendererEvents.OpenGuiOverlay ev) {
         inGui = true;
     }
     
     @EventSubscription
-    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
-        inGui = false;
-    }
-    
-    @EventSubscription
-    private void tsEntityHide(RendererEvents.OpenGuiOverlay ev) {
-        Components.RENDER.get(tileSelectorEntity).enabled = false;
-    }
-    
-    @EventSubscription
     private void tsEntityShow(RendererEvents.CloseGuiOverlay ev) {
-        Components.RENDER.get(tileSelectorEntity).enabled = true;
-    }
-    
-    @Override
-    public void addedToEngine(Engine engine) {
-        super.addedToEngine(engine);
-        engine.addEntity(tileSelectorEntity);
-    }
-    
-    @Override
-    public void removedFromEngine(Engine engine) {
-        super.removedFromEngine(engine);
-        engine.removeEntity(tileSelectorEntity);
+        inGui = false;
     }
     
     @Override
@@ -86,11 +47,8 @@ public class PlayerInputSystem extends EntitySystem {
         }
         boolean enableInput = !this.inGui;
         Entity entity = this.player.getPlayerEntity();
-        Vector2 pos = Components.TRANSFORM.get(entity).position;
-        for (ItemStack s : player.getDroppingQueue()) {
-            s.drop(world, pos.x, pos.y);
-        }
-        player.getDroppingQueue().clear();
+        //move this somewhere else...
+        this.player.dropQueue(world);
         
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
@@ -152,47 +110,7 @@ public class PlayerInputSystem extends EntitySystem {
             pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40,
                     -pc.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         }
-        if (enableInput && !InptMgr.isPressed(EnumInputIds.MovMod)) {
-            int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot());
-            player.getInventory().setSelectedSlot(hotbarChecked);
-        } else if (enableInput) {
-            float scroll = InptMgr.getScrollY() * 0.1f;
-            getEngine().getSystem(CameraSystem.class).changeZoom(scroll);
-        }
         
     }
     
-    private int checkSelectHotbarSlot(int current) {
-        for (int i = Keys.NUM_1; i <= Keys.NUM_9; i++) {
-            if (Gdx.input.isKeyPressed(i)) {
-                return i - Keys.NUM_1;
-            }
-        }
-        float scroll = InptMgr.getScrollY();
-        int v = (int) Math.signum(scroll);
-        int select = current + v;
-        if (select < 0) {
-            return select + 9;
-        }
-        return select % 9;
-    }
-    
-    //TODO Have a dedicated system for context clues and the tileselectorentity?
-    private Entity createTileSelectorEntity() {
-        Entity e = new EntityImproved();
-        RenderComponent rc = new RenderComponent(RenderLayers.WORLD_HUD);
-        rc.considerAsGui = true;
-        e.add(rc);
-        RenderRenderableComponent tex = new RenderRenderableComponent();
-        tex.renderable = CoreRes.TILEMARKER_DEF;
-        tex.width = 1;
-        tex.height = 1;
-        tex.color = Color.GRAY;
-        e.add(tex);
-        e.add(new TransformComponent());
-        FollowMouseComponent fmc = new FollowMouseComponent();
-        fmc.tiled = true;
-        e.add(fmc);
-        return e;
-    }
 }

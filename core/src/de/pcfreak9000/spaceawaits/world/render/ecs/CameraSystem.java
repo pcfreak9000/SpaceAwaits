@@ -12,7 +12,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.RenderHelper;
 import de.pcfreak9000.spaceawaits.util.Bounds;
@@ -32,6 +34,8 @@ public class CameraSystem extends IteratingSystem {
     private Bounds bounds;
     private Vector2 mousePosVec = new Vector2();
     
+    private boolean inGui;
+    
     public CameraSystem(Bounds bounds, RenderHelper renderHelper) {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
         this.camera = new OrthographicCamera();
@@ -48,6 +52,16 @@ public class CameraSystem extends IteratingSystem {
     @EventSubscription
     private void ev(RendererEvents.ResizeWorldRendererEvent ev) {
         this.viewport.update(ev.widthNew, ev.heightNew);
+    }
+    
+    @EventSubscription
+    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
+        inGui = true;
+    }
+    
+    @EventSubscription
+    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
+        inGui = false;
     }
     
     //Move to some InputSystem?
@@ -99,5 +113,9 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(bounds.getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
+        if (!inGui && InptMgr.isPressed(EnumInputIds.CamZoom)) {
+            float scroll = InptMgr.getScrollY() * 0.1f;
+            changeZoom(scroll);
+        }
     }
 }

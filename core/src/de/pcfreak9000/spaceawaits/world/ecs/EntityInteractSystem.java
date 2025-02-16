@@ -3,7 +3,8 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -20,7 +21,7 @@ import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
-public class EntityInteractSystem extends EntitySystem {
+public class EntityInteractSystem extends IteratingSystem {
     
     public static enum SpawnState {
         Success, Pending, Failure;
@@ -33,10 +34,20 @@ public class EntityInteractSystem extends EntitySystem {
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
     public EntityInteractSystem(World world, IChunkProvider chunkProvider, IUnchunkProvider unchunkprovider) {
-        setProcessing(false);
+        super(Family.all(BreakingComponent.class).get());
         this.world = world;
         this.chunkProvider = chunkProvider;
         this.unchunkProvider = unchunkprovider;
+    }
+    
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+        BreakingComponent bc = Components.BREAKING.get(entity);
+        if (bc.last == bc.progress) {
+            entity.remove(BreakingComponent.class);
+            return;
+        }
+        
     }
     
     public float breakEntity(IBreaker breaker, Entity entity) {

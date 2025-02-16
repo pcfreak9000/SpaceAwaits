@@ -4,12 +4,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
 
 public class HotbarSlot extends Slot {
     
-    public HotbarSlot(InventoryPlayer inv, int index) {
+    public HotbarSlot(IInventory inv, int index) {
         super(inv, index);
     }
     
@@ -29,6 +30,7 @@ public class HotbarSlot extends Slot {
     }
     
     private boolean isSelected() {
+        //well, maybe use some kind of SelectableInventory instead of InventoryPlayer...
         return ((InventoryPlayer) inventoryBacking).getSelectedSlot() == slotIndex;
     }
 }

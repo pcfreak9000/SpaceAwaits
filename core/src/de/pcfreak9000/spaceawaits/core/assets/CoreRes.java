@@ -21,7 +21,7 @@ public class CoreRes {
     public static enum EnumInputIds {
         Left, Right, Down, Up, Esc, Use, BreakAttack, TestExplodeTiles, ToggleInventory, BackLayerMod,
         DebugScreenButton, DebugDrawPhysics, TestButton, Console, SendMsg, LastChatMsg, NextChatMsg, HideHud, INV_MOD,
-        MovMod;
+        MovMod, CamZoom;
     }
     
     public static final BitmapFont FONT = new BitmapFont();//TODO font provider
@@ -72,6 +72,7 @@ public class CoreRes {
         InptMgr.register(EnumInputIds.HideHud, Keys.F1, false);
         InptMgr.register(EnumInputIds.INV_MOD, Keys.SHIFT_LEFT, false);
         InptMgr.register(EnumInputIds.MovMod, Keys.CONTROL_LEFT, false);
+        InptMgr.register(EnumInputIds.CamZoom, Keys.CONTROL_LEFT, false);
     }
     
     static {

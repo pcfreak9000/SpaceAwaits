@@ -9,33 +9,32 @@ import com.badlogic.gdx.utils.Align;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.screen.GuiHelper;
 import de.pcfreak9000.spaceawaits.flat.HudSupplier;
-import de.pcfreak9000.spaceawaits.player.InventoryPlayer;
-import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.item.IInventory;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
 
 public class Hud {
-
+    
     public Stage stage;
-
+    
     private GuiHelper guiHelper;
     private HudSupplier player;
-
+    
     private HotbarSlot[] slots;
     private ProgressBar healthbar;
-
+    
     public Hud(GuiHelper guiHelper) {
         this.guiHelper = guiHelper;
         this.stage = guiHelper.createStage();
     }
-
+    
     public void setPlayer(HudSupplier player) {
         this.player = player;
         this.initHotbarSlots();
     }
-
+    
     // this sucks
     private void initHotbarSlots() {
-        InventoryPlayer inv = this.player.getInventory();
+        IInventory inv = this.player.getInventory();
         slots = new HotbarSlot[9];
         for (int i = 0; i < slots.length; i++) {
             slots[i] = new HotbarSlot(inv, i);
@@ -53,7 +52,7 @@ public class Hud {
         this.stage.clear();// For now, fixes a bug. also clears listeners
         this.stage.addActor(table);
     }
-
+    
     private Table createHotbarSlotsTable() {
         Table table = new Table();
         for (HotbarSlot hs : slots) {
@@ -61,13 +60,13 @@ public class Hud {
         }
         return table;
     }
-
+    
     public void actAndDraw(float dt) {
         StatsComponent playerHealth = player.getStats();
         // this.healthbar.setValue(playerHealth.currentHealth / playerHealth.maxHealth);
         this.guiHelper.actAndDraw(stage, dt);
     }
-
+    
     public void dispose() {
         this.stage.dispose();
     }
