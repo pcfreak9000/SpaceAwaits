@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.utils.async.AsyncTask;
 
 import de.omnikryptec.math.Mathf;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -22,7 +22,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     }
     
     private float threshold = 0.02f;
-    private World world;
+    private Bounds bounds;
     private TileSystem tiles;
     private AmbientLightProvider ambientLight;
     private Consumer<Pixmap> consumer;
@@ -31,16 +31,16 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
     private int areawidth;
     private int areaheight;
     
-    public PixelPointLightTask2(World world, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight,
-            TileSystem tiles) {
+    public PixelPointLightTask2(Bounds bounds, Consumer<Pixmap> consumer, int tx, int ty, int areawidth, int areaheight,
+            TileSystem tiles, AmbientLightProvider lprov) {
         this.tiles = tiles;
-        this.world = world;
+        this.bounds = bounds;
         this.consumer = consumer;
         this.atx = tx;
         this.aty = ty;
         this.areawidth = areawidth;
         this.areaheight = areaheight;
-        this.ambientLight = world.getLightProvider();
+        this.ambientLight = lprov;
     }
     
     private boolean checkBounds(int i, int j) {
@@ -56,7 +56,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
             for (int j = 0; j < areaheight; j++) {
                 int gtx = i + atx;
                 int gty = j + aty;
-                if (world.getBounds().inBounds(gtx, gty)) {
+                if (bounds.inBounds(gtx, gty)) {
                     Tile tile = tiles.getTile(gtx, gty, TileLayer.Front);
                     Tile backTile = tiles.getTile(gtx, gty, TileLayer.Back);
                     Color light = null;
@@ -117,7 +117,7 @@ public class PixelPointLightTask2 implements AsyncTask<Void> {
         int tx = atx + i;
         int ty = aty + j;
         Tile tile = null;
-        if (world.getBounds().inBounds(tx, ty)) {
+        if (bounds.inBounds(tx, ty)) {
             tile = tiles.getTile(tx, ty, TileLayer.Front);
         }
         float loss = tile == null ? this.ambientLight.getEmptyTileTransmission(tx, ty) : tile.getLightTransmission();

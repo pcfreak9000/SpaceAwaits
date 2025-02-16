@@ -1,8 +1,11 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
+import java.util.Random;
+
+import com.badlogic.ashley.core.Engine;
+
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.item.Item;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
@@ -17,11 +20,11 @@ public class TileLooseRocks extends Tile {
     }
     
     @Override
-    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+    public void onNeighbourChange(Engine world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer, Random random) {
         if (!canPlace(gtx, gty, layer, world, tileSystem)) {
             tileSystem.removeTile(gtx, gty, layer);
-            dropAsItemsInWorld(world, world.getWorldRandom(), gtx, gty, layer);
+            dropAsItemsInWorld(world, random, gtx, gty, layer);
         }
     }
     
@@ -36,7 +39,7 @@ public class TileLooseRocks extends Tile {
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         Tile below = tileSystem.getTile(tx, ty - 1, layer);
         return below != null && below.isSolid() && below.isFullTile();
     }

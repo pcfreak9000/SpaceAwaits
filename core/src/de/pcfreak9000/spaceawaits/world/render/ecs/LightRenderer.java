@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.world.render.ecs;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -13,8 +14,9 @@ import de.omnikryptec.event.EventSubscription;
 import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -24,7 +26,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 public class LightRenderer implements Disposable {
     private static final int extraLightRadius = 25;
     
-    private World world;
+    private Engine world;
     private GameScreen renderer;
     
     private FrameBuffer lightsBuffer;
@@ -32,9 +34,7 @@ public class LightRenderer implements Disposable {
     private Texture texture;
     private int gwi, ghi;
     
-    public LightRenderer(World world, GameScreen renderer) {
-        world.getWorldBus().register(this);
-        this.world = world;
+    public LightRenderer(GameScreen renderer) {
         this.renderer = renderer;
         resize();
     }
@@ -42,6 +42,16 @@ public class LightRenderer implements Disposable {
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
         resize();
+    }
+    
+    public void addedToEngineInternal(Engine engine) {
+        ((EngineImproved) engine).getEventBus().register(this);
+        this.world = engine;
+    }
+    
+    public void removedFromEngineInternal(Engine engine) {
+        ((EngineImproved) engine).getEventBus().unregister(this);
+        this.world = null;
     }
     
     public void enterLitScene() {
@@ -64,6 +74,7 @@ public class LightRenderer implements Disposable {
     public void exitAndRenderLitScene() {
         this.renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
         Camera cam = world.getSystem(CameraSystem.class).getCamera();
+        WorldSystem ws = world.getSystem(WorldSystem.class);
         SpriteBatchImpr batch = renderer.getRenderHelper().getSpriteBatch();
         batch.resetSettings();
         
@@ -72,7 +83,7 @@ public class LightRenderer implements Disposable {
         int wi = Mathf.ceili(cam.viewportWidth);
         int hi = Mathf.ceili(cam.viewportHeight);
         try {
-            new PixelPointLightTask2(world, (pix) -> {
+            new PixelPointLightTask2(ws.getBounds(), (pix) -> {
                 if (texture != null) {
                     texture.dispose();
                 }
@@ -81,7 +92,8 @@ public class LightRenderer implements Disposable {
                 gwi = texture.getWidth();
                 ghi = texture.getHeight();
                 pix.dispose();
-            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius, world.getSystem(TileSystem.class)).call();
+            }, xi, yi, wi + 2 * extraLightRadius, hi + 2 * extraLightRadius, world.getSystem(TileSystem.class),
+                    ws.getAmbientLightProvider()).call();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -80,7 +80,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     public RenderSystem(World world, GameScreen renderer) {
         this.entities = new Array<>();
         this.renderStrategies = new OrderedSet<>();
-        this.lightRenderer = new LightRenderer(world, renderer);
+        this.lightRenderer = new LightRenderer(renderer);//TODO getEngine is null here
         this.renderer = renderer;
         this.batch = renderer.getRenderHelper().getSpriteBatch();
         resize();
@@ -105,6 +105,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
+        this.lightRenderer.addedToEngineInternal(engine);
         engine.addEntityListener(FAMILY, this);
         ImmutableArray<Entity> engineEntities = engine.getEntitiesFor(FAMILY);
         this.entities.ensureCapacity(Math.max(0, engineEntities.size() - this.entities.size));
@@ -122,7 +123,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     @Override
     public void removedFromEngine(Engine engine) {
-        
+        this.lightRenderer.removedFromEngineInternal(engine);
         for (IRenderStrategy strat : this.renderStrategies) {
             if (strat instanceof AbstractRenderStrategy) {
                 AbstractRenderStrategy ast = (AbstractRenderStrategy) strat;

@@ -3,13 +3,13 @@ package de.pcfreak9000.spaceawaits.item;
 import java.util.Objects;
 import java.util.Random;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerializable;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -27,13 +27,14 @@ public class ItemStack {
     public static final int MAX_STACKSIZE = 999;
     
     public static final ItemStack EMPTY = new ItemStack() {
+        
         @Override
-        public void drop(World world, float x, float y) {
+        public void drop(Engine world, float x, float y) {
             return;
         }
     };
     
-    public static void drop(Array<ItemStack> array, World world, float tx, float ty) {
+    public static void drop(Array<ItemStack> array, Engine world, float tx, float ty, Random random) {
         for (ItemStack s : array) {
             if (!ItemStack.isEmptyOrNull(s)) {
                 s.drop(world, tx, ty);
@@ -41,10 +42,10 @@ public class ItemStack {
         }
     }
     
-    public static void dropRandomInTile(Array<ItemStack> array, World world, float tx, float ty) {
+    public static void dropRandomInTile(Array<ItemStack> array, Engine world, float tx, float ty, Random random) {
         for (ItemStack s : array) {
             if (!ItemStack.isEmptyOrNull(s)) {
-                s.dropRandomInTile(world, tx, ty);
+                s.dropRandomInTile(world, tx, ty, random);
             }
         }
     }
@@ -218,9 +219,9 @@ public class ItemStack {
         this.nbt = nbt;
     }
     
-    public void dropRandomInTile(World world, float x, float y) {
-        x = x + world.getWorldRandom().nextFloat() * 0.9f;
-        y = y + world.getWorldRandom().nextFloat() * 0.9f;
+    public void dropRandomInTile(Engine world, float x, float y, Random random) {
+        x = x + random.nextFloat() * 0.9f;
+        y = y + random.nextFloat() * 0.9f;
         drop(world, x, y);
     }
     
@@ -230,7 +231,7 @@ public class ItemStack {
         drop(world, x, y);
     }
     
-    public void drop(World world, float x, float y) {
+    public void drop(Engine world, float x, float y) {
         Entity e = ItemEntityFactory.setupItemEntity(this, x - Item.WORLD_SIZE / 2.1f, y - Item.WORLD_SIZE / 2.1f);
         world.getSystem(EntityInteractSystem.class).spawnEntity(e, false);
     }

@@ -10,6 +10,7 @@ import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.AABBBodyFactory;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
@@ -56,16 +57,17 @@ public class WorldUtil {
     }
     
     //TODO refine spawning system
-    public static Vector2 findSpawnpoint(World world, float entWidth, float entHeight, float spawnX, float spawnY,
+    public static Vector2 findSpawnpoint(Engine world, float entWidth, float entHeight, float spawnX, float spawnY,
             float spawnWidth, float spawnHeight, long seed) {
         RandomXS128 rand = new RandomXS128(seed);
         PhysicsSystem ps = world.getSystem(PhysicsSystem.class);
+        WorldSystem ws = world.getSystem(WorldSystem.class);
         for (int i = 0; i < 100; i++) {
             float x = spawnX + rand.nextFloat() * spawnWidth;
             float y = spawnY + rand.nextFloat() * spawnHeight;
-            if (world.getBounds().inBoundsf(x, y)) {
+            if (ws.getBounds().inBoundsf(x, y)) {
                 if (!ps.checkRectOccupation(x, y, entWidth, entHeight, false)) {
-                    if (world.getWorldProperties().autoLowerSpawnpointToSolidGround()) {
+                    if (ws.getWorldProperties().autoLowerSpawnpointToSolidGround()) {
                         while (true) {
                             y--;
                             if (ps.checkRectOccupation(x, y, entWidth, entHeight, false)) {// || y < spawnArea.y -> strictly enforcing the spawnArea might lead to fall damage and a death loop 

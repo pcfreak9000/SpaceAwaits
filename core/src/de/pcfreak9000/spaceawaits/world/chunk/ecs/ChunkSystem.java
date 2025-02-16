@@ -5,12 +5,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
-import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.IChunkLoader;
 import de.pcfreak9000.spaceawaits.world.ITicket;
 import de.pcfreak9000.spaceawaits.world.IWorldChunkProvider;
+import de.pcfreak9000.spaceawaits.world.IWorldProperties;
 import de.pcfreak9000.spaceawaits.world.TestChunkProvider;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -28,11 +27,11 @@ public class ChunkSystem extends IteratingSystem implements ChunkECSHandler, Loa
     
     private WorldBounds bounds;
     
-    public ChunkSystem(World world, WorldBounds bounds, IChunkLoader chunkloader, IChunkGenerator gen) {
+    public ChunkSystem(IChunkLoader chunkloader, IChunkGenerator gen, WorldBounds bounds, IWorldProperties props) {
         super(Family.all(ChunkComponent.class, TransformComponent.class).get());
         this.bounds = bounds;
         this.chunkLoader = chunkloader;//Save <-> ChunkProvider
-        this.chunkProvider = new TestChunkProvider(world, chunkLoader, gen, this); // ChunkProvider/Generator <-> World
+        this.chunkProvider = new TestChunkProvider(bounds, chunkLoader, gen, this, props); // ChunkProvider/Generator <-> World
         this.chunkManager = new TicketedChunkManager(bounds, chunkProvider); //Managed chunks
     }
     
@@ -109,13 +108,9 @@ public class ChunkSystem extends IteratingSystem implements ChunkECSHandler, Loa
         countChunkActive--;
     }
     
-    //Hmmmm?
-    public Bounds getBounds() {
-        return bounds;
-    }
-    
     @Override
     public void load() {
+        //TODO use this to preload chunks around the player??
     }
     
 }

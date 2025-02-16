@@ -1,12 +1,13 @@
 package de.pcfreak9000.spaceawaits.world.tile;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.math.MathUtils;
 
 import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.util.Direction;
-import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderLiquidTransparentMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -79,20 +80,20 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         return layer == TileLayer.Front;
     }
     
     @Override
-    public void onTileSet(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public void onTileSet(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         super.onTileSet(tx, ty, layer, world, tileSystem);
         tileSystem.scheduleTick(tx, ty, layer, this, 1);//TODO Hmmm. what if at set time its known that this water is in fact settled? e.g. big lakes or oceans...
     }
     
     @Override
-    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
-        super.onNeighbourChange(world, tileSystem, gtx, gty, newNeighbour, oldNeighbour, ngtx, ngty, layer);
+    public void onNeighbourChange(Engine world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer, Random random) {
+        super.onNeighbourChange(world, tileSystem, gtx, gty, newNeighbour, oldNeighbour, ngtx, ngty, layer, random);
         tileSystem.scheduleTick(gtx, gty, layer, this, 1);
     }
     
@@ -112,7 +113,7 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
             int i = tx + d.dx;
             int j = ty + d.dy;
             //Hmmm
-            if (world.getSystem(ChunkSystem.class).getBounds().inBounds(i, j)) {
+            if (world.getSystem(WorldSystem.class).getBounds().inBounds(i, j)) {
                 Tile ne = ts.getTile(i, j, layer);
                 if (ne != null && canFlowInto(ne)) {
                     LiquidState neighdata = null;

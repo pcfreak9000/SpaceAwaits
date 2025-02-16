@@ -17,16 +17,17 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class WorldArea implements ITileArea {
     
+    private IWorldProperties props;
+    
     private IChunkProvider chunkProvider;
     private Bounds bounds;
-    private World world;
     
     private List<Entity> entitiesToSpawn = new ArrayList<>();
     
-    public WorldArea(IChunkProvider prov, Bounds bounds, World active) {
+    public WorldArea(IChunkProvider prov, Bounds bounds, IWorldProperties active) {
         this.chunkProvider = prov;
         this.bounds = bounds;
-        this.world = active;
+        this.props = active;
     }
     
     private Chunk getChunkForTile(int tx, int ty) {
@@ -83,7 +84,7 @@ public class WorldArea implements ITileArea {
     
     @Override
     public Tile removeTile(int tx, int ty, TileLayer layer) {
-        return setTile(tx, ty, layer, this.world.getWorldProperties().getTileDefault(tx, ty, layer));
+        return setTile(tx, ty, layer, props.getTileDefault(tx, ty, layer));
     }
     
 }

@@ -13,7 +13,6 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
@@ -27,15 +26,14 @@ public class EntityInteractSystem extends IteratingSystem {
         Success, Pending, Failure;
     }
     
-    private World world;
-    private IGlobalLoader globalLoader;
+    //private World world;
+    private Random random;
     
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     
-    public EntityInteractSystem(World world, IGlobalLoader unchunkprovider) {
+    public EntityInteractSystem(Random random) {
         super(Family.all(BreakingComponent.class).get());
-        this.world = world;
-        this.globalLoader = unchunkprovider;
+        this.random = random;
     }
     
     @Override
@@ -72,7 +70,7 @@ public class EntityInteractSystem extends IteratingSystem {
             BreakableComponent breakableComponent = Components.BREAKABLE.get(entity);
             boolean validated = breakableComponent.validate(entity);
             Array<ItemStack> drops = new Array<>();
-            Random worldRandom = world.getWorldRandom();
+            Random worldRandom = random;
             if (validated) {
                 breakableComponent.breakable.collectDrops(getEngine(), worldRandom, entity, drops);
                 breakableComponent.breakable.onEntityBreak(getEngine(), entity, breaker);
@@ -81,7 +79,7 @@ public class EntityInteractSystem extends IteratingSystem {
             this.despawnEntity(entity);
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
-                ItemStack.dropRandomInTile(drops, world, tc.position.x, tc.position.y);
+                ItemStack.dropRandomInTile(drops, getEngine(), tc.position.x, tc.position.y, random);
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;

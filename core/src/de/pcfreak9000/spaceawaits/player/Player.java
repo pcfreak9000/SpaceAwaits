@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.player;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -14,7 +15,6 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.science.Science;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
 
@@ -85,7 +85,7 @@ public class Player implements INBTSerializable, HudSupplier {
         }
     }
     
-    public void dropQueue(World world) {
+    public void dropQueue(Engine world) {
         Vector2 pos = Components.TRANSFORM.get(playerEntity).position;
         for (ItemStack s : this.toDrop) {
             s.drop(world, pos.x, pos.y);

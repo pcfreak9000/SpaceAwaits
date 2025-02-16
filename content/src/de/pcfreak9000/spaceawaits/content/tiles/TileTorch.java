@@ -1,12 +1,14 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
+import java.util.Random;
+
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 
 import de.pcfreak9000.spaceawaits.core.assets.AnimatedTextureProvider;
 import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
 import de.pcfreak9000.spaceawaits.core.assets.RegionedTextureProvider;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.TileLiquid;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -35,7 +37,7 @@ public class TileTorch extends Tile {
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         Tile behind = layer == TileLayer.Front ? tileSystem.getTile(tx, ty, TileLayer.Back) : null;
         Tile below = tileSystem.getTile(tx, ty - 1, layer);
         return (behind != null && behind.isSolid() && behind.isFullTile())
@@ -43,11 +45,11 @@ public class TileTorch extends Tile {
     }
     
     @Override
-    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+    public void onNeighbourChange(Engine world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer, Random random) {
         if (!canPlace(gtx, gty, layer, world, tileSystem)) {
             tileSystem.removeTile(gtx, gty, layer);
-            dropAsItemsInWorld(world, world.getWorldRandom(), gtx, gty, layer);
+            dropAsItemsInWorld(world, random, gtx, gty, layer);
         }
     }
 }

@@ -20,7 +20,6 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
@@ -223,30 +222,30 @@ public class Tile extends Destructible {
         return 1;
     }
     
-    public void collectDrops(World world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
+    public void collectDrops(Engine world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
         drops.add(new ItemStack(getItemDropped(), getDroppedQuantity()));
     }
     
-    public void dropAsItemsInWorld(World world, Random random, int tx, int ty, TileLayer layer) {
+    public void dropAsItemsInWorld(Engine world, Random random, int tx, int ty, TileLayer layer) {
         Array<ItemStack> drops = new Array<>();
         collectDrops(world, random, tx, ty, layer, drops);
-        ItemStack.dropRandomInTile(drops, world, tx, ty);
+        ItemStack.dropRandomInTile(drops, world, tx, ty, random);
     }
     
-    public void onTileBreak(int tx, int ty, TileLayer layer, World world, TileSystem tiles, IBreaker breaker) {
+    public void onTileBreak(int tx, int ty, TileLayer layer, Engine world, TileSystem tiles, IBreaker breaker) {
     }
     
-    public void onTileRemoved(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public void onTileRemoved(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
     }
     
-    public void onTileSet(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public void onTileSet(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
     }
     
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         return true;
     }
     
-    public void onTilePlaced(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public void onTilePlaced(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
     }
     
     public void updateTick(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem, long tick) {
@@ -274,8 +273,8 @@ public class Tile extends Destructible {
         return null;
     }
     
-    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+    public void onNeighbourChange(Engine world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer, Random random) {
     }
     
     //-> CustomHitboxModule?

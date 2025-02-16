@@ -1,12 +1,13 @@
 package de.pcfreak9000.spaceawaits.content.tiles;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
@@ -29,8 +30,8 @@ public class TileLadder extends Tile implements IContactListener {
     }
     
     @Override
-    public void onNeighbourChange(World world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
-            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
+    public void onNeighbourChange(Engine world, TileSystem tileSystem, int gtx, int gty, Tile newNeighbour,
+            Tile oldNeighbour, int ngtx, int ngty, TileLayer layer, Random random) {
         if (!canPlace(gtx, gty, layer, world, tileSystem)) {
             tileSystem.removeTile(gtx, gty, layer);
             ItemStack toDrop = new ItemStack(getItemDropped(), getDroppedQuantity());//TODO maybe put this somewhere else? -> drops rework
@@ -40,7 +41,7 @@ public class TileLadder extends Tile implements IContactListener {
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         return layer == TileLayer.Front && tileSystem.getTile(tx, ty, TileLayer.Back).isSolid();
     }
     

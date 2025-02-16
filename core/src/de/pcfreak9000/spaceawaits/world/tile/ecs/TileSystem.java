@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.world.tile.ecs;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -24,6 +25,7 @@ import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
@@ -37,7 +39,6 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class TileSystem extends EntitySystem implements ITileArea {
     
-    private World world;
     private final LongMap<BreakTileProgress> breakingTiles = new LongMap<>();
     private final Entity entity;
     
@@ -46,8 +47,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     private UserDataHelper ud = new UserDataHelper();
     
-    public TileSystem(World world) {
-        this.world = world;
+    private Random random;
+    
+    public TileSystem(Random random) {
+        this.random = random;
         this.entity = createInfoEntity();
     }
     
@@ -98,8 +101,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (c != null) {
             Tile old = c.setTile(tx, ty, layer, tile);
             breakingTiles.remove(IntCoords.toLong(tx, ty));
-            old.onTileRemoved(tx, ty, layer, world, this);
-            tile.onTileSet(tx, ty, layer, world, this);//Hmmmmm, oof. Decide if this listener stuff happens in chunk or here
+            old.onTileRemoved(tx, ty, layer, getEngine(), this);
+            tile.onTileSet(tx, ty, layer, getEngine(), this);//Hmmmmm, oof. Decide if this listener stuff happens in chunk or here
             notifyNeighbours(tile, old, tx, ty, layer);
             return old;
         }
@@ -108,7 +111,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     @Override
     public Tile removeTile(int tx, int ty, TileLayer layer) {
-        return setTile(tx, ty, layer, this.world.getWorldProperties().getTileDefault(tx, ty, layer));
+        return setTile(tx, ty, layer,
+                getEngine().getSystem(WorldSystem.class).getWorldProperties().getTileDefault(tx, ty, layer));
     }
     
     //Hmmm. What about tiles on the edge to only loaded but not updated? What about resonance cascades?
@@ -116,9 +120,10 @@ public class TileSystem extends EntitySystem implements ITileArea {
         for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
             int i = tx + d.dx;
             int j = ty + d.dy;
-            getTile(i, j, layer).onNeighbourChange(world, this, i, j, tile, old, tx, ty, layer);
+            getTile(i, j, layer).onNeighbourChange(getEngine(), this, i, j, tile, old, tx, ty, layer, random);
         }
-        getTile(tx, ty, layer.other()).onNeighbourChange(world, this, tx, ty, tile, old, tx, ty, layer.other());
+        getTile(tx, ty, layer.other()).onNeighbourChange(getEngine(), this, tx, ty, tile, old, tx, ty, layer.other(),
+                random);
         phys.get(getEngine()).queryAABB(tx - 0.1f, ty - 0.1f, tx + 1 + 0.1f * 2, ty + 1 + 0.1f * 2, (fix, conv) -> {
             ud.set(fix.getUserData(), fix);
             if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!
@@ -126,7 +131,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 if (Components.NEIGHGOUR_CHANGED.has(e)) {
                     OnNeighbourChangeComponent oncc = Components.NEIGHGOUR_CHANGED.get(e);
                     if (oncc.validate(e)) {
-                        oncc.onNeighbourTileChange.onNeighbourTileChange(world, this, e, tile, old, tx, ty, layer);
+                        oncc.onNeighbourTileChange.onNeighbourTileChange(getEngine(), this, e, tile, old, tx, ty,
+                                layer);
                     }
                 }
             }
@@ -213,7 +219,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
                 }
             }
         }
-        if (!tile.canPlace(tx, ty, layer, world, this)) {
+        if (!tile.canPlace(tx, ty, layer, getEngine(), this)) {
             return null;
         }
         for (Entity e : ents) {
@@ -221,7 +227,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             tc.position.add(reloc.dx, reloc.dy);
         }
         Tile ret = setTile(tx, ty, layer, tile);
-        tile.onTilePlaced(tx, ty, layer, world, this);
+        tile.onTilePlaced(tx, ty, layer, getEngine(), this);
         return ret;
     }
     
@@ -261,12 +267,12 @@ public class TileSystem extends EntitySystem implements ITileArea {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
-            tile.collectDrops(world, world.getWorldRandom(), tx, ty, layer, drops);
-            tile.onTileBreak(tx, ty, layer, world, this, breaker);
-            breaker.onBreak(getEngine(), tile, drops, world.getWorldRandom());
+            tile.collectDrops(getEngine(), random, tx, ty, layer, drops);
+            tile.onTileBreak(tx, ty, layer, getEngine(), this, breaker);
+            breaker.onBreak(getEngine(), tile, drops, random);
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
-                ItemStack.dropRandomInTile(drops, world, tx, ty);
+                ItemStack.dropRandomInTile(drops, getEngine(), tx, ty, random);
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;
@@ -338,7 +344,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     @Override
     public boolean inBounds(int tx, int ty) {
-        return world.getBounds().inBounds(tx, ty);
+        return getEngine().getSystem(WorldSystem.class).getBounds().inBounds(tx, ty);
     }
     
 }

@@ -66,7 +66,6 @@ public class TestChunkProvider implements IWorldChunkProvider {
     private SpecialCache2D<Chunk> cacheReady, cacheDangling;
     
     private LongMap<Status> statusMap = new LongMap<>();
-    private World world;
     
     private WorldBounds bounds;
     
@@ -76,11 +75,14 @@ public class TestChunkProvider implements IWorldChunkProvider {
     
     private IChunkGenerator chunkGen;
     
+    private IWorldProperties props;
+    
     private ConcurrentLinkedQueue<Runnable> runOnMainThread = new ConcurrentLinkedQueue<>();
     
-    public TestChunkProvider(World world, IChunkLoader loader, IChunkGenerator chunkgen, ChunkECSHandler cecs) {
-        this.world = world;
-        this.bounds = world.getBounds();
+    public TestChunkProvider(WorldBounds world, IChunkLoader loader, IChunkGenerator chunkgen, ChunkECSHandler cecs,
+            IWorldProperties props) {
+        this.props = props;
+        this.bounds = world;
         this.chunkecs = cecs;
         this.loader = loader;
         this.chunkGen = chunkgen;
@@ -368,7 +370,7 @@ public class TestChunkProvider implements IWorldChunkProvider {
             bounds = chunk.getBounds();
         }
         BoundedChunkProvider localprov = new BoundedChunkProvider(bounds, context.availableChunks);
-        WorldArea worldarea = new WorldArea(localprov, bounds, world);
+        WorldArea worldarea = new WorldArea(localprov, bounds, props);
         switch (chunk.getGenStage()) {
         case Empty:
             chunk.generate(chunkGen);

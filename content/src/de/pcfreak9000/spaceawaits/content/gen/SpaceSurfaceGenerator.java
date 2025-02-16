@@ -14,7 +14,6 @@ import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
@@ -110,7 +109,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             }
             
             @Override
-            public Vector2 getPlayerSpawn(Player player, World world) {
+            public Vector2 getPlayerSpawn(Player player, Engine world) {
                 Vector2 dim = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
                         .boundingBoxWidthAndHeight();
                 Rectangle rect = getSpawnArea(player);

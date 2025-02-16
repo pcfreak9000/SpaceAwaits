@@ -48,7 +48,7 @@ public class PlayerInputSystem extends EntitySystem {
         boolean enableInput = !this.inGui;
         Entity entity = this.player.getPlayerEntity();
         //move this somewhere else...
-        this.player.dropQueue(world);
+        this.player.dropQueue(getEngine());
         
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;

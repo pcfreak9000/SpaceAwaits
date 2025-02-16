@@ -119,7 +119,7 @@ public class Game {
             scm.setWorldScreen(world, player);//Replace scm with something that onle allows non-null GameScreens?
             if (newLocation) {//hmmmmmmm
                 LOGGER.info("Looking for a spawnpoint...");
-                Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, world);
+                Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, null);//TODO engine
                 Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
                 playerpos.x = spawnpoint.x;
                 playerpos.y = spawnpoint.y;

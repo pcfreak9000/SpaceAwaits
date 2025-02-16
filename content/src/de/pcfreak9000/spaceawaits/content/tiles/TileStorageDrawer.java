@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.module.IModuleTileEntity;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -26,7 +25,7 @@ public class TileStorageDrawer extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public boolean canPlace(int tx, int ty, TileLayer layer, World world, TileSystem tileSystem) {
+    public boolean canPlace(int tx, int ty, TileLayer layer, Engine world, TileSystem tileSystem) {
         return layer == TileLayer.Front;
     }
     
@@ -39,7 +38,7 @@ public class TileStorageDrawer extends Tile implements IModuleTileEntity {
     }
     
     @Override
-    public void collectDrops(World world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
+    public void collectDrops(Engine world, Random random, int tx, int ty, TileLayer layer, Array<ItemStack> drops) {
         super.collectDrops(world, random, tx, ty, layer, drops);
         TileEntityStorageDrawer te = (TileEntityStorageDrawer) world.getSystem(TileSystem.class).getTileEntity(tx, ty,
                 layer);

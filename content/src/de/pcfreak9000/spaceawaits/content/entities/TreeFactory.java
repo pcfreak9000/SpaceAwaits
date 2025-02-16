@@ -22,7 +22,6 @@ import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
 import de.pcfreak9000.spaceawaits.world.IBreakableEntity;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.BreakableComponent;
@@ -86,14 +85,14 @@ public class TreeFactory implements EntityFactory {
         RandomTickComponent rtc = new RandomTickComponent();
         rtc.setRequired(Components.TRANSFORM, Components.TREESTATE);//Hmm
         rtc.chance = 0.00001;
-        rtc.tickable = (world, ent) -> {
+        rtc.tickable = (world, ent, random) -> {
             if (Components.TREESTATE.get(ent).loose) {
                 return;
             }
             TransformComponent tcc = Components.TRANSFORM.get(ent);
             //PhysicsComponent pcc = Components.PHYSICS.get(entity);
-            float f0 = world.getWorldRandom().nextFloat();
-            float f1 = world.getWorldRandom().nextFloat();
+            float f0 = random.nextFloat();
+            float f1 = random.nextFloat();
             ItemStack toDrop = new ItemStack(Items.TWIG, 1);
             toDrop.drop(world, tcc.position.x + f0 * 1.5f, tcc.position.y + 2 + f1 * 3);
         };
@@ -103,7 +102,7 @@ public class TreeFactory implements EntityFactory {
         oncc.onNeighbourTileChange = new OnNeighbourTileChange() {
             
             @Override
-            public void onNeighbourTileChange(World world, TileSystem tileSystem, Entity entity, Tile newNeighbour,
+            public void onNeighbourTileChange(Engine world, TileSystem tileSystem, Entity entity, Tile newNeighbour,
                     Tile oldNeighbour, int ngtx, int ngty, TileLayer layer) {
                 if (layer == TileLayer.Back) {
                     return;

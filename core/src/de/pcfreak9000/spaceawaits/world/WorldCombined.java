@@ -62,9 +62,6 @@ public class WorldCombined extends World {
                 u.load();
             }
         }
-        if (worldProperties.autoWorldBorders()) {
-            WorldUtil.createWorldBorders(ecsEngine, getBounds().getWidth(), getBounds().getHeight());
-        }
     }
     
     public void saveWorld() {
@@ -96,7 +93,7 @@ public class WorldCombined extends World {
                 d.dispose();
             }
         }
-        SpaceAwaits.BUS.unregister(getWorldBus());
+        SpaceAwaits.BUS.unregister(ecsEngine.getEventBus());
         for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
             ecsEngine.removeEntityListener(dal);
         }
@@ -109,23 +106,25 @@ public class WorldCombined extends World {
             engine.addEntityListener(dal.getFamily(), dal);
         }
         SystemResolver ecs = new SystemResolver();
-        ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator()));
+        ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator(), primer.getWorldBounds(),
+                primer.getWorldProperties(), primer.getLightProvider()));
         ecs.addSystem(new InventoryHandlerSystem());
-        ecs.addSystem(new TileSystem(this));
+        ecs.addSystem(new TileSystem(this.getWorldRandom()));
         ecs.addSystem(new PlayerInputSystem(this));
         ecs.addSystem(new SelectorSystem());
         ecs.addSystem(new ActivatorSystem());
         ecs.addSystem(new FollowMouseSystem());
-        ecs.addSystem(new EntityInteractSystem(this, globalLoader));
+        ecs.addSystem(new EntityInteractSystem(this.getWorldRandom()));
         ecs.addSystem(new PhysicsForcesSystem());
         ecs.addSystem(new PhysicsSystem());
-        ecs.addSystem(new ChunkSystem(this, this.getBounds(), chunkLoader, primer.getChunkGenerator()));
-        ecs.addSystem(new CameraSystem(this.getBounds(), gameScreen.getRenderHelper()));
+        ecs.addSystem(new ChunkSystem(chunkLoader, primer.getChunkGenerator(), primer.getWorldBounds(),
+                primer.getWorldProperties()));
+        ecs.addSystem(new CameraSystem(primer.getWorldBounds(), gameScreen.getRenderHelper()));
         ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
         ecs.addSystem(new RenderSystem(this, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem());
         ecs.addSystem(new TickCounterSystem());
-        ecs.addSystem(new RandomTickSystem(getWorldRandom(), this));
+        ecs.addSystem(new RandomTickSystem(getWorldRandom()));
         ecs.addSystem(new GuiOverlaySystem(gameScreen));
         //this one needs some stuff with topological sort anyways to resolve dependencies etc
         //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
@@ -138,7 +137,7 @@ public class WorldCombined extends World {
         this.getSystem(GuiOverlaySystem.class).setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 2));
-        getWorldBus().post(new WorldEvents.PlayerJoinedEvent(this, player));
+        ecsEngine.getEventBus().post(new WorldEvents.PlayerJoinedEvent(this, player));
     }
     
     @Override
@@ -146,7 +145,7 @@ public class WorldCombined extends World {
         super.removePlayer(player);
         removeTicket(currentPlayerTicket);
         currentPlayerTicket = null;
-        getWorldBus().post(new WorldEvents.PlayerLeftEvent(this, player));
+        ecsEngine.getEventBus().post(new WorldEvents.PlayerLeftEvent(this, player));
     }
     
     public void addTicket(ITicket ticket) {
