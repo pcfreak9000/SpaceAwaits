@@ -16,6 +16,11 @@ public class SystemCache<T extends EntitySystem> {
     
     //doesn't handle a change of engine, but that shouldn't happen. -> Well it does, if systemcache is static -> Also what if system t or the caller are disconnected? but whatever
     public T get(Engine e) {
+        if (e == null) {
+            lastEngine = null;
+            t = null;
+            return null;
+        }
         if (t == null || e != lastEngine) {
             t = e.getSystem(clazz);
             lastEngine = e;

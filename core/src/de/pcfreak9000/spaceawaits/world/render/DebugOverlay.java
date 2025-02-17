@@ -79,7 +79,7 @@ public class DebugOverlay {
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
         World world = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent();
-        int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();
+        int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();//TODO gamescreen ecs stuff
         int updatedChunks = world.getSystem(ChunkSystem.class).getUpdatingChunksCount();
         this.labelFps.setText("FPS: " + fps);
         this.chunkUpdates.setText(String.format("up: %d ld: %d", updatedChunks, loadedChunks));

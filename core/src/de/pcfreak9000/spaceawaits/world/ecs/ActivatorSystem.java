@@ -23,12 +23,13 @@ public class ActivatorSystem extends EntitySystem {
     
     private static final Family FAMILY = Family.all(ActionComponent.class).get();
     
-    private static final SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
-    
     private static final Comparator<Object> COMP = (e0, e1) -> {
         return (int) Math
                 .signum(Components.ACTIVATOR.get((Entity) e1).layer - Components.ACTIVATOR.get((Entity) e0).layer);
     };
+    
+    private final SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
+    private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
     
     private Player player;
     private ImmutableArray<Entity> entities;
@@ -70,8 +71,8 @@ public class ActivatorSystem extends EntitySystem {
         if (inGui) {
             return;
         }
-        Vector2 mouse = getEngine().getSystem(CameraSystem.class).getMouseWorldPos();
-        if (!getEngine().getSystem(CameraSystem.class).getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
+        Vector2 mouse = camsys.get(getEngine()).getMouseWorldPos();
+        if (!camsys.get(getEngine()).getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }
         Array<Object> ents = phys.get(getEngine()).queryXY(mouse.x, mouse.y,

@@ -1,33 +1,23 @@
 package de.pcfreak9000.spaceawaits.world.ecs;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
-public class PlayerInputSystem extends EntitySystem {
-    
-    private Player player;
-    
-    private World world;
+public class PlayerInputSystem extends IteratingSystem {
     
     //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
     private boolean inGui;
     
-    public PlayerInputSystem(World world) {
-        this.world = world;
-    }
-    
-    @EventSubscription
-    public void joined(WorldEvents.PlayerJoinedEvent ev) {
-        this.player = ev.player;
+    public PlayerInputSystem() {
+        super(Family.all(PlayerInputComponent.class, PhysicsComponent.class).get());
     }
     
     @EventSubscription
@@ -41,14 +31,11 @@ public class PlayerInputSystem extends EntitySystem {
     }
     
     @Override
-    public void update(float deltaTime) {
-        if (this.player == null) {
-            return;
-        }
+    protected void processEntity(Entity entity, float dt) {
+        Player player = Components.PLAYER_INPUT.get(entity).player;
         boolean enableInput = !this.inGui;
-        Entity entity = this.player.getPlayerEntity();
         //move this somewhere else...
-        this.player.dropQueue(getEngine());
+        player.dropQueue(getEngine());
         
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
@@ -110,7 +97,6 @@ public class PlayerInputSystem extends EntitySystem {
             pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40,
                     -pc.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         }
-        
     }
     
 }

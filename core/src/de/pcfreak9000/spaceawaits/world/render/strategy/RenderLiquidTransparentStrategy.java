@@ -18,6 +18,7 @@ import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
@@ -43,9 +44,10 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     
     private FlexBatch<LiquidQuad2D> batch;
     
-    private TileSystem tiles;
-    
     private FrameBuffer refl;
+    
+    private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
+    private final SystemCache<TileSystem> tsys = new SystemCache<>(TileSystem.class);
     
     public RenderLiquidTransparentStrategy(GameScreen rend, Engine world) {
         super(Family.all(ChunkRenderComponent.class, RenderLiquidTransparentMarkerComponent.class).get());
@@ -71,18 +73,8 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
     }
     
     @Override
-    protected void addedToEngine(Engine engine) {
-        this.tiles = engine.getSystem(TileSystem.class);
-    }
-    
-    @Override
-    protected void removedFromEngine(Engine engine) {
-        this.tiles = null;
-    }
-    
-    @Override
     public void begin() {
-        this.camera = getEngine().getSystem(CameraSystem.class).getCamera();
+        this.camera = camsys.get(getEngine()).getCamera();
         this.batchSimple.resetSettings();
         this.refl.begin();
         ScreenUtils.clear(0, 0, 0, 0);
@@ -109,6 +101,7 @@ public class RenderLiquidTransparentStrategy extends AbstractRenderStrategy impl
         if (!Util.checkChunkInFrustum(crc.chunk, camera)) {
             return;
         }
+        TileSystem tiles = tsys.get(getEngine());
         LongArray pos = crc.tilePositions;
         for (int i = 0; i < pos.size; i++) {
             long l = pos.items[i];

@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.event.EventBus;
+import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
@@ -13,7 +14,7 @@ import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.gui.GuiEsc;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.gui.Hud;
-import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.render.DebugOverlay;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
@@ -34,6 +35,11 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
         this.gamescreen = gs;
         this.debugScreen = new DebugOverlay(this.gamescreen);
         this.hud = new Hud(gs.getGuiHelper());
+    }
+    
+    @EventSubscription
+    private void ev(WorldEvents.PlayerJoinedEvent ev) {
+        this.hud.setPlayer(ev.player);
     }
     
     @Override
@@ -94,11 +100,6 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
                 this.guiContainerCurrent.actAndDraw(delta);
             }
         }
-    }
-    
-    @Deprecated
-    public void setPlayer(Player player) {
-        this.hud.setPlayer(player);
     }
     
     @Override

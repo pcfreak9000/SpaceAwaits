@@ -1,9 +1,10 @@
 package mod;
 
+import com.badlogic.ashley.core.Engine;
+
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
 import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -14,11 +15,11 @@ public class LaserTileEntity implements Tickable, ITileEntity {
     @NBTSerialize(key = "progress")
     private float progress = 0;
     
-    private World world;
+    private Engine world;
     
     private int gtx, gty;
     
-    public LaserTileEntity(World w, int gtx, int gty) {
+    public LaserTileEntity(Engine w, int gtx, int gty) {
         this.world = w;
         this.gtx = gtx;
         this.gty = gty;

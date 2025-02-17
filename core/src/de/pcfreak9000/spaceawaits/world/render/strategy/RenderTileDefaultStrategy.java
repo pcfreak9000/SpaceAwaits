@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.LongArray;
 
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
@@ -27,6 +28,8 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     
     private int count;
     
+    private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
+    
     public RenderTileDefaultStrategy(GameScreen renderer) {
         super(Family.all(ChunkRenderComponent.class, RenderTileDefaultMarkerComponent.class).get());
         this.gameScreen = renderer;
@@ -35,7 +38,7 @@ public class RenderTileDefaultStrategy extends AbstractRenderStrategy implements
     
     @Override
     public void begin() {
-        this.camera = getEngine().getSystem(CameraSystem.class).getCamera();
+        this.camera = camsys.get(getEngine()).getCamera();
         RenderHelper2D.setDefaultBlending();
         regionCache.setProjectionMatrix(camera.combined);
         this.count = 0;

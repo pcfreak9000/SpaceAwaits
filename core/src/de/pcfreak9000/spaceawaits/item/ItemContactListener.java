@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
@@ -14,6 +15,8 @@ import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 
 public class ItemContactListener implements IContactListener {
+    
+    private SystemCache<EntityInteractSystem> eisys = new SystemCache<>(EntityInteractSystem.class);
     
     @Override
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
@@ -25,7 +28,7 @@ public class ItemContactListener implements IContactListener {
                 ItemStackComponent you = Components.ITEM_STACK.get(e);
                 me.stack = ItemStack.join(me.stack, you.stack);
                 if (ItemStack.isEmptyOrNull(you.stack)) {
-                    world.getSystem(EntityInteractSystem.class).despawnEntity(e);
+                    eisys.get(world).despawnEntity(e);
                 }
                 return true;
             }

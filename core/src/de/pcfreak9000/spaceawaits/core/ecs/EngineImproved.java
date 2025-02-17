@@ -74,6 +74,7 @@ public class EngineImproved extends Engine {
         Array<EntitySystem> container = system instanceof RenderSystemMarker ? this.rendersystems : this.logicsystems;
         if (old != null) {
             container.removeValue(old, true);
+            eventBus.unregister(old);
         }
         container.add(system);
         eventBus.register(system);

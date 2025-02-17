@@ -15,6 +15,7 @@ import de.omnikryptec.math.Mathf;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
@@ -33,6 +34,10 @@ public class LightRenderer implements Disposable {
     private FrameBuffer sceneBuffer;
     private Texture texture;
     private int gwi, ghi;
+    
+    private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
+    private SystemCache<WorldSystem> wsys = new SystemCache<>(WorldSystem.class);
+
     
     public LightRenderer(GameScreen renderer) {
         this.renderer = renderer;
@@ -73,8 +78,8 @@ public class LightRenderer implements Disposable {
     
     public void exitAndRenderLitScene() {
         this.renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
-        Camera cam = world.getSystem(CameraSystem.class).getCamera();
-        WorldSystem ws = world.getSystem(WorldSystem.class);
+        Camera cam = camsys.get(world).getCamera();
+        WorldSystem ws = wsys.get(world);
         SpriteBatchImpr batch = renderer.getRenderHelper().getSpriteBatch();
         batch.resetSettings();
         

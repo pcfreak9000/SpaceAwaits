@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ShaderProvider;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
@@ -24,6 +25,8 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     private Mesh mesh;
     private GameScreen renderer;
     private ShaderProvider shader = CoreRes.FOG_SHADER;
+    
+    private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
     
     public RenderFogStrategy(GameScreen renderer) {
         super(Family.all(RenderFogComponent.class, TransformComponent.class).get());
@@ -49,7 +52,7 @@ public class RenderFogStrategy extends AbstractRenderStrategy implements Disposa
     public void render(Entity e, float dt) {
         RenderFogComponent rfc = Components.RENDER_FOG.get(e);
         TransformComponent tc = Components.TRANSFORM.get(e);
-        Camera cam = getEngine().getSystem(CameraSystem.class).getCamera();
+        Camera cam = camsys.get(getEngine()).getCamera();
         shader.getShader().bind();
         shader.getShader().setUniformMatrix("u_projView", cam.combined);
         shader.getShader().setUniformf("time", renderer.getRenderTime());

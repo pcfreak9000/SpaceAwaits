@@ -1,7 +1,5 @@
 package de.pcfreak9000.spaceawaits.world;
 
-import java.util.Random;
-
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
@@ -18,6 +16,7 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxSystem;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
@@ -47,7 +46,6 @@ public class World {
     protected final EngineImproved ecsEngine;
     
     //Used for random item drops etc, not terrain gen etc
-    private final RandomXS128 worldRandom;
     
     //Server side stuff
     private IGlobalLoader globalLoader;
@@ -61,7 +59,6 @@ public class World {
         //initialize fields
         this.ecsEngine = new EngineImproved(STEPLENGTH_SECONDS);
         SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
-        this.worldRandom = new RandomXS128(); //-> UtilSystem???????? RandomSystem?
         this.primer = primer;
         this.globalLoader = save.createGlobalLoader();
         this.chunkLoader = save.createChunkLoader();
@@ -71,16 +68,11 @@ public class World {
         this.ecsEngine.update(dt);
     }
     
-    protected Random getWorldRandom() {
-        return worldRandom;
-    }
-    
     public void setPlayer(Player player) {
         ecsEngine.addEntity(player.getPlayerEntity());
-        this.getSystem(GuiOverlaySystem.class).setPlayer(player);
         Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
         addTicket(currentPlayerTicket = new FollowingTicket(playerpos, 2));
-        ecsEngine.getEventBus().post(new WorldEvents.PlayerJoinedEvent(this, player));
+        ecsEngine.getEventBus().post(new WorldEvents.PlayerJoinedEvent(player));
     }
     
     //Could keep the Player instance here and just removePlayer()...
@@ -88,7 +80,7 @@ public class World {
         ecsEngine.removeEntity(player.getPlayerEntity());
         removeTicket(currentPlayerTicket);
         currentPlayerTicket = null;
-        ecsEngine.getEventBus().post(new WorldEvents.PlayerLeftEvent(this, player));
+        ecsEngine.getEventBus().post(new WorldEvents.PlayerLeftEvent(player));
     }
     
     public <T extends EntitySystem> T getSystem(Class<T> clazz) {
@@ -155,12 +147,12 @@ public class World {
         ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator(), primer.getWorldBounds(),
                 primer.getWorldProperties(), primer.getLightProvider()));
         ecs.addSystem(new InventoryHandlerSystem());
-        ecs.addSystem(new TileSystem(this.getWorldRandom()));
-        ecs.addSystem(new PlayerInputSystem(this));
+        ecs.addSystem(new TileSystem());
+        ecs.addSystem(new PlayerInputSystem());
         ecs.addSystem(new SelectorSystem());
         ecs.addSystem(new ActivatorSystem());
         ecs.addSystem(new FollowMouseSystem());
-        ecs.addSystem(new EntityInteractSystem(this.getWorldRandom()));
+        ecs.addSystem(new EntityInteractSystem());
         ecs.addSystem(new PhysicsForcesSystem());
         ecs.addSystem(new PhysicsSystem());
         ecs.addSystem(new ChunkSystem(chunkLoader, primer.getChunkGenerator(), primer.getWorldBounds(),
@@ -170,8 +162,9 @@ public class World {
         ecs.addSystem(new RenderSystem(ecsEngine, gameScreen));
         ecs.addSystem(new PhysicsDebugRendererSystem());
         ecs.addSystem(new TickCounterSystem());
-        ecs.addSystem(new RandomTickSystem(getWorldRandom()));
+        ecs.addSystem(new RandomTickSystem());
         ecs.addSystem(new GuiOverlaySystem(gameScreen));
+        ecs.addSystem(new RandomSystem(new RandomXS128()));
         //this one needs some stuff with topological sort anyways to resolve dependencies etc
         //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(engine);

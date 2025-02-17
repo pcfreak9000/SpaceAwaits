@@ -83,6 +83,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     private final UserDataHelper udh = new UserDataHelper();
     
     private final SystemCache<TileSystem> tiles = new SystemCache<>(TileSystem.class);
+    private final SystemCache<ChunkSystem> csys = new SystemCache<>(ChunkSystem.class);
     
     public PhysicsSystem() {
         super(Family.all(PhysicsComponent.class).get());
@@ -259,7 +260,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     }
     
     private void ensureChunksAABB(float x1, float y1, float x2, float y2) {
-        if (getEngine().getSystem(ChunkSystem.class) == null) {
+        if (csys.get(getEngine()) == null) {
             return;
         }
         tmpEntitiesDepth++;
@@ -280,7 +281,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         //would be nice if coordinate point of things always was the lower left corner, then the upper bounds +1 could be left out
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
-                Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(i, j);
+                Chunk c = csys.get(getEngine()).getChunk(i, j);
                 if (c == null) { //hmm                        
                     continue;
                 }

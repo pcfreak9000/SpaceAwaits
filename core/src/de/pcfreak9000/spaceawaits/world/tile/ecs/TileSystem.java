@@ -2,7 +2,6 @@ package de.pcfreak9000.spaceawaits.world.tile.ecs;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.utils.LongMap;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -44,13 +44,13 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     private SystemCache<ChunkSystem> chunks = new SystemCache<>(ChunkSystem.class);
+    private SystemCache<WorldSystem> worldsys = new SystemCache<>(WorldSystem.class);
+    private SystemCache<TickCounterSystem> tcsys = new SystemCache<>(TickCounterSystem.class);
+    private SystemCache<RandomSystem> randsys = new SystemCache<>(RandomSystem.class);
     
     private UserDataHelper ud = new UserDataHelper();
     
-    private Random random;
-    
-    public TileSystem(Random random) {
-        this.random = random;
+    public TileSystem() {
         this.entity = createInfoEntity();
     }
     
@@ -111,8 +111,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     @Override
     public Tile removeTile(int tx, int ty, TileLayer layer) {
-        return setTile(tx, ty, layer,
-                getEngine().getSystem(WorldSystem.class).getWorldProperties().getTileDefault(tx, ty, layer));
+        return setTile(tx, ty, layer, worldsys.get(getEngine()).getWorldProperties().getTileDefault(tx, ty, layer));
     }
     
     //Hmmm. What about tiles on the edge to only loaded but not updated? What about resonance cascades?
@@ -120,10 +119,11 @@ public class TileSystem extends EntitySystem implements ITileArea {
         for (Direction d : Direction.VONNEUMANN_NEIGHBOURS) {
             int i = tx + d.dx;
             int j = ty + d.dy;
-            getTile(i, j, layer).onNeighbourChange(getEngine(), this, i, j, tile, old, tx, ty, layer, random);
+            getTile(i, j, layer).onNeighbourChange(getEngine(), this, i, j, tile, old, tx, ty, layer,
+                    randsys.get(getEngine()).getRandom());
         }
         getTile(tx, ty, layer.other()).onNeighbourChange(getEngine(), this, tx, ty, tile, old, tx, ty, layer.other(),
-                random);
+                randsys.get(getEngine()).getRandom());
         phys.get(getEngine()).queryAABB(tx - 0.1f, ty - 0.1f, tx + 1 + 0.1f * 2, ty + 1 + 0.1f * 2, (fix, conv) -> {
             ud.set(fix.getUserData(), fix);
             if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!
@@ -165,7 +165,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     public void scheduleTick(int tx, int ty, TileLayer layer, Tile tile, int waitticks) {
         Chunk c = getChunkForTile(tx, ty);
         if (c != null) {
-            c.scheduleTick(getEngine().getSystem(TickCounterSystem.class), tx, ty, layer, tile, waitticks);
+            c.scheduleTick(tcsys.get(getEngine()), tx, ty, layer, tile, waitticks);
         }
         //do something if this fails?
     }
@@ -267,12 +267,12 @@ public class TileSystem extends EntitySystem implements ITileArea {
             //********************************+
             //Handle tile breaking:
             Array<ItemStack> drops = new Array<>();
-            tile.collectDrops(getEngine(), random, tx, ty, layer, drops);
+            tile.collectDrops(getEngine(), randsys.get(getEngine()).getRandom(), tx, ty, layer, drops);
             tile.onTileBreak(tx, ty, layer, getEngine(), this, breaker);
-            breaker.onBreak(getEngine(), tile, drops, random);
+            breaker.onBreak(getEngine(), tile, drops, randsys.get(getEngine()).getRandom());
             removeTile(tx, ty, layer);
             if (drops.size > 0) {
-                ItemStack.dropRandomInTile(drops, getEngine(), tx, ty, random);
+                ItemStack.dropRandomInTile(drops, getEngine(), tx, ty, randsys.get(getEngine()).getRandom());
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;
@@ -344,7 +344,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
     
     @Override
     public boolean inBounds(int tx, int ty) {
-        return getEngine().getSystem(WorldSystem.class).getBounds().inBounds(tx, ty);
+        return worldsys.get(getEngine()).getBounds().inBounds(tx, ty);
     }
     
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.Destructible;
@@ -26,14 +27,13 @@ public class EntityInteractSystem extends IteratingSystem {
         Success, Pending, Failure;
     }
     
-    //private World world;
-    private Random random;
-    
     private SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
+    private SystemCache<ChunkSystem> csys = new SystemCache<>(ChunkSystem.class);
+    private SystemCache<WorldSystem> wsys = new SystemCache<>(WorldSystem.class);
+    private SystemCache<RandomSystem> randsys = new SystemCache<>(RandomSystem.class);
     
-    public EntityInteractSystem(Random random) {
+    public EntityInteractSystem() {
         super(Family.all(BreakingComponent.class).get());
-        this.random = random;
     }
     
     @Override
@@ -70,7 +70,7 @@ public class EntityInteractSystem extends IteratingSystem {
             BreakableComponent breakableComponent = Components.BREAKABLE.get(entity);
             boolean validated = breakableComponent.validate(entity);
             Array<ItemStack> drops = new Array<>();
-            Random worldRandom = random;
+            Random worldRandom = randsys.get(getEngine()).getRandom();
             if (validated) {
                 breakableComponent.breakable.collectDrops(getEngine(), worldRandom, entity, drops);
                 breakableComponent.breakable.onEntityBreak(getEngine(), entity, breaker);
@@ -79,7 +79,8 @@ public class EntityInteractSystem extends IteratingSystem {
             this.despawnEntity(entity);
             if (drops.size > 0) {
                 TransformComponent tc = Components.TRANSFORM.get(entity);
-                ItemStack.dropRandomInTile(drops, getEngine(), tc.position.x, tc.position.y, random);
+                ItemStack.dropRandomInTile(drops, getEngine(), tc.position.x, tc.position.y,
+                        randsys.get(getEngine()).getRandom());
                 drops.clear();
             }
             return IBreaker.FINISHED_BREAKING;
@@ -103,13 +104,13 @@ public class EntityInteractSystem extends IteratingSystem {
             TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(supposedChunkX, supposedChunkY);
+            Chunk c = csys.get(getEngine()).getChunk(supposedChunkX, supposedChunkY);
             if (c == null) {
                 return SpawnState.Failure;//Not so nice, this way the entity is just forgotten 
             }
             c.addEntityAC(entity);
         } else {
-            getEngine().getSystem(WorldSystem.class).addEntity(entity);
+            wsys.get(getEngine()).addEntity(entity);
         }
         return SpawnState.Success;
     }
@@ -124,10 +125,10 @@ public class EntityInteractSystem extends IteratingSystem {
             TransformComponent t = Components.TRANSFORM.get(entity);
             int supposedChunkX = Chunk.toGlobalChunkf(t.position.x);
             int supposedChunkY = Chunk.toGlobalChunkf(t.position.y);
-            Chunk c = getEngine().getSystem(ChunkSystem.class).getChunk(supposedChunkX, supposedChunkY);
+            Chunk c = csys.get(getEngine()).getChunk(supposedChunkX, supposedChunkY);
             c.removeEntityAC(entity);
         } else {
-            getEngine().getSystem(WorldSystem.class).removeEntity(entity);
+            wsys.get(getEngine()).removeEntity(entity);
         }
     }
 }

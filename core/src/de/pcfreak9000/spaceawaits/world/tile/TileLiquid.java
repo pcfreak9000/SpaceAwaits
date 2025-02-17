@@ -105,6 +105,7 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
         float myLiquid = liquiddata.getLiquid();
         final float oldliquid = myLiquid;
         Direction[] order = flowUp ? ORDER_UP : ORDER_DOWN;
+        WorldSystem wsys = world.getSystem(WorldSystem.class);
         for (Direction d : order) {
             if (myLiquid <= LiquidState.MIN_LIQUID) {
                 liquiddata.addLiquid(-myLiquid * 2);
@@ -113,7 +114,7 @@ public class TileLiquid extends Tile implements IModuleTileEntity {
             int i = tx + d.dx;
             int j = ty + d.dy;
             //Hmmm
-            if (world.getSystem(WorldSystem.class).getBounds().inBounds(i, j)) {
+            if (wsys.getBounds().inBounds(i, j)) {
                 Tile ne = ts.getTile(i, j, layer);
                 if (ne != null && canFlowInto(ne)) {
                     LiquidState neighdata = null;

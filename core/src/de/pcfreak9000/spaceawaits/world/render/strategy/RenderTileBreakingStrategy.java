@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
@@ -18,6 +19,8 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     private SpriteBatch b;
     private Camera cam;
     
+    private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
+    
     public RenderTileBreakingStrategy(GameScreen renderer) {
         super(Family.all(BreakingTilesComponent.class).get());
         this.b = renderer.getRenderHelper().getSpriteBatch();
@@ -26,7 +29,7 @@ public class RenderTileBreakingStrategy extends AbstractRenderStrategy {
     @Override
     public void begin() {
         this.b.begin();
-        this.cam = getEngine().getSystem(CameraSystem.class).getCamera();
+        this.cam = camsys.get(getEngine()).getCamera();
     }
     
     @Override

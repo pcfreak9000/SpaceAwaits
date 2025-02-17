@@ -19,6 +19,7 @@ import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
@@ -87,7 +88,8 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     private Bounds chunkBounds;
     
     private Engine addedToEngine;
-    private TileSystem tileSystem;
+    
+    private final SystemCache<TileSystem> tsys = new SystemCache<>(TileSystem.class);
     
     private ChunkGenStage genStage = ChunkGenStage.Empty;
     
@@ -190,7 +192,6 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
             throw new IllegalStateException();
         }
         addedToEngine = ecs;
-        this.tileSystem = ecs.getSystem(TileSystem.class);
         ecs.addEntity(chunkEntity);
         for (Entity e : entities) {
             ecs.addEntity(e);
@@ -201,7 +202,6 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         if (addedToEngine == null) {
             throw new IllegalStateException();
         }
-        this.tileSystem = null;
         addedToEngine.removeEntity(chunkEntity);
         for (Entity e : entities) {
             addedToEngine.removeEntity(e);
@@ -302,7 +302,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
                 it.remove();
                 Tile t = getTile(k.getX(), k.getY(), k.getLayer());
                 if (t == k.getTile()) {
-                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.addedToEngine, this.tileSystem, ticks);
+                    t.updateTick(k.getX(), k.getY(), k.getLayer(), this.addedToEngine, tsys.get(addedToEngine), ticks);
                 }
             }
         }
@@ -315,7 +315,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
                 if (inBounds(x, y)) {
                     Tile t = getTile(x, y, l);
                     if (t.receivesRandomTick()) {
-                        t.randomTick(x, y, l, this.addedToEngine, tileSystem, ticks);
+                        t.randomTick(x, y, l, this.addedToEngine, tsys.get(addedToEngine), ticks);
                     }
                 }
             }

@@ -23,6 +23,7 @@ import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
+import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
@@ -63,6 +64,8 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;
     private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
+    
+    private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
     
     private final OrderedSet<IRenderStrategy> renderStrategies;
     private Array<Entity> entities;
@@ -242,7 +245,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         renderer.getRenderHelper().applyViewport();
         batch.setDefaultBlending();
         batch.setColor(Color.WHITE);
-        Camera cam = getEngine().getSystem(CameraSystem.class).getCamera();//TODO decouple systems???
+        Camera cam = camsys.get(getEngine()).getCamera();
         batch.begin();
         batch.draw(this.sceneBuffer.getColorBufferTexture(), cam.position.x - cam.viewportWidth / 2,
                 cam.position.y - cam.viewportHeight / 2, cam.viewportWidth, cam.viewportHeight, 0, 0,
