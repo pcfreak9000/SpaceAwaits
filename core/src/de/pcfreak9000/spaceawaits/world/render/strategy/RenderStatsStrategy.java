@@ -50,6 +50,8 @@ public class RenderStatsStrategy extends AbstractRenderStrategy {
         for (StatData st : hc.statDatas.values()) {
             float ratio = st.current / st.max;
             ratio = Mathf.clamp(ratio, 0, 1);
+            batch.setColor(Color.DARK_GRAY);
+            batch.draw(CoreRes.WHITE, x - 0.05f, y - 0.05f, rsc.width + 0.1f, 0.3f);
             batch.setColor(Color.RED);
             batch.draw(CoreRes.WHITE, x, y, rsc.width, 0.2f);
             if (ratio > 0.01f) {

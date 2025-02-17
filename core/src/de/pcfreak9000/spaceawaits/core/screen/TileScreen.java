@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.core.screen;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 
@@ -107,5 +108,10 @@ public class TileScreen extends GameScreen {
     
     public void removeTicket(ITicket ticket) {
         ecsEngine.getSystem(ChunkSystem.class).removeTicket(ticket);
+    }
+    //TMP??
+    @Deprecated
+    public Engine getECS() {
+        return ecsEngine;
     }
 }
