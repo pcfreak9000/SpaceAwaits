@@ -17,6 +17,7 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
@@ -35,7 +36,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     
     private static final Logger LOGGER = Logger.getLogger(PhysicsSystem.class);
     
-    private static final float STEPLENGTH_SECONDS = de.pcfreak9000.spaceawaits.world.World.STEPLENGTH_SECONDS;
+    private static final float STEPLENGTH_SECONDS = GameScreen.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1f;
     
     private static final float QUERYXY_OFFSET = 0.01f;

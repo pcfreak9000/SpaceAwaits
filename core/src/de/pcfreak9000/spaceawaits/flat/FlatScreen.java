@@ -58,13 +58,13 @@ public class FlatScreen extends GameScreen {
         this.viewport.update(this.viewport.getScreenWidth(), this.viewport.getScreenHeight());
     }
     
-    @Override
-    public void updateAndRenderContent(float delta, boolean gui) {
-        this.world.update(delta);
-        if (gui) {
-            this.hud.actAndDraw(delta);
-        }
-    }
+//    @Override
+//    public void updateAndRenderContent(float delta, boolean gui) {
+//        this.world.update(delta);
+//        if (gui) {
+//            this.hud.actAndDraw(delta);
+//        }
+//    }
     
     @Override
     public ICommandContext getCommandContext() {

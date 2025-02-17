@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
-import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -78,7 +78,7 @@ public class DebugOverlay {
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
-        World world = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent();
+        TileScreen world = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getTileScreenCurrent();
         int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();//TODO gamescreen ecs stuff
         int updatedChunks = world.getSystem(ChunkSystem.class).getUpdatingChunksCount();
         this.labelFps.setText("FPS: " + fps);

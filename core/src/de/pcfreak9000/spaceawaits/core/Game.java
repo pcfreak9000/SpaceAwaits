@@ -13,6 +13,7 @@ import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
+import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -20,7 +21,6 @@ import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
@@ -37,7 +37,7 @@ public class Game {
     
     private Player player;
     private String uuidPlayerLocation;
-    private World world;
+    private TileScreen tilescreen;
     
     private boolean fresh;//TMP!!! also what if the spawn world is deleted? that shoudl then be replaced by another spawn world
     
@@ -65,7 +65,7 @@ public class Game {
     
     public void saveGame() {
         LOGGER.info("Saving...");
-        world.saveWorld();
+        tilescreen.saveWorld();
         writePlayer();
     }
     
@@ -91,9 +91,9 @@ public class Game {
     }
     
     public void saveAndLeaveCurrentWorld() {
-        this.world.removePlayer(player);
-        this.world.unloadWorld();
-        this.world = null;
+        this.tilescreen.removePlayer(player);
+        this.tilescreen.unload();
+        this.tilescreen = null;
     }
     
     public void joinWorld(String uuid) {
@@ -109,12 +109,14 @@ public class Game {
             WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
             fresh = false;
             worldPrimer.setWorldBounds(meta.getBounds());
-            World world = new World(worldPrimer, save);
+            TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save.createChunkLoader(),
+                    save.createGlobalLoader());
+            tilescreen.load(worldPrimer);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
-            this.world = world;
+            this.tilescreen = tilescreen;
             this.uuidPlayerLocation = uuid;
             LOGGER.info("Joining world...");
-            scm.setWorldScreen(world, player);//Replace scm with something that onle allows non-null GameScreens?
+            scm.setWorldScreen(tilescreen);//Replace scm with something that onle allows non-null GameScreens?
             if (newLocation) {//hmmmmmmm
                 LOGGER.info("Looking for a spawnpoint...");
                 Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, null);//TODO engine
@@ -125,7 +127,7 @@ public class Game {
                 osgc.lastContactX = spawnpoint.x;
                 osgc.lastContactY = spawnpoint.y;
             }
-            world.setPlayer(player);
+            tilescreen.setPlayer(player);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -147,8 +149,8 @@ public class Game {
         }
     }
     
-    public World getWorldCurrent() {
-        return this.world;
+    public TileScreen getTileScreenCurrent() {
+        return this.tilescreen;
     }
     
     public Player getPlayer() {

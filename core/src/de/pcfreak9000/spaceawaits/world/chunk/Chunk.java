@@ -9,7 +9,6 @@ import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.utils.OrderedSet;
 
 import de.omnikryptec.math.Mathf;
@@ -20,6 +19,7 @@ import de.pcfreak9000.nbt.NBTTag;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.Tickable;
@@ -91,6 +91,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
     private Engine addedToEngine;
     
     private final SystemCache<TileSystem> tsys = new SystemCache<>(TileSystem.class);
+    private final SystemCache<RandomSystem> randsys = new SystemCache<>(RandomSystem.class);
     
     private ChunkGenStage genStage = ChunkGenStage.Empty;
     
@@ -308,7 +309,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
             }
         }
         if (randomTickTileCount > 0) {
-            Random rand = new RandomXS128();//TODO this.world.getWorldRandom();
+            Random rand = randsys.get(addedToEngine).getRandom();
             for (int i = 0; i < 6; i++) {
                 TileLayer l = rand.nextBoolean() ? TileLayer.Front : TileLayer.Back;
                 int x = getGlobalTileX() + rand.nextInt(CHUNK_SIZE);

@@ -12,8 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
 import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakableComponent;
@@ -66,7 +66,7 @@ public class EntityInteractSystem extends IteratingSystem {
         }
         float speedActual = breaker.breakIt(getEngine(), destr, bc.progress);
         bc.last = bc.progress;
-        bc.progress += speedActual * World.STEPLENGTH_SECONDS;
+        bc.progress += speedActual * GameScreen.STEPLENGTH_SECONDS;
         if (bc.progress >= IBreaker.FINISHED_BREAKING) {
             entity.remove(BreakingComponent.class);
             BreakableComponent breakableComponent = Components.BREAKABLE.get(entity);

@@ -16,11 +16,11 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.world.ITileArea;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
@@ -262,7 +262,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
             breakingTiles.put(l, t);
         }
         float speedActual = breaker.breakIt(getEngine(), tile, t.getProgress());
-        t.incProgress(speedActual * World.STEPLENGTH_SECONDS);
+        t.incProgress(speedActual * GameScreen.STEPLENGTH_SECONDS);
         if (t.getProgress() >= IBreaker.FINISHED_BREAKING) {
             //********************************+
             //Handle tile breaking:

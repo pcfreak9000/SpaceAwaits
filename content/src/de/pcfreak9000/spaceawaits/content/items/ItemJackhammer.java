@@ -4,11 +4,11 @@ import com.badlogic.ashley.core.Engine;
 
 import de.pcfreak9000.spaceawaits.content.Tools;
 import de.pcfreak9000.spaceawaits.content.modules.IModuleEnergy;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.world.World;
 import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -49,7 +49,7 @@ public class ItemJackhammer extends Item {
             return false;
         }
         IModuleEnergy enmod = bat.getItem().getModule(IModuleEnergy.ID);
-        float chargeNeeded = 50f * World.STEPLENGTH_SECONDS;
+        float chargeNeeded = 50f * GameScreen.STEPLENGTH_SECONDS;
         if (enmod.getCurrentCharge(bat) <= 0f) {
             return false;
         }

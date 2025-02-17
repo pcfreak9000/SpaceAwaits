@@ -12,8 +12,8 @@ public class LightCommand implements Runnable {
     
     @Override
     public void run() {
-        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getWorldCurrent().getSystem(RenderSystem.class)
-                .setDoLight(light);
+        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getTileScreenCurrent()
+                .getSystem(RenderSystem.class).setDoLight(light);
     }
     
 }

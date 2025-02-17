@@ -3,7 +3,13 @@ package de.pcfreak9000.spaceawaits.core.ecs;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
-//Hmm
+
+//Hmmmmmm......
+/**
+ * For components which contain functionality accessing other components. This
+ * can be used to make sure the entity has the components required by that
+ * functionality.
+ */
 public abstract class ValidatingComponent implements Component {
     private ComponentMapper<?>[] mappers;
     

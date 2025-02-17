@@ -6,11 +6,15 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.pcfreak9000.spaceawaits.command.ICommandContext;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
+import de.pcfreak9000.spaceawaits.world.command.WorldCommandContext;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
 //TODO Maybe have a GameScreen2D in the hierachy as well?
-public abstract class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter {
+    public static final float STEPLENGTH_SECONDS = 1 / 60f;
     
     /* Technical stuff */
     
@@ -24,9 +28,21 @@ public abstract class GameScreen extends ScreenAdapter {
     private boolean saveAndExitToMainMenu = false;
     private boolean showGuiElements = true;
     
+    /* Game related stuff */
+    
+    protected final EngineImproved ecsEngine;
+    
+    private WorldCommandContext commands;
+    
     public GameScreen(GuiHelper guiHelper) {
         this.guiHelper = guiHelper;
         this.renderHelper2D = new RenderHelper2D();
+        
+        this.ecsEngine = new EngineImproved(STEPLENGTH_SECONDS);
+        SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
+        
+        this.commands = new WorldCommandContext();
+        
     }
     
     public GuiHelper getGuiHelper() {
@@ -65,8 +81,7 @@ public abstract class GameScreen extends ScreenAdapter {
         SpaceAwaits.BUS.post(new RendererEvents.PreFrameEvent());
         //oh boi, this is updating all loaded animations, not just the ones on the screen, not really efficient
         SpaceAwaits.BUS.post(new RendererEvents.UpdateAnimationEvent(delta));
-        updateAndRenderContent(delta, showGuiElements);
-        
+        ecsEngine.update(delta);
         if (saveAndExitToMainMenu) {
             SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();
         }
@@ -92,11 +107,14 @@ public abstract class GameScreen extends ScreenAdapter {
         return renderTime;
     }
     
-    public abstract ICommandContext getCommandContext();
-    
-    public abstract void updateAndRenderContent(float delta, boolean gui);
+    public ICommandContext getCommandContext() {
+        return commands;
+    }
     
     //Removing this needs some more refactoring
     @Deprecated
-    public abstract void setGuiCurrent(GuiOverlay guiOverlay);
+    public void setGuiCurrent(GuiOverlay guiOverlay) {
+        ecsEngine.getSystem(GuiOverlaySystem.class).setGuiCurrent(guiOverlay);
+    }
+    
 }
