@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
@@ -173,7 +174,14 @@ public class EventBus implements IEventListener {
             methods = ((Class<?>) object).getDeclaredMethods();
             object = null;
         } else {
-            methods = object.getClass().getDeclaredMethods();
+            //Hmmm
+            List<Method> ms = new ArrayList<>();
+            Class<?> someclazz = object.getClass();
+            do {
+                ms.addAll(Arrays.asList(someclazz.getDeclaredMethods()));
+                someclazz = someclazz.getSuperclass();
+            } while (someclazz != Object.class && someclazz != null);
+            methods = ms.toArray(Method[]::new);
         }
         boolean annotationFound = false;
         for (final Method m : methods) {
