@@ -6,8 +6,8 @@ import java.util.Random;
 
 import com.badlogic.gdx.utils.Array;
 
+import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 

@@ -13,14 +13,17 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.Destructible;
 import de.pcfreak9000.spaceawaits.world.World;
+import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
+import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakableComponent;
+import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakingComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 
+//TODO this could be generalized
 public class EntityInteractSystem extends IteratingSystem {
     
     public static enum SpawnState {
@@ -43,14 +46,13 @@ public class EntityInteractSystem extends IteratingSystem {
             entity.remove(BreakingComponent.class);
             return;
         }
-        
     }
     
     public float breakEntity(IBreaker breaker, Entity entity) {
         if (!Components.BREAKABLE.has(entity)) {
             return IBreaker.ABORTED_BREAKING;
         }
-        Destructible destr = Components.BREAKABLE.get(entity).destructable;
+        BreakableInfo destr = Components.BREAKABLE.get(entity).destructable;
         if (!destr.canBreak()) {
             return IBreaker.ABORTED_BREAKING;
         }

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.chunk.mgmt;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -14,6 +14,10 @@ import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.util.Direction;
 import de.pcfreak9000.spaceawaits.util.IntCoords;
 import de.pcfreak9000.spaceawaits.util.SpecialCache2D;
+import de.pcfreak9000.spaceawaits.world.IChunkLoader;
+import de.pcfreak9000.spaceawaits.world.IWorldProperties;
+import de.pcfreak9000.spaceawaits.world.WorldArea;
+import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk.ChunkGenStage;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;

@@ -3,6 +3,7 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 
+import de.pcfreak9000.spaceawaits.core.ecs.Loadable;
 import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 import de.pcfreak9000.spaceawaits.world.IWorldProperties;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;

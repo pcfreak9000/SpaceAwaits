@@ -3,8 +3,8 @@ package de.pcfreak9000.spaceawaits.world.gen.feature;
 import java.util.Random;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
+import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 

@@ -19,13 +19,14 @@ import de.pcfreak9000.spaceawaits.module.ModuleID;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.GameRegistry;
 import de.pcfreak9000.spaceawaits.registry.Registry;
-import de.pcfreak9000.spaceawaits.world.Destructible;
+import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderMarkerComp;
 import de.pcfreak9000.spaceawaits.world.render.strategy.RenderTileDefaultMarkerComponent;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
-public class Tile extends Destructible {
+public class Tile extends BreakableInfo {
     
     public static enum TileLayer {
         Front {

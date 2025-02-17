@@ -9,13 +9,13 @@ import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.content.Action;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.ecs.Action;
+import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -35,17 +35,17 @@ public class BreakAttackAction implements Action {
     private final IBreaker br = new IBreaker() {
         
         @Override
-        public float breakIt(Engine world, Destructible breakable, float f) {
+        public float breakIt(Engine world, BreakableInfo breakable, float f) {
             return 1f / breakable.getHardness();
         }
         
         @Override
-        public boolean canBreak(Engine world, Destructible breakable) {
+        public boolean canBreak(Engine world, BreakableInfo breakable) {
             return breakable.getMaterialLevel() == 0.0f;
         }
         
         @Override
-        public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
+        public void onBreak(Engine world, BreakableInfo breakable, Array<ItemStack> drops, Random random) {
         }
         
     };

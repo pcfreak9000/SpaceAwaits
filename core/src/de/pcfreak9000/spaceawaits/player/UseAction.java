@@ -5,8 +5,8 @@ import com.badlogic.ashley.core.Entity;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.content.Action;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.ecs.Action;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;

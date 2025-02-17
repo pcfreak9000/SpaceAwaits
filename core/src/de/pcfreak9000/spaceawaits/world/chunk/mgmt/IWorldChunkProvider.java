@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.chunk.mgmt;
 
 public interface IWorldChunkProvider extends IChunkProvider {
     

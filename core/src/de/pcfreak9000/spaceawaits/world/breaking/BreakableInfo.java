@@ -1,6 +1,6 @@
-package de.pcfreak9000.spaceawaits.world;
+package de.pcfreak9000.spaceawaits.world.breaking;
 
-public class Destructible {
+public class BreakableInfo {
     private boolean canBreak = true;
     private float hardness = 1f;
     private float materialLevel = 0f;
@@ -10,12 +10,12 @@ public class Destructible {
         return materialLevel;
     }
     
-    public Destructible setMaterialLevel(float materialLevel) {
+    public BreakableInfo setMaterialLevel(float materialLevel) {
         this.materialLevel = materialLevel;
         return this;
     }
     
-    public Destructible setRequiredTool(String tool) {
+    public BreakableInfo setRequiredTool(String tool) {
         this.tool = tool;
         return this;
     }
@@ -28,7 +28,7 @@ public class Destructible {
         return canBreak;
     }
     
-    public Destructible setCanBreak(boolean canBreak) {
+    public BreakableInfo setCanBreak(boolean canBreak) {
         this.canBreak = canBreak;
         return this;
     }
@@ -37,7 +37,7 @@ public class Destructible {
         return hardness;
     }
     
-    public Destructible setHardness(float hardness) {
+    public BreakableInfo setHardness(float hardness) {
         this.hardness = hardness;
         return this;
     }

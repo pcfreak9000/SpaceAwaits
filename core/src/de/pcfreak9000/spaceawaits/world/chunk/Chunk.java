@@ -29,6 +29,7 @@ import de.pcfreak9000.spaceawaits.serialize.AnnotationSerializer;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.Bounds;
+import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;

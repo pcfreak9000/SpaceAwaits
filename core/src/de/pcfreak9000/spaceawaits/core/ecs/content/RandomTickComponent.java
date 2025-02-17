@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import java.util.Random;
 

@@ -8,7 +8,7 @@ import com.badlogic.ashley.core.Entity;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.IChunkProvider;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem.SpawnState;
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;

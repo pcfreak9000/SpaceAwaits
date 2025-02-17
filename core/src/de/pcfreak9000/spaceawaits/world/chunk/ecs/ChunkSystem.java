@@ -4,17 +4,17 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
+import de.pcfreak9000.spaceawaits.core.ecs.Loadable;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.IChunkLoader;
-import de.pcfreak9000.spaceawaits.world.ITicket;
-import de.pcfreak9000.spaceawaits.world.IWorldChunkProvider;
 import de.pcfreak9000.spaceawaits.world.IWorldProperties;
-import de.pcfreak9000.spaceawaits.world.TestChunkProvider;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.ITicket;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.IWorldChunkProvider;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.TestChunkProvider;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.Loadable;
-import de.pcfreak9000.spaceawaits.world.ecs.TicketedChunkManager;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.ChunkECSHandler;
 

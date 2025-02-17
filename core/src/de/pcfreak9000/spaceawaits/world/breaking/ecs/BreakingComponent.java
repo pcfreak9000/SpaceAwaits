@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.world.breaking.ecs;
 
 import com.badlogic.ashley.core.Component;
 

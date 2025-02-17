@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldGlobalComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;

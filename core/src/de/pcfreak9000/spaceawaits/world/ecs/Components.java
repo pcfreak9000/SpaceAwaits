@@ -2,11 +2,16 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 
 import com.badlogic.ashley.core.ComponentMapper;
 
+import de.pcfreak9000.spaceawaits.core.ecs.content.ActionComponent;
+import de.pcfreak9000.spaceawaits.core.ecs.content.ActivatorComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxComponent;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
+import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakableComponent;
+import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakingComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkRenderComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.ContactListenerComponent;

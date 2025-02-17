@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.world.chunk.mgmt;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -8,8 +8,6 @@ import com.badlogic.gdx.utils.LongMap;
 import com.badlogic.gdx.utils.LongMap.Keys;
 
 import de.pcfreak9000.spaceawaits.util.IntCoords;
-import de.pcfreak9000.spaceawaits.world.ITicket;
-import de.pcfreak9000.spaceawaits.world.IWorldChunkProvider;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 
 public class TicketedChunkManager {

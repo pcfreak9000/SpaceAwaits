@@ -8,8 +8,8 @@ import de.pcfreak9000.spaceawaits.content.entities.Entities;
 import de.pcfreak9000.spaceawaits.content.items.Items;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.gen.feature.IFeature;
 

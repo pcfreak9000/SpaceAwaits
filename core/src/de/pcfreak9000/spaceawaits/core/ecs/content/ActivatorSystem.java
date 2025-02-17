@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import java.util.Comparator;
 
@@ -15,11 +15,11 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
-public class ActivatorSystem extends EntitySystem {
+public abstract class ActivatorSystem extends EntitySystem {
     
     private static final Family FAMILY = Family.all(ActionComponent.class).get();
     
@@ -28,9 +28,8 @@ public class ActivatorSystem extends EntitySystem {
                 .signum(Components.ACTIVATOR.get((Entity) e1).layer - Components.ACTIVATOR.get((Entity) e0).layer);
     };
     
-    private final SystemCache<PhysicsSystem> phys = new SystemCache<>(PhysicsSystem.class);
     private final SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
-    
+    @Deprecated
     private Player player;
     private ImmutableArray<Entity> entities;
     
@@ -38,6 +37,8 @@ public class ActivatorSystem extends EntitySystem {
     
     public ActivatorSystem() {
     }
+    
+    protected abstract Array<Object> getEntities(float mousex, float mousey);
     
     @EventSubscription
     private void plEv(WorldEvents.PlayerJoinedEvent ev) {
@@ -75,8 +76,7 @@ public class ActivatorSystem extends EntitySystem {
         if (!camsys.get(getEngine()).getCamera().frustum.pointInFrustum(mouse.x, mouse.y, 0)) {
             return;
         }
-        Array<Object> ents = phys.get(getEngine()).queryXY(mouse.x, mouse.y,
-                (udh, uc) -> udh.isEntity() && Components.ACTIVATOR.has(udh.getEntity()));
+        Array<Object> ents = getEntities(mouse.x, mouse.y);
         for (Entity e : entities) {
             ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {
@@ -100,15 +100,10 @@ public class ActivatorSystem extends EntitySystem {
             ActivatorComponent ac = Components.ACTIVATOR.get(e);
             for (Activator a : ac.activators) {
                 if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
-                    if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getPlayerEntity())) {
+                    if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getPlayerEntity())) {//TODO change to the entity which is inputting stuff
                         return;
                     }
                 }
-                //                else if (InptMgr.isJustReleased(a.getInputKey())) {
-                //                    if (a.handleRelease(mouse.x, mouse.y, e, this.world, this.player.getPlayerEntity())) {
-                //                        return;//TODO what if the key is hold down but the mouse is moved out of the entities bounds?
-                //                    }
-                //                }
             }
         }
         

@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.tile;
+package de.pcfreak9000.spaceawaits.world.breaking;
 
 import java.util.Random;
 
@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.Destructible;
 
 public class InstantBreaker implements IBreaker {
     
@@ -16,17 +15,17 @@ public class InstantBreaker implements IBreaker {
     }
     
     @Override
-    public float breakIt(Engine world, Destructible breakable, float f) {
+    public float breakIt(Engine world, BreakableInfo breakable, float f) {
         return Float.POSITIVE_INFINITY;
     }
     
     @Override
-    public boolean canBreak(Engine world, Destructible breakable) {
+    public boolean canBreak(Engine world, BreakableInfo breakable) {
         return true;
     }
     
     @Override
-    public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
+    public void onBreak(Engine world, BreakableInfo breakable, Array<ItemStack> drops, Random random) {
     }
     
 }

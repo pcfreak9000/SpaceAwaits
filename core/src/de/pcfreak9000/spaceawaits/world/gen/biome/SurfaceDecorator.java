@@ -5,8 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import de.omnikryptec.math.MathUtil;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
+import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
-import de.pcfreak9000.spaceawaits.world.chunk.ITileArea;
 import de.pcfreak9000.spaceawaits.world.gen.ShapeSystem;
 import de.pcfreak9000.spaceawaits.world.gen.feature.FeatureGenData;
 

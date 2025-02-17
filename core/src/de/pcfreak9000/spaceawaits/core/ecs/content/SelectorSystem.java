@@ -1,4 +1,4 @@
-package de.pcfreak9000.spaceawaits.world.ecs;
+package de.pcfreak9000.spaceawaits.core.ecs.content;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -8,8 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
-import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseComponent;
-import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;

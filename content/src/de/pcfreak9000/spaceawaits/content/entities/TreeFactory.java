@@ -18,21 +18,21 @@ import de.pcfreak9000.spaceawaits.content.tiles.Tiles;
 import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.content.ActivatorComponent;
+import de.pcfreak9000.spaceawaits.core.ecs.content.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
-import de.pcfreak9000.spaceawaits.world.IBreakableEntity;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreakable;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
+import de.pcfreak9000.spaceawaits.world.breaking.ecs.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.ActivatorComponent;
-import de.pcfreak9000.spaceawaits.world.ecs.BreakableComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnNeighbourChangeComponent.OnNeighbourTileChange;
-import de.pcfreak9000.spaceawaits.world.ecs.RandomTickComponent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -69,7 +69,7 @@ public class TreeFactory implements EntityFactory {
         BreakableComponent bc = new BreakableComponent();
         bc.setRequired(Components.TRANSFORM);
         bc.destructable.setMaterialLevel(1f).setRequiredTool(Tools.AXE);
-        bc.breakable = new IBreakableEntity() {
+        bc.breakable = new IBreakable() {
             
             @Override
             public void collectDrops(Engine world, Random random, Entity entity, Array<ItemStack> drops) {

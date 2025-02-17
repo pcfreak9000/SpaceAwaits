@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.content;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.module.ModuleUsage;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 
 public class Tools {
     public static final String AXE = "axe";

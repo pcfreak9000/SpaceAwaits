@@ -9,7 +9,7 @@ import de.pcfreak9000.spaceawaits.item.ItemHelper;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.World;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 

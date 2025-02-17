@@ -6,8 +6,8 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.world.Destructible;
-import de.pcfreak9000.spaceawaits.world.tile.IBreaker;
+import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
+import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 
 public class BreakerTools implements IBreaker {
     
@@ -26,17 +26,17 @@ public class BreakerTools implements IBreaker {
     }
     
     @Override
-    public float breakIt(Engine world, Destructible breakable, float progressCurrent) {
+    public float breakIt(Engine world, BreakableInfo breakable, float progressCurrent) {
         return basespeed / breakable.getHardness();
     }
     
     @Override
-    public boolean canBreak(Engine world, Destructible breakable) {
+    public boolean canBreak(Engine world, BreakableInfo breakable) {
         return breakable.getMaterialLevel() <= level && tool == breakable.getRequiredTool();
     }
     
     @Override
-    public void onBreak(Engine world, Destructible breakable, Array<ItemStack> drops, Random random) {
+    public void onBreak(Engine world, BreakableInfo breakable, Array<ItemStack> drops, Random random) {
     }
     
 }
