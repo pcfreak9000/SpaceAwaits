@@ -4,7 +4,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 
-import de.pcfreak9000.spaceawaits.core.ecs.Loadable;
+import de.pcfreak9000.spaceawaits.core.ecs.Transferable;
+import de.pcfreak9000.spaceawaits.core.ecs.Saveable;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.world.IChunkLoader;
 import de.pcfreak9000.spaceawaits.world.IWorldProperties;
@@ -18,7 +19,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.gen.IChunkGenerator;
 import de.pcfreak9000.spaceawaits.world.tile.ChunkECSHandler;
 
-public class ChunkSystem extends IteratingSystem implements ChunkECSHandler, Loadable {
+public class ChunkSystem extends IteratingSystem implements ChunkECSHandler, Transferable, Saveable {
     private final IWorldChunkProvider chunkProvider;
     private final IChunkLoader chunkLoader;
     private TicketedChunkManager chunkManager;
@@ -111,6 +112,11 @@ public class ChunkSystem extends IteratingSystem implements ChunkECSHandler, Loa
     @Override
     public void load() {
         //TODO use this to preload chunks around the player??
+    }
+    
+    @Override
+    public void save() {
+        chunkLoader.saveAllChunks();
     }
     
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.player.Player;
 
@@ -31,7 +32,7 @@ public class GuiOverlay implements Disposable {
         this.player = player;
         this.stage = this.gameScreen.getGuiHelper().createStage();
         create();
-        this.gameScreen.setGuiCurrent(this);
+        this.gameScreen.getSystem(GuiOverlaySystem.class).setGuiCurrent(this);
     }
     
     protected void create() {
@@ -39,7 +40,7 @@ public class GuiOverlay implements Disposable {
     }
     
     protected void closeContainer() {
-        this.gameScreen.setGuiCurrent(null);
+        this.gameScreen.getSystem(GuiOverlaySystem.class).setGuiCurrent(null);
     }
     
     public void onOpened() {

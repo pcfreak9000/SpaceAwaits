@@ -3,15 +3,18 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 
-import de.pcfreak9000.spaceawaits.core.ecs.Loadable;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.Saveable;
+import de.pcfreak9000.spaceawaits.core.ecs.Transferable;
 import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 import de.pcfreak9000.spaceawaits.world.IWorldProperties;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
+import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
-public class WorldSystem extends EntitySystem implements Loadable {
+public class WorldSystem extends EntitySystem implements Transferable, Saveable {
     
     private final WorldBounds bounds;
     
@@ -55,9 +58,7 @@ public class WorldSystem extends EntitySystem implements Loadable {
     @Override
     public void load() {
         loader.load();
-        //((EngineImproved) getEngine()).getEventBus().post(new WorldEvents.WMNBTReadingEvent(loader.getData()));//Hmm        
-        //world.getWorldBus().post(new WorldEvents.WMNBTWritingEvent(nbt));
-        
+        ((EngineImproved) getEngine()).getEventBus().post(new WorldEvents.WMNBTReadingEvent(loader.getData()));
         if (!loader.getData().getBooleanFromByteOrDefault("isGenerated", false)) {
             gen.generate(getEngine());
             loader.getData().putBooleanAsByte("isGenerated", true);
@@ -68,8 +69,19 @@ public class WorldSystem extends EntitySystem implements Loadable {
         }
     }
     
+    private void collectNbtFromEvent() {
+        ((EngineImproved) getEngine()).getEventBus().post(new WorldEvents.WMNBTWritingEvent(loader.getData()));
+    }
+    
+    @Override
+    public void save() {
+        collectNbtFromEvent();
+        loader.save();
+    }
+    
     @Override
     public void unload() {
+        collectNbtFromEvent();
         loader.unload();
     }
     

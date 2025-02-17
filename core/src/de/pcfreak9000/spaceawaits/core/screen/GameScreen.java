@@ -1,18 +1,22 @@
 package de.pcfreak9000.spaceawaits.core.screen;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import de.omnikryptec.event.EventBus;
 import de.pcfreak9000.spaceawaits.command.ICommandContext;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
+import de.pcfreak9000.spaceawaits.core.assets.DynamicAssetListener;
+import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAssetAnnotationProcessor;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
-import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
-import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
-import de.pcfreak9000.spaceawaits.world.command.WorldCommandContext;
+import de.pcfreak9000.spaceawaits.core.ecs.Transferable;
+import de.pcfreak9000.spaceawaits.core.ecs.Saveable;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
-//TODO Maybe have a GameScreen2D in the hierachy as well?
 public class GameScreen extends ScreenAdapter {
     public static final float STEPLENGTH_SECONDS = 1 / 60f;
     
@@ -28,21 +32,17 @@ public class GameScreen extends ScreenAdapter {
     private boolean saveAndExitToMainMenu = false;
     private boolean showGuiElements = true;
     
-    /* Game related stuff */
-    
     protected final EngineImproved ecsEngine;
     
-    private WorldCommandContext commands;
+    //Hmmm...
+    private ICommandContext commands;
     
-    public GameScreen(GuiHelper guiHelper) {
+    public GameScreen(GuiHelper guiHelper, ICommandContext commands) {
         this.guiHelper = guiHelper;
+        this.commands = commands;
         this.renderHelper2D = new RenderHelper2D();
         
         this.ecsEngine = new EngineImproved(STEPLENGTH_SECONDS);
-        SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
-        
-        this.commands = new WorldCommandContext();
-        
     }
     
     public GuiHelper getGuiHelper() {
@@ -111,10 +111,70 @@ public class GameScreen extends ScreenAdapter {
         return commands;
     }
     
-    //Removing this needs some more refactoring
-    @Deprecated
-    public void setGuiCurrent(GuiOverlay guiOverlay) {
-        ecsEngine.getSystem(GuiOverlaySystem.class).setGuiCurrent(guiOverlay);
+    public <T extends EntitySystem> T getSystem(Class<T> clazz) {
+        return ecsEngine.getSystem(clazz);
+    }
+    
+    public EventBus getWorldBus() {
+        return this.ecsEngine.getEventBus();
+    }
+    
+    public void save() {
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            if (es instanceof Saveable) {
+                Saveable u = (Saveable) es;
+                u.save();
+            }
+        }
+    }
+    
+    public void load() {
+        //FIXME this is called after addition of Systems which might alreeady add entities with DynamicAssets...
+        for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
+            ecsEngine.addEntityListener(dal.getFamily(), dal);
+        }
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            if (es instanceof Transferable) {
+                Transferable u = (Transferable) es;
+                u.load();
+            }
+        }
+        SpaceAwaits.BUS.register(this.ecsEngine.getEventBus());//Not too sure about this
+    }
+    
+    public void unload() {
+        //can't use ecsEngine.removeAllSystems(); because systems need to be unregistered
+        EntitySystem[] syss = ecsEngine.getSystems().toArray(EntitySystem.class);
+        for (EntitySystem es : syss) {
+            if (es instanceof Transferable) {
+                Transferable u = (Transferable) es;
+                u.unload();
+            }
+        }
+        
+        ecsEngine.removeAllEntities();
+        
+        //first decouple...
+        for (EntitySystem es : syss) {
+            ecsEngine.removeSystem(es);
+            SpaceAwaits.BUS.unregister(es);//Forcefully unregister systems which would otherwise be dangling. Systems shouldn't register to this BUS anyways, at least usually. 
+        }
+        //...then dispose
+        for (EntitySystem es : syss) {
+            if (es instanceof Disposable) {
+                Disposable d = (Disposable) es;
+                d.dispose();
+            }
+        }
+        
+        SpaceAwaits.BUS.unregister(ecsEngine.getEventBus());
+        
+        for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
+            ecsEngine.removeEntityListener(dal);
+        }
+        
     }
     
 }

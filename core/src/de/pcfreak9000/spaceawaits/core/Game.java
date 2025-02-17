@@ -65,7 +65,7 @@ public class Game {
     
     public void saveGame() {
         LOGGER.info("Saving...");
-        tilescreen.saveWorld();
+        tilescreen.save();
         writePlayer();
     }
     
