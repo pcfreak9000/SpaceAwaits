@@ -12,6 +12,7 @@ import de.pcfreak9000.spaceawaits.module.ModuleBar;
 public class ActorItemStack extends Actor {
     
     private ItemStack itemstack;
+    public boolean drawcount = true;//Hmmm
     
     public void setItemStack(ItemStack stack) {
         this.itemstack = stack;
@@ -46,7 +47,7 @@ public class ActorItemStack extends Actor {
                     batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * widthFull, BAR_HEIGHT);
                 }
             }
-            if (itemstack.getCount() > 1) {
+            if (itemstack.getCount() > 1 && drawcount) {
                 CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
             }
         }

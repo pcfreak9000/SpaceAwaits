@@ -54,6 +54,7 @@ public class GuiInventory extends GuiOverlay {
                     }
                 }
             } else {
+                //Maybe handle individual stuff in slots themselfes?
                 if (clicked.canPut()) {
                     if (event.getButton() == Buttons.LEFT) {
                         ItemStack leftover = InvUtil.insert(clicked.inventoryBacking, clicked.slotIndex,

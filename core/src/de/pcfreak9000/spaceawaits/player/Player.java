@@ -9,6 +9,7 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTType;
+import de.pcfreak9000.spaceawaits.core.ContainerTesting;
 import de.pcfreak9000.spaceawaits.flat.HudSupplier;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
@@ -112,7 +113,11 @@ public class Player implements INBTSerializable, HudSupplier {
     }
     
     public void openInventory() {
-        this.openContainer(new ContainerInventoryPlayer());
+        if (gameMode.isTesting) {
+            this.openContainer(new ContainerTesting());
+        } else {
+            this.openContainer(new ContainerInventoryPlayer());
+        }
     }
     
     @Override

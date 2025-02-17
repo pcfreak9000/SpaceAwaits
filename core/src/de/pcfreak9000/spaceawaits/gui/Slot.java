@@ -19,6 +19,8 @@ public class Slot extends Actor {
     
     protected final ActorItemStack actorItemStack;
     
+    protected boolean canPut = true, canTake = true;
+    
     private ClickListener listener;
     private Label tooltipLabel;
     
@@ -37,11 +39,11 @@ public class Slot extends Actor {
     }
     
     public boolean canTake() {
-        return true;
+        return canTake;
     }
     
     public boolean canPut() {
-        return true;
+        return canPut;
     }
     
     @Override

@@ -44,11 +44,9 @@ public class GuiOverlay implements Disposable {
     }
     
     public void onOpened() {
-        
     }
     
     public void onClosed() {
-        
     }
     
     public void actAndDraw(float dt) {

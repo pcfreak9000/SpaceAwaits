@@ -87,7 +87,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
         if (InptMgr.isJustPressed(EnumInputIds.HideHud)) {
             this.gamescreen.setShowGuiElements(!this.gamescreen.isShowGuiElements());
         }
-        if (this.guiContainerCurrent == null && InptMgr.isJustPressed(EnumInputIds.Esc)) {
+        if (!isGuiContainerOpen() && InptMgr.isJustPressed(EnumInputIds.Esc)) {
             GuiEsc gesc = new GuiEsc();
             gesc.createAndOpen(null);//Hmmmmmmm
         }
