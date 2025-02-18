@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import de.omnikryptec.util.Logger;
@@ -30,7 +31,7 @@ public class CoreRes {
     public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
     public static final ShaderProvider LIQUID_TRANSPARENT_SHADER = new ShaderProvider("liquid.vert");
     
-    public static final Texture WHITE;
+    public static final Texture WHITE, MISSING_TEXTURE;
     
     public static final TextureProvider ITEM_HIGHLIGHT = TextureProvider.get("itemhighlight.png");
     
@@ -81,6 +82,16 @@ public class CoreRes {
         p.drawPixel(0, 0);
         WHITE = new Texture(p);
         p.dispose();
+        Pixmap pmissing = new Pixmap(2, 2, Format.RGB888);
+        pmissing.setColor(Color.BLACK);
+        pmissing.drawPixel(0, 0);
+        pmissing.drawPixel(1, 1);
+        pmissing.setColor(Color.MAGENTA);
+        pmissing.drawPixel(0, 1);
+        pmissing.drawPixel(1, 0);
+        MISSING_TEXTURE = new Texture(pmissing);
+        MISSING_TEXTURE.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+        pmissing.dispose();
         SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1500, 32 * 0.0288f * 1.3f / 1.5f));
         SPACE_BACKGROUND_2.create();
     }
@@ -88,6 +99,7 @@ public class CoreRes {
     public static void dispose() {
         FONT.dispose();
         WHITE.dispose();
+        MISSING_TEXTURE.dispose();
         SPACE_BACKGROUND_2.dispose();
     }
 }

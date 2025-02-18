@@ -145,6 +145,9 @@ public class EventBus implements IEventListener {
      * @param eventtype the class of the event type
      */
     public void register(final IEventListener listener, final Class<? extends Event> eventtype) {
+        if (listener == this) {
+            throw new IllegalArgumentException("Can't listen to myself");
+        }
         this.listeners.get(eventtype).add(listener);
     }
     
@@ -160,7 +163,7 @@ public class EventBus implements IEventListener {
      * </ul>
      * <p>
      * Note: If the object does not contain any subscriptions, an exception is
-     * thrown.
+     * thrown. (No, not anymore)
      * </p>
      *
      * @param object the object to search for subscriptions in
@@ -268,13 +271,8 @@ public class EventBus implements IEventListener {
             LOGGER.debugf("Processing event: %s", event.toString());
         }
         Class<?> someclazz = event.getClass();
-        List<IEventListener> filteredListeners = new ArrayList<>();
-        do {
-            Class<? extends Event> casted = (Class<? extends Event>) someclazz;
-            filteredListeners.addAll(this.listeners.get(casted));
-            someclazz = someclazz.getSuperclass();
-        } while (someclazz != Object.class && someclazz != null);
-        filteredListeners.sort(LISTENER_COMP);
+        //maybe this could be cached?
+        List<IEventListener> filteredListeners = getFilteredListeners(someclazz);
         if (this.verbose) {
             LOGGER.debugf("Found %d listeners listening for an event of this type", filteredListeners.size());
         }
@@ -283,6 +281,17 @@ public class EventBus implements IEventListener {
                 l.invoke(event);
             }
         }
+    }
+    
+    private List<IEventListener> getFilteredListeners(Class<?> someclazz) {
+        List<IEventListener> filteredListeners = new ArrayList<>();
+        do {
+            Class<? extends Event> casted = (Class<? extends Event>) someclazz;
+            filteredListeners.addAll(this.listeners.get(casted));
+            someclazz = someclazz.getSuperclass();
+        } while (someclazz != Object.class && someclazz != null);
+        filteredListeners.sort(LISTENER_COMP);
+        return filteredListeners;
     }
     
     public void setAcceptEvents(boolean b) {

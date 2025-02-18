@@ -32,7 +32,7 @@ public class Item {
     private int maxstacksize = ItemStack.MAX_STACKSIZE;
     
     private Color color = Color.WHITE;
-    private String displayName = "";
+    private String displayName = null;
     
     private Composite composite;
     

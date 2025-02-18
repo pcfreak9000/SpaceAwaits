@@ -68,7 +68,8 @@ public class Tile extends BreakableInfo {
         NOTHING.setSolid(false);
         NOTHING.setColor(Color.CLEAR);
         NOTHING.setCanBreak(false);
-        GameRegistry.registerTile("empty", NOTHING);
+        NOTHING.setDisplayName("tile_nothing");
+        GameRegistry.registerTile("tile_nothing", NOTHING);
     }
     
     private ITextureProvider textureProvider = TextureProvider.EMPTY;
@@ -86,7 +87,7 @@ public class Tile extends BreakableInfo {
     
     private float bouncyness = 0f;
     
-    private String displayName;
+    private String displayName = null;
     
     private Composite composite;
     

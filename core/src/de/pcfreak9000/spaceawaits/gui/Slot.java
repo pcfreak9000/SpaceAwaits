@@ -63,7 +63,7 @@ public class Slot extends Actor {
     }
     
     protected void layoutActorItemStack() {
-        final float offset = 0.1f;
+        final float offset = 0.12f;
         float wt = getWidth() * offset;
         float ht = getHeight() * offset;
         this.actorItemStack.setBounds(getX() + wt, getY() + ht, getWidth() * (1 - offset * 2),

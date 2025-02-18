@@ -11,10 +11,9 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import de.omnikryptec.event.EventSubscription;
-import de.pcfreak9000.spaceawaits.core.CoreEvents;
-import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.QueueResourcesEvent;
 import de.pcfreak9000.spaceawaits.core.CoreEvents.UpdateResourcesEvent;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 
 public class TextureProvider implements ITextureProvider {
     
@@ -93,11 +92,15 @@ public class TextureProvider implements ITextureProvider {
     private void event2(UpdateResourcesEvent ev) {
         Texture t = null;
         if (registered) {
-            t = ev.assetMgr.get(name == null ? "missing_texture.png" : name, Texture.class);
-            t.setAnisotropicFilter(16f);//TODO Write my own TextureLoader to incorporate this into it
+            if (name == null) {
+                t = CoreRes.MISSING_TEXTURE;
+            } else {
+                t = ev.assetMgr.get(name, Texture.class);
+                t.setAnisotropicFilter(16f);//TODO Write my own TextureLoader to incorporate this into it
+            }
         }
         if (t == null) {
-            t = ev.assetMgr.get("missing_texture.png", Texture.class);
+            t = CoreRes.MISSING_TEXTURE;
         }
         region = new TextureRegion(t);
     }

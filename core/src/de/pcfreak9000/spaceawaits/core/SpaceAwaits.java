@@ -16,7 +16,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 
@@ -126,9 +125,7 @@ public class SpaceAwaits extends Game {
     }
     
     private void preloadResources() {//What happens on resource reload?
-        this.assetManager.load("hyperraum.png", Texture.class);
         this.assetManager.load("text.fnt", BitmapFont.class);
-        this.assetManager.load("missing_texture.png", Texture.class);
         //...
         this.assetManager.finishLoading();
     }

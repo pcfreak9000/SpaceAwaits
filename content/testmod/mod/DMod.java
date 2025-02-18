@@ -70,7 +70,7 @@ public class DMod {
         //                TextureProvider.get("sand.png"));
         GameRegistry.registerWorldEntity("spac", fac);
         
-        water.setTexture("stone.png");
+        water.setTexture("stoneWhite.png");
         water.setSolid(false);
         water.setCanBreak(false);
         water.setLightTransmission(0.9f);

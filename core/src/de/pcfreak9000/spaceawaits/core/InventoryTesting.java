@@ -12,6 +12,7 @@ public class InventoryTesting implements IInventory {
             .map((i) -> new ItemStack(i, i.getMaxStackSize())).toList();
     
     public InventoryTesting() {
+        Registry.ITEM_REGISTRY.getAll().forEach((e)->System.out.println(e.getClass().getName()));
     }
     
     @Override
