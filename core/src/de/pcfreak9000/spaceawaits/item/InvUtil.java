@@ -17,6 +17,7 @@ public class InvUtil {
             } else {
                 if (ItemStack.isItemEqual(cur, stack) && ItemStack.isStackTagEqual(cur, stack)) {
                     int amount = Math.min(cur.getItem().getMaxStackSize() - cur.getCount(), stack.getCount());
+                    //FIXME stacktag is not transferred to new stack
                     inv.setSlotContent(slot, new ItemStack(stack.getItem(), amount + cur.getCount()));
                     stack.changeNumber(-amount);
                     if (stack.isEmpty()) {

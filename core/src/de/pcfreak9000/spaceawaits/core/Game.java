@@ -111,7 +111,7 @@ public class Game {
             worldPrimer.setWorldBounds(meta.getBounds());
             TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save.createChunkLoader(),
                     save.createGlobalLoader());
-            tilescreen.load(worldPrimer);
+            tilescreen.load(worldPrimer, player);
             boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);//The player is not currently on this location so a spawn point needs to be found...
             this.tilescreen = tilescreen;
             this.uuidPlayerLocation = uuid;

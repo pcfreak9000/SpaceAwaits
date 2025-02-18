@@ -6,8 +6,11 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.item.InvUtil;
+import de.pcfreak9000.spaceawaits.item.Item;
+import de.pcfreak9000.spaceawaits.world.WorldEvents.PlayerItemPickupEvent;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.ItemStackComponent;
@@ -26,8 +29,15 @@ public class PlayerContactListener implements IContactListener {
             Entity ent = other.getEntity();
             if (Components.ITEM_STACK.has(ent)) {
                 ItemStackComponent iscomp = Components.ITEM_STACK.get(ent);
-                iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
-                if (iscomp.stack == null) {
+                if (iscomp.stack != null) {
+                    int i = iscomp.stack.getCount();
+                    Item it = iscomp.stack.getItem();
+                    iscomp.stack = InvUtil.insert(player.getInventory(), iscomp.stack);
+                    if (iscomp.stack == null || iscomp.stack.getCount() < i) {
+                        //items were picked up
+                        ((EngineImproved) world).getEventBus().post(new PlayerItemPickupEvent(player, it));
+                    }
+                } else {
                     eisys.get(world).despawnEntity(ent);
                 }
             }

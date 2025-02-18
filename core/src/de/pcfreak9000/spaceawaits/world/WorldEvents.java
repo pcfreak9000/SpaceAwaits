@@ -2,9 +2,20 @@ package de.pcfreak9000.spaceawaits.world;
 
 import de.omnikryptec.event.Event;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.player.Player;
 
 public class WorldEvents {
+    
+    public static class PlayerItemPickupEvent extends Event {
+        public final Player player;
+        public final Item item;
+        //TODO split this up into addedtoinventory event and beforepickup event
+        public PlayerItemPickupEvent(Player player, Item item) {
+            this.player = player;
+            this.item = item;
+        }
+    }
     
     public static class PlayerJoinedEvent extends Event {
         public final Player player;

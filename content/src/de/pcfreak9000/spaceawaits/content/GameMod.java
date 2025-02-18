@@ -12,17 +12,18 @@ import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.OreDict;
+import de.pcfreak9000.spaceawaits.science.Science;
 
 @Mod(id = "SpaceAwaits-Game", name = "Space Awaits Main Game", version = { 0, 0, 1 })
 public class GameMod {
-
+    
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
         //Components.registerComponents();
         Items.registerItems();
         Tiles.registerTiles();
         Entities.registerEntities();
-
+        Science.OBSERVATION_REGISTRY.register("testsss", new TestObservation());
         OreDict.addEntry("ingotIron", Items.INGOT_UNREFINED_IRON);
         OreDict.addEntry("ingotIron", Items.INGOT_IRON);
     }

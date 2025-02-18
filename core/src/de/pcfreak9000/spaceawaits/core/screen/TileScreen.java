@@ -13,6 +13,8 @@ import de.pcfreak9000.spaceawaits.core.ecs.content.RandomTickSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.SelectorSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TickCounterSystem;
 import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.science.Observation;
+import de.pcfreak9000.spaceawaits.science.ScienceHookSystem;
 import de.pcfreak9000.spaceawaits.world.IChunkLoader;
 import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -46,12 +48,12 @@ public class TileScreen extends GameScreen {
         this.chunkLoader = chunkloader;
     }
     
-    public void load(WorldPrimer primer) {
-        setupECS(primer);
+    public void load(WorldPrimer primer, Player player) {
+        setupECS(primer, player);
         super.load();
     }
     
-    private void setupECS(WorldPrimer primer) {
+    private void setupECS(WorldPrimer primer, Player player) {
         SystemResolver ecs = new SystemResolver();
         ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator(), primer.getWorldBounds(),
                 primer.getWorldProperties(), primer.getLightProvider()));
@@ -74,6 +76,7 @@ public class TileScreen extends GameScreen {
         ecs.addSystem(new RandomTickSystem());
         ecs.addSystem(new GuiOverlaySystem(this));
         ecs.addSystem(new RandomSystem(new RandomXS128()));
+        ecs.addSystem(new ScienceHookSystem(Observation.ENV_WORLD, player.getScience()));
         //this one needs some stuff with topological sort anyways to resolve dependencies etc
         //SpaceAwaits.BUS.post(new WorldEvents.SetupEntitySystemsEvent(this, ecs, primer));
         ecs.setupSystems(ecsEngine);

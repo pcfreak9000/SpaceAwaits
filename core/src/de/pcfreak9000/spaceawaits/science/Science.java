@@ -1,10 +1,7 @@
 package de.pcfreak9000.spaceawaits.science;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import com.badlogic.gdx.utils.ObjectIntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
 
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
@@ -14,60 +11,57 @@ import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 
 public class Science implements INBTSerializable {
     
-    public static final Registry<IScienceTrigger> TRIGGER_REGISTRY = new Registry<>();
+    public static final Registry<Observation> OBSERVATION_REGISTRY = new Registry<>();
     
-    private Set<ScienceFinding> submittedFindings;
-    private Set<ScienceFinding> submittedFindingsImmutable;
+    private ObjectSet<String> unlockedObservationIds = new ObjectSet<>();
     
-    private ObjectIntMap<ScienceFinding> findingRarity;
+    //TODO this needs to be serialized as well
+    private ObjectMap<Observation, Object> dataholders = new ObjectMap<>();
     
-    public Science() {
-        this.submittedFindings = new LinkedHashSet<>();
-        this.submittedFindingsImmutable = Collections.unmodifiableSet(this.submittedFindings);
-    }
-    
-    public void submitFinding(ScienceType type, int findingRarity, String findingmsg) {
-        ScienceFinding finding = new ScienceFinding(type, findingmsg);
-        if (this.submittedFindings.add(finding)) {
-            this.findingRarity.put(finding, findingRarity);
-            //probably inefficient but ok for now
-            for (IScienceTrigger trig : TRIGGER_REGISTRY.getAll()) {
-                if (trig.isComplete(this)) {
-                    trig.triggerComplete(this);
-                }
-            }
+    public <T> T getDataHolder(Observation o) {
+        Object dh = dataholders.get(o);
+        if (dh == null) {
+            OBSERVATION_REGISTRY.checkRegistered(o);//checking on creation should be sufficient
+            dh = o.createDataHolder();
+            dataholders.put(o, dh);
         }
+        return (T) dh;
     }
     
-    public boolean isSubmitted(ScienceFinding finding) {
-        return submittedFindings.contains(finding);
+    public boolean isUnlocked(Observation obs) {
+        return isUnlocked(OBSERVATION_REGISTRY.getId(obs));
     }
     
-    public Set<ScienceFinding> getSubmittedFindings() {
-        return this.submittedFindingsImmutable;
+    public boolean isUnlocked(String key) {
+        return unlockedObservationIds.contains(key);
     }
     
-    public int getRarity(ScienceFinding finding) {
-        return findingRarity.get(finding, Integer.MIN_VALUE);
+    public void unlock(Observation obs) {
+        if (unlockedObservationIds.add(OBSERVATION_REGISTRY.getId(obs))) {
+            dataholders.remove(obs);
+            //TODO fire obseervation unlock event?
+            //for now just print something:
+            System.out.println("Congrats on unlocking the observation " + obs.getDisplayName());
+        }
     }
     
     @Override
     public void readNBT(NBTCompound nbt) {
-        NBTList nbtfindings = nbt.getList("findings");
-        for (int i = 0; i < nbtfindings.size(); i++) {
-            NBTCompound findingnbt = nbtfindings.getCompound(i);
-            ScienceFinding finding = new ScienceFinding();
-            finding.readNBT(findingnbt);
-            this.submittedFindings.add(finding);
+        NBTList sl = nbt.getList("unlocked");
+        for (int i = 0; i < sl.size(); i++) {
+            //maybe check registered...?
+            unlockedObservationIds.add(sl.getString(i));
         }
     }
     
     @Override
     public void writeNBT(NBTCompound nbt) {
-        NBTList nbtfindings = new NBTList(NBTType.Compound);
-        for (ScienceFinding find : this.submittedFindings) {
-            nbtfindings.addCompound(INBTSerializable.writeNBT(find));
+        NBTList sl = new NBTList(NBTType.String);
+        for (String s : unlockedObservationIds) {
+            sl.addString(s);
         }
-        nbt.putList("findings", nbtfindings);
+        nbt.putList("unlocked", sl);
+        //NBTCompound data = new NBTCompound();
     }
+    
 }
