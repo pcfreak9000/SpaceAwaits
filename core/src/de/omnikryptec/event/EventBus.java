@@ -169,6 +169,9 @@ public class EventBus implements IEventListener {
         if (this.verbose) {
             LOGGER.debug("Trying to register @EventSubscriptions in " + object);
         }
+        if (objMappings.containsKey(object)) {
+            throw new IllegalArgumentException("Object is already registered: " + object);
+        }
         Method[] methods;
         if (object instanceof Class<?>) {
             methods = ((Class<?>) object).getDeclaredMethods();
