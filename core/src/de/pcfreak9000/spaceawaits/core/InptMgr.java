@@ -38,6 +38,9 @@ public class InptMgr {
         register(id, new ButtonKey(code, isbutton));
     }
     
+    //TODO could also register ids to specific InptMgrs, so the checking place doesn't need a "specific" InptMgr in mind
+    //TODO could make precise buttonkey configs where other buttons must not be pressed
+    
     public static void register(Object id, ButtonKey... buttons) {
         Objects.requireNonNull(buttons);
         if (buttons.length == 0) {
