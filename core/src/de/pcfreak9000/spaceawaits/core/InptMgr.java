@@ -11,11 +11,14 @@ import com.badlogic.gdx.utils.ObjectMap;
 public class InptMgr {
     public static final long DOUBLECLICK_DURATION_MS = 300;
     
+    public static final InptMgr WORLD = new InptMgr();
+    public static final InptMgr UI = new InptMgr();
+    
     private static ObjectMap<Object, ButtonKey[]> mappings = new ObjectMap<>();
     
     private static InputProcessor myProc = new InptProc();
     
-    private static boolean locked;
+    private boolean locked;
     
     private static float scrolledX, scrolledY;
     
@@ -43,7 +46,7 @@ public class InptMgr {
         mappings.put(id, buttons);
     }
     
-    public static boolean isPressed(Object id) {
+    public boolean isPressed(Object id) {
         if (locked) {
             return false;
         }
@@ -58,7 +61,7 @@ public class InptMgr {
         return false;
     }
     
-    public static boolean isJustPressed(Object id) {
+    public boolean isJustPressed(Object id) {
         if (locked) {
             return false;
         }
@@ -73,7 +76,10 @@ public class InptMgr {
         return false;
     }
     
-    public static boolean isJustReleased(Object id) {
+    //When locked this should somehow be remembered.... see next line
+    //Opening some UI should maybe also somehow trigger this??
+    //also see ActivatorSystem where this method is used
+    public boolean isJustReleased(Object id) {
         if (locked) {
             return false;
         }
@@ -88,6 +94,8 @@ public class InptMgr {
         return false;
     }
     
+    //maybe make the scroll functions methods to return 0 if that InptMgr is locked
+    
     public static float getScrollX() {
         return scrolledX;
     }
@@ -96,17 +104,17 @@ public class InptMgr {
         return scrolledY;
     }
     
-    public static boolean isLocked() {
+    public boolean isLocked() {
         return locked;
     }
     
-    public static void setLocked(boolean b, InputProcessor other) {
+    public void setLocked(boolean b, InputProcessor other) {
         locked = b;
         if (locked) {
-            Gdx.input.setInputProcessor(other);
+            //Gdx.input.setInputProcessor(other);
             clear();
         } else {
-            Gdx.input.setInputProcessor(myProc);
+            //Gdx.input.setInputProcessor(myProc);
         }
     }
     
@@ -221,7 +229,7 @@ public class InptMgr {
             scrolledY = amountY;
             return false;
         }
-
+        
         @Override
         public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
             return false;

@@ -11,13 +11,11 @@ import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
 //Hmmmm... isJustPressed behaves awkward with fixed time step game loops. This is fixed now.
 public class InventoryHandlerSystem extends EntitySystem implements RenderSystemMarker {
     
     private Player player;
-    private boolean inGui;
     
     private float scrollAccum;
     
@@ -29,33 +27,21 @@ public class InventoryHandlerSystem extends EntitySystem implements RenderSystem
         this.player = ev.player;
     }
     
-    @EventSubscription
-    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
-        inGui = true;
-    }
-    
-    @EventSubscription
-    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
-        inGui = false;
-    }
-    
     @Override
     public void update(float deltaTime) {
-        if (inGui) {
-            return;
+        if (InptMgr.WORLD.isJustPressed(EnumInputIds.ToggleInventory)) {
+            player.openInventory();
         }
-        if (InptMgr.isJustPressed(EnumInputIds.ToggleInventory)) {
-            if (!inGui) {
-                player.openInventory();
-            }
-        }
-        if (!InptMgr.isPressed(EnumInputIds.CamZoom)) {
+        if (!InptMgr.WORLD.isPressed(EnumInputIds.CamZoom)) {
             int hotbarChecked = checkSelectHotbarSlot(player.getInventory().getSelectedSlot(), deltaTime);
             player.getInventory().setSelectedSlot(hotbarChecked);
         }
     }
     
     private int checkSelectHotbarSlot(int current, float dt) {
+        if (InptMgr.WORLD.isLocked()) {
+            return current;
+        }
         for (int i = Keys.NUM_1; i <= Keys.NUM_9; i++) {
             if (Gdx.input.isKeyPressed(i)) {
                 return i - Keys.NUM_1;

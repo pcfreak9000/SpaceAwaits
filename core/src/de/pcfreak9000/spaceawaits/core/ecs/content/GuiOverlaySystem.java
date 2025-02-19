@@ -62,6 +62,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
             this.guiContainerCurrent.onClosed();
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
+            InptMgr.WORLD.setLocked(false, null);
             this.guiContainerCurrent = null;
         } else if (guicont != null) {
             if (isGuiContainerOpen()) {
@@ -69,6 +70,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
             }
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
+            InptMgr.WORLD.setLocked(true, null);
             this.guiContainerCurrent.onOpened();
             bus.post(new RendererEvents.OpenGuiOverlay(guicont));
             //Possibly opening logic
@@ -81,13 +83,13 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
     
     @Override
     public void update(float delta) {
-        if (InptMgr.isJustPressed(EnumInputIds.DebugScreenButton)) {
+        if (InptMgr.UI.isJustPressed(EnumInputIds.DebugScreenButton)) {
             showDebugScreen = !showDebugScreen;
         }
-        if (InptMgr.isJustPressed(EnumInputIds.HideHud)) {
+        if (InptMgr.UI.isJustPressed(EnumInputIds.HideHud)) {
             this.gamescreen.setShowGuiElements(!this.gamescreen.isShowGuiElements());
         }
-        if (!isGuiContainerOpen() && InptMgr.isJustPressed(EnumInputIds.Esc)) {
+        if (!isGuiContainerOpen() && InptMgr.UI.isJustPressed(EnumInputIds.Esc)) {
             GuiEsc gesc = new GuiEsc();
             gesc.createAndOpen(null);//Hmmmmmmm
         }

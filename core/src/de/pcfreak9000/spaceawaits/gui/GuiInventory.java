@@ -39,7 +39,7 @@ public class GuiInventory extends GuiOverlay {
             ItemStack currentAttached = followmouse.getItemStack();
             if (currentAttached == null || currentAttached.isEmpty()) {
                 if (clicked.canTake()) {
-                    if (inventoryBackingMain != null && InptMgr.isPressed(EnumInputIds.INV_MOD)) {
+                    if (inventoryBackingMain != null && InptMgr.UI.isPressed(EnumInputIds.INV_MOD)) {
                         ItemStack stack = InvUtil.extract(clicked.inventoryBacking, clicked.slotIndex);
                         IInventory target = clicked.inventoryBacking == player.getInventory() ? inventoryBackingMain
                                 : player.getInventory();

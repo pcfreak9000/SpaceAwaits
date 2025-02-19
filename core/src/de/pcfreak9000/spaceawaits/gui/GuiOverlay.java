@@ -52,8 +52,8 @@ public class GuiOverlay implements Disposable {
     public void actAndDraw(float dt) {
         this.gameScreen.getGuiHelper().drawDarken(0.7f);
         this.gameScreen.getGuiHelper().actAndDraw(stage, dt);
-        if (!justOpened && (InptMgr.isJustPressed(EnumInputIds.Esc)
-                || (InptMgr.isJustPressed(EnumInputIds.ToggleInventory) && reactsToToggleInventory))) {
+        if (!justOpened && (InptMgr.UI.isJustPressed(EnumInputIds.Esc)
+                || (InptMgr.UI.isJustPressed(EnumInputIds.ToggleInventory) && reactsToToggleInventory))) {
             closeContainer();
         }
         if (justOpened) {

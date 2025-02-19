@@ -31,7 +31,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     
     @Override
     public void update(float deltaTime) {
-        if (InptMgr.isJustPressed(EnumInputIds.DebugDrawPhysics)) {
+        if (InptMgr.WORLD.isJustPressed(EnumInputIds.DebugDrawPhysics)) {
             enabled = !enabled;
         }
         if (enabled) {

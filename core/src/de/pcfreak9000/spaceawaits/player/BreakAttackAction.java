@@ -66,7 +66,7 @@ public class BreakAttackAction implements Action {
     public boolean handle(float mousex, float mousey, Engine world, Entity source) {
         TileSystem tiles = world.getSystem(TileSystem.class);
         Player player = Components.PLAYER_INPUT.get(source).player;
-        boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
+        boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         int tx = Tile.toGlobalTile(mousex);
         int ty = Tile.toGlobalTile(mousey);

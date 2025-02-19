@@ -26,7 +26,7 @@ public class UseAction implements Action {
     
     @Override
     public boolean handle(float mousex, float mousey, Engine world, Entity source) {
-        boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
+        boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         Player player = Components.PLAYER_INPUT.get(source).player;
         //Current mouse stuff
@@ -41,7 +41,7 @@ public class UseAction implements Action {
             Tile clicked = tileSystem.getTile(tx, ty, layer);//FIXME can't use backlayer tiles if front layer is blocking!! (reuse from building?)
             //onTileUse
             ItemStack cp = stack != null ? stack.cpy() : null;
-            if (InptMgr.isJustPressed(getInputKey())) {
+            if (InptMgr.WORLD.isJustPressed(getInputKey())) {
                 used |= clicked.onTileJustUse(player, world, tileSystem, stack, tx, ty, layer);
             }
             used |= clicked.onTileUse(player, world, tileSystem, cp, tx, ty, layer);
@@ -52,7 +52,7 @@ public class UseAction implements Action {
             //onItemUse
             if (stack != null && stack.getItem() != null) {
                 ItemStack cp = stack.cpy();
-                if (InptMgr.isJustPressed(getInputKey())) {
+                if (InptMgr.WORLD.isJustPressed(getInputKey())) {
                     used |= stack.getItem().onItemJustUse(player, cp, world, mousex, mousey, ty, ty, layer);
                 }
                 used |= stack.getItem().onItemUse(player, cp, world, mousex, mousey, tx, ty, layer);//Hmmm... does the layer fit here?

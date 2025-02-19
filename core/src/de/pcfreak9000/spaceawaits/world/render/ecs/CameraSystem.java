@@ -34,8 +34,6 @@ public class CameraSystem extends IteratingSystem {
     private Bounds bounds;
     private Vector2 mousePosVec = new Vector2();
     
-    private boolean inGui;
-    
     public CameraSystem(Bounds bounds, RenderHelper2D renderHelper2D) {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
         this.camera = new OrthographicCamera();
@@ -52,16 +50,6 @@ public class CameraSystem extends IteratingSystem {
     @EventSubscription
     private void ev(RendererEvents.ResizeWorldRendererEvent ev) {
         this.viewport.update(ev.widthNew, ev.heightNew);
-    }
-    
-    @EventSubscription
-    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
-        inGui = true;
-    }
-    
-    @EventSubscription
-    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
-        inGui = false;
     }
     
     //Move to some InputSystem?
@@ -113,7 +101,7 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(bounds.getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        if (!inGui && InptMgr.isPressed(EnumInputIds.CamZoom)) {
+        if (InptMgr.WORLD.isPressed(EnumInputIds.CamZoom)) {
             float scroll = InptMgr.getScrollY() * 0.1f;
             changeZoom(scroll);
         }

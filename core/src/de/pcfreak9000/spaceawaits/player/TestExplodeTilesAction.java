@@ -30,7 +30,7 @@ public class TestExplodeTilesAction implements Action {
         if (!Components.PLAYER_INPUT.get(source).player.getGameMode().isTesting) {
             return false;
         }
-        boolean backlayer = InptMgr.isPressed(EnumInputIds.BackLayerMod);
+        boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         int txm = Tile.toGlobalTile(mousex);
         int tym = Tile.toGlobalTile(mousey);

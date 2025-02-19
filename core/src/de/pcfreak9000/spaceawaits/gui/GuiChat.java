@@ -34,13 +34,13 @@ public class GuiChat extends GuiOverlay {
     
     @Override
     public void actAndDraw(float dt) {
-        if (InptMgr.isJustPressed(EnumInputIds.LastChatMsg)) {
+        if (InptMgr.UI.isJustPressed(EnumInputIds.LastChatMsg)) {
             updateHistory(1);
         }
-        if (InptMgr.isJustPressed(EnumInputIds.NextChatMsg)) {
+        if (InptMgr.UI.isJustPressed(EnumInputIds.NextChatMsg)) {
             updateHistory(-1);
         }
-        if (InptMgr.isJustPressed(EnumInputIds.SendMsg) && !justOpened()) {
+        if (InptMgr.UI.isJustPressed(EnumInputIds.SendMsg) && !justOpened()) {
             String input = text.getText();
             if (!input.isBlank()) {
                 if (history.size() == 0 || !history.get(history.size() - 1).equals(input)) {

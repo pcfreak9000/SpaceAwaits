@@ -16,7 +16,6 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 public abstract class ActivatorSystem extends EntitySystem {
@@ -33,8 +32,6 @@ public abstract class ActivatorSystem extends EntitySystem {
     private Player player;
     private ImmutableArray<Entity> entities;
     
-    private boolean inGui;
-    
     public ActivatorSystem() {
     }
     
@@ -43,16 +40,6 @@ public abstract class ActivatorSystem extends EntitySystem {
     @EventSubscription
     private void plEv(WorldEvents.PlayerJoinedEvent ev) {
         this.player = ev.player;
-    }
-    
-    @EventSubscription
-    private void guioverlayev(RendererEvents.OpenGuiOverlay ev) {
-        inGui = true;
-    }
-    
-    @EventSubscription
-    private void guioverlayev2(RendererEvents.CloseGuiOverlay ev) {
-        inGui = false;
     }
     
     @Override
@@ -69,7 +56,7 @@ public abstract class ActivatorSystem extends EntitySystem {
     
     @Override
     public void update(float deltaTime) {
-        if (inGui) {
+        if (InptMgr.WORLD.isLocked()) {
             return;
         }
         Vector2 mouse = camsys.get(getEngine()).getMouseWorldPos();
@@ -80,11 +67,12 @@ public abstract class ActivatorSystem extends EntitySystem {
         for (Entity e : entities) {
             ActionComponent ac = Components.ACTION.get(e);
             for (Action a : ac.actions) {
-                if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
+                if (a.isContinuous() ? InptMgr.WORLD.isPressed(a.getInputKey())
+                        : InptMgr.WORLD.isJustPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, getEngine(), e)) {
                         return;
                     }
-                } else if (InptMgr.isJustReleased(a.getInputKey())) {
+                } else if (InptMgr.WORLD.isJustReleased(a.getInputKey())) {//Opening some UI should maybe also somehow trigger this??
                     if (a.handleRelease(mouse.x, mouse.y, getEngine(), e)) {
                         return;//Move this up to the top? What if the entity is removed from the system in the meantime? 
                         //Or leave this just here? should work fine
@@ -99,7 +87,8 @@ public abstract class ActivatorSystem extends EntitySystem {
             Entity e = (Entity) o;
             ActivatorComponent ac = Components.ACTIVATOR.get(e);
             for (Activator a : ac.activators) {
-                if (a.isContinuous() ? InptMgr.isPressed(a.getInputKey()) : InptMgr.isJustPressed(a.getInputKey())) {
+                if (a.isContinuous() ? InptMgr.WORLD.isPressed(a.getInputKey())
+                        : InptMgr.WORLD.isJustPressed(a.getInputKey())) {
                     if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getPlayerEntity())) {//TODO change to the entity which is inputting stuff
                         return;
                     }
