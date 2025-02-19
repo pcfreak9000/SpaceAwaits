@@ -108,13 +108,10 @@ public class InptMgr {
         return locked;
     }
     
-    public void setLocked(boolean b, InputProcessor other) {
+    public void setLocked(boolean b) {
         locked = b;
         if (locked) {
-            //Gdx.input.setInputProcessor(other);
             clear();
-        } else {
-            //Gdx.input.setInputProcessor(myProc);
         }
     }
     

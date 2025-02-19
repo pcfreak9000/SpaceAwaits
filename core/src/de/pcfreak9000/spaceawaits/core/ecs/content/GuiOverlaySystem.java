@@ -62,7 +62,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
             this.guiContainerCurrent.onClosed();
             this.guiContainerCurrent.dispose();
             InptMgr.multiplex(null);
-            InptMgr.WORLD.setLocked(false, null);
+            InptMgr.WORLD.setLocked(false);
             this.guiContainerCurrent = null;
         } else if (guicont != null) {
             if (isGuiContainerOpen()) {
@@ -70,7 +70,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
             }
             this.guiContainerCurrent = guicont;
             InptMgr.multiplex(guicont.getStage());
-            InptMgr.WORLD.setLocked(true, null);
+            InptMgr.WORLD.setLocked(true);
             this.guiContainerCurrent.onOpened();
             bus.post(new RendererEvents.OpenGuiOverlay(guicont));
             //Possibly opening logic
