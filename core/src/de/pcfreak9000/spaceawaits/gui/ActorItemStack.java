@@ -10,24 +10,24 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ActorItemStack extends Actor {
-    
+
     private ItemStack itemstack;
-    public boolean drawcount = true;//Hmmm
-    
+    public boolean drawcount = true;// Hmmm
+
     public void setItemStack(ItemStack stack) {
         this.itemstack = stack;
     }
-    
+
     public boolean hasStack() {
         return itemstack != null;
     }
-    
+
     public ItemStack getItemStack() {
         return this.itemstack;
     }
-    
-    private static final float BAR_HEIGHT = 1.5f;
-    
+
+    private static final float BAR_HEIGHT = 1.0f;
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (!ItemStack.isEmptyOrNull(itemstack)) {
@@ -42,9 +42,9 @@ public class ActorItemStack extends Actor {
                     float widthFull = getWidth() * 0.9f;
                     float pad = (getWidth() - widthFull) * 0.5f;
                     batch.setColor(bar.getColorBack(itemstack));
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), widthFull, BAR_HEIGHT);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY() - BAR_HEIGHT * 1.1f, widthFull, BAR_HEIGHT);
                     batch.setColor(bar.getColorFill(itemstack));
-                    batch.draw(CoreRes.WHITE, getX() + pad, getY(), fill * widthFull, BAR_HEIGHT);
+                    batch.draw(CoreRes.WHITE, getX() + pad, getY() - BAR_HEIGHT * 1.1f, fill * widthFull, BAR_HEIGHT);
                 }
             }
             if (itemstack.getCount() > 1 && drawcount) {

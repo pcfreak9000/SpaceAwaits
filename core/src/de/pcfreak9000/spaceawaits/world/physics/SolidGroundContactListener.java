@@ -10,13 +10,13 @@ import com.badlogic.gdx.physics.box2d.WorldManifold;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 
 public class SolidGroundContactListener implements IContactListener {
-    
+
     private OnSolidGroundComponent backingComp;
-    
+
     public SolidGroundContactListener(OnSolidGroundComponent comp) {
         this.backingComp = comp;
     }
-    
+
     @Override
     public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             Engine world) {
@@ -25,7 +25,7 @@ public class SolidGroundContactListener implements IContactListener {
         }
         return false;
     }
-    
+
     @Override
     public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
             Engine world) {
@@ -44,22 +44,22 @@ public class SolidGroundContactListener implements IContactListener {
                 } else if (n == 2) {
                     backingComp.lastContactX = p[0].x * 0.5f + p[1].x * 0.5f;
                     backingComp.lastContactY = p[0].y * 0.5f + p[1].y * 0.5f;
-                }//FIXME ? this looks like it needs a METER_CONV conversion?
+                } // FIXME ? this looks like it needs a METER_CONV conversion?
             }
         }
         return false;
     }
-    
+
     @Override
     public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
             UnitConversion conv, Engine world) {
         return false;
     }
-    
+
     @Override
     public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
             UnitConversion conv, Engine world) {
         return false;
     }
-    
+
 }
