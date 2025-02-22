@@ -169,6 +169,8 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         
+        //unregister all other listener of the worldbus?
+        
         SpaceAwaits.BUS.unregister(ecsEngine.getEventBus());
         
         for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
