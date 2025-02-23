@@ -10,14 +10,21 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.NBTList;
 import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.core.ContainerTesting;
+import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
+import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.flat.HudSupplier;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.science.Science;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
+import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.FollowingTicket;
+import de.pcfreak9000.spaceawaits.world.chunk.mgmt.ITicket;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
+import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 
 /**
  * Information about the player: level, ships, inventory, etc. Also the player
@@ -27,66 +34,96 @@ import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
  *
  */
 public class Player implements INBTSerializable, HudSupplier {
-    
+
     public static enum GameMode {
         Survival(false), Testing(true), TestingGhost(true);
-        
+
         public final boolean isTesting;
-        
+
         private GameMode(boolean istesting) {
             this.isTesting = istesting;
         }
     }
-    
+
+    private String locationUuid = null;
+
     private final Entity playerEntity;
-    
+
     private InventoryPlayer inventory;
-    
+
     private Science science;
-    
+
     private GameMode gameMode = GameMode.Survival;
-    
-    //Hmmmmm...
+
+    // Hmmmmm...
     private Array<ItemStack> toDrop = new Array<>(false, 10);
-    
+
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
         this.science = new Science();
     }
-    
+
+    public void joinTileWorld(TileScreen ts) {
+        if (locationUuid == null) {// hmmmmmmm, check for new location
+            // LOGGER.info("Looking for a spawnpoint...");
+            Vector2 spawnpoint = ts.getSystem(WorldSystem.class).getPlayerSpawn().getPlayerSpawn(this, ts.getECS());// TODO
+                                                                                                                    // engine
+            Vector2 playerpos = Components.TRANSFORM.get(getPlayerEntity()).position;
+            playerpos.x = spawnpoint.x;
+            playerpos.y = spawnpoint.y;
+            OnSolidGroundComponent osgc = getPlayerEntity().getComponent(OnSolidGroundComponent.class);
+            osgc.lastContactX = spawnpoint.x;
+            osgc.lastContactY = spawnpoint.y;
+        }
+        this.locationUuid = ts.getUUID();
+        ts.getECS().addEntity(getPlayerEntity());
+        ((EngineImproved) ts.getECS()).getEventBus().post(new WorldEvents.PlayerJoinedEvent(this));
+    }
+
+    public void leaveTileWorld(TileScreen ts) {
+        ts.getECS().removeEntity(getPlayerEntity());
+        // this.locationUuid = null; //<- this is currently buggy and would lead to a
+        // new spawnpoint each time the world is joined...
+        ((EngineImproved) ts.getECS()).getEventBus().post(new WorldEvents.PlayerLeftEvent(this));
+    }
+
+    public String getLocationUuid() {
+        return locationUuid;
+    }
+
     public GameMode getGameMode() {
         return gameMode;
     }
-    
+
     public void setGameMode(GameMode mode) {
         this.gameMode = mode;
     }
-    
+
     public Entity getPlayerEntity() {
         return this.playerEntity;
     }
-    
+
     @Override
     public InventoryPlayer getInventory() {
         return this.inventory;
     }
-    
+
     @Override
-    public StatsComponent getStats() {//Move stats?
+    public StatsComponent getStats() {// Move stats?
         return getPlayerEntity().getComponent(StatsComponent.class);
     }
-    
+
     public Science getScience() {
         return this.science;
     }
-    
+
     public void dropWhenPossible(ItemStack stack) {
         if (!ItemStack.isEmptyOrNull(stack)) {
             this.toDrop.add(stack);
         }
     }
-    
+
     public void dropQueue(Engine world) {
         Vector2 pos = Components.TRANSFORM.get(playerEntity).position;
         for (ItemStack s : this.toDrop) {
@@ -94,11 +131,11 @@ public class Player implements INBTSerializable, HudSupplier {
         }
         this.toDrop.clear();
     }
-    
+
     public float getReach() {
-        return getGameMode().isTesting ? 200 : 10;//-> ReachComponent or something...
+        return getGameMode().isTesting ? 200 : 10;// -> ReachComponent or something...
     }
-    
+
     // have reach component??? maybe move this into hand component or so? and then
     // as parameter have an entity?
     public boolean isInReachFromHand(float x, float y, float range) {
@@ -107,11 +144,11 @@ public class Player implements INBTSerializable, HudSupplier {
         float ydif = y - pos.y + 1;
         return Mathf.square(xdif) + Mathf.square(ydif) < Mathf.square(range);
     }
-    
+
     public void openContainer(GuiOverlay container) {
         container.createAndOpen(this);
     }
-    
+
     public void openInventory() {
         if (gameMode.isTesting) {
             this.openContainer(new ContainerTesting());
@@ -119,9 +156,13 @@ public class Player implements INBTSerializable, HudSupplier {
             this.openContainer(new ContainerInventoryPlayer());
         }
     }
-    
+
     @Override
     public void readNBT(NBTCompound pc) {
+        this.locationUuid = pc.getStringOrDefault("currentLocationUuid", "");
+        if (this.locationUuid.isEmpty()) {
+            this.locationUuid = null;
+        }
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.inventory.readNBT(pc.getCompound("inventory"));
         this.science.readNBT(pc.getCompound("science"));
@@ -131,9 +172,10 @@ public class Player implements INBTSerializable, HudSupplier {
         }
         this.gameMode = GameMode.values()[(int) pc.getIntegerSmartOrDefault("gamemode", GameMode.Survival.ordinal())];
     }
-    
+
     @Override
     public void writeNBT(NBTCompound pc) {
+        pc.putString("currentLocationUuid", locationUuid == null ? "" : locationUuid);
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
         pc.put("inventory", INBTSerializable.writeNBT(inventory));
         pc.put("science", INBTSerializable.writeNBT(science));
@@ -146,5 +188,5 @@ public class Player implements INBTSerializable, HudSupplier {
         pc.put("todrop", todropl);
         pc.putIntegerSmart("gamemode", gameMode.ordinal());
     }
-    
+
 }

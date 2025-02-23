@@ -18,27 +18,35 @@ import de.pcfreak9000.spaceawaits.world.IChunkLoader;
 import de.pcfreak9000.spaceawaits.world.IGlobalLoader;
 
 public class WorldSave implements IWorldSave {
-    
+
     private WorldMeta meta;
     private File myDir;
-    
+
     private File globalFile;
-    
-    public WorldSave(WorldMeta meta, File dir) {
+
+    private final String uuid;
+
+    public WorldSave(WorldMeta meta, File dir, String uuid) {
         this.meta = meta;
         this.myDir = dir;
+        this.uuid = uuid;
         this.globalFile = new File(myDir, "global.dat");
     }
-    
+
+    @Override
+    public String getUUID() {
+        return uuid;
+    }
+
     @Override
     public WorldMeta getWorldMeta() {
         return meta;
     }
-    
+
     public boolean hasGlobal() {
         return globalFile.exists() && globalFile.isFile();
     }
-    
+
     public NBTCompound readGlobal() {
         try (CompressedNbtReader reader = new CompressedNbtReader(new FileInputStream(globalFile))) {
             return reader.toCompoundTag();
@@ -46,7 +54,7 @@ public class WorldSave implements IWorldSave {
             throw new RuntimeException(e);
         }
     }
-    
+
     public void writeGlobal(NBTCompound nbtc) {
         try {
             TagReader.toCompressedBinaryNBTFile(globalFile, nbtc);
@@ -54,11 +62,11 @@ public class WorldSave implements IWorldSave {
             e.printStackTrace();
         }
     }
-    
+
     public boolean hasChunk(int cx, int cy) {
         return RegionFileCache.hasChunk(myDir, cx, cy);
     }
-    
+
     public NBTCompound readChunk(int cx, int cy) {
         DataInputStream is = RegionFileCache.getChunkDataInputStream(myDir, cx, cy);
         try (NbtReader reader = new NbtReader(is)) {
@@ -67,7 +75,7 @@ public class WorldSave implements IWorldSave {
             throw new RuntimeException(e);
         }
     }
-    
+
     public void writeChunk(int cx, int cy, NBTCompound nbtc) {
         DataOutputStream os = RegionFileCache.getChunkDataOutputStream(myDir, cx, cy);
         try (NbtWriter writer = new NbtWriter(os)) {
@@ -76,15 +84,15 @@ public class WorldSave implements IWorldSave {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public IChunkLoader createChunkLoader() {
         return new ChunkLoader(this, meta.getBounds());
     }
-    
+
     @Override
     public IGlobalLoader createGlobalLoader() {
         return new GlobalLoader(this);
     }
-    
+
 }

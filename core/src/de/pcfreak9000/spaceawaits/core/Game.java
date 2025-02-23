@@ -33,18 +33,13 @@ public class Game {
     // switch worlds etc
 
     private ISave mySave;
-    private ScreenManager scm;// Meh
+    private ScreenManager scm;// Meh?
 
     private Player player;
-    private String uuidPlayerLocation;
     private TileScreen tilescreen;
 
-    private boolean fresh;// TMP!!! also what if the spawn world is deleted? that shoudl then be replaced
-                          // by another spawn world
-
-    public Game(ISave save, boolean fresh, ScreenManager scm) {
+    public Game(ISave save, ScreenManager scm) {
         this.mySave = save;
-        this.fresh = fresh;
         this.scm = scm;
     }
 
@@ -72,8 +67,8 @@ public class Game {
 
     // probably also TMP
     public void joinGame() {
-        if (this.mySave.hasWorld(uuidPlayerLocation)) {
-            this.joinWorld(uuidPlayerLocation);
+        if (this.mySave.hasWorld(player.getLocationUuid())) {
+            this.joinWorld(player.getLocationUuid());
         } else {
             // Check if this save has a spawn place, otherwise generate a new one
             // When generating a new world, place the player at spawn
@@ -93,52 +88,25 @@ public class Game {
     }
 
     public void saveAndLeaveCurrentWorld() {
-        this.tilescreen.removePlayer(player);
+        this.player.leaveTileWorld(tilescreen);
         this.tilescreen.unload();
         this.tilescreen = null;
     }
 
     public void joinWorld(String uuid) {
         try {
+            // TODO check for world existance??
             LOGGER.infof("Setting up world for joining...");
             IWorldSave save = this.mySave.getWorld(uuid);
-            TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save.createChunkLoader(),
-                    save.createGlobalLoader());
+            TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save);
             this.tilescreen = tilescreen;
-            boolean newLocation = !Objects.equals(uuidPlayerLocation, uuid);// The player is not currently on this
-            // location so a spawn point needs to be
-            // found...
-            this.uuidPlayerLocation = uuid;
 
-            
-            WorldMeta meta = save.getWorldMeta();
-            String genId = meta.getWorldGeneratorUsed();
-            long worldSeed = meta.getWorldSeed();
-            // No default because this is crucial information and can't really be defaulted
-            IGeneratingLayer<WorldPrimer, GeneratorSettings> gen = (IGeneratingLayer<WorldPrimer, GeneratorSettings>) Registry.GENERATOR_REGISTRY
-                    .get(genId);
-            WorldPrimer worldPrimer = gen.generate(new GeneratorSettings(worldSeed, fresh));
-            fresh = false;
-            worldPrimer.setWorldBounds(meta.getBounds());
-            tilescreen.load(worldPrimer, player);
-            if (newLocation) {// hmmmmmmm
-                LOGGER.info("Looking for a spawnpoint...");
-                Vector2 spawnpoint = worldPrimer.getPlayerSpawn().getPlayerSpawn(player, tilescreen.getECS());// TODO
-                                                                                                              // engine
-                Vector2 playerpos = Components.TRANSFORM.get(player.getPlayerEntity()).position;
-                playerpos.x = spawnpoint.x;
-                playerpos.y = spawnpoint.y;
-                OnSolidGroundComponent osgc = player.getPlayerEntity().getComponent(OnSolidGroundComponent.class);
-                osgc.lastContactX = spawnpoint.x;
-                osgc.lastContactY = spawnpoint.y;
-            }
-            
+            tilescreen.load();
+
             LOGGER.info("Joining world...");
-            scm.setWorldScreen(tilescreen);// Replace scm with something that onle allows non-null GameScreens?
-            tilescreen.setPlayer(player);
+            scm.setWorldScreen(tilescreen);
+            this.player.joinTileWorld(tilescreen);
 
-            
-            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -146,14 +114,14 @@ public class Game {
 
     public String createWorld(String name, IGeneratingLayer<WorldPrimer, GeneratorSettings> generator, long seed) {
         LOGGER.infof("Creating world...");
-        WorldPrimer worldPrimer = generator.generate(new GeneratorSettings(seed, fresh));
-        fresh = false;
+        WorldPrimer worldPrimer = generator.generate(new GeneratorSettings(seed));
         WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
                 .worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldPrimer.getWorldBounds())
                 .create();
         // The meta can probably be cached (useful for create-and-join)
+        //See Save.java for todo on uuid in meta...?
         try {
-            String uuid = this.mySave.createWorld(name, wMeta);
+            String uuid = this.mySave.createWorld(wMeta);
             return uuid;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -172,14 +140,12 @@ public class Game {
         if (this.mySave.hasPlayer()) {
             NBTCompound savestate = mySave.readPlayerNBT();
             this.player.readNBT(savestate.getCompound("player"));
-            this.uuidPlayerLocation = savestate.getString("currentLocation");
         }
     }
 
     private void writePlayer() {
         NBTCompound comp = new NBTCompound();
         comp.put("player", INBTSerializable.writeNBT(player));
-        comp.putString("currentLocation", uuidPlayerLocation);
         mySave.writePlayerNBT(comp);
     }
 

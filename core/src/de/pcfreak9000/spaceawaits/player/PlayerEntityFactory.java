@@ -8,6 +8,7 @@ import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.content.ActionComponent;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.serialize.SerializeEntityComponent;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkTicketComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.RenderStatsComponent;
@@ -21,13 +22,13 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerEntityFactory implements EntityFactory {
-    
+
     public static Entity setupPlayerEntity(Player player) {
         Entity e = CoreRes.PLAYER_FACTORY.createEntity();
-        e.getComponent(PlayerInputComponent.class).player = player;//Move this into dedicated component?
+        e.getComponent(PlayerInputComponent.class).player = player;// Move this into dedicated component?
         return e;
     }
-    
+
     @Override
     public Entity createEntity() {
         Entity e = new EntityImproved();
@@ -44,9 +45,9 @@ public class PlayerEntityFactory implements EntityFactory {
         rc.height = 1.9f;
         pic.offx = rc.width / 2f;
         pic.offy = rc.height / 2f;
-        
-        //rc.sprite = sprite;
-        //rc.action = new TextureSpriteAction(CoreRes.HUMAN);
+
+        // rc.sprite = sprite;
+        // rc.action = new TextureSpriteAction(CoreRes.HUMAN);
         rc.renderable = CoreRes.HUMAN;
         e.add(rc);
         TransformComponent tc = new TransformComponent();
@@ -63,8 +64,11 @@ public class PlayerEntityFactory implements EntityFactory {
         rsc.yOff = rc.height + 0.1f;
         e.add(rsc);
         pc.factory = new PlayerBodyFactory(rc.width, rc.height, l);
-        //        pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f)
-        //                .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f, sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
+        // pc.factory = AABBBodyFactory.builder().dimensions(sprite.getWidth() * 0.7f,
+        // sprite.getHeight() * 0.9f)
+        // .offsets(sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f).create();//new
+        // AABBBodyFactory(sprite.getWidth() * 0.7f, sprite.getHeight() * 0.9f,
+        // sprite.getWidth() / 2, sprite.getHeight() / 2 * 0.9f);
         e.add(new SerializeEntityComponent(this));
         e.add(new RenderComponent(RenderLayers.ENTITY));
         e.add(new ContactListenerComponent(new PlayerContactListener()));
@@ -74,6 +78,7 @@ public class PlayerEntityFactory implements EntityFactory {
         actionComp.actions.add(new UseAction());
         actionComp.actions.add(new ConsoleAction());
         e.add(actionComp);
+        e.add(new ChunkTicketComponent(2));
         return e;
     }
 }

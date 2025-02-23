@@ -35,11 +35,11 @@ public class Save implements ISave {
     }
     
     @Override
-    public String createWorld(String name, WorldMeta meta) {
+    public String createWorld(WorldMeta meta) {
         String combinedID = null;
         File worldFile = null;
         do {
-            combinedID = createNewID(name);
+            combinedID = createNewID(meta.getDisplayName());
             worldFile = new File(worldsDir, combinedID);
         } while (worldFile.exists());//In theory this could take forever but in practice it won't
         worldFile.mkdir();
@@ -68,7 +68,7 @@ public class Save implements ISave {
     public boolean hasWorld(String uuid) {
         if (uuid == null) {//Hmm
             return false;
-        }
+        }//TODO Include uuid in world meta and check that here?!
         File file = new File(worldsDir, uuid);
         return file.exists() && file.isDirectory();
     }
@@ -81,7 +81,7 @@ public class Save implements ISave {
         }
         WorldMeta meta = getWorldMetaFor(file);
         writeWorldMetaFor(file, meta);//Update meta or smth...
-        WorldSave save = new WorldSave(meta, file);
+        WorldSave save = new WorldSave(meta, file, uuid);
         return save;
     }
     

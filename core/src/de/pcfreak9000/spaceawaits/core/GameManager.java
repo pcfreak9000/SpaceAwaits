@@ -32,19 +32,19 @@ public class GameManager {
 
     public void createAndLoadGame(String name, long seed) throws IOException {
         ISave save = this.saveManager.createSave(name, seed);
-        loadGame(save.getSaveMeta().getNameOnDisk(), true);
+        loadGame(save.getSaveMeta().getNameOnDisk());
     }
 
-    public void loadGame(String uniqueSaveDesc, boolean fresh) throws IOException {
+    public void loadGame(String uniqueSaveDesc) throws IOException {
         if (!saveManager.exists(uniqueSaveDesc)) {
             throw new IllegalStateException(uniqueSaveDesc);
         }
         ISave save = this.saveManager.getSave(uniqueSaveDesc);
-        Game game = new Game(save, fresh, screenManager);
+        Game game = new Game(save, screenManager);
         game.loadGame();
         game.joinGame();
         this.gameCurrent = game;
- //       screenManager.setFlatWorldScreen(new FlatWorld(), new FlatPlayer());
+        // screenManager.setFlatWorldScreen(new FlatWorld(), new FlatPlayer());
     }
 
     public void unloadGame() {

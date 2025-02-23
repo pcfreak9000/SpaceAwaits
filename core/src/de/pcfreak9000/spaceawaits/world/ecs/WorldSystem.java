@@ -11,50 +11,58 @@ import de.pcfreak9000.spaceawaits.world.IWorldProperties;
 import de.pcfreak9000.spaceawaits.world.WorldBounds;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.WorldUtil;
+import de.pcfreak9000.spaceawaits.world.gen.IPlayerSpawn;
 import de.pcfreak9000.spaceawaits.world.gen.IWorldGenerator;
 import de.pcfreak9000.spaceawaits.world.light.AmbientLightProvider;
 
 public class WorldSystem extends EntitySystem implements Transferable, Saveable {
-    
+
     private final WorldBounds bounds;
-    
+
     private IGlobalLoader loader;
     private IWorldGenerator gen;
-    
+
     private IWorldProperties props;
     private AmbientLightProvider alp;
-    
+
+    private IPlayerSpawn spawn;
+
     public WorldSystem(IGlobalLoader loader, IWorldGenerator gen, WorldBounds bounds, IWorldProperties props,
-            AmbientLightProvider alp) {
+            AmbientLightProvider alp, IPlayerSpawn spawn) {
         this.loader = loader;
         this.gen = gen;
         this.bounds = bounds;
         this.props = props;
         this.alp = alp;
+        this.spawn = spawn;
     }
-    
+
+    public IPlayerSpawn getPlayerSpawn() {
+        return this.spawn;
+    }
+
     public IWorldProperties getWorldProperties() {
         return props;
     }
-    
+
     public AmbientLightProvider getAmbientLightProvider() {
         return alp;
     }
-    
+
     public WorldBounds getBounds() {
         return bounds;
     }
-    
+
     public void addEntity(Entity ent) {
         getEngine().addEntity(ent);
         loader.getEntities().addEntity(ent);
     }
-    
+
     public void removeEntity(Entity ent) {
         getEngine().removeEntity(ent);
         loader.getEntities().removeEntity(ent);
     }
-    
+
     @Override
     public void load() {
         loader.load();
@@ -68,21 +76,21 @@ public class WorldSystem extends EntitySystem implements Transferable, Saveable 
             WorldUtil.createWorldBorders(getEngine(), getBounds().getWidth(), getBounds().getHeight());
         }
     }
-    
+
     private void collectNbtFromEvent() {
         ((EngineImproved) getEngine()).getEventBus().post(new WorldEvents.WMNBTWritingEvent(loader.getData()));
     }
-    
+
     @Override
     public void save() {
         collectNbtFromEvent();
         loader.save();
     }
-    
+
     @Override
     public void unload() {
         collectNbtFromEvent();
         loader.unload();
     }
-    
+
 }
