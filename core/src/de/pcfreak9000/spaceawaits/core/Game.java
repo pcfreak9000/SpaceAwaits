@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.NBTCompound;
+import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
@@ -36,7 +37,7 @@ public class Game {
     private ScreenManager scm;// Meh?
 
     private Player player;
-    private TileScreen tilescreen;
+    private GameScreen gamescreenCurrent;
 
     public Game(ISave save, ScreenManager scm) {
         this.mySave = save;
@@ -61,7 +62,7 @@ public class Game {
 
     public void saveGame() {
         LOGGER.info("Saving...");
-        tilescreen.save();
+        gamescreenCurrent.save();
         writePlayer();
     }
 
@@ -88,18 +89,22 @@ public class Game {
     }
 
     public void saveAndLeaveCurrentWorld() {
-        this.player.leaveTileWorld(tilescreen);
-        this.tilescreen.unload();
-        this.tilescreen = null;
+        // eh...
+        this.player.leaveTileWorld((TileScreen) gamescreenCurrent);
+        this.gamescreenCurrent.unload();
+        this.gamescreenCurrent = null;
     }
 
     public void joinWorld(String uuid) {
         try {
-            // TODO check for world existance??
+            if (!this.mySave.hasWorld(uuid)) {
+                LOGGER.error("No such world with uuid: " + uuid);
+                return;
+            }
             LOGGER.infof("Setting up world for joining...");
             IWorldSave save = this.mySave.getWorld(uuid);
             TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save);
-            this.tilescreen = tilescreen;
+            this.gamescreenCurrent = tilescreen;
 
             tilescreen.load();
 
@@ -119,7 +124,7 @@ public class Game {
                 .worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldPrimer.getWorldBounds())
                 .create();
         // The meta can probably be cached (useful for create-and-join)
-        //See Save.java for todo on uuid in meta...?
+        // See Save.java for todo on uuid in meta...?
         try {
             String uuid = this.mySave.createWorld(wMeta);
             return uuid;
@@ -129,7 +134,8 @@ public class Game {
     }
 
     public TileScreen getTileScreenCurrent() {
-        return this.tilescreen;
+        // Hmmm...
+        return (TileScreen) this.gamescreenCurrent;
     }
 
     public Player getPlayer() {
