@@ -10,16 +10,16 @@ import de.pcfreak9000.spaceawaits.crafting.FurnaceRecipe;
 import de.pcfreak9000.spaceawaits.crafting.ShapedRecipe;
 import de.pcfreak9000.spaceawaits.crafting.SimpleRecipe;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.knowledge.Knowledge;
+import de.pcfreak9000.spaceawaits.knowledge.Knowledgebase;
 import de.pcfreak9000.spaceawaits.mod.Mod;
 import de.pcfreak9000.spaceawaits.registry.OreDict;
-import de.pcfreak9000.spaceawaits.science.Observation;
-import de.pcfreak9000.spaceawaits.science.Science;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 
 @Mod(id = "SpaceAwaits-Game", name = "Space Awaits Main Game", version = { 0, 0, 1 })
 public class GameMod {
 
-    public static final Observation TEST_OBS = new TestObservation();
+    public static final Knowledge TEST_OBS = new TestObservation();
 
     @EventSubscription
     public void init(final CoreEvents.InitEvent init) {
@@ -27,7 +27,7 @@ public class GameMod {
         Items.registerItems();
         Tiles.registerTiles();
         Entities.registerEntities();
-        Science.OBSERVATION_REGISTRY.register("testsss", TEST_OBS);
+        Knowledgebase.KNOWLEDGE_REGISTRY.register("testsss", TEST_OBS);
         OreDict.addEntry("ingotIron", Items.INGOT_UNREFINED_IRON);
         OreDict.addEntry("ingotIron", Items.INGOT_IRON);
     }

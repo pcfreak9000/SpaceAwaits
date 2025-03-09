@@ -15,7 +15,7 @@ import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.flat.HudSupplier;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
-import de.pcfreak9000.spaceawaits.science.Science;
+import de.pcfreak9000.spaceawaits.knowledge.Knowledgebase;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
@@ -51,7 +51,7 @@ public class Player implements INBTSerializable, HudSupplier {
 
     private InventoryPlayer inventory;
 
-    private Science science;
+    private Knowledgebase science;
 
     private GameMode gameMode = GameMode.Survival;
 
@@ -61,7 +61,7 @@ public class Player implements INBTSerializable, HudSupplier {
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
-        this.science = new Science();
+        this.science = new Knowledgebase();
     }
 
     public void joinTileWorld(TileScreen ts) {
@@ -114,7 +114,7 @@ public class Player implements INBTSerializable, HudSupplier {
         return getPlayerEntity().getComponent(StatsComponent.class);
     }
 
-    public Science getScience() {
+    public Knowledgebase getScience() {
         return this.science;
     }
 
