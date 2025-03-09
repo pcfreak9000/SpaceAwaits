@@ -102,7 +102,7 @@ public class CoreRes {
         Texture texture = new Texture(Gdx.files.internal("ui/dejavusans.png"), true); // true enables mipmaps
         texture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
         FONT = new DistanceFieldFont(Gdx.files.internal("ui/dejavusans.fnt"), new TextureRegion(texture), false);
-        ((DistanceFieldFont)FONT).setDistanceFieldSmoothing(10f);
+        ((DistanceFieldFont)FONT).setDistanceFieldSmoothing(5f);
         //FONT = new BitmapFont();
     }
     

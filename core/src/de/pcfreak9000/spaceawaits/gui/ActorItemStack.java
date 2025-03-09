@@ -2,6 +2,7 @@ package de.pcfreak9000.spaceawaits.gui;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
@@ -15,6 +16,13 @@ public class ActorItemStack extends Actor {
 
     private ItemStack itemstack;
     public boolean drawcount = true;// Hmmm
+
+    private Label label;
+
+    public ActorItemStack() {
+        this.label = new Label("", CoreRes.SKIN.getSkin());
+        this.label.setFontScale(0.7f);
+    }
 
     public void setItemStack(ItemStack stack) {
         this.itemstack = stack;
@@ -48,7 +56,9 @@ public class ActorItemStack extends Actor {
                 }
             }
             if (itemstack.getCount() > 1 && drawcount) {
-                CoreRes.FONT.draw(batch, itemstack.getCount() + "", getX(), getY() + getHeight());
+                this.label.setText(itemstack.getCount() + "");
+                this.label.setPosition(getX(), getY() + getHeight() * 0.85f);
+                this.label.draw(batch, 1f);
             }
         }
     }
