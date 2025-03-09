@@ -171,9 +171,12 @@ public class SelectSaveScreen extends MenuScreen {
                             }
                         };
                     };
+                    d.pad(10f);
+                    d.padTop(50);
                     d.getContentTable().add(newName);
                     d.button("Rename", new Object());
                     d.button("Cancel");
+                    d.getTitleTable().setSize(400, 100);
                     d.show(stage);
                 }
             }
@@ -204,19 +207,19 @@ public class SelectSaveScreen extends MenuScreen {
         savesList.addListener(listListener);
         ScrollPane pane = new ScrollPane(savesList);
         table.setFillParent(true);
-        table.align(Align.left);
+        table.align(Align.center);
         Table buttontable = new Table();
-        buttontable.add(newButton).width(100).pad(5);
+        buttontable.add(newButton).width(400).height(70).pad(5);
         buttontable.row();
-        buttontable.add(playSelectedButton).width(100).pad(5);
+        buttontable.add(playSelectedButton).width(400).height(70).pad(5);
         buttontable.row();
-        buttontable.add(renameButton).width(100).pad(5);
+        buttontable.add(renameButton).width(400).height(70).pad(5);
         buttontable.row();
-        buttontable.add(deleteSelectedButton).width(100).pad(5);
+        buttontable.add(deleteSelectedButton).width(400).height(70).pad(5);
         buttontable.row();
-        buttontable.add(backButton).width(100).pad(5);
-        table.add(buttontable);
-        table.add(pane);
+        buttontable.add(backButton).width(400).height(70).pad(5);
+        table.add(buttontable).padRight(50);
+        table.add(pane).width(400);
         stage.addActor(table);
     }
     

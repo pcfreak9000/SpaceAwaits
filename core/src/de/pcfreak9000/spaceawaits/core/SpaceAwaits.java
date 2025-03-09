@@ -15,8 +15,10 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 
 import de.codemakers.base.os.OSUtil;
@@ -193,6 +195,7 @@ public class SpaceAwaits extends Game {
                 return new FileHandleClassLoaderExtension(fileName, modloader.getModClassLoader());
             }
         });
+        manager.setLoader(Skin.class, new SkinLoaderModified(manager.getFileHandleResolver()));
         return manager;
     }
     

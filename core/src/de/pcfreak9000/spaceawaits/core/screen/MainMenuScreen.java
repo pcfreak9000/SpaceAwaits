@@ -36,9 +36,9 @@ public class MainMenuScreen extends MenuScreen {
         table.align(Align.center);
         table.add(label);
         table.row();
-        table.add(playButton).width(110).padBottom(5);
+        table.add(playButton).width(400).height(70f).padBottom(5);
         table.row();
-        table.add(exitButton).width(110);
+        table.add(exitButton).width(400).height(70f);
         stage.addActor(table);
     }
     

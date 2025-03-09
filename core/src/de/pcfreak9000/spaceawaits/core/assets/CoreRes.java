@@ -1,5 +1,6 @@
 package de.pcfreak9000.spaceawaits.core.assets;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -8,6 +9,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.DistanceFieldFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
@@ -25,7 +29,7 @@ public class CoreRes {
         MovMod, CamZoom;
     }
     
-    public static final BitmapFont FONT = new BitmapFont();//TODO font provider
+    public static final BitmapFont FONT;//TODO font provider
     public static final SkinProvider SKIN = new SkinProvider();
     
     public static final ShaderProvider FOG_SHADER = new ShaderProvider("fog.vert");
@@ -94,6 +98,12 @@ public class CoreRes {
         pmissing.dispose();
         SPACE_BACKGROUND_2 = new GeneratedTexture(1920, 1080, new StarfieldTexGen(1500, 32 * 0.0288f * 1.3f / 1.5f));
         SPACE_BACKGROUND_2.create();
+        //setup font
+        Texture texture = new Texture(Gdx.files.internal("ui/dejavusans.png"), true); // true enables mipmaps
+        texture.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+        FONT = new DistanceFieldFont(Gdx.files.internal("ui/dejavusans.fnt"), new TextureRegion(texture), false);
+        ((DistanceFieldFont)FONT).setDistanceFieldSmoothing(10f);
+        //FONT = new BitmapFont();
     }
     
     public static void dispose() {

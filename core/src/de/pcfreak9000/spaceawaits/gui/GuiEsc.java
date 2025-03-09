@@ -26,7 +26,7 @@ public class GuiEsc extends GuiOverlay {
                 closeContainer();
             }
         });
-        table.add(buttonContinue).pad(5);
+        table.add(buttonContinue).size(400, 70).pad(5);
         table.row();
         TextButton buttonSaveAll = new TextButton("Save All", CoreRes.SKIN.getSkin());
         buttonSaveAll.addListener(new ClickListener() {
@@ -36,7 +36,7 @@ public class GuiEsc extends GuiOverlay {
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().saveGame();
             }
         });
-        table.add(buttonSaveAll).pad(5);
+        table.add(buttonSaveAll).size(400, 70).pad(5);
         table.row();
         TextButton buttonSaveExit = new TextButton("Save and Exit", CoreRes.SKIN.getSkin());
         buttonSaveExit.addListener(new ClickListener() {
@@ -46,7 +46,7 @@ public class GuiEsc extends GuiOverlay {
                 gameScreen.queueSaveAndExitToMainMenu();
             }
         });
-        table.add(buttonSaveExit).pad(5);
+        table.add(buttonSaveExit).size(400, 70).pad(5);
         table.row();
         ScrollPane pane = new ScrollPane(table, CoreRes.SKIN.getSkin());
         supertable.add(pane);
