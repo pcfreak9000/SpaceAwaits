@@ -11,6 +11,8 @@ import de.pcfreak9000.spaceawaits.module.ModuleBar;
 
 public class ActorItemStack extends Actor {
 
+    private static final float BAR_HEIGHT = 1.5f;
+
     private ItemStack itemstack;
     public boolean drawcount = true;// Hmmm
 
@@ -25,8 +27,6 @@ public class ActorItemStack extends Actor {
     public ItemStack getItemStack() {
         return this.itemstack;
     }
-
-    private static final float BAR_HEIGHT = 1.0f;
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
