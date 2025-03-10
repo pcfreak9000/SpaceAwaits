@@ -3,27 +3,31 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
+import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 
 public class PlayerInputSystem extends IteratingSystem {
-    
-    //How was that input multiplexing going again?! well it needs to be THIS way as other important things rely on InptMgr...
+
+    // How was that input multiplexing going again?! well it needs to be THIS way as
+    // other important things rely on InptMgr...
     // private boolean inGui;
-    
+
     public PlayerInputSystem() {
         super(Family.all(PlayerInputComponent.class, PhysicsComponent.class).get());
     }
-    
+
     @Override
     protected void processEntity(Entity entity, float dt) {
         Player player = Components.PLAYER_INPUT.get(entity).player;
-        //move this somewhere else...
+        // move this somewhere else...
         player.dropQueue(getEngine());
-        
+
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
         float vx = 0;
@@ -50,7 +54,7 @@ public class PlayerInputSystem extends IteratingSystem {
             if (right) {
                 vx += play.maxXv;
             }
-            
+
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             if (!InptMgr.WORLD.isPressed(EnumInputIds.MovMod)) {
                 vx *= 0.5f;
@@ -65,7 +69,7 @@ public class PlayerInputSystem extends IteratingSystem {
                     vy += play.maxXv;
                 }
             }
-            //kinda useless, use for sneaking/ladders instead?
+            // kinda useless, use for sneaking/ladders instead?
             if (down) {
                 if (canmovefreely) {
                     vy -= play.maxXv;
@@ -81,9 +85,28 @@ public class PlayerInputSystem extends IteratingSystem {
             }
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             pc.body.applyAccelerationW(vx * 6, vy * (canmovefreely ? 6 : 3));
-            pc.body.applyAccelerationPh(-pc.body.getLinearVelocityPh().x * 40,
-                    -pc.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         }
+
+        // Move the gamemode stuff?
+        // ************************************************************************
+        PhysicsComponent comp = Components.PHYSICS.get(entity);
+        GameMode mode = Components.PLAYER_INPUT.get(entity).player.getGameMode();
+        comp.affectedByForces = !mode.isTesting;
+        if (mode == GameMode.TestingGhost && comp.i_nonsensorfixtures == null) {
+            comp.i_nonsensorfixtures = new Array<Fixture>();
+            for (Fixture f : Components.PHYSICS.get(entity).body.getBody().getFixtureList()) {
+                if (!f.isSensor()) {
+                    comp.i_nonsensorfixtures.add(f);
+                    f.setSensor(true);
+                }
+            }
+        } else if (mode != GameMode.TestingGhost && comp.i_nonsensorfixtures != null) {
+            for (int i = 0; i < comp.i_nonsensorfixtures.size; i++) {
+                comp.i_nonsensorfixtures.get(i).setSensor(false);
+            }
+            comp.i_nonsensorfixtures = null;
+        }
+        // ************************************************************************
     }
-    
+
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
+import de.pcfreak9000.spaceawaits.core.ecs.content.AutosaveSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxSystem;
@@ -96,7 +97,7 @@ public class TileScreen extends GameScreen {
         ecs.addSystem(new RandomTickSystem());
         ecs.addSystem(new GuiOverlaySystem(this));
         ecs.addSystem(new RandomSystem(new RandomXS128()));
-
+        ecs.addSystem(new AutosaveSystem(10f));
         SpaceAwaits.BUS.post(new WorldEvents.SetupEvent(ecs, getWorldBus()));
 
         // this one needs some stuff with topological sort anyways to resolve

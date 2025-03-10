@@ -215,9 +215,9 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
-        if (pc.tmpadded && entity.flags == EngineImproved.FLAG_ADDED) {
+        if (pc.i_tmpadded && entity.flags == EngineImproved.FLAG_ADDED) {
             tmpEntities.removeValue(entity, true);
-            pc.tmpadded = false;
+            pc.i_tmpadded = false;
         }
         if (pc.body != null) {
             LOGGER.error("Body of just added entity isn't null: " + entity);
@@ -289,8 +289,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
                 if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
                     for (Entity e : c.getEntities()) {
                         if (getFamily().matches(e)) {
-                            if (e.flags != EngineImproved.FLAG_ADDED && !Components.PHYSICS.get(e).tmpadded) {
-                                Components.PHYSICS.get(e).tmpadded = true;
+                            if (e.flags != EngineImproved.FLAG_ADDED && !Components.PHYSICS.get(e).i_tmpadded) {
+                                Components.PHYSICS.get(e).i_tmpadded = true;
                                 tmpEntities.add(e);
                                 entityAdded(e);
                                 syncBodyToTransform(e);
