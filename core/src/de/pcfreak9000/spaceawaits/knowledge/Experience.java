@@ -1,10 +1,13 @@
 package de.pcfreak9000.spaceawaits.knowledge;
 
 public class Experience {
-// for a level bases experience
-//    public float getExpForNextLevel(int currentLvl) {
-//        return 1.0f;
-//    }
+
+    private String displayname = "";
+    
+    public String getDisplayName() {
+        return displayname;
+    }
+    
     public boolean hasData() {
         return false;
     }

@@ -9,7 +9,7 @@ public class ObservationUnlockListener {
     @EventSubscription
     private void ev(PlayerItemPickupEvent ev) {
         if (ev.item == Items.TWIG) {
-            ev.player.getScience().unlock(GameMod.TEST_OBS);
+            ev.player.getKnowledge().unlock(GameMod.TEST_OBS);
         }
     }
 

@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
 import de.pcfreak9000.spaceawaits.flat.HudSupplier;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
+import de.pcfreak9000.spaceawaits.knowledge.Experiences;
 import de.pcfreak9000.spaceawaits.knowledge.Knowledgebase;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
@@ -51,7 +52,8 @@ public class Player implements INBTSerializable, HudSupplier {
 
     private InventoryPlayer inventory;
 
-    private Knowledgebase science;
+    private Knowledgebase knowledges;
+    private Experiences experiences;
 
     private GameMode gameMode = GameMode.Survival;
 
@@ -61,7 +63,8 @@ public class Player implements INBTSerializable, HudSupplier {
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
-        this.science = new Knowledgebase();
+        this.knowledges = new Knowledgebase();
+        this.experiences = new Experiences();
     }
 
     public void joinTileWorld(TileScreen ts) {
@@ -114,8 +117,12 @@ public class Player implements INBTSerializable, HudSupplier {
         return getPlayerEntity().getComponent(StatsComponent.class);
     }
 
-    public Knowledgebase getScience() {
-        return this.science;
+    public Knowledgebase getKnowledge() {
+        return this.knowledges;
+    }
+
+    public Experiences getExperience() {
+        return this.experiences;
     }
 
     public void dropWhenPossible(ItemStack stack) {
@@ -165,7 +172,8 @@ public class Player implements INBTSerializable, HudSupplier {
         }
         EntitySerializer.deserializeEntityComponents(playerEntity, pc.getCompound("entity"));
         this.inventory.readNBT(pc.getCompound("inventory"));
-        this.science.readNBT(pc.getCompound("science"));
+        this.knowledges.readNBT(pc.getCompound("science"));
+        this.experiences.readNBT(pc.getCompound("experience"));
         NBTList todropl = pc.getListOrDefault("todrop", new NBTList(NBTType.Compound));
         for (int i = 0; i < todropl.size(); i++) {
             toDrop.add(ItemStack.readNBT(todropl.getCompound(i)));
@@ -178,7 +186,8 @@ public class Player implements INBTSerializable, HudSupplier {
         pc.putString("currentLocationUuid", locationUuid == null ? "" : locationUuid);
         pc.put("entity", EntitySerializer.serializeEntityComponents(playerEntity));
         pc.put("inventory", INBTSerializable.writeNBT(inventory));
-        pc.put("science", INBTSerializable.writeNBT(science));
+        pc.put("science", INBTSerializable.writeNBT(knowledges));
+        pc.put("experience", INBTSerializable.writeNBT(experiences));
         NBTList todropl = new NBTList(NBTType.Compound);
         for (ItemStack s : toDrop) {
             if (!ItemStack.isEmptyOrNull(s)) {
