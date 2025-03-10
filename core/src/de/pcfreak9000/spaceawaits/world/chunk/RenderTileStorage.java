@@ -13,6 +13,8 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 
 public class RenderTileStorage {
     
+    public static final int ENTITY_FLAG_RENDERSTORAGE = 4206969;
+    
     private ObjectMap<Object, LongArray> storage;
     private ObjectMap<Object, Entity> entities;
     private final float renderlayer;
@@ -55,7 +57,7 @@ public class RenderTileStorage {
             if (array.isEmpty()) {
                 storage.remove(rendererId);
                 Entity e = this.entities.remove(rendererId);
-                e.flags = 4206969;
+                e.flags = ENTITY_FLAG_RENDERSTORAGE;
                 this.chunk.removeEntityAC(e);
                 //e.removeAll(); //oh no, delayed entity removal causes some trouble if this is used... 
             }

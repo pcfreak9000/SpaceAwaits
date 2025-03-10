@@ -23,6 +23,8 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 public class PlayerEntityFactory implements EntityFactory {
 
+    public static final int ENTITY_FLAG_PLAYER = 2;
+
     public static Entity setupPlayerEntity(Player player) {
         Entity e = CoreRes.PLAYER_FACTORY.createEntity();
         e.getComponent(PlayerInputComponent.class).player = player;// Move this into dedicated component?
@@ -32,7 +34,7 @@ public class PlayerEntityFactory implements EntityFactory {
     @Override
     public Entity createEntity() {
         Entity e = new EntityImproved();
-        e.flags = 2;
+        e.flags = ENTITY_FLAG_PLAYER;
         OnSolidGroundComponent osgc = new OnSolidGroundComponent();
         SolidGroundContactListener l = new SolidGroundContactListener(osgc);
         PlayerInputComponent pic = new PlayerInputComponent();

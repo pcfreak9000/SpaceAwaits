@@ -45,6 +45,8 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class Chunk implements INBTSerializable, Tickable, ITileArea {
     
+    public static final int ENTITY_FLAG_CHUNK = 1;
+    
     public static enum ChunkGenStage {
         Empty(null, 0), Tiled(Empty, 1), Structured(Tiled, 2), Populated(Structured, 3);
         
@@ -111,7 +113,7 @@ public class Chunk implements INBTSerializable, Tickable, ITileArea {
         this.entities = new ArrayList<>();
         this.immutableEntities = Collections.unmodifiableList(this.entities);
         this.chunkEntity = new EntityImproved();
-        this.chunkEntity.flags = 1;
+        this.chunkEntity.flags = ENTITY_FLAG_CHUNK;
         
         this.chunkEntity.add(new TickComponent(this));
         
