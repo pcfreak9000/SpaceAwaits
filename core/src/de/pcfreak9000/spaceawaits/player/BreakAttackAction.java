@@ -16,6 +16,7 @@ import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
@@ -81,6 +82,7 @@ public class BreakAttackAction implements Action {
                                                                                              // items...
         // What if there is an entity but without a body?? the tile behind it would be
         // broken, might not be nice
+        //eeh... what about modified RenderSystem comparators?
         ent.sort(ENTITY_COMPARATOR);
         if (!ItemStack.isEmptyOrNull(stack)
                 && player.isInReachFromHand(mousex, mousey, stack.getItem().getMaxRangeBreakAttack(player, stack))) {

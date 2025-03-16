@@ -194,6 +194,10 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
         this.comparator = comp != null ? comp : DEFAULT_COMPARATOR;
     }
 
+    public Comparator<Entity> getComparator() {
+        return this.comparator;
+    }
+
     public void forceLayerSort() {
         this.forceSort = true;
     }
