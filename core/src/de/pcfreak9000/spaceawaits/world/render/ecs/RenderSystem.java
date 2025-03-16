@@ -186,7 +186,7 @@ public class RenderSystem extends EntitySystem implements EntityListener, Dispos
     
     private void sortIfNecessary() {
         if (forceSort) {
-            this.entities.sort(COMPARATOR);
+            this.entities.sort(COMPARATOR.thenComparing(COMPARATOR));
             this.forceSort = false;
         }
     }

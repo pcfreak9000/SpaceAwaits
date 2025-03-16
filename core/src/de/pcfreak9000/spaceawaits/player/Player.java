@@ -12,7 +12,7 @@ import de.pcfreak9000.nbt.NBTType;
 import de.pcfreak9000.spaceawaits.core.ContainerTesting;
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
-import de.pcfreak9000.spaceawaits.flat.HudSupplier;
+import de.pcfreak9000.spaceawaits.flat.FlatScreen;
 import de.pcfreak9000.spaceawaits.gui.GuiOverlay;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.knowledge.Experiences;
@@ -20,8 +20,6 @@ import de.pcfreak9000.spaceawaits.knowledge.Knowledgebase;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
-import de.pcfreak9000.spaceawaits.world.chunk.mgmt.FollowingTicket;
-import de.pcfreak9000.spaceawaits.world.chunk.mgmt.ITicket;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.StatsComponent;
@@ -34,7 +32,7 @@ import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
  * @author pcfreak9000
  *
  */
-public class Player implements INBTSerializable, HudSupplier {
+public class Player implements INBTSerializable {
 
     public static enum GameMode {
         Survival(false), Testing(true), TestingGhost(true);
@@ -91,6 +89,18 @@ public class Player implements INBTSerializable, HudSupplier {
         ((EngineImproved) ts.getECS()).getEventBus().post(new WorldEvents.PlayerLeftEvent(this));
     }
 
+    public void leaveFlatWorld(FlatScreen fs) {
+        fs.getEngine().removeEntity(getPlayerEntity());
+        // this.locationUuid = null; //<- this is currently buggy and would lead to a
+        // new spawnpoint each time the world is joined...
+        fs.getEngine().getEventBus().post(new WorldEvents.PlayerLeftEvent(this));
+    }
+
+    public void joinFlatWorld(FlatScreen fs) {
+        fs.getEngine().addEntity(getPlayerEntity());
+        fs.getEngine().getEventBus().post(new WorldEvents.PlayerJoinedEvent(this));
+    }
+
     public String getLocationUuid() {
         return locationUuid;
     }
@@ -107,12 +117,10 @@ public class Player implements INBTSerializable, HudSupplier {
         return this.playerEntity;
     }
 
-    @Override
     public InventoryPlayer getInventory() {
         return this.inventory;
     }
 
-    @Override
     public StatsComponent getStats() {// Move stats?
         return getPlayerEntity().getComponent(StatsComponent.class);
     }

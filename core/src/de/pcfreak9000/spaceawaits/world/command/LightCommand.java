@@ -9,11 +9,11 @@ import picocli.CommandLine.Parameters;
 public class LightCommand implements Runnable {
     @Parameters(index = "0")
     public boolean light;
-    
+
     @Override
     public void run() {
-        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getTileScreenCurrent()
+        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getGameScreenCurrent()
                 .getSystem(RenderSystem.class).setDoLight(light);
     }
-    
+
 }

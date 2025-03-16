@@ -41,11 +41,13 @@ public class CameraSystem extends IteratingSystem {
 
     public CameraSystem(Bounds bounds, RenderHelper2D renderHelper2D) {
         super(Family.all(PlayerInputComponent.class, TransformComponent.class).get());
+        this.bounds = bounds;
         this.camera = new OrthographicCamera();
         this.viewport = new ExtendViewport(VISIBLE_TILES_MIN, VISIBLE_TILES_MIN, VISIBLE_TILES_MAX, VISIBLE_TILES_MAX,
                 camera);
         renderHelper2D.setViewport(viewport);
-        //ModuleBasisFunction m = new ModuleBasisFunction(BasisType.SIMPLEX, InterpolationType.LINEAR);
+        // ModuleBasisFunction m = new ModuleBasisFunction(BasisType.SIMPLEX,
+        // InterpolationType.LINEAR);
     }
 
     @EventSubscription

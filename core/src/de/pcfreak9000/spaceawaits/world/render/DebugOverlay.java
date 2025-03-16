@@ -20,10 +20,10 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class DebugOverlay {
-    
+
     private GameScreen renderer;
     private Stage stage;
-    
+
     private Table table;
     private Label labelFps;
     private Label playerPos;
@@ -32,11 +32,11 @@ public class DebugOverlay {
     private Label tile;
     private Label meta;
     private Label seed;
-    
+
     private Label gamemode;
-    
+
     private Label time;
-    
+
     public DebugOverlay(GameScreen renderer) {
         this.renderer = renderer;
         this.stage = renderer.getGuiHelper().createStage();
@@ -71,15 +71,16 @@ public class DebugOverlay {
         this.table.add(this.gamemode).align(Align.left);
         this.stage.addActor(table);
     }
-    
+
     public void actAndDraw(float dt) {
         int fps = Gdx.graphics.getFramesPerSecond();
         Vector2 playerPos = Components.TRANSFORM.get(
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
-        TileScreen world = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getTileScreenCurrent();
-        int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();//TODO gamescreen ecs stuff
+        TileScreen world = (TileScreen) SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent()
+                .getGameScreenCurrent();
+        int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();// TODO gamescreen ecs stuff
         int updatedChunks = world.getSystem(ChunkSystem.class).getUpdatingChunksCount();
         this.labelFps.setText("FPS: " + fps);
         this.chunkUpdates.setText(String.format("up: %d ld: %d", updatedChunks, loadedChunks));
@@ -91,7 +92,7 @@ public class DebugOverlay {
         Tile front = ts.getTile(tx, ty, TileLayer.Front);
         Tile back = ts.getTile(tx, ty, TileLayer.Back);
         this.tile.setText(
-                "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));//Hmmm
+                "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));// Hmmm
         this.meta.setText("Not displaying meta");
         this.seed.setText(
                 "Master Seed: " + SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getMasterSeed());
@@ -100,9 +101,9 @@ public class DebugOverlay {
         this.gamemode.setText("Gamemode: "
                 + SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getGameMode().toString());
     }
-    
+
     private String getDisplayName(Tile t) {
         return t == null ? "null" : t.getDisplayName();
     }
-    
+
 }

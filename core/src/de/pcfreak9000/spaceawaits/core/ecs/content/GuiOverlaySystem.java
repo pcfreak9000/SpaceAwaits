@@ -27,6 +27,7 @@ public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker
     private boolean showDebugScreen;
     private DebugOverlay debugScreen;
     
+    //Move the Hud to InventoryHandlerSystem or something?
     private Hud hud;
     
     private EventBus bus;

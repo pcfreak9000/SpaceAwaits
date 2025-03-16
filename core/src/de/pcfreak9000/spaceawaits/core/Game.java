@@ -15,6 +15,7 @@ import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.core.screen.TileScreen;
+import de.pcfreak9000.spaceawaits.flat.FlatScreen;
 import de.pcfreak9000.spaceawaits.generation.IGeneratingLayer;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -78,6 +79,11 @@ public class Game {
                                                          // using it directly
             joinWorld(id);
         }
+//        FlatScreen flatscreen = new FlatScreen(scm.getGuiHelper());
+//        this.gamescreenCurrent = flatscreen;
+//        flatscreen.load();
+//        scm.setGameScreen(flatscreen);
+//        this.player.joinFlatWorld(flatscreen);
     }
 
     // TMP!!!!
@@ -109,7 +115,7 @@ public class Game {
             tilescreen.load();
 
             LOGGER.info("Joining world...");
-            scm.setWorldScreen(tilescreen);
+            scm.setGameScreen(tilescreen);
             this.player.joinTileWorld(tilescreen);
 
         } catch (IOException e) {
@@ -133,9 +139,8 @@ public class Game {
         }
     }
 
-    public TileScreen getTileScreenCurrent() {
-        // Hmmm...
-        return (TileScreen) this.gamescreenCurrent;
+    public GameScreen getGameScreenCurrent() {
+        return this.gamescreenCurrent;
     }
 
     public Player getPlayer() {

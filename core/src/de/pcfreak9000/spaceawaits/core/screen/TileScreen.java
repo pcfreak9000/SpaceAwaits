@@ -124,6 +124,6 @@ public class TileScreen extends GameScreen {
     // TMP??
     @Deprecated
     public Engine getECS() {
-        return ecsEngine;
+        return getEngine();
     }
 }
