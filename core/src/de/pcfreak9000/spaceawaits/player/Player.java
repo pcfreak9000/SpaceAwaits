@@ -97,6 +97,7 @@ public class Player implements INBTSerializable {
     }
 
     public void joinFlatWorld(FlatScreen fs) {
+        Components.TRANSFORM.get(playerEntity).position.set(0, 0);
         fs.getEngine().addEntity(getPlayerEntity());
         fs.getEngine().getEventBus().post(new WorldEvents.PlayerJoinedEvent(this));
     }

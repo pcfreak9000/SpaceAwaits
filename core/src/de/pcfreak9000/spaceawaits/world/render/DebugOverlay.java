@@ -78,21 +78,23 @@ public class DebugOverlay {
                 SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
-        TileScreen world = (TileScreen) SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent()
-                .getGameScreenCurrent();
-        int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();// TODO gamescreen ecs stuff
-        int updatedChunks = world.getSystem(ChunkSystem.class).getUpdatingChunksCount();
+        GameScreen gs = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getGameScreenCurrent();
+        if (gs instanceof TileScreen) {
+            TileScreen world = (TileScreen) gs;
+            int loadedChunks = world.getSystem(ChunkSystem.class).getLoadedChunksCount();// TODO gamescreen ecs stuff
+            int updatedChunks = world.getSystem(ChunkSystem.class).getUpdatingChunksCount();
+            this.chunkUpdates.setText(String.format("up: %d ld: %d", updatedChunks, loadedChunks));
+            int tx = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().x);
+            int ty = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().y);
+            TileSystem ts = world.getSystem(TileSystem.class);
+            Tile front = ts.getTile(tx, ty, TileLayer.Front);
+            Tile back = ts.getTile(tx, ty, TileLayer.Back);
+            this.tile.setText("Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: "
+                    + getDisplayName(back));// Hmmm
+            this.chunkPos.setText(String.format("cx: %d cy: %d", cx, cy));
+        }
         this.labelFps.setText("FPS: " + fps);
-        this.chunkUpdates.setText(String.format("up: %d ld: %d", updatedChunks, loadedChunks));
         this.playerPos.setText(String.format("x: %.3f y: %.3f", playerPos.x, playerPos.y));
-        this.chunkPos.setText(String.format("cx: %d cy: %d", cx, cy));
-        int tx = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().x);
-        int ty = Tile.toGlobalTile(world.getSystem(CameraSystem.class).getMouseWorldPos().y);
-        TileSystem ts = world.getSystem(TileSystem.class);
-        Tile front = ts.getTile(tx, ty, TileLayer.Front);
-        Tile back = ts.getTile(tx, ty, TileLayer.Back);
-        this.tile.setText(
-                "Looking at tx: " + tx + " ty: " + ty + " f: " + getDisplayName(front) + " b: " + getDisplayName(back));// Hmmm
         this.meta.setText("Not displaying meta");
         this.seed.setText(
                 "Master Seed: " + SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getMasterSeed());

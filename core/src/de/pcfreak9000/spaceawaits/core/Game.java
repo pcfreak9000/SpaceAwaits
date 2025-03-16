@@ -69,21 +69,21 @@ public class Game {
 
     // probably also TMP
     public void joinGame() {
-        if (this.mySave.hasWorld(player.getLocationUuid())) {
-            this.joinWorld(player.getLocationUuid());
-        } else {
-            // Check if this save has a spawn place, otherwise generate a new one
-            // When generating a new world, place the player at spawn
-            String id = createWorld("A nice World", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
-                    this.mySave.getSaveMeta().getSeed());// TODO Derive world seed from that master seed instead of
-                                                         // using it directly
-            joinWorld(id);
-        }
-//        FlatScreen flatscreen = new FlatScreen(scm.getGuiHelper());
-//        this.gamescreenCurrent = flatscreen;
-//        flatscreen.load();
-//        scm.setGameScreen(flatscreen);
-//        this.player.joinFlatWorld(flatscreen);
+//        if (this.mySave.hasWorld(player.getLocationUuid())) {
+//            this.joinWorld(player.getLocationUuid());
+//        } else {
+//            // Check if this save has a spawn place, otherwise generate a new one
+//            // When generating a new world, place the player at spawn
+//            String id = createWorld("A nice World", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
+//                    this.mySave.getSaveMeta().getSeed());// TODO Derive world seed from that master seed instead of
+//                                                         // using it directly
+//            joinWorld(id);
+//        }
+        FlatScreen flatscreen = new FlatScreen(scm.getGuiHelper());
+        this.gamescreenCurrent = flatscreen;
+        flatscreen.load();
+        scm.setGameScreen(flatscreen);
+        this.player.joinFlatWorld(flatscreen);
     }
 
     // TMP!!!!
@@ -96,7 +96,11 @@ public class Game {
 
     public void saveAndLeaveCurrentWorld() {
         // eh...
-        this.player.leaveTileWorld((TileScreen) gamescreenCurrent);
+        if (gamescreenCurrent instanceof TileScreen) {
+            this.player.leaveTileWorld((TileScreen) gamescreenCurrent);
+        } else if (gamescreenCurrent instanceof FlatScreen) {
+            this.player.leaveFlatWorld((FlatScreen) gamescreenCurrent);
+        }
         this.gamescreenCurrent.unload();
         this.gamescreenCurrent = null;
     }

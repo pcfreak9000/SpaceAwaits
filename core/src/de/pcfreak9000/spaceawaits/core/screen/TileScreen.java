@@ -8,6 +8,7 @@ import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemResolver;
 import de.pcfreak9000.spaceawaits.core.ecs.content.AutosaveSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.FollowMouseSystem;
+import de.pcfreak9000.spaceawaits.core.ecs.content.GuiChatSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.GuiOverlaySystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.ParallaxSystem;
 import de.pcfreak9000.spaceawaits.core.ecs.content.RandomSystem;
@@ -39,6 +40,7 @@ import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsDebugRendererSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsForcesSystem;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsSystem;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
+import de.pcfreak9000.spaceawaits.world.render.ecs.LightRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderSystem;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
@@ -79,6 +81,7 @@ public class TileScreen extends GameScreen {
         ecs.addSystem(new WorldSystem(globalLoader, primer.getWorldGenerator(), primer.getWorldBounds(),
                 primer.getWorldProperties(), primer.getLightProvider(), primer.getPlayerSpawn()));
         ecs.addSystem(new InventoryHandlerSystem());
+        ecs.addSystem(new GuiChatSystem());
         ecs.addSystem(new TileSystem());
         ecs.addSystem(new PlayerInputSystem());
         ecs.addSystem(new SelectorSystem());
@@ -91,7 +94,7 @@ public class TileScreen extends GameScreen {
                 primer.getWorldProperties()));
         ecs.addSystem(new CameraSystem(primer.getWorldBounds(), getRenderHelper()));
         ecs.addSystem(new ParallaxSystem(CameraSystem.VISIBLE_TILES_MIN));
-        ecs.addSystem(new RenderSystem(ecsEngine, this));
+        ecs.addSystem(new RenderSystem(ecsEngine, this, new LightRenderer(this)));
         ecs.addSystem(new PhysicsDebugRendererSystem());
         ecs.addSystem(new TickCounterSystem());
         ecs.addSystem(new RandomTickSystem());

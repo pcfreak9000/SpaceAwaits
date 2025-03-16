@@ -78,7 +78,6 @@ public class PlayerEntityFactory implements EntityFactory {
         actionComp.actions.add(new TestExplodeTilesAction());
         actionComp.actions.add(new BreakAttackAction());
         actionComp.actions.add(new UseAction());
-        actionComp.actions.add(new ConsoleAction());
         e.add(actionComp);
         e.add(new ChunkTicketComponent(2));
         return e;

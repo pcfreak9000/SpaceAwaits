@@ -33,17 +33,18 @@ import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class PhysicsSystem extends IteratingSystem implements EntityListener {
-    
+
     private static final Logger LOGGER = Logger.getLogger(PhysicsSystem.class);
-    
+
     private static final float STEPLENGTH_SECONDS = GameScreen.STEPLENGTH_SECONDS;
     private static final float PIXELS_PER_METER = 1f;
-    
+
     private static final float QUERYXY_OFFSET = 0.01f;
-    
-    //Consider subclassing World and putting the unitconversion there. Might be useful when space arrives
+
+    // Consider subclassing World and putting the unitconversion there. Might be
+    // useful when space arrives
     public static final UnitConversion METER_CONV = new UnitConversion(PIXELS_PER_METER);
-    
+
     public static void syncTransformToBody(Entity entity) {
         if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity)) {
             TransformComponent tc = Components.TRANSFORM.get(entity);
@@ -59,7 +60,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             pc.rotVel = pc.body.getBody().getAngularVelocity();
         }
     }
-    
+
     public static void syncBodyToTransform(Entity entity) {
         if (Components.TRANSFORM.has(entity) && Components.PHYSICS.has(entity)) {
             PhysicsComponent pc = Components.PHYSICS.get(entity);
@@ -68,63 +69,64 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
                     tc.rotation);
         }
     }
-    
+
     private World box2dWorld;
-    
+
     private ContactListenerImpl contactEventDispatcher;
-    
+
     private final RaycastCallbackBox2DImpl raycastImpl = new RaycastCallbackBox2DImpl();
     private final RaycastCallbackEntityImpl raycastCallbackWr = new RaycastCallbackEntityImpl();
     private final QueryCallbackBox2DImpl queryImpl = new QueryCallbackBox2DImpl();
     private final EntityOccupationChecker entCheck = new EntityOccupationChecker();
-    
+
     private final Array<Entity> tmpEntities = new Array<>(false, 10);
     private int tmpEntitiesDepth = 0;
-    
+
     private final UserDataHelper udh = new UserDataHelper();
-    
+
+    // eh...
     private final SystemCache<TileSystem> tiles = new SystemCache<>(TileSystem.class);
     private final SystemCache<ChunkSystem> csys = new SystemCache<>(ChunkSystem.class);
-    
+
     public PhysicsSystem() {
         super(Family.all(PhysicsComponent.class).get());
-        
+
         this.box2dWorld = new World(new Vector2(0, 0), true);
         this.box2dWorld.setAutoClearForces(true);
         this.contactEventDispatcher = new ContactListenerImpl(METER_CONV);
         this.box2dWorld.setContactListener(contactEventDispatcher);
     }
-    
-    //for the PhysicsDebugRendererSystem
+
+    // for the PhysicsDebugRendererSystem
     public World getB2DWorld() {
         return box2dWorld;
     }
-    
+
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         engine.addEntityListener(getFamily(), this);
         contactEventDispatcher.setEngine(engine);
     }
-    
+
     @Override
     public void removedFromEngine(Engine engine) {
         super.removedFromEngine(engine);
         engine.removeEntityListener(this);
     }
-    
+
     @Override
     public void update(float deltat) {
         for (Entity e : getEntities()) {
             processEntity(e, deltat);
         }
         this.box2dWorld.step(STEPLENGTH_SECONDS, 5, 2);
-        //this.box2dWorld.clearForces();
+        // this.box2dWorld.clearForces();
         for (Entity e : getEntities()) {
             post(e);
         }
     }
-    
+
     public void raycast(float x1, float y1, float x2, float y2, IRaycastFixtureCallback callback) {
         ensureChunksAABB(x1, y1, x2, y2);
         x1 = METER_CONV.in(x1);
@@ -136,23 +138,25 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         raycastImpl.callback = null;
         unensureChunks();
     }
-    
+
     public void raycastEntities(float x1, float y1, float x2, float y2, IRaycastEntityCallback callback) {
-        raycastCallbackWr.callb = callback;//FIXME? Might trigger multiple times for one entity with multiple fixtures
+        raycastCallbackWr.callb = callback;// FIXME? Might trigger multiple times for one entity with multiple fixtures
         raycast(x1, y1, x2, y2, raycastCallbackWr);
         raycastCallbackWr.callb = null;
     }
-    
+
     public boolean checkRectOccupation(float x, float y, float w, float h, boolean canSensorsBlock) {
-        int ix = Mathf.floori(x);
-        int iy = Mathf.floori(y);
-        int iw = Mathf.ceili(x + w);
-        int ih = Mathf.ceili(y + h);
-        for (int i = ix; i < iw; i++) {
-            for (int j = iy; j < ih; j++) {
-                Tile t = tiles.get(getEngine()).getTile(i, j, TileLayer.Front);
-                if (t.isSolid()) {
-                    return true;
+        if (tiles.get(getEngine()) != null) {
+            int ix = Mathf.floori(x);
+            int iy = Mathf.floori(y);
+            int iw = Mathf.ceili(x + w);
+            int ih = Mathf.ceili(y + h);
+            for (int i = ix; i < iw; i++) {
+                for (int j = iy; j < ih; j++) {
+                    Tile t = tiles.get(getEngine()).getTile(i, j, TileLayer.Front);
+                    if (t.isSolid()) {
+                        return true;
+                    }
                 }
             }
         }
@@ -161,7 +165,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         }
         return false;
     }
-    
+
     public boolean checkRectEntityOccupation(float x1, float y1, float x2, float y2, boolean canSensorsBlock) {
         entCheck.ud.clear();
         entCheck.canSensorsBlock = canSensorsBlock;
@@ -169,7 +173,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         boolean b = entCheck.blocking;
         return b;
     }
-    
+
     public void queryAABB(float x1, float y1, float x2, float y2, IQueryCallback callback) {
         ensureChunksAABB(x1, y1, x2, y2);
         x1 = METER_CONV.in(x1);
@@ -181,7 +185,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         queryImpl.callback = null;
         unensureChunks();
     }
-    
+
     public void queryXYc(float x, float y, IQueryCallback callback) {
         queryAABB(x - QUERYXY_OFFSET, y - QUERYXY_OFFSET, x + QUERYXY_OFFSET, y + QUERYXY_OFFSET, (fix, uc) -> {
             if (fix.testPoint(uc.in(x), uc.in(y))) {
@@ -190,7 +194,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             return true;
         });
     }
-    
+
     public Array<Object> queryXY(float x, float y, IQueryFilter filter) {
         Array<Object> results = new Array<>();
         queryXYc(x, y, (fix, uc) -> {
@@ -202,16 +206,16 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         });
         return results;
     }
-    
+
     private void post(Entity entity) {
         syncTransformToBody(entity);
     }
-    
+
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         syncBodyToTransform(entity);
     }
-    
+
     @Override
     public void entityAdded(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
@@ -228,24 +232,29 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
         pc.body.getBody().setAngularVelocity(pc.rotVel);
         if (pc.body.getBody().getUserData() == null) {
             pc.body.getBody().setUserData(entity);
-            for (Fixture f : pc.body.getBody().getFixtureList()) {//Hmmm... have this loop in that if or put it outside?
+            for (Fixture f : pc.body.getBody().getFixtureList()) {// Hmmm... have this loop in that if or put it
+                                                                  // outside?
                 if (f.getUserData() == null) {
                     f.setUserData(entity);
                 }
             }
         }
     }
-    
+
     @Override
     public void entityRemoved(Entity entity) {
         PhysicsComponent pc = Components.PHYSICS.get(entity);
         pc.factory.destroyBody(pc.body.getBody(), box2dWorld);
         pc.body = null;
     }
-    
-    //TODO this stuff belongs somewhere else, this is not physics related, or is it?
-    
+
+    // TODO this stuff belongs somewhere else, this is not physics related, or is
+    // it?
+
     private void unensureChunks() {
+        if (csys.get(getEngine()) == null) {
+            return;
+        }
         if (tmpEntitiesDepth <= 0) {
             throw new IllegalStateException("Too much unensuring");
         }
@@ -259,7 +268,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             }
         }
     }
-    
+
     private void ensureChunksAABB(float x1, float y1, float x2, float y2) {
         if (csys.get(getEngine()) == null) {
             return;
@@ -279,11 +288,12 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             cy2 = cy1;
             cy1 = t;
         }
-        //would be nice if coordinate point of things always was the lower left corner, then the upper bounds +1 could be left out
+        // would be nice if coordinate point of things always was the lower left corner,
+        // then the upper bounds +1 could be left out
         for (int i = cx1 - 1; i <= cx2 + 1; i++) {
             for (int j = cy1 - 1; j <= cy2 + 1; j++) {
                 Chunk c = csys.get(getEngine()).getChunk(i, j);
-                if (c == null) { //hmm                        
+                if (c == null) { // hmm
                     continue;
                 }
                 if (!c.isActive() && c.getGenStage().level >= ChunkGenStage.Populated.level) {
@@ -301,38 +311,38 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             }
         }
     }
-    
+
     private static final class QueryCallbackBox2DImpl implements QueryCallback {
-        
+
         private IQueryCallback callback;
-        
+
         @Override
         public boolean reportFixture(Fixture fixture) {
             return callback.reportFixture(fixture, METER_CONV);
         }
-        
+
     }
-    
+
     private static final class RaycastCallbackBox2DImpl implements RayCastCallback {
-        
+
         private IRaycastFixtureCallback callback;
-        
+
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
             return callback.reportRayFixture(fixture, METER_CONV.out(point.x), METER_CONV.out(point.y), normal.x,
                     normal.y, fraction, METER_CONV);
         }
-        
+
     }
-    
+
     private static final class RaycastCallbackEntityImpl implements IRaycastFixtureCallback {
         private IRaycastEntityCallback callb;
         private final UserDataHelper ud = new UserDataHelper();
-        
+
         @Override
         public float reportRayFixture(Fixture fixture, float pointx, float pointy, float normalx, float normaly,
                 float fraction, UnitConversion conv) {
-            //ignore everything which is not an Entity
+            // ignore everything which is not an Entity
             ud.set(fixture.getUserData(), fixture);
             if (!ud.isEntity()) {
                 return -1;
@@ -340,15 +350,15 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             return callb.reportRayEntity(ud.getEntity(), pointx, pointy, normalx, normaly, fraction, conv);
         }
     }
-    
+
     private static final class EntityOccupationChecker implements IQueryCallback {
-        
+
         public final UserDataHelper ud = new UserDataHelper();
-        
+
         public boolean blocking;
-        
+
         public boolean canSensorsBlock;
-        
+
         @Override
         public boolean reportFixture(Fixture fix, UnitConversion conv) {
             ud.set(fix.getUserData(), fix);
@@ -359,6 +369,6 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
             }
             return !blocking;
         }
-        
+
     }
 }

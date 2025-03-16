@@ -19,70 +19,78 @@ import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.core.screen.GameScreen;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
 import de.pcfreak9000.spaceawaits.world.light.PixelPointLightTask2;
+import de.pcfreak9000.spaceawaits.world.render.EffectRenderer;
+import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 //Optimize for the case if everything is lit anyways? the scenebuffer wouldnt be required then
-public class LightRenderer implements Disposable {
+public class LightRenderer implements Disposable, EffectRenderer {
     private static final int extraLightRadius = 25;
-    
+
+    private static final float BEGIN_LIGHT_LAYER = RenderLayers.BEGIN_LIGHT;
+    private static final float END_LIGHT_LAYER = RenderLayers.END_LIGHT;
+
     private Engine world;
     private GameScreen renderer;
-    
+
     private FrameBuffer lightsBuffer;
     private FrameBuffer sceneBuffer;
     private Texture texture;
     private int gwi, ghi;
-    
+
     private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
     private SystemCache<WorldSystem> wsys = new SystemCache<>(WorldSystem.class);
 
-    
     public LightRenderer(GameScreen renderer) {
         this.renderer = renderer;
         resize();
     }
-    
+
     @EventSubscription
     public void event2(RendererEvents.ResizeWorldRendererEvent ev) {
         resize();
     }
-    
+
     public void addedToEngineInternal(Engine engine) {
         ((EngineImproved) engine).getEventBus().register(this);
         this.world = engine;
     }
-    
+
     public void removedFromEngineInternal(Engine engine) {
         ((EngineImproved) engine).getEventBus().unregister(this);
         this.world = null;
     }
-    
+
     public void enterLitScene() {
         this.renderer.getRenderHelper().getFBOStack().push(sceneBuffer);
-        //sceneBuffer.begin();
+        // sceneBuffer.begin();
         ScreenUtils.clear(0, 0, 0, 0);
     }
-    
+
     public void resize() {
         if (lightsBuffer != null) {
             this.lightsBuffer.dispose();
         }
-        this.lightsBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);//Hmmmm, width and height, ...?!
+        this.lightsBuffer = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);// Hmmmm,
+                                                                                                                     // width
+                                                                                                                     // and
+                                                                                                                     // height,
+                                                                                                                     // ...?!
         if (sceneBuffer != null) {
             this.sceneBuffer.dispose();
         }
         this.sceneBuffer = new FrameBuffer(Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
-    
+
     public void exitAndRenderLitScene() {
         this.renderer.getRenderHelper().getFBOStack().pop(sceneBuffer);
         Camera cam = camsys.get(world).getCamera();
         WorldSystem ws = wsys.get(world);
         SpriteBatchImpr batch = renderer.getRenderHelper().getSpriteBatch();
         batch.resetSettings();
-        
+
         int xi = Tile.toGlobalTile(cam.position.x - cam.viewportWidth / 2) - extraLightRadius;
         int yi = Tile.toGlobalTile(cam.position.y - cam.viewportHeight / 2) - extraLightRadius;
         int wi = Mathf.ceili(cam.viewportWidth);
@@ -102,9 +110,11 @@ public class LightRenderer implements Disposable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //}
-        
-        this.renderer.getRenderHelper().getFBOStack().push(lightsBuffer);//This framebuffer is good because places where the light is not yet calculated will be pitch black
+        // }
+
+        this.renderer.getRenderHelper().getFBOStack().push(lightsBuffer);// This framebuffer is good because places
+                                                                         // where the light is not yet calculated will
+                                                                         // be pitch black
         {
             ScreenUtils.clear(0, 0, 0, 0);
             if (texture != null) {
@@ -131,7 +141,7 @@ public class LightRenderer implements Disposable {
                 this.sceneBuffer.getWidth(), this.sceneBuffer.getHeight(), false, true);
         batch.end();
     }
-    
+
     @Override
     public void dispose() {
         Logger.getLogger(getClass()).debug("Disposing...");
@@ -142,5 +152,25 @@ public class LightRenderer implements Disposable {
         if (lightsBuffer != null) {
             this.lightsBuffer.dispose();
         }
+    }
+
+    @Override
+    public void enterEffect() {
+        enterLitScene();
+    }
+
+    @Override
+    public void exitAndRenderEffect() {
+        exitAndRenderLitScene();
+    }
+
+    @Override
+    public float getBeginLayer() {
+        return BEGIN_LIGHT_LAYER;
+    }
+
+    @Override
+    public float getEndLayer() {
+        return END_LIGHT_LAYER;
     }
 }

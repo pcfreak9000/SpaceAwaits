@@ -26,6 +26,10 @@ public class UseAction implements Action {
     
     @Override
     public boolean handle(float mousex, float mousey, Engine world, Entity source) {
+        TileSystem tileSystem = world.getSystem(TileSystem.class);
+        if(tileSystem == null) {
+            return false;
+        }
         boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         TileLayer layer = backlayer ? TileLayer.Back : TileLayer.Front;
         Player player = Components.PLAYER_INPUT.get(source).player;
@@ -35,7 +39,6 @@ public class UseAction implements Action {
         //get current item
         boolean used = false;
         ItemStack stack = player.getInventory().getSelectedStack();
-        TileSystem tileSystem = world.getSystem(TileSystem.class);
         if (!used && player.isInReachFromHand(mousex, mousey,
                 (ItemStack.isEmptyOrNull(stack) ? player.getReach() : stack.getItem().getReach(player, stack)))) {//Move to activator in chunk entity? -> chunk isnt filled with fixtures but they are used for detection, so no (for now)
             Tile clicked = tileSystem.getTile(tx, ty, layer);//FIXME can't use backlayer tiles if front layer is blocking!! (reuse from building?)
