@@ -1,23 +1,14 @@
 package de.pcfreak9000.spaceawaits.core;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.Arrays;
 
-import org.reflections.Reflections;
-
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 
@@ -27,13 +18,21 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
-import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAsset;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
-import de.pcfreak9000.spaceawaits.serialize.NBTSerialize;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
+import de.pottgames.tuningfork.Audio;
+import de.pottgames.tuningfork.AudioConfig;
+import de.pottgames.tuningfork.AudioDevice;
+import de.pottgames.tuningfork.AudioDeviceConfig;
+import de.pottgames.tuningfork.StreamedSoundSource;
+import de.pottgames.tuningfork.jukebox.JukeBox;
+import de.pottgames.tuningfork.jukebox.playlist.PlayList;
+import de.pottgames.tuningfork.jukebox.playlist.PlayListProvider;
+import de.pottgames.tuningfork.jukebox.song.Song;
+import de.pottgames.tuningfork.jukebox.song.SongSettings;
 
 public class SpaceAwaits extends Game {
     public static final boolean DEBUG = true;
@@ -55,49 +54,74 @@ public class SpaceAwaits extends Game {
         return singleton;
     }
     
+    //Infrastructure
+    private Audio audio;
     private Modloader modloader;
     private AssetManager assetManager;
-    
-    private GameManager gameManager; //Is this the correct place for that?
-    
+    private FileHandleResolver filehandleresolver;
+    private SaveManager saveManager;
     private ScreenManager screenManager;
+    private ReflectionManager reflectionManager;
+    private GameManager gameManager;
     
-    private Set<Class<?>> classesWithSerialize = new LinkedHashSet<>();
-    private Set<Class<?>> classesWithSerializeIm = Collections.unmodifiableSet(classesWithSerialize);
-    private Set<Class<? extends Component>> componentsWithSerialize = new LinkedHashSet<>();
-    private Set<Class<? extends Component>> componentsWithSerializeIm = Collections
-            .unmodifiableSet(componentsWithSerialize);
-    private Map<String, Class<? extends Component>> componentsByKey = new HashMap<>();
-    
-    private Set<Class<?>> classesWithWatchDynamicAsset = new LinkedHashSet<>();
+    private JukeBox jukebox;
+    private PlayList playlist;
     
     public SpaceAwaits() {
         if (SpaceAwaits.singleton != null) {
             throw new IllegalStateException("singleton violation");
         }
         Engine.debug = DEBUG;
+        Logger.setMinLogType(DEBUG ? LogType.Debug : LogType.Info);
         SpaceAwaits.singleton = this;
     }
     
     @Override
     public void create() {
-        //Setup debugging stuff
-        Logger.setMinLogType(DEBUG ? LogType.Debug : LogType.Info);
         Gdx.app.setLogLevel(DEBUG ? Application.LOG_DEBUG : Application.LOG_INFO);
-        
         //Instantiate infrastructure
-        this.modloader = new Modloader();
-        this.assetManager = createAssetmanager();
-        AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
-        
-        //Load mods and resources
+        setupInfrastructure();
+        //Preload resources required for a loading screen
         preloadResources();
-        setupTooltipManager();
         //setScreen(new LoadingScreen());
-        //...
+        loadGame();
+        
+        //Where to put this?
+        BUS.register(new WorldSetupHandler());
+        StreamedSoundSource songsrc = new StreamedSoundSource(Gdx.files.internal("ObservingTheStar.mp3"));
+        songsrc.setRelative(true);
+        SongSettings settings = SongSettings.linear(0.5f, 2f, 2f);
+        Song song = new Song(songsrc, settings);
+        this.playlist = new PlayList();
+        playlist.addSong(song);
+        this.jukebox = new JukeBox(new PlayListProvider() {
+            
+            @Override
+            public PlayList next() {
+                return playlist;
+            }
+            
+            @Override
+            public boolean hasNext() {
+                return true;
+            }
+        });
+        jukebox.play();
+        //this.setScreen(new TestScreen());
+        
+        this.screenManager.setMainMenuScreen();
+    }
+    
+    @Override
+    public void render() {
+        super.render();
+        this.jukebox.update();
+    }
+    
+    private void loadGame() {
         this.modloader.load(mkdirIfNotExisting(new AdvancedFile(FOLDER, MODS)));
         LOGGER.info("Init...");
-        doReflectionStuff();
+        this.reflectionManager.collectAnnotationsEtc();
         CoreRes.init();
         BUS.post(new CoreEvents.InitEvent());
         LOGGER.info("Queue resources...");
@@ -107,15 +131,39 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.UpdateResourcesEvent(assetManager));
         LOGGER.info("Post-Init...");
         BUS.post(new CoreEvents.PostInitEvent());
-        //Where to put this?
-        BUS.register(new WorldSetupHandler());
-        //Instantiate game stuff
+    }
+    
+    private void setupInfrastructure() {
+        audio = Audio.init();
+        if (audio == null) {
+            throw new RuntimeException("No audio");
+        }
+        initFileHandleResolver();
+        this.modloader = new Modloader();
+        createAssetmanager();
+        setupTooltipManager();
+        AdvancedFile savesFolderFile = mkdirIfNotExisting(new AdvancedFile(FOLDER, SAVES));
+        this.saveManager = new SaveManager(savesFolderFile.toFile());
         this.screenManager = new ScreenManager(this);
-        this.gameManager = new GameManager(new SaveManager(savesFolderFile.toFile()), this.screenManager);
-        
-        //this.setScreen(new TestScreen());
-        
-        this.screenManager.setMainMenuScreen();
+        this.reflectionManager = new ReflectionManager(modloader);
+        this.gameManager = new GameManager(saveManager, this.screenManager);
+    }
+    
+    private void initFileHandleResolver() {
+        this.filehandleresolver = new FileHandleResolver() {
+            @Override
+            public FileHandle resolve(String fileName) {
+                return new FileHandleClassLoaderExtension(fileName, modloader.getModClassLoader());
+            }
+        };
+    }
+    
+    public FileHandleResolver getFileHandleResolver() {
+        return filehandleresolver;
+    }
+    
+    public ReflectionManager getReflectionManager() {
+        return this.reflectionManager;
     }
     
     public GameManager getGameManager() {
@@ -127,7 +175,7 @@ public class SpaceAwaits extends Game {
     }
     
     private void preloadResources() {//What happens on resource reload?
-        this.assetManager.load("text.fnt", BitmapFont.class);
+        //this.assetManager.load("text.fnt", BitmapFont.class);
         //...
         this.assetManager.finishLoading();
     }
@@ -155,48 +203,15 @@ public class SpaceAwaits extends Game {
         super.dispose();
         this.assetManager.dispose();
         CoreRes.dispose();
+        this.audio.dispose();
         LOGGER.info("Exit.");
     }
     
-    private void doReflectionStuff() {
-        Reflections refl = new Reflections("de.pcfreak9000.spaceawaits");
-        classesWithSerialize.addAll(refl.getTypesAnnotatedWith(NBTSerialize.class));
-        classesWithSerialize.addAll(this.modloader.getModClassesWithSerialize());
-        classesWithWatchDynamicAsset.addAll(refl.getTypesAnnotatedWith(WatchDynamicAsset.class));
-        classesWithWatchDynamicAsset.addAll(this.modloader.getModClassesWithWatchDynamicAsset());
-        for (Class<?> c : classesWithSerialize) {
-            if (Component.class.isAssignableFrom(c)) {
-                componentsWithSerialize.add((Class<? extends Component>) c);
-                componentsByKey.put(c.getAnnotation(NBTSerialize.class).key(), (Class<? extends Component>) c);
-            }
-        }
-    }
-    
-    public Set<Class<?>> getClassesWithWatchDynamicAsset() {
-        return classesWithWatchDynamicAsset;
-    }
-    
-    public Set<Class<?>> getClassesWithSerialize() {
-        return classesWithSerializeIm;
-    }
-    
-    public Set<Class<? extends Component>> getComponentsWithSerialize() {
-        return componentsWithSerializeIm;
-    }
-    
-    public Class<? extends Component> getComponentByKey(String key) {
-        return componentsByKey.get(key);
-    }
-    
-    private AssetManager createAssetmanager() {
-        AssetManager manager = new AssetManager(new FileHandleResolver() {
-            @Override
-            public FileHandle resolve(String fileName) {
-                return new FileHandleClassLoaderExtension(fileName, modloader.getModClassLoader());
-            }
-        });
+    private void createAssetmanager() {
+        AssetManager manager = new AssetManager(filehandleresolver);
         manager.setLoader(Skin.class, new SkinLoaderModified(manager.getFileHandleResolver()));
-        return manager;
+        audio.registerAssetManagerLoaders(manager);
+        this.assetManager = manager;
     }
     
     private AdvancedFile mkdirIfNotExisting(AdvancedFile file) {

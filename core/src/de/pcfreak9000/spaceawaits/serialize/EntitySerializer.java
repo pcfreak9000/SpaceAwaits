@@ -62,17 +62,17 @@ public class EntitySerializer {
         deserializeComponents(ENTITY_WRAPPER, componentCompound);
     }
     
-//    public static void serializeComponents(Iterable<Component> components, NBTCompound nbt) {
-//        for (Component c : components) {
-//            if (c instanceof NBTSerializable) {
-//                GameRegistry.WORLD_COMPONENT_REGISTRY.checkRegistered(c.getClass());
-//                String id = GameRegistry.WORLD_COMPONENT_REGISTRY.getId(c.getClass());
-//                NBTSerializable serializable = (NBTSerializable) c;
-//                NBTTag tag = serializable.writeNBT();
-//                nbt.put(id, tag);
-//            }
-//        }
-//    }
+    //    public static void serializeComponents(Iterable<Component> components, NBTCompound nbt) {
+    //        for (Component c : components) {
+    //            if (c instanceof NBTSerializable) {
+    //                GameRegistry.WORLD_COMPONENT_REGISTRY.checkRegistered(c.getClass());
+    //                String id = GameRegistry.WORLD_COMPONENT_REGISTRY.getId(c.getClass());
+    //                NBTSerializable serializable = (NBTSerializable) c;
+    //                NBTTag tag = serializable.writeNBT();
+    //                nbt.put(id, tag);
+    //            }
+    //        }
+    //    }
     
     public static void serializeComponents(Iterable<Component> components, NBTCompound comp) {
         for (Component c : components) {
@@ -84,7 +84,7 @@ public class EntitySerializer {
     
     public static void deserializeComponents(ComponentHolder ent, NBTCompound comp) {
         for (String s : comp.keySet()) {
-            Class<? extends Component> cl = SpaceAwaits.getSpaceAwaits().getComponentByKey(s);
+            Class<? extends Component> cl = SpaceAwaits.getSpaceAwaits().getReflectionManager().getComponentByKey(s);
             //Component is serializable but doesnt exist on the holder
             if (cl != null && ent.getComponent(cl) == null) {
                 try {
@@ -103,30 +103,30 @@ public class EntitySerializer {
         }
     }
     
-//    public static void deserializeComponents(ComponentHolder ent, NBTCompound comp) {
-//        for (Map.Entry<String, NBTTag> entry : comp.entrySet()) {
-//            if (!GameRegistry.WORLD_COMPONENT_REGISTRY.isRegistered(entry.getKey())) {
-//                continue;//Ignore this case, maybe a mod has been removed, etc...
-//            }
-//            Class<? extends Component> cClass = GameRegistry.WORLD_COMPONENT_REGISTRY.get(entry.getKey());
-//            Component c = ent.getComponent(cClass);
-//            if (c == null) {
-//                try {
-//                    c = cClass.getDeclaredConstructor().newInstance();
-//                    ent.add(c);
-//                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-//                        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            if (c instanceof NBTSerializable) {
-//                NBTSerializable sc = (NBTSerializable) c;
-//                sc.readNBT(entry.getValue());
-//            } else {
-//                throw new IllegalStateException("Component is not serializable but was serialized");
-//            }
-//        }
-//    }
+    //    public static void deserializeComponents(ComponentHolder ent, NBTCompound comp) {
+    //        for (Map.Entry<String, NBTTag> entry : comp.entrySet()) {
+    //            if (!GameRegistry.WORLD_COMPONENT_REGISTRY.isRegistered(entry.getKey())) {
+    //                continue;//Ignore this case, maybe a mod has been removed, etc...
+    //            }
+    //            Class<? extends Component> cClass = GameRegistry.WORLD_COMPONENT_REGISTRY.get(entry.getKey());
+    //            Component c = ent.getComponent(cClass);
+    //            if (c == null) {
+    //                try {
+    //                    c = cClass.getDeclaredConstructor().newInstance();
+    //                    ent.add(c);
+    //                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+    //                        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+    //                    e.printStackTrace();
+    //                }
+    //            }
+    //            if (c instanceof NBTSerializable) {
+    //                NBTSerializable sc = (NBTSerializable) c;
+    //                sc.readNBT(entry.getValue());
+    //            } else {
+    //                throw new IllegalStateException("Component is not serializable but was serialized");
+    //            }
+    //        }
+    //    }
     
     private static final class EntityComponentHolderWrapper implements ComponentHolder {
         
