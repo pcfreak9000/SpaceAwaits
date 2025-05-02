@@ -22,15 +22,6 @@ public class RendererEvents {
         
     }
     
-    @Deprecated
-    public static class UpdateAnimationEvent extends Event {
-        public final float dt;
-        
-        public UpdateAnimationEvent(float dt) {
-            this.dt = dt;
-        }
-    }
-    
     public static class OpenGuiOverlay extends Event {
         public final GuiOverlay guiOverlay;
         
