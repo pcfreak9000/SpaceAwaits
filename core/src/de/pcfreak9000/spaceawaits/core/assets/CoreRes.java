@@ -17,6 +17,7 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.InptMgr.ButtonKey;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityFactory;
+import de.pcfreak9000.spaceawaits.flat.XXXXEntityFactory;
 import de.pcfreak9000.spaceawaits.item.ItemEntityFactory;
 import de.pcfreak9000.spaceawaits.player.PlayerEntityFactory;
 import de.pcfreak9000.spaceawaits.registry.Registry;
@@ -54,6 +55,8 @@ public class CoreRes {
             .register("player", new PlayerEntityFactory()).get("player");//Meh...
     public static final EntityFactory ITEM_FACTORY = Registry.WORLD_ENTITY_REGISTRY
             .register("item", new ItemEntityFactory()).get("item");
+    
+    public static final EntityFactory XXXX_FACTORY = Registry.WORLD_ENTITY_REGISTRY.register("xxxx", new XXXXEntityFactory()).get("xxxx");
     
     public static final void init() {
         Logger.getLogger(CoreRes.class).info("Creating core resource hooks");

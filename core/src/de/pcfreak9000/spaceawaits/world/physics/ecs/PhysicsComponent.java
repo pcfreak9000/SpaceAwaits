@@ -12,7 +12,9 @@ public class PhysicsComponent implements Component {
     public boolean considerSensorsAsBlocking = false;
     public BodyWrapper body;
     public IBodyFactory factory;
-
+    
+    public boolean gurke = false;
+    
     public boolean affectedByForces = true;
     //do not touch
     public Array<Fixture> i_nonsensorfixtures;

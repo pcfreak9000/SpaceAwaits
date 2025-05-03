@@ -3,15 +3,19 @@ package mod;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
+import de.pcfreak9000.spaceawaits.flat.XXXXEntityFactory;
 import de.pcfreak9000.spaceawaits.item.Item;
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.breaking.BreakableInfo;
 import de.pcfreak9000.spaceawaits.world.breaking.IBreaker;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
+import de.pcfreak9000.spaceawaits.world.ecs.EntityInteractSystem;
 import de.pcfreak9000.spaceawaits.world.physics.IRaycastTileCallback;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -33,6 +37,20 @@ public class ItemMininglaser extends Item {
     @Override
     public float getMaxRangeBreakAttack(Player player, ItemStack stackUsed) {
         return Float.POSITIVE_INFINITY;
+    }
+    
+    @Override
+    public float getMaxRangeUse(Player player, ItemStack stackUsed) {
+        return 10000f;
+    }
+    
+    @Override
+    public boolean onItemUse(Player player, ItemStack stackUsed, Engine world, float x, float y, int tilex, int tiley,
+            TileLayer layer) {
+        System.out.println("tesa");
+        Entity e = XXXXEntityFactory.setupXXXXEntity(x, y);
+        world.getSystem(EntityInteractSystem.class).spawnEntity(e, false);
+        return true;
     }
     
     @Override

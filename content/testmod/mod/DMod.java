@@ -53,6 +53,8 @@ public class DMod {
     
     public TileLiquid water = new TileLiquid();
     
+    public TileLiquid lava = new TileLiquid();
+    
     public SpaceshipFactory fac = new SpaceshipFactory();
     public static final Item MININGLASER = new ItemMininglaser();
     
@@ -78,6 +80,20 @@ public class DMod {
         water.setDisplayName("Water");
         water.setOpaque(false);
         GameRegistry.registerTile("water", water);
+        
+        lava.setTexture("stoneWhite.png");
+        lava.setSolid(false);
+        lava.setCanBreak(false);
+        lava.setLightTransmission(0.5f);
+        lava.setLightColor(Color.ORANGE);
+        lava.setColor(Color.ORANGE);
+        lava.setDisplayName("Lava");
+        lava.setOpaque(true);
+        lava.setFlowSpeed(0.05f);
+        lava.setMaxComp(0.05f);
+        //lava
+        GameRegistry.registerTile("lava", lava);
+        
         Background backbig = new Background(new InfiniteGeneratedTexture(1 / 32f, 1 / 32f, 2048, 2048, 20, 14,
                 new StarfieldTexGen(2000, 32 * 0.0288f)));
         backbig.zdist = Float.POSITIVE_INFINITY;

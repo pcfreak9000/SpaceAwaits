@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.IntArray;
 import de.pcfreak9000.spaceawaits.generation.GenerationParameters;
 import de.pcfreak9000.spaceawaits.generation.IGen2D;
 import de.pcfreak9000.spaceawaits.generation.RndHelper;
+import de.pcfreak9000.spaceawaits.registry.GameRegistry;
+import de.pcfreak9000.spaceawaits.registry.Registry;
 import de.pcfreak9000.spaceawaits.world.ITileArea;
 import de.pcfreak9000.spaceawaits.world.WorldArea;
 import de.pcfreak9000.spaceawaits.world.chunk.Chunk;
@@ -64,6 +66,8 @@ public class BiomeChunkGenerator implements IChunkGenerator {
                         boolean cave = caveGen == null ? false : caveGen.isCave(x, y);
                         if (!cave || !tile.canBreak()) {
                             chunk.setTile(x, y, TileLayer.Front, tile);
+                        } else if (cave && tile.canBreak()) {
+                            chunk.setTile(x, y, TileLayer.Front, Registry.TILE_REGISTRY.get("lava"));
                         }
                         chunk.setTile(x, y, TileLayer.Back, tile);
                     }
