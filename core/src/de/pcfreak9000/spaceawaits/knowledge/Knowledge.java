@@ -16,7 +16,7 @@ public class Knowledge {
         return false;
     }
 
-    public Object createDataHolder() {
+    public UnlockProgress createDataHolder(Knowledgebase kb) {
         return null;
     }
 }

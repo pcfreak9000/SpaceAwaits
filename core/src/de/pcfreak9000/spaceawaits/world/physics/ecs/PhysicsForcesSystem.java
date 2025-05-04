@@ -29,8 +29,8 @@ public class PhysicsForcesSystem extends IteratingSystem {
         boolean canmovefreely = Components.ON_SOLID_GROUND.has(entity) ? Components.ON_SOLID_GROUND.get(entity).canMoveFreely() : false;
         comp.body.applyAccelerationPh(0, -9.81f);
         //eeeehhh.......
-        comp.body.applyAccelerationPh(-comp.body.getLinearVelocityPh().x * 40,
-                -comp.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
+        //comp.body.applyAccelerationPh(-comp.body.getLinearVelocityPh().x * 4f,
+          //      -comp.body.getLinearVelocityPh().y * (canmovefreely ? 40f : 0.1f));
         // Problem 1: welche Fixture/Shape/Rectangle für buoyancy nehmen? Bedenke
         // mehrere Fixtures haben nebeneffekte von zu viel drag etc...
         // Problem 2: Was ist mit Kreisen?

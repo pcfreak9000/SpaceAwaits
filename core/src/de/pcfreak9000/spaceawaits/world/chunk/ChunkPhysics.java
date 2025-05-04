@@ -74,6 +74,7 @@ public class ChunkPhysics implements IBodyFactory {
         PolygonShape shape = new PolygonShape();
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
+        fd.friction = 1f;
         fd.restitution = tile.getBouncyness();
         if (!tile.hasCustomHitbox()) {
             shape.setAsBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), new Vector2(

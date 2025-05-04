@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 
+import de.omnikryptec.math.Mathd;
 import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.SpriteBatchImpr;
 import de.pcfreak9000.spaceawaits.core.assets.ITextureProvider;
@@ -24,6 +25,11 @@ public class Util {
             return a > 0.5f ? 1f : 0f;
         }
     };
+    
+    public static float logisticFunction(float sup, float steep, float x0, float input) {
+        double d = Mathd.exp(-steep * (input - x0));
+        return (float) (sup / (d + 1));
+    }
     
     @Deprecated
     public static float interpolateStepwise2Ddirect(int x, int y, IGenInt2D stepwise, Interpolation interpolinterpol,

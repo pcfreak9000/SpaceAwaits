@@ -30,6 +30,7 @@ public class PlayerBodyFactory implements IBodyFactory {
     public Body createBody(World world) {
         BodyDef bd = new BodyDef();
         bd.fixedRotation = true;
+        bd.linearDamping = 0.01f;
         bd.type = BodyType.DynamicBody;
         bd.position.set(METER_CONV.in(OFFSET.x), METER_CONV.in(OFFSET.x));
         FixtureDef fd = new FixtureDef();
@@ -37,7 +38,7 @@ public class PlayerBodyFactory implements IBodyFactory {
         shape.setRadius(METER_CONV.in(WH.y / 5.5f));
         shape.setPosition(METER_CONV.in(new Vector2(0, WH.y / 3.6f)));
         fd.shape = shape;
-        fd.friction = 0;
+        fd.friction = 15f;
         fd.density = 1.1f;
         Body b = world.createBody(bd);
         b.createFixture(fd);
@@ -46,8 +47,8 @@ public class PlayerBodyFactory implements IBodyFactory {
         shape.setPosition(METER_CONV.in(new Vector2(0, 0)));
         b.createFixture(fd);
         PolygonShape psh = new PolygonShape();
-        psh.setAsBox(METER_CONV.in(WH.x * 0.015f), METER_CONV.in(WH.y / 16),
-                METER_CONV.in(new Vector2(0, -WH.y / 2 + 3*WH.y / 32f)), 0);
+        psh.setAsBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 32f),
+                METER_CONV.in(new Vector2(0, -WH.y / 2 + 5 * WH.y / 64f)), 0);
         fd.shape = psh;
         fd.isSensor = true;
         Fixture f = b.createFixture(fd);

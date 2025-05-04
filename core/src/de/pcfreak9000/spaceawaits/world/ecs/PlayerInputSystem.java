@@ -7,37 +7,41 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
+import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.player.Player.GameMode;
+import de.pcfreak9000.spaceawaits.world.WorldEvents.PlayerJumpEvent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 
 public class PlayerInputSystem extends IteratingSystem {
-
+    
     // How was that input multiplexing going again?! well it needs to be THIS way as
     // other important things rely on InptMgr...
     // private boolean inGui;
-
+    
     public PlayerInputSystem() {
         super(Family.all(PlayerInputComponent.class, PhysicsComponent.class).get());
     }
-
+    
     @Override
     protected void processEntity(Entity entity, float dt) {
         Player player = Components.PLAYER_INPUT.get(entity).player;
         // move this somewhere else...
         player.dropQueue(getEngine());
-
+        
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;
         float vx = 0;
-        boolean up = InptMgr.WORLD.isPressed(EnumInputIds.Up);
-        boolean left = InptMgr.WORLD.isPressed(EnumInputIds.Left);
-        boolean down = InptMgr.WORLD.isPressed(EnumInputIds.Down);
-        boolean right = InptMgr.WORLD.isPressed(EnumInputIds.Right);
-        boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         boolean onSolidGround = Components.ON_SOLID_GROUND.get(entity).isOnSolidGround();
         boolean canmovefreely = Components.ON_SOLID_GROUND.get(entity).canMoveFreely();
+        boolean up = InptMgr.WORLD.isPressed(EnumInputIds.Up);
+        boolean left = InptMgr.WORLD.isPressed(EnumInputIds.Left)
+                && (onSolidGround || canmovefreely || player.getGameMode().isTesting);
+        boolean down = InptMgr.WORLD.isPressed(EnumInputIds.Down);
+        boolean right = InptMgr.WORLD.isPressed(EnumInputIds.Right)
+                && (onSolidGround || canmovefreely || player.getGameMode().isTesting);
+        boolean backlayer = InptMgr.WORLD.isPressed(EnumInputIds.BackLayerMod);
         if (InptMgr.WORLD.isJustPressed(EnumInputIds.TestButton)) {
             Components.STATS.get(entity).statDatas.get("health").current -= backlayer ? -10 : 10;
         }
@@ -54,7 +58,7 @@ public class PlayerInputSystem extends IteratingSystem {
             if (right) {
                 vx += play.maxXv;
             }
-
+            
             PhysicsComponent pc = Components.PHYSICS.get(entity);
             if (!InptMgr.WORLD.isPressed(EnumInputIds.MovMod)) {
                 vx *= 0.5f;
@@ -63,11 +67,17 @@ public class PlayerInputSystem extends IteratingSystem {
             pc.body.setVelocityW(vx, vy);
         } else {
             if (up) {
-                if (onSolidGround) {
-                    vy += play.maxYv * 5;
+                if (onSolidGround && !Components.ON_SOLID_GROUND.get(entity).jumping) {
+                    Components.ON_SOLID_GROUND.get(entity).jumping = true;
+                    PlayerJumpEvent pje = new PlayerJumpEvent(player);
+                    SpaceAwaits.BUS.post(pje);
+                    System.out.println(pje.strength);
+                    vy += play.maxYv * 10 * pje.strength;
                 } else if (canmovefreely) {
                     vy += play.maxXv;
                 }
+            } else {
+                Components.ON_SOLID_GROUND.get(entity).jumping = false;
             }
             // kinda useless, use for sneaking/ladders instead?
             if (down) {
@@ -84,9 +94,9 @@ public class PlayerInputSystem extends IteratingSystem {
                 vx += play.maxXv;
             }
             PhysicsComponent pc = Components.PHYSICS.get(entity);
-            pc.body.applyAccelerationW(vx * 6, vy * (canmovefreely ? 6 : 3));
+            pc.body.applyAccelerationW(vx, vy * (canmovefreely ? 6 : 3));
         }
-
+        
         // Move the gamemode stuff?
         // ************************************************************************
         PhysicsComponent comp = Components.PHYSICS.get(entity);
@@ -108,5 +118,5 @@ public class PlayerInputSystem extends IteratingSystem {
         }
         // ************************************************************************
     }
-
+    
 }

@@ -180,4 +180,11 @@ public strictfp class Mathd {
         return roundM(value * mult) / mult;
     }
     
+    public static double exp(double f) {
+        if (abs(f) < 0.001) {
+            return Math.expm1(f) + 1;
+        }
+        return Math.exp(f);
+    }
+    
 }

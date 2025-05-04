@@ -33,38 +33,38 @@ import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
  *
  */
 public class Player implements INBTSerializable {
-
+    
     public static enum GameMode {
         Survival(false), Testing(true), TestingGhost(true);
-
+        
         public final boolean isTesting;
-
+        
         private GameMode(boolean istesting) {
             this.isTesting = istesting;
         }
     }
-
+    
     private String locationUuid = null;
-
+    
     private final Entity playerEntity;
-
+    
     private InventoryPlayer inventory;
-
+    
     private Knowledgebase knowledges;
     private Experiences experiences;
-
+    
     private GameMode gameMode = GameMode.Survival;
-
+    
     // Hmmmmm...
     private Array<ItemStack> toDrop = new Array<>(false, 10);
-
+    
     public Player() {
         this.playerEntity = PlayerEntityFactory.setupPlayerEntity(this);
         this.inventory = new InventoryPlayer();
         this.knowledges = new Knowledgebase();
         this.experiences = new Experiences();
     }
-
+    
     public void joinTileWorld(TileScreen ts) {
         if (locationUuid == null) {// hmmmmmmm, check for new location
             // LOGGER.info("Looking for a spawnpoint...");
@@ -79,67 +79,71 @@ public class Player implements INBTSerializable {
         }
         this.locationUuid = ts.getUUID();
         ts.getECS().addEntity(getPlayerEntity());
+        knowledges.register(ts.getWorldBus());
+        experiences.register(ts.getWorldBus());
         ((EngineImproved) ts.getECS()).getEventBus().post(new WorldEvents.PlayerJoinedEvent(this));
     }
-
+    
     public void leaveTileWorld(TileScreen ts) {
         ts.getECS().removeEntity(getPlayerEntity());
         // this.locationUuid = null; //<- this is currently buggy and would lead to a
         // new spawnpoint each time the world is joined...
         ((EngineImproved) ts.getECS()).getEventBus().post(new WorldEvents.PlayerLeftEvent(this));
+        knowledges.unregister();
+        experiences.unregister();
     }
-
+    
     public void leaveFlatWorld(FlatScreen fs) {
         fs.getEngine().removeEntity(getPlayerEntity());
         // this.locationUuid = null; //<- this is currently buggy and would lead to a
         // new spawnpoint each time the world is joined...
         fs.getEngine().getEventBus().post(new WorldEvents.PlayerLeftEvent(this));
     }
-
+    
     public void joinFlatWorld(FlatScreen fs) {
         Components.TRANSFORM.get(playerEntity).position.set(0, 0);
         fs.getEngine().addEntity(getPlayerEntity());
         fs.getEngine().getEventBus().post(new WorldEvents.PlayerJoinedEvent(this));
     }
-
+    
     public String getLocationUuid() {
         return locationUuid;
     }
-
+    
     public GameMode getGameMode() {
         return gameMode;
     }
-
+    
     public void setGameMode(GameMode mode) {
         this.gameMode = mode;
     }
-
+    
     public Entity getPlayerEntity() {
         return this.playerEntity;
     }
-
+    
     public InventoryPlayer getInventory() {
         return this.inventory;
     }
-
+    
     public StatsComponent getStats() {// Move stats?
         return getPlayerEntity().getComponent(StatsComponent.class);
     }
-
+    
     public Knowledgebase getKnowledge() {
         return this.knowledges;
     }
-
+    
     public Experiences getExperience() {
         return this.experiences;
     }
-
+    
     public void dropWhenPossible(ItemStack stack) {
         if (!ItemStack.isEmptyOrNull(stack)) {
             this.toDrop.add(stack);
         }
     }
-
+    
     public void dropQueue(Engine world) {
         Vector2 pos = Components.TRANSFORM.get(playerEntity).position;
         for (ItemStack s : this.toDrop) {
@@ -147,11 +151,11 @@ public class Player implements INBTSerializable {
         }
         this.toDrop.clear();
     }
-
+    
     public float getReach() {
         return getGameMode().isTesting ? 200 : 10;// -> ReachComponent or something...
     }
-
+    
     // have reach component??? maybe move this into hand component or so? and then
     // as parameter have an entity?
     public boolean isInReachFromHand(float x, float y, float range) {
@@ -160,11 +164,11 @@ public class Player implements INBTSerializable {
         float ydif = y - pos.y + 1;
         return Mathf.square(xdif) + Mathf.square(ydif) < Mathf.square(range);
     }
-
+    
     public void openContainer(GuiOverlay container) {
         container.createAndOpen(this);
     }
-
+    
     public void openInventory() {
         if (gameMode.isTesting) {
             this.openContainer(new ContainerTesting());
@@ -172,7 +176,7 @@ public class Player implements INBTSerializable {
             this.openContainer(new ContainerInventoryPlayer());
         }
     }
-
+    
     @Override
     public void readNBT(NBTCompound pc) {
         this.locationUuid = pc.getStringOrDefault("currentLocationUuid", "");
@@ -189,7 +193,7 @@ public class Player implements INBTSerializable {
         }
         this.gameMode = GameMode.values()[(int) pc.getIntegerSmartOrDefault("gamemode", GameMode.Survival.ordinal())];
     }
-
+    
     @Override
     public void writeNBT(NBTCompound pc) {
         pc.putString("currentLocationUuid", locationUuid == null ? "" : locationUuid);
@@ -206,5 +210,5 @@ public class Player implements INBTSerializable {
         pc.put("todrop", todropl);
         pc.putIntegerSmart("gamemode", gameMode.ordinal());
     }
-
+    
 }

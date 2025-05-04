@@ -10,6 +10,8 @@ public class OnSolidGroundComponent implements Component {
     public int solidGroundContacts;
     public int freemovementContacts;
     
+    public boolean jumping = false;
+    
     @NBTSerialize(key = "lcx")
     public float lastContactX;
     
