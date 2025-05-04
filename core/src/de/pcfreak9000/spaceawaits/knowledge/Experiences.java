@@ -63,7 +63,6 @@ public class Experiences implements INBTSerializable {
         NBTCompound datacompound = new NBTCompound();
         for (ObjectMap.Entry<Experience, Object> e : dataholders.entries()) {
             if (!AnnotationSerializer.canAnnotationSerialize(e.value)) {
-                System.out.println(e);
                 continue;
             }
             NBTCompound data = AnnotationSerializer.serialize(e.value);
