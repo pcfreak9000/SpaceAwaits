@@ -205,6 +205,7 @@ public class SpaceAwaits extends Game {
         CoreRes.dispose();
         this.audio.dispose();
         LOGGER.info("Exit.");
+        Gdx.gl.glDepthMask(false);//not doing this causes a SIGBUS on glfw window destruction on my system for whatever reason
     }
     
     private void createAssetmanager() {
