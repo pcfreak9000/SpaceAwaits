@@ -136,7 +136,7 @@ public class SpaceAwaits extends Game {
     private void setupInfrastructure() {
     	AudioConfig ac = new AudioConfig();
     	ac.setLogger(null);
-        audio = Audio.init();
+        audio = Audio.init(ac);
         if (audio == null) {
             throw new RuntimeException("No audio");
         }
