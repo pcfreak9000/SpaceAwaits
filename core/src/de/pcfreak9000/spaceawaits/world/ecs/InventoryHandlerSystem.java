@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 
 import de.omnikryptec.event.EventSubscription;
-import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
@@ -13,11 +12,10 @@ import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 
 //Hmmmm... isJustPressed behaves awkward with fixed time step game loops. This is fixed now.
-public class InventoryHandlerSystem extends EntitySystem implements RenderSystemMarker {
+@RenderSystemMarker
+public class InventoryHandlerSystem extends EntitySystem {
     
     private Player player;
-    
-    private float scrollAccum;
     
     public InventoryHandlerSystem() {
     }
@@ -48,18 +46,9 @@ public class InventoryHandlerSystem extends EntitySystem implements RenderSystem
             }
         }
         
-        //this is garbage
         float scroll = InptMgr.getScrollY();
-        if (scroll == 0.0f) {
-            scrollAccum = 0.0f;
-        }
-        scrollAccum += scroll;
-        if (Mathf.abs(scrollAccum) < 3.0f) {
-            return current;
-        }
-        int v = (int) Math.signum(scrollAccum);
+        int v = (int) Math.signum(scroll);
         int select = current + v;
-        scrollAccum = 0.0f;
         if (select < 0) {
             return select + 9;
         }

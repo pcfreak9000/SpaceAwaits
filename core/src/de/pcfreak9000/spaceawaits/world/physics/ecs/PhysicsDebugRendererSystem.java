@@ -12,8 +12,8 @@ import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
-
-public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable, RenderSystemMarker {
+@RenderSystemMarker
+public class PhysicsDebugRendererSystem extends EntitySystem implements Disposable {
     
     //maybe there is a better way of doing this, seems kinda crude to inject the PhysicsSystem...
     

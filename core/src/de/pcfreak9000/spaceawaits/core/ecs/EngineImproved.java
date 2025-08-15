@@ -71,7 +71,9 @@ public class EngineImproved extends Engine {
     public void addSystem(EntitySystem system) {
         EntitySystem old = getSystem(system.getClass());
         super.addSystem(system);
-        Array<EntitySystem> container = system instanceof RenderSystemMarker ? this.rendersystems : this.logicsystems;
+        boolean isrendersystem = system.getClass().isAnnotationPresent(RenderSystemMarker.class);
+        //system instanceof RenderSystemMarker
+        Array<EntitySystem> container = isrendersystem ? this.rendersystems : this.logicsystems;
         if (old != null) {
             container.removeValue(old, true);
             eventBus.unregister(old);
@@ -83,7 +85,9 @@ public class EngineImproved extends Engine {
     @Override
     public void removeSystem(EntitySystem system) {
         super.removeSystem(system);
-        Array<EntitySystem> container = system instanceof RenderSystemMarker ? this.rendersystems : this.logicsystems;
+        boolean isrendersystem = system.getClass().isAnnotationPresent(RenderSystemMarker.class);
+        //system instanceof RenderSystemMarker
+        Array<EntitySystem> container = isrendersystem ? this.rendersystems : this.logicsystems;
         container.removeValue(system, true);
         eventBus.unregister(system);
     }
@@ -107,6 +111,7 @@ public class EngineImproved extends Engine {
             }
             InptMgr.setJustModeNormal(true);
             updateCycleFor(deltaTime, rendersystems);
+            InptMgr.clearRenderCycleScroll();
         } finally {
             setUpdating(false);
         }

@@ -18,7 +18,8 @@ import de.pcfreak9000.spaceawaits.world.WorldEvents;
 import de.pcfreak9000.spaceawaits.world.render.DebugOverlay;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
-public class GuiOverlaySystem extends EntitySystem implements RenderSystemMarker, Disposable {
+@RenderSystemMarker
+public class GuiOverlaySystem extends EntitySystem implements Disposable {
     
     private GameScreen gamescreen;
     

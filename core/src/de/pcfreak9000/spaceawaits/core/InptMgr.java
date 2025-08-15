@@ -21,6 +21,7 @@ public class InptMgr {
     private boolean locked;
     
     private static float scrolledX, scrolledY;
+    private static float scrolledXnormal, scrolledYnormal;
     
     private static boolean[] justPressedKeys = new boolean[Keys.MAX_KEYCODE + 1];
     private static boolean[] justPressedButtons = new boolean[5];
@@ -100,11 +101,11 @@ public class InptMgr {
     //maybe make the scroll functions methods to return 0 if that InptMgr is locked
     
     public static float getScrollX() {
-        return scrolledX;
+        return justModeNormal?scrolledXnormal: scrolledX;
     }
     
     public static float getScrollY() {
-        return scrolledY;
+        return justModeNormal?scrolledYnormal: scrolledY;
     }
     
     public boolean isLocked() {
@@ -129,6 +130,11 @@ public class InptMgr {
     
     public static void setJustModeNormal(boolean b) {
         justModeNormal = b;
+    }
+    
+    public static void clearRenderCycleScroll() {
+    	scrolledXnormal = 0;
+    	scrolledYnormal = 0;
     }
     
     public static void clear() {
@@ -227,6 +233,8 @@ public class InptMgr {
         public boolean scrolled(float amountX, float amountY) {
             scrolledX = amountX;
             scrolledY = amountY;
+            scrolledXnormal = scrolledX;
+            scrolledYnormal = scrolledY;
             return false;
         }
         

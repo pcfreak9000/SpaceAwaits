@@ -6,8 +6,8 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.gui.GuiChat;
-
-public class GuiChatSystem extends EntitySystem implements RenderSystemMarker {
+@RenderSystemMarker
+public class GuiChatSystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
         if (!getEngine().getSystem(GuiOverlaySystem.class).isGuiContainerOpen()

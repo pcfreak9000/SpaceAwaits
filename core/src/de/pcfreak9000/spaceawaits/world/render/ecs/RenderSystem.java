@@ -31,8 +31,8 @@ import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 import de.pcfreak9000.spaceawaits.world.render.strategy.AbstractRenderStrategy;
 import de.pcfreak9000.spaceawaits.world.render.strategy.IRenderStrategy;
-
-public class RenderSystem extends EntitySystem implements EntityListener, Disposable, RenderSystemMarker {
+@RenderSystemMarker
+public class RenderSystem extends EntitySystem implements EntityListener, Disposable {
 
     private static final Family FAMILY = Family.all(RenderComponent.class).get();
 
