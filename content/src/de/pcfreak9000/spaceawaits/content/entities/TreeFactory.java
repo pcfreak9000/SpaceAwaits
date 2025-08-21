@@ -39,7 +39,7 @@ import de.pcfreak9000.spaceawaits.world.tile.ecs.TileSystem;
 
 public class TreeFactory implements EntityFactory {
     
-    private static final TextureProvider tex = TextureProvider.get("baum.png");
+    private static final TextureProvider tex = TextureProvider.get("sometree.png");
     
     @Override
     public Entity createEntity() {
@@ -49,8 +49,8 @@ public class TreeFactory implements EntityFactory {
         rec.renderable = tex;
         rec.color = Color.WHITE;
         
-        rec.width = 50 / 16f;
-        rec.height = 222 / 16f;
+        rec.width = 4;//50 / 16f;
+        rec.height = 6;//222 / 16f;
         
         entity.add(rec);
         TransformComponent tc = new TransformComponent();
