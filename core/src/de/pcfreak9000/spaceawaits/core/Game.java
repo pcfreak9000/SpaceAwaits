@@ -3,11 +3,8 @@ package de.pcfreak9000.spaceawaits.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-
-import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.MathUtil;
 import de.omnikryptec.util.Logger;
@@ -23,8 +20,6 @@ import de.pcfreak9000.spaceawaits.save.ISave;
 import de.pcfreak9000.spaceawaits.save.IWorldSave;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
-import de.pcfreak9000.spaceawaits.world.ecs.Components;
-import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
 import de.pcfreak9000.spaceawaits.world.gen.WorldPrimer;
 

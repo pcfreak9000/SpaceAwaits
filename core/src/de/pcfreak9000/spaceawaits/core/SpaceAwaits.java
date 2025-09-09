@@ -18,6 +18,7 @@ import de.omnikryptec.event.EventBus;
 import de.omnikryptec.util.Logger;
 import de.omnikryptec.util.Logger.LogType;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
+import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
@@ -49,7 +50,8 @@ public class SpaceAwaits extends Game {
     private static SpaceAwaits singleton;
     
     private static final Logger LOGGER = Logger.getLogger(SpaceAwaits.class);
-    
+    public static final TextureProvider testtree = TextureProvider.get("sometree.png");
+
     public static SpaceAwaits getSpaceAwaits() {
         return singleton;
     }
