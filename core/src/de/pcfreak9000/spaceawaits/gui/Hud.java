@@ -62,7 +62,7 @@ public class Hud {
     }
 
     public void actAndDraw(float dt) {
-        StatsComponent playerHealth = player.getStats();
+        //StatsComponent playerHealth = player.getStats();
         // this.healthbar.setValue(playerHealth.currentHealth / playerHealth.maxHealth);
         this.guiHelper.actAndDraw(stage, dt);
     }

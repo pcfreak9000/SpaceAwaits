@@ -59,7 +59,7 @@ public class TileScreen extends GameScreen {
     public String getUUID() {
         return save.getUUID();
     }
-
+    
     @Override
     public void load() {
         WorldMeta meta = save.getWorldMeta();

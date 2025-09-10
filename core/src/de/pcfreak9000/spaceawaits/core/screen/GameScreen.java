@@ -15,6 +15,7 @@ import de.pcfreak9000.spaceawaits.core.assets.WatchDynamicAssetAnnotationProcess
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.Saveable;
 import de.pcfreak9000.spaceawaits.core.ecs.Transferable;
+import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
 
 public class GameScreen extends ScreenAdapter {
