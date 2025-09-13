@@ -42,16 +42,16 @@ public class Game {
 
 	private Player player;
 	private GameScreen gamescreenCurrent;
-	
-	//private SpecialCache<String, GameScreen> screenCache;
-	private ObjectMap<String, GameScreen> screenCache = new ObjectMap<>();
+
+	private SpecialCache<String, GameScreen> screenCache;
+	// private ObjectMap<String, GameScreen> screenCache = new ObjectMap<>();
 
 	private LevelTypeTiles lttiles = LevelTypeTiles.LTT;
-	
+
 	public Game(ISave save, ScreenManager scm) {
 		this.mySave = save;
 		this.scm = scm;
-		//this.screenCache = new SpecialCache<String, GameScreen>(5, 3, (key)->loadLevel(key), (gs)->unloadLevel(gs));
+		this.screenCache = new SpecialCache<String, GameScreen>(5, 3, (key) -> loadLevel(key), (gs) -> unloadLevel(gs));
 	}
 
 	public long getMasterSeed() {
@@ -112,11 +112,7 @@ public class Game {
 //		this.gamescreenCurrent = null;
 //	}
 
-
 	public void unloadGame() {
-		for (GameScreen gs : screenCache.values()) {
-			justUnloadScreen(gs);
-		}
 		screenCache.clear();
 	}
 
@@ -128,7 +124,7 @@ public class Game {
 	}
 
 	public void joinLevel(String uuid) {
-		this.gamescreenCurrent = loadLevel(uuid);
+		this.gamescreenCurrent = screenCache.getOrFresh(uuid);
 		LOGGER.info("Joining level...");
 		this.scm.setGameScreen(this.gamescreenCurrent);
 		this.player.join(this.gamescreenCurrent, uuid);
@@ -140,39 +136,29 @@ public class Game {
 		this.gamescreenCurrent = null;
 	}
 
-	public void unloadLevel(GameScreen screen) {
+	private void unloadLevel(GameScreen screen) {
 		Objects.requireNonNull(screen);
-		justUnloadScreen(screen);
-		String key = screenCache.findKey(screen, true);
-		screenCache.remove(key);
-	}
-
-	private void justUnloadScreen(GameScreen screen) {
 		if (this.gamescreenCurrent == screen) {
 			leaveLevel();
 		}
 		screen.unload();
 	}
-	
-	public GameScreen loadLevel(String uuid) {
+
+	private GameScreen loadLevel(String uuid) {
 		GameScreen screen = null;
-		if (screenCache.containsKey(uuid)) {
-			screen = screenCache.get(uuid);
-		} else {
-			try {
-				if (!this.mySave.hasLevel(uuid)) {
-					LOGGER.error("No such level with uuid " + uuid);
-					return null;
-				}
-				LOGGER.infof("Loading level...");
-				ILevelSave save = this.mySave.getLevel(uuid);
-				screen = save.getLevelType().createGameScreen(scm.getGuiHelper(), save.getWorldSave());
-				screen.load();
-				this.screenCache.put(uuid, screen);
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
+		try {
+			if (!this.mySave.hasLevel(uuid)) {
+				LOGGER.error("No such level with uuid " + uuid);
+				return null;
 			}
+			LOGGER.infof("Loading level...");
+			ILevelSave save = this.mySave.getLevel(uuid);
+			screen = save.getLevelType().createGameScreen(scm.getGuiHelper(), save.getWorldSave());
+			screen.load();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
+
 		return screen;
 	}
 
