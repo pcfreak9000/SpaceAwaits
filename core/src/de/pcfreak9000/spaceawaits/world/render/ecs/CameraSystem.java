@@ -18,13 +18,14 @@ import de.omnikryptec.math.Mathf;
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
+import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.ecs.content.TransformComponent;
 import de.pcfreak9000.spaceawaits.core.screen.RenderHelper2D;
 import de.pcfreak9000.spaceawaits.util.Bounds;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.PlayerInputComponent;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
-
+@RenderSystemMarker
 public class CameraSystem extends IteratingSystem {
     public static final int VISIBLE_TILES_MIN = 35;
     public static final int VISIBLE_TILES_MAX = 6 * VISIBLE_TILES_MIN;
@@ -102,6 +103,10 @@ public class CameraSystem extends IteratingSystem {
         PlayerInputComponent pc = Components.PLAYER_INPUT.get(entity);
         float x = tc.position.x + pc.offx;
         float y = tc.position.y + pc.offy;
+        if (InptMgr.WORLD.isPressed(EnumInputIds.CamZoom)) {
+            float scroll = InptMgr.getScrollY() * 0.1f;
+            changeZoom(scroll);
+        }
         if (this.bounds != null && !pc.player.getGameMode().isTesting) {
             x = Mathf.max(bounds.getTileX() + camera.viewportWidth / 2, x);
             y = Mathf.max(bounds.getTileY() + camera.viewportHeight / 2, y);
@@ -109,9 +114,5 @@ public class CameraSystem extends IteratingSystem {
             y = Mathf.min(bounds.getHeight() - camera.viewportHeight / 2, y);
         }
         camera.position.set(x, y, 0);
-        if (InptMgr.WORLD.isPressed(EnumInputIds.CamZoom)) {
-            float scroll = InptMgr.getScrollY() * 0.1f;
-            changeZoom(scroll);
-        }
     }
 }

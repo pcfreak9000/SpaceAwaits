@@ -22,6 +22,7 @@ import de.pcfreak9000.spaceawaits.core.assets.TextureProvider;
 import de.pcfreak9000.spaceawaits.core.screen.ScreenManager;
 import de.pcfreak9000.spaceawaits.mod.Modloader;
 import de.pcfreak9000.spaceawaits.save.SaveManager;
+import de.pcfreak9000.spaceawaits.save.regionfile.RegionFileCache;
 import de.pcfreak9000.spaceawaits.util.FileHandleClassLoaderExtension;
 import de.pcfreak9000.spaceawaits.world.WorldSetupHandler;
 import de.pottgames.tuningfork.Audio;
@@ -205,6 +206,7 @@ public class SpaceAwaits extends Game {
         BUS.post(new CoreEvents.ExitEvent());
         this.setScreen(null);
         super.dispose();
+		RegionFileCache.clear();
         this.assetManager.dispose();
         CoreRes.dispose();
         this.audio.dispose();

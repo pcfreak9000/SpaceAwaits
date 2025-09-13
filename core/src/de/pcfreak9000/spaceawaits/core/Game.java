@@ -25,6 +25,7 @@ import de.pcfreak9000.spaceawaits.save.LevelType;
 import de.pcfreak9000.spaceawaits.save.LevelTypeTiles;
 import de.pcfreak9000.spaceawaits.save.TilesLevelCreationVisitor;
 import de.pcfreak9000.spaceawaits.save.WorldMeta;
+import de.pcfreak9000.spaceawaits.save.regionfile.RegionFileCache;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.util.SpecialCache;
 import de.pcfreak9000.spaceawaits.world.gen.GeneratorSettings;
