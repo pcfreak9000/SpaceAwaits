@@ -11,7 +11,7 @@ import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.player.Player;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
 
-//Hmmmm... isJustPressed behaves awkward with fixed time step game loops. This is fixed now.
+//isJustPressed behaves awkward with fixed time step game loops. This is fixed now.
 @RenderSystemMarker
 public class InventoryHandlerSystem extends EntitySystem {
     

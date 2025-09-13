@@ -6,10 +6,11 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 
 import de.omnikryptec.math.Mathf;
+import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
-
+@RenderSystemMarker
 public class FollowMouseSystem extends IteratingSystem {
     
     private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);

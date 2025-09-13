@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import de.omnikryptec.event.EventSubscription;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes;
 import de.pcfreak9000.spaceawaits.core.ecs.EntityImproved;
+import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.render.RenderLayers;
 import de.pcfreak9000.spaceawaits.world.render.RendererEvents;
@@ -15,6 +16,7 @@ import de.pcfreak9000.spaceawaits.world.render.ecs.RenderComponent;
 import de.pcfreak9000.spaceawaits.world.render.ecs.RenderRenderableComponent;
 
 //TODO this system can be generalized to multiple selector entities...
+@RenderSystemMarker
 public class SelectorSystem extends EntitySystem {
     
     private Entity selectorEntity;
