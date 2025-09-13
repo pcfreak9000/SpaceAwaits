@@ -11,11 +11,6 @@ public interface ISave {
 
 	SaveMeta getSaveMeta();
 
-//	boolean hasWorld(String uuid);
-//
-//	String createWorld(WorldMeta worldMeta) throws IOException;
-//
-//	IWorldSave getWorld(String uuid) throws IOException;
 
 	ILevelSave getLevel(String uuid) throws IOException;
 

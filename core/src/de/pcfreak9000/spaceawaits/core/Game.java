@@ -45,14 +45,34 @@ public class Game {
 	private GameScreen gamescreenCurrent;
 
 	private SpecialCache<String, GameScreen> screenCache;
-	// private ObjectMap<String, GameScreen> screenCache = new ObjectMap<>();
 
 	private LevelTypeTiles lttiles = LevelTypeTiles.LTT;
 
 	public Game(ISave save, ScreenManager scm) {
 		this.mySave = save;
 		this.scm = scm;
-		this.screenCache = new SpecialCache<String, GameScreen>(5, 3, (key) -> loadLevel(key), (gs) -> unloadLevel(gs));
+		this.screenCache = new SpecialCache<String, GameScreen>(5, 3, (uuid) -> {
+			GameScreen screen = null;
+			try {
+				if (!this.mySave.hasLevel(uuid)) {
+					LOGGER.error("No such level with uuid " + uuid);
+					return null;
+				}
+				LOGGER.infof("Loading level...");
+				ILevelSave lsave = this.mySave.getLevel(uuid);
+				screen = lsave.getLevelType().createGameScreen(scm.getGuiHelper(), lsave.getWorldSave());
+				screen.load();
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
+			return screen;
+		}, (screen) -> {
+			Objects.requireNonNull(screen);
+			if (this.gamescreenCurrent == screen) {
+				leaveLevel();
+			}
+			screen.unload();
+		});
 	}
 
 	public long getMasterSeed() {
@@ -64,39 +84,18 @@ public class Game {
 		this.readPlayer();
 	}
 
-//	// Why does this not simply use saveGame()?
-//	public void unloadGame() {
-//		LOGGER.info("Unloading...");
-//		saveAndLeaveCurrentWorld();
-//		writePlayer();
-//	}
-//
-//	public void saveGame() {
-//		LOGGER.info("Saving...");
-//		gamescreenCurrent.save();
-//		writePlayer();
-//	}
-
 	// probably also TMP
+	//if the save doesn't have the current level, try to return to the original spawn?
 	public void joinGame() {
 		if (this.mySave.hasLevel(player.getCurrentLevel())) {
 			this.joinLevel(player.getCurrentLevel());
 		} else {
 			// Check if this save has a spawn place, otherwise generate a new one
 			// When generating a new world, place the player at spawn
-//			String id = createWorld("A nice World", pickGenerator(Registry.GENERATOR_REGISTRY.getGens()),
-//					this.mySave.getSaveMeta().getSeed());// TODO Derive world seed from that master seed instead of
-//															// using it directly
-//			joinWorld(id);
 			String uuid = createLevel(lttiles, new TilesLevelCreationVisitor(this.mySave.getSaveMeta().getSeed(),
 					pickGenerator(Registry.GENERATOR_REGISTRY.getGens()), "Some world"));
 			joinLevel(uuid);
 		}
-//        FlatScreen flatscreen = new FlatScreen(scm.getGuiHelper());
-//        this.gamescreenCurrent = flatscreen;
-//        flatscreen.load();
-//        scm.setGameScreen(flatscreen);
-//        flatscreen.join(player);
 	}
 
 	// TMP!!!!
@@ -106,12 +105,6 @@ public class Game {
 		list.addAll(set);
 		return MathUtil.getRandom(new Random(), list);
 	}
-
-//	public void saveAndLeaveCurrentWorld() {
-//		player.leave(this.gamescreenCurrent);
-//		this.gamescreenCurrent.unload();
-//		this.gamescreenCurrent = null;
-//	}
 
 	public void unloadGame() {
 		screenCache.clear();
@@ -137,32 +130,6 @@ public class Game {
 		this.gamescreenCurrent = null;
 	}
 
-	private void unloadLevel(GameScreen screen) {
-		Objects.requireNonNull(screen);
-		if (this.gamescreenCurrent == screen) {
-			leaveLevel();
-		}
-		screen.unload();
-	}
-
-	private GameScreen loadLevel(String uuid) {
-		GameScreen screen = null;
-		try {
-			if (!this.mySave.hasLevel(uuid)) {
-				LOGGER.error("No such level with uuid " + uuid);
-				return null;
-			}
-			LOGGER.infof("Loading level...");
-			ILevelSave save = this.mySave.getLevel(uuid);
-			screen = save.getLevelType().createGameScreen(scm.getGuiHelper(), save.getWorldSave());
-			screen.load();
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
-
-		return screen;
-	}
-
 	public String createLevel(LevelType type, LevelCreationVisitor visitor) {
 		String uuid = this.mySave.createLevel(type);
 		try {
@@ -173,44 +140,6 @@ public class Game {
 		}
 		return uuid;
 	}
-
-//	public void joinWorld(String uuid) {
-//		try {
-//			if (!this.mySave.hasWorld(uuid)) {
-//				LOGGER.error("No such world with uuid: " + uuid);
-//				return;
-//			}
-//			LOGGER.infof("Setting up world for joining...");
-//			IWorldSave save = this.mySave.getWorld(uuid);
-//			TileScreen tilescreen = new TileScreen(scm.getGuiHelper(), save);
-//			this.gamescreenCurrent = tilescreen;
-//
-//			tilescreen.load();
-//
-//			LOGGER.info("Joining world...");
-//			scm.setGameScreen(tilescreen);
-//			player.join(tilescreen);
-//
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
-
-//	public String createWorld(String name, IGeneratingLayer<WorldPrimer, GeneratorSettings> generator, long seed) {
-//		LOGGER.infof("Creating world...");
-//		WorldPrimer worldPrimer = generator.generate(new GeneratorSettings(seed));
-//		WorldMeta wMeta = WorldMeta.builder().displayName(name).worldSeed(seed).createdNow()
-//				.worldGenerator(Registry.GENERATOR_REGISTRY.getId(generator)).dimensions(worldPrimer.getWorldBounds())
-//				.create();
-//		// The meta can probably be cached (useful for create-and-join)
-//		// See Save.java for todo on uuid in meta...?
-//		try {
-//			String uuid = this.mySave.createWorld(wMeta);
-//			return uuid;
-//		} catch (IOException ex) {
-//			throw new RuntimeException(ex);
-//		}
-//	}
 
 	public GameScreen getGameScreenCurrent() {
 		return this.gamescreenCurrent;

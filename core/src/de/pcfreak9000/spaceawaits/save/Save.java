@@ -15,7 +15,6 @@ import de.omnikryptec.util.Logger;
 import de.pcfreak9000.nbt.CompressedNbtReader;
 import de.pcfreak9000.nbt.NBTCompound;
 import de.pcfreak9000.nbt.TagReader;
-import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 
 public class Save implements ISave {
 
@@ -28,7 +27,7 @@ public class Save implements ISave {
 	public Save(SaveMeta meta, File dir) {
 		this.meta = meta;
 		this.myDir = dir;
-		this.worldsDir = new File(myDir, "worlds");
+		this.worldsDir = new File(myDir, "levels");
 		this.worldsDir.mkdir();
 		this.playerFile = new File(myDir, "player.dat");
 	}
@@ -37,19 +36,6 @@ public class Save implements ISave {
 	public SaveMeta getSaveMeta() {
 		return meta;
 	}
-
-//	@Override
-//	public String createWorld(WorldMeta meta) {
-//		String combinedID = null;
-//		File worldFile = null;
-//		do {
-//			combinedID = createNewID(meta.getDisplayName());
-//			worldFile = new File(worldsDir, combinedID);
-//		} while (worldFile.exists());// In theory this could take forever but in practice it won't
-//		worldFile.mkdir();
-//		writeWorldMetaFor(worldFile, meta);
-//		return combinedID;
-//	}
 
 	private String createNewID(String wname) {
 		MessageDigest md;
@@ -67,27 +53,6 @@ public class Save implements ISave {
 		System.arraycopy(additional, 0, bytes, md5Bytes.length, additional.length);
 		return Base64.getEncoder().encodeToString(bytes).replace('/', '_').replace('+', '-').replace("==", "");
 	}
-
-//	@Override
-//	public boolean hasWorld(String uuid) {
-//		if (uuid == null) {// Hmm
-//			return false;
-//		} // TODO Include uuid in world meta and check that here?!
-//		File file = new File(worldsDir, uuid);
-//		return file.exists() && file.isDirectory();
-//	}
-
-//	@Override
-//	public IWorldSave getWorld(String uuid) throws IOException {
-//		File file = new File(worldsDir, uuid);
-//		if (!file.isDirectory() || !file.exists()) {
-//			throw new IllegalArgumentException();
-//		}
-//		WorldMeta meta = getWorldMetaFor(file);
-//		writeWorldMetaFor(file, meta);// Update meta or smth...
-//		WorldSave save = new WorldSave(meta, file, uuid);
-//		return save;
-//	}
 
 	@Override
 	public boolean hasPlayer() {
@@ -112,25 +77,6 @@ public class Save implements ISave {
 			throw new RuntimeException(e);
 		}
 	}
-
-//	private WorldMeta getWorldMetaFor(File world) throws IOException {
-//		File metafile = new File(world, "meta.dat");
-//		try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(metafile))) {
-//			NBTCompound compound = nbtreader.toCompoundTag();
-//			WorldMeta m = new WorldMeta();
-//			m.readNBT(compound);
-//			return m;
-//		}
-//	}
-//
-//	private void writeWorldMetaFor(File world, WorldMeta meta) {
-//		File metaFile = new File(world, "meta.dat");
-//		try {
-//			TagReader.toCompressedBinaryNBTFile(metaFile, INBTSerializable.writeNBT(meta));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	@Override
 	public ILevelSave getLevel(String uuid) throws IOException {
@@ -182,7 +128,7 @@ public class Save implements ISave {
 			return false;
 		}
 		File levelInfo = new File(file, "level.dat");
-		if(!levelInfo.exists()) {
+		if (!levelInfo.exists()) {
 			return false;
 		}
 		try (CompressedNbtReader nbtreader = new CompressedNbtReader(new FileInputStream(levelInfo))) {
