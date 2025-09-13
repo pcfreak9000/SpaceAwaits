@@ -11,14 +11,16 @@ public interface ISave {
 
 	SaveMeta getSaveMeta();
 
-	boolean hasWorld(String uuid);
-
-	String createWorld(WorldMeta worldMeta) throws IOException;
-
-	IWorldSave getWorld(String uuid) throws IOException;
+//	boolean hasWorld(String uuid);
+//
+//	String createWorld(WorldMeta worldMeta) throws IOException;
+//
+//	IWorldSave getWorld(String uuid) throws IOException;
 
 	ILevelSave getLevel(String uuid) throws IOException;
 
+	String createLevel(LevelType type);
+	
 	boolean hasLevel(String uuid);
 
 	boolean hasPlayer();
@@ -26,5 +28,6 @@ public interface ISave {
 	void writePlayerNBT(NBTCompound nbtc);
 
 	NBTCompound readPlayerNBT();
+
 
 }

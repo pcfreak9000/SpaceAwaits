@@ -89,8 +89,8 @@ public abstract class ActivatorSystem extends EntitySystem {
             for (Activator a : ac.activators) {
                 if (a.isContinuous() ? InptMgr.WORLD.isPressed(a.getInputKey())
                         : InptMgr.WORLD.isJustPressed(a.getInputKey())) {
-                    if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getPlayerEntity())) {//TODO change to the entity which is inputting stuff
-                        return;
+                    if (a.handle(mouse.x, mouse.y, e, getEngine(), this.player.getTileWorldPlayer().getPlayerEntity())) {//TODO change to the entity which is inputting stuff
+                        return;//this.player.getPlayerEntity()
                     }
                 }
             }

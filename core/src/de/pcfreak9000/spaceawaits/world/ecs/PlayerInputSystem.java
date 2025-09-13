@@ -28,7 +28,7 @@ public class PlayerInputSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float dt) {
         Player player = Components.PLAYER_INPUT.get(entity).player;
         // move this somewhere else...
-        player.dropQueue(getEngine());
+        player.getTileWorldPlayer().dropQueue(getEngine());
         
         PlayerInputComponent play = Components.PLAYER_INPUT.get(entity);
         float vy = 0;

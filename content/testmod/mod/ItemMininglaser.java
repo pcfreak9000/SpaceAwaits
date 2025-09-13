@@ -38,7 +38,7 @@ public class ItemMininglaser extends Item {
     @Override
     public boolean onItemSpecialBreakAttack(Player player, ItemStack stackUsed, Engine world, float x, float y, int tx,
             int ty, TileLayer layer) {
-        TransformComponent tc = Components.TRANSFORM.get(player.getPlayerEntity());
+        TransformComponent tc = Components.TRANSFORM.get(player.getTileWorldPlayer().getPlayerEntity());
         world.getSystem(TileSystem.class).raycastTiles(tc.position.x + 1, tc.position.y + 2, x, y, TileLayer.Front,
                 new IRaycastTileCallback() {
                     

@@ -110,7 +110,7 @@ public class SpaceSurfaceGenerator implements IGeneratingLayer<WorldPrimer, Spac
             
             @Override
             public Vector2 getPlayerSpawn(Player player, Engine world) {
-                Vector2 dim = player.getPlayerEntity().getComponent(PhysicsComponent.class).factory
+                Vector2 dim = player.getTileWorldPlayer().getPlayerEntity().getComponent(PhysicsComponent.class).factory
                         .boundingBoxWidthAndHeight();
                 Rectangle rect = getSpawnArea(player);
                 Vector2 s = WorldUtil.findSpawnpoint(world, dim.x, dim.y, 0, params.getHeight() / 3, params.getWidth(),

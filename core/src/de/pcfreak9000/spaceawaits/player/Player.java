@@ -54,7 +54,7 @@ public class Player implements INBTSerializable {
 	private Experiences experiences;
 
 	private GameMode gameMode = GameMode.Survival;
-
+	private String currentLocation = "";
 	// Hmmmmm...
 	private Array<ItemStack> toDrop = new Array<>(false, 10);
 
@@ -66,12 +66,24 @@ public class Player implements INBTSerializable {
 		this.flatworldplayer = new FlatWorldPlayer(this);
 	}
 
+	public TileWorldPlayer getTileWorldPlayer() {
+		return tileworldplayer;
+	}
+
+	public FlatWorldPlayer getFlatWorldPlayer() {
+		return flatworldplayer;
+	}
+
 	public GameMode getGameMode() {
 		return gameMode;
 	}
 
 	public void setGameMode(GameMode mode) {
 		this.gameMode = mode;
+	}
+
+	public String getCurrentLevel() {
+		return currentLocation;
 	}
 
 	public InventoryPlayer getInventory() {
@@ -134,6 +146,7 @@ public class Player implements INBTSerializable {
 			toDrop.add(ItemStack.readNBT(todropl.getCompound(i)));
 		}
 		this.gameMode = GameMode.values()[(int) pc.getIntegerSmartOrDefault("gamemode", GameMode.Survival.ordinal())];
+		this.currentLocation = pc.getString("currentLocation");
 	}
 
 	@Override
@@ -151,9 +164,11 @@ public class Player implements INBTSerializable {
 		}
 		pc.put("todrop", todropl);
 		pc.putIntegerSmart("gamemode", gameMode.ordinal());
+		pc.putString("currentLocation", currentLocation);
 	}
 
-	public void join(GameScreen gamescreenCurrent) {
+	public void join(GameScreen gamescreenCurrent, String uuid) {
+		this.currentLocation = uuid;
 		if (gamescreenCurrent instanceof TileScreen) {
 			this.tileworldplayer.joinTileWorld((TileScreen) gamescreenCurrent);
 		} else if (gamescreenCurrent instanceof FlatScreen) {
@@ -167,6 +182,7 @@ public class Player implements INBTSerializable {
 		} else if (gamescreenCurrent instanceof FlatScreen) {
 			this.flatworldplayer.leaveFlatWorld((FlatScreen) gamescreenCurrent);
 		}
+		this.currentLocation = "";
 	}
 
 }

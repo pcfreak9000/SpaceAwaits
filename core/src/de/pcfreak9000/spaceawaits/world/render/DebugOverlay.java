@@ -75,7 +75,7 @@ public class DebugOverlay {
     public void actAndDraw(float dt) {
         int fps = Gdx.graphics.getFramesPerSecond();
         Vector2 playerPos = Components.TRANSFORM.get(
-                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()).position;
+                SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getTileWorldPlayer().getPlayerEntity()).position;
         int cx = Chunk.toGlobalChunkf(playerPos.x);
         int cy = Chunk.toGlobalChunkf(playerPos.y);
         GameScreen gs = SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getGameScreenCurrent();

@@ -14,7 +14,7 @@ public class TpCommand implements Runnable {
     
     @Override
     public void run() {
-        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getPlayerEntity()
+        SpaceAwaits.getSpaceAwaits().getGameManager().getGameCurrent().getPlayer().getTileWorldPlayer().getPlayerEntity()
                 .getComponent(TransformComponent.class).position.set(targetx, targety);
     }
 }

@@ -6,4 +6,5 @@ public interface ILevelSave {
 
 	IWorldSave getWorldSave();
 	
+	void writeMeta(WorldMeta meta);
 }
