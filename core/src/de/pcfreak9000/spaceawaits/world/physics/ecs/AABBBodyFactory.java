@@ -1,12 +1,15 @@
 package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.enums.b2BodyType;
+import com.badlogic.gdx.box2d.structs.b2BodyDef;
+import com.badlogic.gdx.box2d.structs.b2BodyId;
+import com.badlogic.gdx.box2d.structs.b2Polygon;
+import com.badlogic.gdx.box2d.structs.b2ShapeDef;
+import com.badlogic.gdx.box2d.structs.b2Vec2;
+import com.badlogic.gdx.box2d.structs.b2WorldId;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class AABBBodyFactory implements IBodyFactory {
     
@@ -17,10 +20,10 @@ public class AABBBodyFactory implements IBodyFactory {
     private final Vector2 offset;
     private final Vector2 widthAndHeight;
     private final float initx, inity;
-    private final BodyType t;
+    private final b2BodyType t;
     
     public AABBBodyFactory(float width, float height, float xoffset, float yoffset, float initx, float inity,
-            BodyType type) {
+            b2BodyType type) {
         this.offset = new Vector2(xoffset, yoffset);
         this.widthAndHeight = new Vector2(width, height);
         this.initx = initx;
@@ -30,19 +33,17 @@ public class AABBBodyFactory implements IBodyFactory {
     
     //What about a dynamic initial position?
     @Override
-    public Body createBody(World world) {
-        BodyDef bd = new BodyDef();
-        bd.fixedRotation = true;
-        bd.type = t;
-        bd.position.set(METER_CONV.in(initx), METER_CONV.in(inity));
-        bd.position.add(METER_CONV.in(offset.x), METER_CONV.in(offset.y));
-        FixtureDef fd = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(METER_CONV.in(widthAndHeight.x / 2), METER_CONV.in(widthAndHeight.y / 2));
-        fd.shape = shape;
-        Body b = world.createBody(bd);
-        b.createFixture(fd);//PhysicsComponent userdata?
-        shape.dispose();
+    public b2BodyId createBody(b2WorldId world, Entity entity) {
+        b2BodyDef bd = Box2d.b2DefaultBodyDef();
+        bd.fixedRotation(true);
+        bd.type(t);
+        b2Vec2 pos = bd.position();
+        pos.x(METER_CONV.in(offset.x+initx));
+        pos.y(METER_CONV.in(offset.y+inity));
+        b2ShapeDef fd = Box2d.b2DefaultShapeDef();
+        b2Polygon poly = Box2d.b2MakeBox(METER_CONV.in(widthAndHeight.x / 2), METER_CONV.in(widthAndHeight.y / 2));
+        b2BodyId b = Box2d.b2CreateBody(world, bd.asPointer());
+        Box2d.b2CreatePolygonShape(b, fd.asPointer(), poly.asPointer());//PhysicsComponent userdata?
         return b;
     }
     
@@ -59,7 +60,7 @@ public class AABBBodyFactory implements IBodyFactory {
     public static final class Builder {
         
         private float w = -1, h = -1, ix, iy, ox = -1, oy = -1;
-        private BodyType type;
+        private b2BodyType type;
         
         public Builder dimensions(float width, float height) {
             w = width;
@@ -81,17 +82,17 @@ public class AABBBodyFactory implements IBodyFactory {
         
         //Default
         public Builder dynamicBody() {
-            this.type = BodyType.DynamicBody;
+            this.type = b2BodyType.b2_dynamicBody;
             return this;
         }
         
         public Builder kinematicBody() {
-            this.type = BodyType.KinematicBody;
+            this.type = b2BodyType.b2_kinematicBody;
             return this;
         }
         
         public Builder staticBody() {
-            this.type = BodyType.StaticBody;
+            this.type = b2BodyType.b2_staticBody;
             return this;
         }
         

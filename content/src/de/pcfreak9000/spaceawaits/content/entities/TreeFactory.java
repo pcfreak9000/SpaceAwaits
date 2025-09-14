@@ -4,10 +4,10 @@ import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.enums.b2BodyType;
+import com.badlogic.gdx.box2d.structs.b2BodyId;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.content.Tools;
@@ -116,11 +116,9 @@ public class TreeFactory implements EntityFactory {
                     }
                     Components.TREESTATE.get(entity).loose = true;
                     Components.RENDER.get(entity).setLayer(RenderLayers.ENTITY);
-                    Body b = Components.PHYSICS.get(entity).body.getBody();
-                    b.setType(BodyType.DynamicBody);
-                    for (Fixture f : b.getFixtureList()) {
-                        f.setSensor(false);
-                    }
+                    b2BodyId b = Components.PHYSICS.get(entity).body.getBody();
+                    Box2d.b2Body_SetType(b, b2BodyType.b2_dynamicBody);
+                    //TODO change mask of body so it doesn't collide with player anymore or reincarnate it as sensor, idk
                 }
             }
         };

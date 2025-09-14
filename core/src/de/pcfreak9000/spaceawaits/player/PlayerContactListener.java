@@ -2,9 +2,7 @@ package de.pcfreak9000.spaceawaits.player;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.box2d.structs.b2Manifold;
 
 import de.pcfreak9000.spaceawaits.core.ecs.EngineImproved;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
@@ -22,7 +20,7 @@ public class PlayerContactListener implements IContactListener {
     private SystemCache<EntityInteractSystem> eisys = new SystemCache<>(EntityInteractSystem.class);
     
     @Override
-    public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+    public boolean beginContact(UserDataHelper owner, UserDataHelper other, b2Manifold manifold,UnitConversion conv,
             Engine world) {
         Player player = Components.PLAYER_INPUT.get(owner.getEntity()).player;
         if (other.isEntity()) {
@@ -46,21 +44,10 @@ public class PlayerContactListener implements IContactListener {
     }
     
     @Override
-    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+    public boolean endContact(UserDataHelper owner, UserDataHelper other, UnitConversion conv,
             Engine world) {
         return false;
     }
-    
-    @Override
-    public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
-            UnitConversion conv, Engine world) {
-        return false;
-    }
-    
-    @Override
-    public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
-            UnitConversion conv, Engine world) {
-        return false;
-    }
+
     
 }

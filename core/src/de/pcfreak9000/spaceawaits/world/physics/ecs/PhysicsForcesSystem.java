@@ -3,12 +3,9 @@ package de.pcfreak9000.spaceawaits.world.physics.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.enums.b2BodyType;
 
-import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 
 public class PhysicsForcesSystem extends IteratingSystem {
@@ -20,8 +17,8 @@ public class PhysicsForcesSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         PhysicsComponent comp = Components.PHYSICS.get(entity);
-        if (comp.body.getBody().getType() == BodyType.StaticBody) {
-            return;
+        if(Box2d.b2Body_GetType(comp.body.getBody())==b2BodyType.b2_staticBody) {
+        	return;
         }
         if (!comp.affectedByForces) {
             return;

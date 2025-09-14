@@ -1,15 +1,21 @@
 package de.pcfreak9000.spaceawaits.world.chunk;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.enums.b2BodyType;
+import com.badlogic.gdx.box2d.structs.b2BodyDef;
+import com.badlogic.gdx.box2d.structs.b2BodyId;
+import com.badlogic.gdx.box2d.structs.b2Polygon;
+import com.badlogic.gdx.box2d.structs.b2Rot;
+import com.badlogic.gdx.box2d.structs.b2ShapeDef;
+import com.badlogic.gdx.box2d.structs.b2ShapeId;
+import com.badlogic.gdx.box2d.structs.b2SurfaceMaterial;
+import com.badlogic.gdx.box2d.structs.b2Vec2;
+import com.badlogic.gdx.box2d.structs.b2WorldId;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.util.Direction;
+import de.pcfreak9000.spaceawaits.world.physics.IDFactory;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.IBodyFactory;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
 import de.pcfreak9000.spaceawaits.world.tile.Tile.TileLayer;
@@ -19,7 +25,7 @@ public class ChunkPhysics implements IBodyFactory {
     private static final Vector2 BODY_OFFSET = new Vector2(0.5f, 0.5f);
     
     private final Chunk chunk;
-    private Body body;
+    private b2BodyId body;
     
     public ChunkPhysics(Chunk chunk) {
         this.chunk = chunk;
@@ -27,11 +33,13 @@ public class ChunkPhysics implements IBodyFactory {
     }
     
     @Override
-    public Body createBody(World world) {
-        BodyDef bd = new BodyDef();
-        bd.position.set(METER_CONV.in(chunk.getGlobalTileX() + 0.5f), METER_CONV.in(chunk.getGlobalTileY() + 0.5f));
-        bd.type = BodyType.StaticBody;
-        Body b = world.createBody(bd);
+    public b2BodyId createBody(b2WorldId world, Entity entity) {
+        b2BodyDef bd = Box2d.b2DefaultBodyDef();
+        b2Vec2 pos = bd.position();
+        pos.x(METER_CONV.in(chunk.getGlobalTileX() + 0.5f));
+        pos.y(METER_CONV.in(chunk.getGlobalTileY() + 0.5f));
+        bd.type(b2BodyType.b2_staticBody);
+        b2BodyId b = Box2d.b2CreateBody(world, bd.asPointer());
         this.body = b;
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
@@ -51,13 +59,13 @@ public class ChunkPhysics implements IBodyFactory {
                 }
             }
         }
-        b.setUserData(this);
+        Box2d.b2Body_SetUserData(b, IDFactory.putData(this));
         //b.setUserData(new UserData(false));
         return b;
     }
     
     @Override
-    public void destroyBody(Body body, World world) {
+    public void destroyBody(b2BodyId body, b2WorldId world) {
         for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
             for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                 int x = chunk.getGlobalTileX() + i;
@@ -71,14 +79,18 @@ public class ChunkPhysics implements IBodyFactory {
     }
     
     private void createFixture(Tile tile, int gtx, int gty) { //This could be more memory efficient
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fd = new FixtureDef();
-        fd.shape = shape;
-        fd.friction = 1f;
-        fd.restitution = tile.getBouncyness();
-        if (!tile.hasCustomHitbox()) {
-            shape.setAsBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), new Vector2(
-                    METER_CONV.in((gtx - chunk.getGlobalTileX())), METER_CONV.in((gty - chunk.getGlobalTileY()))), 0);
+        b2ShapeDef fd = Box2d.b2DefaultShapeDef();
+        b2SurfaceMaterial mat = Box2d.b2DefaultSurfaceMaterial();
+        b2Polygon shape;
+        mat.friction(1f);
+        mat.restitution(tile.getBouncyness());
+        fd.setMaterial(mat);
+        if (!tile.hasCustomHitbox()||true) {
+        	b2Vec2 offset = new b2Vec2();
+        	offset.x(METER_CONV.in((gtx - chunk.getGlobalTileX())));
+        	offset.y(METER_CONV.in((gty - chunk.getGlobalTileY())));
+        	b2Rot rot = Box2d.b2MakeRot(0);
+        	shape = Box2d.b2MakeOffsetBox(METER_CONV.in(0.5f), METER_CONV.in(0.5f), offset, rot);
         } else {
             float[] custom = tile.getCustomHitbox();
             for (int i = 0; i < custom.length; i++) {
@@ -88,15 +100,15 @@ public class ChunkPhysics implements IBodyFactory {
                     custom[i] = METER_CONV.in(gty - chunk.getGlobalTileY() + custom[i] - 0.5f);
                 }
             }
-            shape.set(custom);
+            Box2d.b2ComputeHull(null, gty);
+            //shape.set(custom);
         }
-        Fixture fix = body.createFixture(fd);
-        chunk.getTileState(gtx, gty).setFixture(fix);
-        shape.dispose();
-        fix.setUserData(tile);//Enough for now
         if (!tile.isSolid() && tile.getContactListener() != null) {
-            fix.setSensor(true);
+            fd.isSensor(true);
         }
+        b2ShapeId fix = Box2d.b2CreatePolygonShape(body, fd.asPointer(), shape.asPointer());
+        chunk.getTileState(gtx, gty).setFixture(fix);
+        Box2d.b2Shape_SetUserData(fix, IDFactory.putData(tile));//Enough for now
     }
     
     public boolean isSolidAndFilling(Tile t) {
@@ -158,7 +170,7 @@ public class ChunkPhysics implements IBodyFactory {
                 //The restitution might have to change
                 boolean normalTileFilled = isSolidAndFilling(oldTile) && isSolidAndFilling(newTile);
                 if (normalTileFilled && state.getFixture() != null) {
-                    state.getFixture().setRestitution(newTile.getBouncyness());
+                	Box2d.b2Shape_SetRestitution(state.getFixture(), newTile.getBouncyness());
                 } else if (!normalTileFilled) {//deal with custom hitboxes. In this case doesn't change the state of surrounding fixtures, so this is relatively simple.
                     if (state.getFixture() != null) {
                         destroyFixture(state);
@@ -188,7 +200,7 @@ public class ChunkPhysics implements IBodyFactory {
         }
         
         private void destroyFixture(TileState state) {
-            body.destroyFixture(state.getFixture());
+        	Box2d.b2DestroyShape(state.getFixture(), true);
             state.setFixture(null);
         }
         

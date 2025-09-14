@@ -3,9 +3,7 @@ package de.pcfreak9000.spaceawaits.content.tiles;
 import java.util.Random;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.box2d.structs.b2Manifold;
 
 import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
@@ -46,7 +44,7 @@ public class TileLadder extends Tile implements IContactListener {
     }
     
     @Override
-    public boolean beginContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+    public boolean beginContact(UserDataHelper owner, UserDataHelper other, b2Manifold manifold, UnitConversion conv,
             Engine world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
             Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts++;
@@ -55,7 +53,7 @@ public class TileLadder extends Tile implements IContactListener {
     }
     
     @Override
-    public boolean endContact(UserDataHelper owner, UserDataHelper other, Contact contact, UnitConversion conv,
+    public boolean endContact(UserDataHelper owner, UserDataHelper other, UnitConversion conv,
             Engine world) {
         if (other.isEntity() && Components.PLAYER_INPUT.has(other.getEntity())) {
             Components.ON_SOLID_GROUND.get(other.getEntity()).freemovementContacts--;
@@ -63,15 +61,4 @@ public class TileLadder extends Tile implements IContactListener {
         return false;
     }
     
-    @Override
-    public boolean preSolve(UserDataHelper owner, UserDataHelper other, Contact contact, Manifold oldManifold,
-            UnitConversion conv, Engine world) {
-        return false;
-    }
-    
-    @Override
-    public boolean postSolve(UserDataHelper owner, UserDataHelper other, Contact contact, ContactImpulse impulse,
-            UnitConversion conv, Engine world) {
-        return false;
-    }
 }

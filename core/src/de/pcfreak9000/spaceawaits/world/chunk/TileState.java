@@ -2,7 +2,7 @@ package de.pcfreak9000.spaceawaits.world.chunk;
 
 import java.util.Objects;
 
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.box2d.structs.b2ShapeId;
 
 import de.pcfreak9000.spaceawaits.world.tile.ITileEntity;
 import de.pcfreak9000.spaceawaits.world.tile.Tile;
@@ -11,7 +11,7 @@ public class TileState {
     
     private Tile type;
     
-    private Fixture fixture;
+    private b2ShapeId fixture;
     private ITileEntity iTileEntity = null;
     
     TileState() {
@@ -33,11 +33,11 @@ public class TileState {
         return iTileEntity;
     }
     
-    Fixture getFixture() {
+    b2ShapeId getFixture() {
         return fixture;
     }
     
-    void setFixture(Fixture fix) {
+    void setFixture(b2ShapeId fix) {
         this.fixture = fix;
     }
     

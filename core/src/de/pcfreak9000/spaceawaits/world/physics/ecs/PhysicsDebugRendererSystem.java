@@ -3,7 +3,6 @@ package de.pcfreak9000.spaceawaits.world.physics.ecs;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.Disposable;
 
 import de.omnikryptec.util.Logger;
@@ -17,7 +16,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     
     //maybe there is a better way of doing this, seems kinda crude to inject the PhysicsSystem...
     
-    private Box2DDebugRenderer debugRend;
+    //private Box2DDebugRenderer debugRend;
     private boolean enabled;
     
     private OrthographicCamera cam = new OrthographicCamera();
@@ -26,7 +25,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
     private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
     
     public PhysicsDebugRendererSystem() {
-        this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
+        //this.debugRend = new Box2DDebugRenderer(true, true, true, true, true, true);
     }
     
     @Override
@@ -34,6 +33,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
         if (InptMgr.WORLD.isJustPressed(EnumInputIds.DebugDrawPhysics)) {
             enabled = !enabled;
         }
+        enabled = false;
         if (enabled) {
             Camera gameecam = camsys.get(getEngine()).getCamera();
             cam.setToOrtho(false, PhysicsSystem.METER_CONV.in(gameecam.viewportWidth),
@@ -41,13 +41,13 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
             cam.position.set(PhysicsSystem.METER_CONV.in(gameecam.position.x),
                     PhysicsSystem.METER_CONV.in(gameecam.position.y), 0);
             cam.update();
-            debugRend.render(phys.get(getEngine()).getB2DWorld(), cam.combined);
+            //debugRend.render(phys.get(getEngine()).getB2DWorld(), cam.combined);
         }
     }
     
     @Override
     public void dispose() {
         Logger.getLogger(getClass()).debug("Disposing...");
-        debugRend.dispose();
+        //debugRend.dispose();
     }
 }

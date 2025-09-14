@@ -1,6 +1,6 @@
 package de.pcfreak9000.spaceawaits.world.physics;
 
-import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.box2d.structs.b2ShapeId;
 
 public interface IRaycastFixtureCallback {
     /**
@@ -15,6 +15,6 @@ public interface IRaycastFixtureCallback {
      * @return -1 to filter, 0 to terminate, fraction to clip the ray for closest
      *         hit, 1 to continue
      **/
-    float reportRayFixture(Fixture fix, float pointx, float pointy, float normalx, float normaly, float fraction,
+    float reportRayFixture(b2ShapeId fix, float pointx, float pointy, float normalx, float normaly, float fraction,
             UnitConversion conv);
 }

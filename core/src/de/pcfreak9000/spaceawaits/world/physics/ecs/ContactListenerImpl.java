@@ -1,11 +1,9 @@
 package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Engine;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.structs.b2Manifold;
+import com.badlogic.gdx.box2d.structs.b2ShapeId;
 
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.physics.IContactListener;
@@ -13,7 +11,7 @@ import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 import de.pcfreak9000.spaceawaits.world.physics.UserData;
 import de.pcfreak9000.spaceawaits.world.physics.UserDataHelper;
 
-class ContactListenerImpl implements ContactListener {
+class ContactListenerImpl {
     
     private UserDataHelper userdata1 = new UserDataHelper();
     private UserDataHelper userdata2 = new UserDataHelper();
@@ -43,71 +41,31 @@ class ContactListenerImpl implements ContactListener {
         return null;
     }
     
-    @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
-        Fixture f1 = contact.getFixtureA();
-        Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData(), f1);
-        userdata2.set(f2.getUserData(), f2);
+    public void beginContact(b2ShapeId f1, b2ShapeId f2, b2Manifold manifold) {
+        userdata1.set(Box2d.b2Shape_GetUserData(f1), f1);
+        userdata2.set(Box2d.b2Shape_GetUserData(f2), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;
         if (l1 != null) {
-            b = l1.preSolve(userdata1, userdata2, contact, oldManifold, conv, world);
+            b = l1.beginContact(userdata1, userdata2, manifold, conv, world);
         }
         if (!b && l2 != null) {
-            l2.preSolve(userdata2, userdata1, contact, oldManifold, conv, world);
+            l2.beginContact(userdata2, userdata1, manifold, conv, world);
         }
     }
     
-    @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-        Fixture f1 = contact.getFixtureA();
-        Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData(), f1);
-        userdata2.set(f2.getUserData(), f2);
+    public void endContact(b2ShapeId f1, b2ShapeId f2) {
+        userdata1.set(Box2d.b2Shape_GetUserData(f1), f1);
+        userdata2.set(Box2d.b2Shape_GetUserData(f2), f2);
         IContactListener l1 = getListener(userdata1);
         IContactListener l2 = getListener(userdata2);
         boolean b = false;
         if (l1 != null) {
-            b = l1.postSolve(userdata1, userdata2, contact, impulse, conv, world);
+            b = l1.endContact(userdata1, userdata2, conv, world);
         }
         if (!b && l2 != null) {
-            l2.postSolve(userdata2, userdata1, contact, impulse, conv, world);
-        }
-    }
-    
-    @Override
-    public void beginContact(Contact contact) {
-        Fixture f1 = contact.getFixtureA();
-        Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData(), f1);
-        userdata2.set(f2.getUserData(), f2);
-        IContactListener l1 = getListener(userdata1);
-        IContactListener l2 = getListener(userdata2);
-        boolean b = false;
-        if (l1 != null) {
-            b = l1.beginContact(userdata1, userdata2, contact, conv, world);
-        }
-        if (!b && l2 != null) {
-            l2.beginContact(userdata2, userdata1, contact, conv, world);
-        }
-    }
-    
-    @Override
-    public void endContact(Contact contact) {
-        Fixture f1 = contact.getFixtureA();
-        Fixture f2 = contact.getFixtureB();
-        userdata1.set(f1.getUserData(), f1);
-        userdata2.set(f2.getUserData(), f2);
-        IContactListener l1 = getListener(userdata1);
-        IContactListener l2 = getListener(userdata2);
-        boolean b = false;
-        if (l1 != null) {
-            b = l1.endContact(userdata1, userdata2, contact, conv, world);
-        }
-        if (!b && l2 != null) {
-            l2.endContact(userdata2, userdata1, contact, conv, world);
+            l2.endContact(userdata2, userdata1, conv, world);
         }
     }
     

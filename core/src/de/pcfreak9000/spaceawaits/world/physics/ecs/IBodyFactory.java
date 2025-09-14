@@ -1,9 +1,10 @@
 package de.pcfreak9000.spaceawaits.world.physics.ecs;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.box2d.Box2d;
+import com.badlogic.gdx.box2d.structs.b2BodyId;
+import com.badlogic.gdx.box2d.structs.b2WorldId;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
 
 import de.pcfreak9000.spaceawaits.world.physics.UnitConversion;
 
@@ -12,15 +13,10 @@ public interface IBodyFactory {
     //If this class is reused for space as well this isn't suitable anymore
     public static final UnitConversion METER_CONV = PhysicsSystem.METER_CONV;
     
-    default Body createBody(World world, Entity entity) {
-        return createBody(world);
-    }
+    b2BodyId createBody(b2WorldId world, Entity entity);
     
-    @Deprecated
-    Body createBody(World world);
-    
-    default void destroyBody(Body body, World world) {
-        world.destroyBody(body);
+    default void destroyBody(b2BodyId body, b2WorldId world) {
+        Box2d.b2DestroyBody(body);
     }
     
     Vector2 bodyOffset();

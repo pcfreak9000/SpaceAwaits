@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.gdx.box2d.Box2d;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
@@ -125,7 +126,7 @@ public class TileSystem extends EntitySystem implements ITileArea {
         getTile(tx, ty, layer.other()).onNeighbourChange(getEngine(), this, tx, ty, tile, old, tx, ty, layer.other(),
                 randsys.get(getEngine()).getRandom());
         phys.get(getEngine()).queryAABB(tx - 0.1f, ty - 0.1f, tx + 1 + 0.1f * 2, ty + 1 + 0.1f * 2, (fix, conv) -> {
-            ud.set(fix.getUserData(), fix);
+            ud.set(Box2d.b2Shape_GetUserData(fix), fix);
             if (ud.isEntity()) {//This might trigger multiple times for one entity that has more than one fixture!
                 Entity e = ud.getEntity();
                 if (Components.NEIGHGOUR_CHANGED.has(e)) {
@@ -187,8 +188,8 @@ public class TileSystem extends EntitySystem implements ITileArea {
         if (tile.isSolid() && layer == TileLayer.Front) {
             boolean[] blocking = new boolean[1];
             phys.get(getEngine()).queryAABB(tx + 0.15f, ty + 0.15f, tx + 0.7f, ty + 0.7f, (fix, conv) -> {
-                ud.set(fix.getUserData(), fix);
-                if (fix.isSensor()) {
+                ud.set(Box2d.b2Shape_GetUserData(fix), fix);
+                if (Box2d.b2Shape_IsSensor(fix)) {
                     if (!ud.isEntity() || !Components.PHYSICS.get(ud.getEntity()).considerSensorsAsBlocking) {
                         return true;
                     }

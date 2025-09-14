@@ -3,14 +3,11 @@ package de.pcfreak9000.spaceawaits.world.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.utils.Array;
 
 import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.SpaceAwaits;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.player.Player;
-import de.pcfreak9000.spaceawaits.player.Player.GameMode;
 import de.pcfreak9000.spaceawaits.world.WorldEvents.PlayerJumpEvent;
 import de.pcfreak9000.spaceawaits.world.physics.ecs.PhysicsComponent;
 
@@ -99,23 +96,24 @@ public class PlayerInputSystem extends IteratingSystem {
         
         // Move the gamemode stuff?
         // ************************************************************************
-        PhysicsComponent comp = Components.PHYSICS.get(entity);
-        GameMode mode = Components.PLAYER_INPUT.get(entity).player.getGameMode();
-        comp.affectedByForces = !mode.isTesting;
-        if (mode == GameMode.TestingGhost && comp.i_nonsensorfixtures == null) {
-            comp.i_nonsensorfixtures = new Array<Fixture>();
-            for (Fixture f : Components.PHYSICS.get(entity).body.getBody().getFixtureList()) {
-                if (!f.isSensor()) {
-                    comp.i_nonsensorfixtures.add(f);
-                    f.setSensor(true);
-                }
-            }
-        } else if (mode != GameMode.TestingGhost && comp.i_nonsensorfixtures != null) {
-            for (int i = 0; i < comp.i_nonsensorfixtures.size; i++) {
-                comp.i_nonsensorfixtures.get(i).setSensor(false);
-            }
-            comp.i_nonsensorfixtures = null;
-        }
+        //TODO FUCK not being able to setSensor insitu bites as in the ass here
+//        PhysicsComponent comp = Components.PHYSICS.get(entity);
+//        GameMode mode = Components.PLAYER_INPUT.get(entity).player.getGameMode();
+//        comp.affectedByForces = !mode.isTesting;
+//        if (mode == GameMode.TestingGhost && comp.i_nonsensorfixtures == null) {
+//            comp.i_nonsensorfixtures = new Array<b2ShapeId>();
+//            for (b2ShapeId f : Components.PHYSICS.get(entity).body.getBody().getFixtureList()) {
+//                if (!f.isSensor()) {
+//                    comp.i_nonsensorfixtures.add(f);
+//                    f.setSensor(true);
+//                }
+//            }
+//        } else if (mode != GameMode.TestingGhost && comp.i_nonsensorfixtures != null) {
+//            for (int i = 0; i < comp.i_nonsensorfixtures.size; i++) {
+//                //comp.i_nonsensorfixtures.get(i).setSensor(false);
+//            }
+//            comp.i_nonsensorfixtures = null;
+//        }
         // ************************************************************************
     }
     
