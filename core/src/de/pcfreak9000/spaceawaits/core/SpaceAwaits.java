@@ -8,6 +8,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.box2d.Box2d;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
@@ -137,6 +138,7 @@ public class SpaceAwaits extends Game {
     }
     
     private void setupInfrastructure() {
+    	Box2d.initialize();
     	AudioConfig ac = new AudioConfig();
     	ac.setLogger(null);
         audio = Audio.init(ac);
