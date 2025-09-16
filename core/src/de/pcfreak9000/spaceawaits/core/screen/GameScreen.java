@@ -85,7 +85,7 @@ public class GameScreen extends ScreenAdapter {
 		SpaceAwaits.BUS.post(new RendererEvents.PreFrameEvent());
 		ecsEngine.update(delta);
 		if (saveAndExitToMainMenu) {
-			SpaceAwaits.getSpaceAwaits().getGameManager().unloadGame();
+			SpaceAwaits.getSpaceAwaits().getGameManager().saveAndUnloadGame();
 		}
 	}
 

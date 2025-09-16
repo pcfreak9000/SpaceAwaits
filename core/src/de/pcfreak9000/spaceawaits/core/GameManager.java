@@ -47,10 +47,11 @@ public class GameManager {
         // screenManager.setFlatWorldScreen(new FlatWorld(), new FlatPlayer());
     }
 
-    public void unloadGame() {
+    public void saveAndUnloadGame() {
         if (!isInGame()) {
             throw new IllegalStateException();
         }
+        this.gameCurrent.saveGame();
         this.gameCurrent.unloadGame();
         this.gameCurrent = null;
         this.screenManager.setMainMenuScreen();

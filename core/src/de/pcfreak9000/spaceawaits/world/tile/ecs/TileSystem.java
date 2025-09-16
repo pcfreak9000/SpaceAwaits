@@ -151,6 +151,9 @@ public class TileSystem extends EntitySystem implements ITileArea {
     }
     
     private Chunk getChunkForTile(int tx, int ty) {
+    	if(!inBounds(tx, ty)) {
+    		return null;
+    	}
         return chunks.get(getEngine()).getChunk(Chunk.toGlobalChunk(tx), Chunk.toGlobalChunk(ty));
     }
     
