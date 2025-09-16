@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.core.InptMgr;
 import de.pcfreak9000.spaceawaits.core.assets.CoreRes.EnumInputIds;
 import de.pcfreak9000.spaceawaits.core.ecs.RenderSystemMarker;
 import de.pcfreak9000.spaceawaits.core.ecs.SystemCache;
+import de.pcfreak9000.spaceawaits.world.physics.ModifiedDebugRenderer;
 import de.pcfreak9000.spaceawaits.world.render.ecs.CameraSystem;
 
 @RenderSystemMarker
@@ -19,7 +20,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
 	// maybe there is a better way of doing this, seems kinda crude to inject the
 	// PhysicsSystem...
 
-	private Box2dDebugRenderer debugRend;
+	private ModifiedDebugRenderer debugRend;
 	private boolean enabled;
 
 	private OrthographicCamera cam = new OrthographicCamera();
@@ -28,7 +29,7 @@ public class PhysicsDebugRendererSystem extends EntitySystem implements Disposab
 	private SystemCache<CameraSystem> camsys = new SystemCache<>(CameraSystem.class);
 
 	public PhysicsDebugRendererSystem() {
-		this.debugRend = new Box2dDebugRenderer();
+		this.debugRend = new ModifiedDebugRenderer();
 		this.debugRend.getB2DebugDraw().drawShapes(true);
 	}
 

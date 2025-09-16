@@ -49,6 +49,8 @@ public class PlayerBodyFactory implements IBodyFactory {
 		b2SurfaceMaterial mat = fd.material();
 		mat.friction(15f);
 		fd.density(1.1f);
+		fd.enableSensorEvents(true);
+		fd.enableContactEvents(true);
 		b2BodyId b = Box2d.b2CreateBody(world, bd.asPointer());
 		Box2d.b2CreateCircleShape(b, fd.asPointer(), shape.asPointer());
 		shape.center().y(METER_CONV.in(-WH.y / 4f));
@@ -63,6 +65,7 @@ public class PlayerBodyFactory implements IBodyFactory {
 		cen.y(METER_CONV.in(-WH.y / 2 + 5 * WH.y / 64f));
 		b2Polygon poly = Box2d.b2MakeOffsetBox(METER_CONV.in(WH.x * 0.3f), METER_CONV.in(WH.y / 32f), cen, rot);
 		fd.isSensor(true);
+		fd.enableSensorEvents(true);
 		b2ShapeId sid = Box2d.b2CreatePolygonShape(b, fd.asPointer(), poly.asPointer());
 		UserData ud = new UserData();
 		ud.listener = l;

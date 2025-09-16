@@ -20,7 +20,7 @@ public class SolidGroundContactListener implements IContactListener {
             Engine world) {
         if (!Box2d.b2Shape_IsSensor(other.getFixture())) {
             backingComp.solidGroundContacts++;
-            int n = manifold.pointCount();
+            int n = 0;//manifold.pointCount();
             if (n > 0) {
                 //not sure if this works properly, i.e. if anchora is really what it is assumed to be
             	//anyways, we need to record the position anyways in backingcomp 

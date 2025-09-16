@@ -24,12 +24,15 @@ public class ItemBodyFactory implements IBodyFactory {
         bd.position().x(METER_CONV.in(OFFSET.x));
         bd.position().y(METER_CONV.in(OFFSET.y));
         b2ShapeDef fd = Box2d.b2DefaultShapeDef();
+        fd.enableContactEvents(true);
+        fd.enableSensorEvents(true);
         b2Circle shape = new b2Circle();
         shape.radius(METER_CONV.in(Item.WORLD_SIZE / 1.9f));
         b2BodyId b = Box2d.b2CreateBody(world, bd.asPointer());
         Box2d.b2CreateCircleShape(b, fd.asPointer(), shape.asPointer());
         shape.radius(METER_CONV.in(Item.WORLD_SIZE / 1.1f));
         fd.isSensor(true);
+        fd.enableSensorEvents(true);
         Box2d.b2CreateCircleShape(b, fd.asPointer(), shape.asPointer());
         return b;
     }

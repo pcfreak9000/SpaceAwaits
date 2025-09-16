@@ -144,7 +144,7 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
 			processEntity(e, deltat);
 		}
 		// this.box2dWorld.step(STEPLENGTH_SECONDS, 5, 2);
-		Box2d.b2World_Step(box2dWorld, STEPLENGTH_SECONDS, 5);
+		Box2d.b2World_Step(box2dWorld, STEPLENGTH_SECONDS, 4);
 		// TODO handle contact events
 		b2ContactEvents contactevs = Box2d.b2World_GetContactEvents(box2dWorld);
 		int begincount = contactevs.beginCount();
@@ -310,7 +310,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
 		Box2d.b2Body_SetAngularVelocity(pc.body.getBody(), pc.rotVel);
 		// pc.body.getBody().setAngularVelocity(pc.rotVel);
 		VoidPointer vp = Box2d.b2Body_GetUserData(pc.body.getBody());
-		if (vp == VoidPointer.NULL) {
+		Object currentuserdata = IDFactory.obtainData(vp);
+		if (currentuserdata == null) {
 			vp = IDFactory.putData(entity);
 			Box2d.b2Body_SetUserData(pc.body.getBody(), vp);
 			int count = Box2d.b2Body_GetShapeCount(pc.body.getBody());
@@ -318,7 +319,8 @@ public class PhysicsSystem extends IteratingSystem implements EntityListener {
 			Box2d.b2Body_GetShapes(pc.body.getBody(), p, count);
 			for (int i = 0; i < count; i++) {
 				b2ShapeId shape = p.get(i);
-				if (Box2d.b2Shape_GetUserData(shape) == VoidPointer.NULL) {
+				VoidPointer shapevp = Box2d.b2Shape_GetUserData(shape);
+				if (IDFactory.obtainData(shapevp) == null) {
 					Box2d.b2Shape_SetUserData(shape, vp);
 				}
 			}
