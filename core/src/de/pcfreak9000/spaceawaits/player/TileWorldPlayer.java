@@ -11,6 +11,7 @@ import de.pcfreak9000.spaceawaits.item.ItemStack;
 import de.pcfreak9000.spaceawaits.serialize.EntitySerializer;
 import de.pcfreak9000.spaceawaits.serialize.INBTSerializable;
 import de.pcfreak9000.spaceawaits.world.WorldEvents;
+import de.pcfreak9000.spaceawaits.world.chunk.ecs.ChunkSystem;
 import de.pcfreak9000.spaceawaits.world.ecs.Components;
 import de.pcfreak9000.spaceawaits.world.ecs.OnSolidGroundComponent;
 import de.pcfreak9000.spaceawaits.world.ecs.WorldSystem;
@@ -44,6 +45,13 @@ public class TileWorldPlayer implements INBTSerializable {
 		player.getKnowledge().register(ts.getWorldBus());
 		player.getExperience().register(ts.getWorldBus());
 		((EngineImproved) ts.getEngine()).getEventBus().post(new WorldEvents.PlayerJoinedEvent(player));
+		// make sure the chunks around the player are loaded before rendering starts.
+		// The issue occurs as chunks are loaded in the logic loop meaning the loading
+		// might occur less often on fast systems than the rendering, i.e. there are
+		// frames with rendering but no update in logic, leading to frames where chunks
+		// are not loaded/rendered. this might affect teleporting as well, but i dont
+		// care at the moment...
+		ts.getEngine().getSystem(ChunkSystem.class).update(0);
 	}
 
 	public void leaveTileWorld(TileScreen ts) {

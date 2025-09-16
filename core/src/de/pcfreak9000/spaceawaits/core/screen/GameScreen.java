@@ -74,13 +74,11 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void hide() {
 		super.hide();
-		this.dispose();
 	}
 
 	@Override
 	public void render(float delta) {
 		renderTime += delta;
-
 		ScreenUtils.clear(0, 0, 0, 1);
 		SpaceAwaits.BUS.post(new RendererEvents.PreFrameEvent());
 		ecsEngine.update(delta);
@@ -193,6 +191,7 @@ public class GameScreen extends ScreenAdapter {
 		for (DynamicAssetListener<Component> dal : WatchDynamicAssetAnnotationProcessor.get()) {
 			ecsEngine.removeEntityListener(dal);
 		}
+		this.dispose();
 		canuse = 2;
 	}
 

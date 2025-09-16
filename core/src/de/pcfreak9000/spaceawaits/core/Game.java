@@ -120,13 +120,13 @@ public class Game {
 	public void joinLevel(String uuid) {
 		this.gamescreenCurrent = screenCache.getOrFresh(uuid);
 		LOGGER.info("Joining level...");
-		this.scm.setGameScreen(this.gamescreenCurrent);
 		this.player.join(this.gamescreenCurrent, uuid);
+		this.scm.setGameScreen(this.gamescreenCurrent);
 	}
 
 	public void leaveLevel() {
-		this.player.leave(gamescreenCurrent);
 		this.scm.setGameScreen(null);
+		this.player.leave(gamescreenCurrent);
 		this.gamescreenCurrent = null;
 	}
 
